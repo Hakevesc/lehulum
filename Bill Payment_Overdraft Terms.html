@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Errif Terms</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@400;500;600&display=swap');
+  @import url('https://api.fontshare.com/v2/css?f[]=switzer@400,500,600,700&display=swap');
+
+  :root {
+    --Primary: #FE353D;
+    --On-Surface: #1C1C21;
+    --On-Surface-Low: #7C7C87;
+    --Border: #E8E8EC;
+    --Background: #F5F5F5;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'Inter', sans-serif; background: transparent; display: flex; justify-content: center; align-items: center; min-height: 100vh; padding: 20px; }
+  .phone-frame { width: 360px; height: 780px; background: var(--Background); border-radius: 30px; overflow: hidden; position: relative; box-shadow: 0 20px 60px rgba(0,0,0,0.15); }
+  .app-content { height: 100%; display: flex; flex-direction: column; }
+
+  .status-bar { flex-shrink: 0; display: flex; justify-content: space-between; align-items: center; width: 100%; padding: 14px 24px 8px; background: var(--Background); }
+  .status-bar .time { font-size: 14px; font-weight: 600; color: var(--On-Surface); }
+  .status-icons { display: flex; align-items: center; gap: 6px; }
+  .status-icons svg { width: 18px; height: 18px; }
+
+  .header-nav { flex-shrink: 0; width: 100%; display: flex; align-items: center; justify-content: space-between; padding: 8px 16px 12px; background: var(--Background); }
+  .back-btn { display: flex; align-items: center; justify-content: center; width: 36px; height: 36px; border-radius: 50%; background: transparent; border: none; cursor: pointer; transition: all 0.2s; }
+  .back-btn:hover { background: rgba(0,0,0,0.05); }
+  .back-btn svg { width: 22px; height: 22px; stroke: var(--On-Surface); stroke-width: 1.8px; fill: none; }
+  .header-title { color: var(--On-Surface); font-family: 'Switzer', sans-serif; font-size: 17px; font-weight: 500; letter-spacing: 0.3px; flex: 1; text-align: center; }
+
+  .body { flex: 1; overflow-y: auto; padding: 4px 24px 12px; }
+  .body::-webkit-scrollbar { width: 0; }
+  .terms-title { font-family: 'Switzer', sans-serif; font-size: 18px; font-weight: 700; color: var(--On-Surface); margin: 6px 0 14px; }
+  .terms-card { background: #FFF; border: 1px solid var(--Border); border-radius: 16px; padding: 16px; display: flex; flex-direction: column; gap: 14px; box-shadow: 0 2px 8px rgba(0,0,0,0.04); }
+  .term { display: flex; gap: 10px; }
+  .term .n { width: 22px; height: 22px; border-radius: 50%; background: #FFF1F2; color: var(--Primary); font-family: 'Switzer', sans-serif; font-size: 11px; font-weight: 700; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+  .term .tx { font-family: 'Switzer', sans-serif; font-size: 12.5px; line-height: 1.55; color: var(--On-Surface-Low); }
+  .term .tx b { color: var(--On-Surface); font-weight: 600; }
+
+  .agree { display: flex; align-items: flex-start; gap: 10px; margin-top: 16px; cursor: pointer; }
+  .agree .box { width: 22px; height: 22px; border-radius: 7px; border: 2px solid var(--Border); flex-shrink: 0; display: flex; align-items: center; justify-content: center; transition: all 0.15s; background: #FFF; }
+  .agree.checked .box { background: var(--Primary); border-color: var(--Primary); }
+  .agree .box svg { width: 13px; height: 13px; stroke: #FFF; stroke-width: 3; fill: none; opacity: 0; }
+  .agree.checked .box svg { opacity: 1; }
+  .agree .lbl { font-family: 'Switzer', sans-serif; font-size: 12.5px; line-height: 1.5; color: var(--On-Surface); }
+
+  .bottom-area { flex-shrink: 0; width: 100%; display: flex; flex-direction: column; gap: 10px; padding: 12px 24px 24px; background: var(--Background); }
+  .btn-primary { width: 100%; height: 52px; border-radius: 14px; background: #E0E0E0; color: var(--On-Surface-Low); font-family: 'Poppins', sans-serif; font-size: 15px; font-weight: 500; border: none; cursor: not-allowed; transition: all 0.2s; }
+  .btn-primary.active { background: var(--Primary); color: #FFF; cursor: pointer; box-shadow: 0 4px 16px rgba(254,53,61,0.25); }
+  .btn-primary.active:hover { background: #E5303A; transform: translateY(-1px); }
+  .btn-primary.active:active { transform: scale(0.98); }
+</style>
+</head>
+<body>
+<div class="phone-frame">
+  <div class="app-content">
+
+    <div class="status-bar">
+      <span class="time">10:00</span>
+      <div class="status-icons">
+        <svg viewBox="0 0 24 24" fill="none"><path d="M1 9l2 2c4.97-4.97 13.03-4.97 18 0l2-2C16.93 2.93 7.08 2.93 1 9z" fill="#1C1C21"/><path d="M5 13l2 2c2.76-2.76 7.24-2.76 10 0l2-2C15.14 9.14 8.87 9.14 5 13z" fill="#1C1C21"/><path d="M9 17l2 2c1.1-1.1 2.9-1.1 4 0l2-2c-2.21-2.21-5.79-2.21-8 0z" fill="#1C1C21"/></svg>
+        <svg viewBox="0 0 24 24" fill="none"><rect x="2" y="6" width="4" height="12" rx="1" fill="#1C1C21"/><rect x="8" y="4" width="4" height="14" rx="1" fill="#1C1C21"/><rect x="14" y="2" width="4" height="16" rx="1" fill="#1C1C21"/><rect x="20" y="0" width="4" height="18" rx="1" fill="#1C1C21" opacity="0.3"/></svg>
+        <svg viewBox="0 0 28 14" fill="none"><rect x="0" y="1" width="22" height="12" rx="2.5" stroke="#1C1C21" stroke-width="1.5"/><rect x="2" y="3" width="16" height="8" rx="1" fill="#1C1C21"/><rect x="24" y="4" width="2" height="6" rx="1" fill="#1C1C21"/></svg>
+      </div>
+    </div>
+
+    <div class="header-nav">
+      <button class="back-btn" onclick="goBack()">
+        <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+      </button>
+      <span class="header-title">Errif Terms &amp; Fees</span>
+      <div style="width: 36px;"></div>
+    </div>
+
+    <div class="body">
+      <h2 class="terms-title">Terms &amp; Fees</h2>
+      <div class="terms-card">
+        <div class="term"><span class="n">1</span><span class="tx"><b>Credit limit.</b> Your approved Errif overdraft limit is 5,000.00 ETB and may change based on your usage and standing.</span></div>
+        <div class="term"><span class="n">2</span><span class="tx"><b>Repayment.</b> Outstanding amounts are due within 30 days and may be recovered automatically from incoming funds.</span></div>
+        <div class="term"><span class="n">3</span><span class="tx"><b>Service fee.</b> No interest for the first 7 days. A daily service fee applies thereafter as published in the Tariffs &amp; Fees.</span></div>
+        <div class="term"><span class="n">4</span><span class="tx"><b>Eligibility.</b> Errif is provided at the discretion of the service provider and may be suspended if terms are not met.</span></div>
+      </div>
+
+      <div class="agree" id="agree" onclick="toggleAgree()">
+        <span class="box"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></span>
+        <span class="lbl">I have read and agree to the Errif Overdraft Terms &amp; Conditions and Tariffs.</span>
+      </div>
+    </div>
+
+    <div class="bottom-area">
+      <button class="btn-primary" id="agreeBtn" onclick="agreeAndActivate()" disabled>Agree &amp; Activate</button>
+    </div>
+
+  </div>
+</div>
+
+<script>
+  let agreed = false;
+
+  function toggleAgree() {
+    agreed = !agreed;
+    document.getElementById('agree').classList.toggle('checked', agreed);
+    const btn = document.getElementById('agreeBtn');
+    btn.classList.toggle('active', agreed);
+    btn.disabled = !agreed;
+  }
+
+  function agreeAndActivate() {
+    if (!agreed) return;
+    window.location.href = 'Bill Payment_Overdraft Activated.html';
+  }
+
+  function goBack() { window.location.href = 'Bill Payment_Overdraft Activate.html'; }
+</script>
+
+<script src="figma-export.js"></script>
+</body>
+</html>

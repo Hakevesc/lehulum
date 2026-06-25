@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Forgot PIN — Turn Mobile Data On</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@400;500;600&display=swap');
+  @import url('https://api.fontshare.com/v2/css?f[]=switzer@400,500,600,700&display=swap');
+
+  :root {
+    --Primary: #FE353D;
+    --On-Surface: #1C1C21;
+    --On-Surface-Low: #7C7C87;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Inter', sans-serif; background: transparent;
+    display: flex; justify-content: center; align-items: center;
+    min-height: 100vh; padding: 20px;
+  }
+
+  .phone-frame {
+    width: 360px; height: 780px; background: #F5F5F5;
+    border-radius: 30px; overflow: hidden; position: relative;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.15);
+  }
+
+  .app-content { height: 100%; display: flex; flex-direction: column; overflow: hidden; }
+
+  /* ===== HEADER (160px) ===== */
+  .header-section {
+    position: relative; width: 100%; height: 160px; flex-shrink: 0;
+    background: linear-gradient(160deg, #A41016 0%, #C41520 30%, #D32F2F 60%, #B71C1C 100%);
+    border-radius: 0 0 30px 30px;
+    display: flex; flex-direction: column; align-items: center;
+  }
+  .pattern-overlay {
+    position: absolute; inset: 0; opacity: 0.20; z-index: 0;
+    background-image: url('assets/M-PESA-pattern.svg');
+    background-size: 490px; background-position: right -270px top -270px;
+    background-repeat: no-repeat; border-radius: 0 0 30px 30px; mix-blend-mode: overlay;
+  }
+  .status-bar {
+    position: relative; z-index: 5;
+    display: flex; justify-content: space-between; align-items: center;
+    width: 100%; padding: 14px 24px 8px;
+  }
+  .status-bar .time { font-size: 14px; font-weight: 600; color: #FFF; }
+  .status-icons { display: flex; align-items: center; gap: 6px; }
+  .status-icons svg { width: 18px; height: 18px; }
+
+  .header-nav {
+    position: relative; z-index: 5;
+    width: 100%; display: flex; align-items: center; justify-content: center;
+    padding: 12px 20px 0;
+  }
+  .back-btn {
+    position: absolute; left: 20px;
+    display: flex; align-items: center; justify-content: center;
+    background: transparent; border: none; cursor: pointer; transition: all 0.2s;
+  }
+  .back-btn:hover { transform: scale(1.1); }
+  .back-btn svg { width: 24px; height: 24px; stroke: #FFF; stroke-width: 2; fill: none; stroke-linecap: round; stroke-linejoin: round; }
+  .header-title { color: #FFF; font-family: 'Switzer', sans-serif; font-size: 18px; font-weight: 300; letter-spacing: 0.3px; }
+
+  /* ===== MAIN CONTENT ===== */
+  .main-content {
+    flex: 1; display: flex; flex-direction: column; align-items: center;
+    padding: 52px 20px 0; text-align: center;
+  }
+
+  .warning-icon-wrap {
+    width: 88px; height: 88px; border-radius: 28px;
+    background: #FFF1F2; display: flex; align-items: center; justify-content: center;
+    margin-bottom: 28px; box-shadow: 0 4px 24px rgba(254,53,61,0.15);
+  }
+  .warning-icon-wrap svg { width: 48px; height: 48px; stroke: var(--Primary); stroke-width: 1.7; fill: none; stroke-linecap: round; stroke-linejoin: round; }
+
+  .forgot-title {
+    color: var(--On-Surface); font-family: 'Switzer', sans-serif;
+    font-size: 22px; font-weight: 700; margin-bottom: 14px;
+  }
+  .forgot-desc {
+    color: var(--On-Surface-Low); font-family: 'Switzer', sans-serif;
+    font-size: 14px; font-weight: 400; line-height: 1.65;
+    max-width: 280px;
+  }
+
+  /* ===== BOTTOM BUTTONS ===== */
+  .bottom-area {
+    width: 100%; display: flex; flex-direction: column; align-items: center;
+    padding: 0 20px 28px; margin-top: auto; gap: 10px;
+  }
+  .btn-primary {
+    width: 100%; height: 48px; border-radius: 12px;
+    background: var(--Primary); color: #FFF1F2;
+    font-family: 'Poppins', sans-serif; font-size: 14px; font-weight: 500;
+    border: none; cursor: pointer; transition: all 0.2s;
+    box-shadow: 0 4px 16px rgba(254,53,61,0.25);
+    display: flex; align-items: center; justify-content: center; gap: 8px;
+    text-decoration: none;
+  }
+  .btn-primary:hover { background: #E5303A; transform: translateY(-1px); box-shadow: 0 6px 20px rgba(254,53,61,0.35); }
+  .btn-primary:active { transform: scale(0.98); }
+  .btn-primary svg { width: 16px; height: 16px; stroke: #FFF; stroke-width: 2.5; fill: none; }
+
+  .btn-secondary {
+    width: 100%; height: 48px; border-radius: 12px;
+    background: #F0F0F0; color: var(--On-Surface);
+    font-family: 'Poppins', sans-serif; font-size: 14px; font-weight: 500;
+    border: none; cursor: pointer; transition: all 0.2s;
+    display: flex; align-items: center; justify-content: center; gap: 8px;
+    text-decoration: none;
+  }
+  .btn-secondary:hover { background: #E8E8E8; transform: translateY(-1px); }
+  .btn-secondary:active { transform: scale(0.98); }
+  .btn-secondary svg { width: 16px; height: 16px; stroke: var(--On-Surface); stroke-width: 2; fill: none; }
+</style>
+</head>
+<body>
+
+<div class="phone-frame">
+  <div class="app-content">
+
+    <div class="header-section">
+      <div class="pattern-overlay"></div>
+      <div class="status-bar">
+        <span class="time">10:00</span>
+        <div class="status-icons">
+          <svg viewBox="0 0 24 24" fill="none"><path d="M1 9l2 2c4.97-4.97 13.03-4.97 18 0l2-2C16.93 2.93 7.08 2.93 1 9z" fill="#FFF"/><path d="M5 13l2 2c2.76-2.76 7.24-2.76 10 0l2-2C15.14 9.14 8.87 9.14 5 13z" fill="#FFF"/><path d="M9 17l2 2c1.1-1.1 2.9-1.1 4 0l2-2c-2.21-2.21-5.79-2.21-8 0z" fill="#FFF"/></svg>
+          <svg viewBox="0 0 24 24" fill="none"><rect x="2" y="6" width="4" height="12" rx="1" fill="#FFF"/><rect x="8" y="4" width="4" height="14" rx="1" fill="#FFF"/><rect x="14" y="2" width="4" height="16" rx="1" fill="#FFF"/><rect x="20" y="0" width="4" height="18" rx="1" fill="#FFF" opacity="0.3"/></svg>
+          <svg viewBox="0 0 28 14" fill="none"><rect x="0" y="1" width="22" height="12" rx="2.5" stroke="#FFF" stroke-width="1.5"/><rect x="2" y="3" width="16" height="8" rx="1" fill="#FFF"/><rect x="24" y="4" width="2" height="6" rx="1" fill="#FFF"/></svg>
+        </div>
+      </div>
+      <div class="header-nav">
+        <button class="back-btn" onclick="window.location.href='Forgot-PIN.html'" aria-label="Go back">
+          <svg viewBox="0 0 24 24"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+        </button>
+        <span class="header-title">Forgot PIN</span>
+      </div>
+    </div>
+
+    <div class="main-content">
+      <div class="warning-icon-wrap">
+        <svg viewBox="0 0 24 24">
+          <path d="M22 12h-4l-3 9L9 3l-3 9H2"/>
+        </svg>
+      </div>
+      <h2 class="forgot-title">Turn Mobile Data On</h2>
+      <p class="forgot-desc">Please switch off WiFi and connect to your Safaricom mobile data. You can turn your WiFi back on once you have reset your PIN.</p>
+    </div>
+
+    <div class="bottom-area">
+      <button class="btn-primary" onclick="window.location.href='Forgot-PIN-SQ.html'">
+        <svg viewBox="0 0 24 24"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-3.91"/></svg>
+        Retry
+      </button>
+      <button class="btn-secondary" onclick="openSettings()">
+        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+        Settings
+      </button>
+    </div>
+
+  </div>
+</div>
+
+<script>
+function openSettings() {
+  // In a real app this would open device network settings
+  alert('Opening network settings…');
+}
+</script>
+
+<script src="figma-export.js"></script>
+</body>
+</html>

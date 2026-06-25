@@ -1,0 +1,825 @@
+<!DOCTYPE html>
+<!-- PIN Reset Result — Success + Fail side-by-side for all methods -->
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PIN Reset — Result</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@400;500;600&display=swap');
+  @import url('https://api.fontshare.com/v2/css?f[]=switzer@400,500,600,700&display=swap');
+
+  :root {
+    --Primary:       #FE353D;
+    --Primary-Dark:  #C41520;
+    --Success:       #1AAE45;
+    --Success-Bg:    #E8F9ED;
+    --Success-Dark:  #1C5C24;
+    --Fail:          #FE353D;
+    --Fail-Bg:       #FFF0F1;
+    --Fail-Dark:     #8B0000;
+    --On-Surface:    #1C1C21;
+    --On-Surface-Low:#7C7C87;
+    --Surface:       #F5F5F5;
+    --White:         #FFFFFF;
+  }
+
+  * { margin:0; padding:0; box-sizing:border-box; }
+
+  body {
+    font-family: 'Inter', sans-serif;
+    background: #EBEBEB;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-height: 100vh;
+    padding: 24px 16px;
+    gap: 20px;
+  }
+
+  /* ── Switcher toolbar ─────────────────────────── */
+  /* ── Legend row ──── */
+  .legend-row {
+    display: flex;
+    gap: 16px;
+    justify-content: center;
+    flex-wrap: wrap;
+    font-family: 'Switzer', sans-serif;
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--On-Surface-Low);
+  }
+  .legend-item { display: flex; align-items: center; gap: 6px; }
+  .legend-dot {
+    width: 10px; height: 10px; border-radius: 50%;
+  }
+  .legend-dot.success { background: #1AAE45; }
+  .legend-dot.fail    { background: #FE353D; }
+
+  .state-switcher {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: #FFF;
+    border-radius: 14px;
+    padding: 6px;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+    flex-wrap: wrap;
+    justify-content: center;
+    max-width: 760px;
+    width: 100%;
+  }
+  .state-switcher label {
+    font-family: 'Switzer', sans-serif;
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--On-Surface-Low);
+    letter-spacing: 0.5px;
+    padding: 0 4px;
+  }
+  .switcher-btn {
+    padding: 8px 16px;
+    border-radius: 10px;
+    border: none;
+    font-family: 'Switzer', sans-serif;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+    color: var(--On-Surface-Low);
+    background: transparent;
+  }
+  .switcher-btn:hover { background: #F5F5F5; color: var(--On-Surface); }
+  .switcher-btn.active-success { background: #E8F9ED; color: #1AAE45; }
+  .switcher-btn.active-fail    { background: #FFF0F1; color: #FE353D; }
+
+  /* ── Two phone frames side by side ──────────────── */
+  /* ── Page title ── */
+  .page-title {
+    font-family: 'Switzer', sans-serif;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--On-Surface-Low);
+    text-align: center;
+    letter-spacing: 0.3px;
+  }
+  .page-title strong { color: var(--On-Surface); }
+
+  .frames-row {
+    display: flex;
+    gap: 24px;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: flex-start;
+  }
+  .frame-wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+  }
+  .frame-label {
+    font-family: 'Switzer', sans-serif;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    padding: 4px 14px;
+    border-radius: 20px;
+  }
+  .frame-label.success { background: #E8F9ED; color: #1AAE45; }
+  .frame-label.fail    { background: #FFF0F1; color: #FE353D; }
+
+  /* ── Phone frame ─────────────────────────────────── */
+  .phone-frame {
+    width: 360px;
+    height: 780px;
+    background: var(--Surface);
+    border-radius: 30px;
+    overflow: hidden;
+    position: relative;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.15);
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* ── Header ──────────────────────────────────────── */
+  .header-section {
+    position: relative;
+    width: 100%;
+    height: 160px;
+    flex-shrink: 0;
+    background: linear-gradient(160deg, #A41016 0%, #C41520 30%, #D32F2F 60%, #B71C1C 100%);
+    border-radius: 0 0 30px 30px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  .pattern-overlay {
+    position: absolute; inset: 0; opacity: 0.20; z-index: 0;
+    background-image: url('assets/M-PESA-pattern.svg');
+    background-size: 490px;
+    background-position: right -270px top -270px;
+    background-repeat: no-repeat;
+    border-radius: 0 0 30px 30px;
+    mix-blend-mode: overlay;
+  }
+  .status-bar {
+    position: relative; z-index: 5;
+    display: flex; justify-content: space-between; align-items: center;
+    width: 100%; padding: 14px 24px 8px;
+  }
+  .status-bar .time { font-size: 14px; font-weight: 600; color: #FFF; }
+  .status-icons { display: flex; align-items: center; gap: 6px; }
+  .status-icons svg { width: 18px; height: 18px; }
+
+  .header-nav {
+    position: relative; z-index: 5;
+    width: 100%; display: flex; align-items: center; justify-content: center;
+    padding: 12px 20px 0;
+  }
+  .back-btn {
+    position: absolute; left: 20px;
+    display: flex; align-items: center; justify-content: center;
+    background: transparent; border: none; cursor: pointer; transition: all 0.2s;
+  }
+  .back-btn:hover { transform: scale(1.1); }
+  .back-btn svg { width: 24px; height: 24px; stroke: #FFF; stroke-width: 2; fill: none; stroke-linecap: round; stroke-linejoin: round; }
+  .header-title { color: #FFF; font-family: 'Switzer', sans-serif; font-size: 18px; font-weight: 300; letter-spacing: 0.3px; }
+  .header-subtitle {
+    position: relative; z-index: 5;
+    color: #FFF; font-family: 'Switzer', sans-serif;
+    font-size: 22px; font-weight: 600; margin-top: 28px;
+    padding: 0 24px; text-align: left; width: 100%;
+  }
+
+  /* ── Main content ────────────────────────────────── */
+  .main-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 32px 20px 28px;
+    overflow-y: auto;
+  }
+  .main-content::-webkit-scrollbar { width: 0; }
+
+  /* ── Result icon ─────────────────────────────────── */
+  .result-icon-wrap {
+    width: 88px; height: 88px;
+    border-radius: 28px;
+    display: flex; align-items: center; justify-content: center;
+    margin-bottom: 24px;
+    position: relative;
+    animation: pop-in 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+  }
+  .result-icon-wrap.success { background: var(--Success-Bg); }
+  .result-icon-wrap.fail    { background: var(--Fail-Bg); }
+
+  .result-icon-wrap::after {
+    content: '';
+    position: absolute;
+    inset: -6px;
+    border-radius: 32px;
+    opacity: 0.25;
+  }
+  .result-icon-wrap.success::after { border: 2px solid var(--Success); }
+  .result-icon-wrap.fail::after    { border: 2px solid var(--Fail); }
+
+  .result-icon-wrap svg { width: 44px; height: 44px; }
+
+  @keyframes pop-in {
+    0%   { transform: scale(0.5); opacity: 0; }
+    80%  { transform: scale(1.05); opacity: 1; }
+    100% { transform: scale(1); opacity: 1; }
+  }
+
+  /* ── Result text ─────────────────────────────────── */
+  .result-title {
+    font-family: 'Switzer', sans-serif;
+    font-size: 22px; font-weight: 700;
+    text-align: center;
+    line-height: 1.3;
+    margin-bottom: 10px;
+    animation: slide-up 0.4s 0.15s ease both;
+  }
+  .result-title.success { color: var(--Success-Dark); }
+  .result-title.fail    { color: var(--Fail-Dark); }
+
+  .result-subtitle {
+    font-family: 'Switzer', sans-serif;
+    font-size: 14px; font-weight: 400;
+    text-align: center;
+    color: var(--On-Surface-Low);
+    line-height: 1.6;
+    max-width: 270px;
+    animation: slide-up 0.4s 0.25s ease both;
+    margin-bottom: 28px;
+  }
+
+  @keyframes slide-up {
+    from { transform: translateY(12px); opacity: 0; }
+    to   { transform: translateY(0);    opacity: 1; }
+  }
+
+  /* ── Info/detail card ────────────────────────────── */
+  .detail-card {
+    width: 100%; max-width: 328px;
+    border-radius: 16px;
+    padding: 18px 20px;
+    margin-bottom: 20px;
+    animation: slide-up 0.4s 0.3s ease both;
+  }
+  .detail-card.success { background: var(--Success-Bg); border: 1px solid rgba(26,174,69,0.2); }
+  .detail-card.fail    { background: var(--Fail-Bg);    border: 1px solid rgba(254,53,61,0.2); }
+
+  .detail-row {
+    display: flex; align-items: center; gap: 10px;
+    padding: 8px 0;
+  }
+  .detail-row:not(:last-child) {
+    border-bottom: 1px solid rgba(0,0,0,0.05);
+  }
+  .detail-row svg { width: 16px; height: 16px; flex-shrink: 0; }
+  .detail-row .detail-label {
+    font-family: 'Switzer', sans-serif;
+    font-size: 12px; font-weight: 500;
+    color: var(--On-Surface-Low);
+    flex: 1;
+  }
+  .detail-row .detail-value {
+    font-family: 'Switzer', sans-serif;
+    font-size: 13px; font-weight: 600;
+    color: var(--On-Surface);
+  }
+
+  /* ── Attempt badge (fail only) ───────────────────── */
+  .attempt-badge {
+    display: flex; align-items: center; gap: 8px;
+    width: 100%; max-width: 328px;
+    background: #FFF3CD;
+    border: 1px solid rgba(255,193,7,0.4);
+    border-radius: 12px;
+    padding: 12px 16px;
+    margin-bottom: 20px;
+    animation: slide-up 0.4s 0.35s ease both;
+  }
+  .attempt-badge svg { width: 16px; height: 16px; stroke: #856404; flex-shrink: 0; }
+  .attempt-badge span {
+    font-family: 'Switzer', sans-serif;
+    font-size: 12px; font-weight: 500;
+    color: #664D03;
+    line-height: 1.5;
+  }
+  .attempt-badge .attempts-left { font-weight: 700; color: #856404; }
+
+  /* ── Dot steps for success ───────────────────────── */
+  .steps-row {
+    width: 100%; max-width: 328px;
+    display: flex; align-items: center; gap: 0;
+    margin-bottom: 24px;
+    animation: slide-up 0.4s 0.35s ease both;
+  }
+  .step-item {
+    display: flex; flex-direction: column; align-items: center; flex: 1; gap: 6px;
+  }
+  .step-circle {
+    width: 32px; height: 32px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'Switzer', sans-serif;
+    font-size: 12px; font-weight: 700;
+  }
+  .step-circle.done { background: var(--Success-Bg); color: var(--Success); border: 2px solid var(--Success); }
+  .step-circle.done svg { width: 14px; height: 14px; stroke: var(--Success); stroke-width: 2.5; }
+  .step-circle.active { background: var(--Primary); color: #FFF; border: 2px solid var(--Primary); }
+  .step-circle.pending { background: #F0F0F0; color: var(--On-Surface-Low); border: 2px solid #E0E0E0; }
+  .step-label-txt {
+    font-family: 'Switzer', sans-serif;
+    font-size: 10px; font-weight: 500;
+    text-align: center; color: var(--On-Surface-Low);
+    line-height: 1.3;
+  }
+  .step-line { flex: 1; height: 2px; background: #E8E8E8; margin-bottom: 18px; }
+  .step-line.done { background: var(--Success); }
+
+  /* ── Bottom buttons ──────────────────────────────── */
+  .bottom-area {
+    margin-top: auto;
+    width: 100%; max-width: 328px;
+    display: flex; flex-direction: column; gap: 10px;
+    animation: slide-up 0.4s 0.4s ease both;
+  }
+
+  .btn-primary {
+    width: 100%; height: 48px; border-radius: 12px;
+    background: var(--Primary); color: #FFF1F2;
+    font-family: 'Poppins', sans-serif; font-size: 14px; font-weight: 500;
+    border: none; cursor: pointer; transition: all 0.2s;
+    box-shadow: 0 4px 16px rgba(254,53,61,0.25);
+    display: flex; align-items: center; justify-content: center; gap: 8px;
+  }
+  .btn-primary:hover { background: #E5303A; transform: translateY(-1px); box-shadow: 0 6px 20px rgba(254,53,61,0.35); }
+  .btn-primary:active { transform: scale(0.98); }
+
+  .btn-primary.success-green {
+    background: var(--Success);
+    box-shadow: 0 4px 16px rgba(26,174,69,0.25);
+  }
+  .btn-primary.success-green:hover {
+    background: #158a38;
+    box-shadow: 0 6px 20px rgba(26,174,69,0.35);
+  }
+
+  .btn-secondary {
+    width: 100%; height: 44px; border-radius: 12px;
+    background: transparent; color: var(--On-Surface-Low);
+    font-family: 'Poppins', sans-serif; font-size: 13px; font-weight: 500;
+    border: 1.5px solid #E0E0E0; cursor: pointer; transition: all 0.2s;
+    display: flex; align-items: center; justify-content: center; gap: 8px;
+  }
+  .btn-secondary:hover { border-color: var(--Primary); color: var(--Primary); background: #FFF5F5; }
+
+  .btn-ghost {
+    width: 100%; height: 40px;
+    background: none; border: none; cursor: pointer;
+    color: var(--On-Surface-Low); font-family: 'Switzer', sans-serif;
+    font-size: 13px; font-weight: 500;
+    text-decoration: underline; text-underline-offset: 3px;
+    transition: color 0.2s;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .btn-ghost:hover { color: var(--Primary); }
+
+  /* ── Confetti particles (success only) ──────────── */
+  .confetti-wrap {
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 320px;
+    pointer-events: none;
+    overflow: hidden;
+  }
+  .confetti-dot {
+    position: absolute;
+    border-radius: 2px;
+    animation: confetti-fall linear forwards;
+  }
+  @keyframes confetti-fall {
+    0%   { transform: translateY(-20px) rotate(0deg); opacity: 1; }
+    100% { transform: translateY(320px) rotate(720deg); opacity: 0; }
+  }
+
+  /* ── Lock glow (fail only) ───────────────────────── */
+  @keyframes lock-pulse {
+    0%,100% { box-shadow: 0 0 0 0 rgba(254,53,61,0.3); }
+    50%      { box-shadow: 0 0 0 14px rgba(254,53,61,0); }
+  }
+  .result-icon-wrap.fail { animation: pop-in 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) both, lock-pulse 2s 0.6s ease infinite; }
+
+  /* ── Method badge ────────────────────────────────── */
+  .method-chip {
+    display: inline-flex; align-items: center; gap: 5px;
+    padding: 4px 10px; border-radius: 20px;
+    font-family: 'Switzer', sans-serif;
+    font-size: 11px; font-weight: 600;
+    background: #F0F0F5; color: var(--On-Surface-Low);
+    margin-bottom: 12px;
+  }
+  .method-chip svg { width: 12px; height: 12px; }
+
+</style>
+</head>
+<body>
+
+<!-- ── Page title ──────────────────────────────────────────────────── -->
+<p class="page-title">M-PESA · <strong>PIN Reset Result Screens</strong></p>
+
+<!-- ── Method switcher toolbar ──────────────────────────────────────── -->
+<div class="state-switcher">
+  <label>VERIFICATION METHOD</label>
+  <button class="switcher-btn" id="btn-by" onclick="showMethod('by')">📅 Birth Year</button>
+  <button class="switcher-btn active-success" id="btn-sq" onclick="showMethod('sq')">🔒 Security Question</button>
+</div>
+
+<div class="legend-row">
+  <div class="legend-item"><div class="legend-dot success"></div> Success State</div>
+  <div class="legend-item"><div class="legend-dot fail"></div> Failed State</div>
+</div>
+
+<!-- ── Frames row (success + fail always side by side) ───────────────── -->
+<div class="frames-row">
+
+  <!-- SUCCESS frame -->
+  <div class="frame-wrapper">
+    <span class="frame-label success" id="label-success">✓ BIRTH YEAR — SUCCESS</span>
+    <div class="phone-frame" id="frame-success"></div>
+  </div>
+
+  <!-- FAILED frame -->
+  <div class="frame-wrapper">
+    <span class="frame-label fail" id="label-fail">✗ BIRTH YEAR — FAILED</span>
+    <div class="phone-frame" id="frame-fail"></div>
+  </div>
+
+</div>
+
+<script>
+/* ================================================================
+   SHARED: status-bar + header scaffold
+================================================================ */
+const STATUS_BAR = `
+<div class="status-bar">
+  <span class="time">10:00</span>
+  <div class="status-icons">
+    <svg viewBox="0 0 24 24" fill="none"><path d="M1 9l2 2c4.97-4.97 13.03-4.97 18 0l2-2C16.93 2.93 7.08 2.93 1 9z" fill="#FFF"/><path d="M5 13l2 2c2.76-2.76 7.24-2.76 10 0l2-2C15.14 9.14 8.87 9.14 5 13z" fill="#FFF"/><path d="M9 17l2 2c1.1-1.1 2.9-1.1 4 0l2-2c-2.21-2.21-5.79-2.21-8 0z" fill="#FFF"/></svg>
+    <svg viewBox="0 0 24 24" fill="none"><rect x="2" y="6" width="4" height="12" rx="1" fill="#FFF"/><rect x="8" y="4" width="4" height="14" rx="1" fill="#FFF"/><rect x="14" y="2" width="4" height="16" rx="1" fill="#FFF"/><rect x="20" y="0" width="4" height="18" rx="1" fill="#FFF" opacity="0.3"/></svg>
+    <svg viewBox="0 0 28 14" fill="none"><rect x="0" y="1" width="22" height="12" rx="2.5" stroke="#FFF" stroke-width="1.5"/><rect x="2" y="3" width="16" height="8" rx="1" fill="#FFF"/><rect x="24" y="4" width="2" height="6" rx="1" fill="#FFF"/></svg>
+  </div>
+</div>`;
+
+function makeHeader(title, subtitle) {
+  return `
+  <div class="header-section">
+    <div class="pattern-overlay"></div>
+    ${STATUS_BAR}
+    <div class="header-nav">
+      <button class="back-btn"><svg viewBox="0 0 24 24"><path d="M19 12H5M12 19l-7-7 7-7"/></svg></button>
+      <span class="header-title">${title}</span>
+    </div>
+    <span class="header-subtitle">${subtitle}</span>
+  </div>`;
+}
+
+/* ================================================================
+   ICON SVGS
+================================================================ */
+const ICON = {
+  check: `<svg viewBox="0 0 24 24" fill="none" stroke="#1AAE45" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>`,
+  xmark: `<svg viewBox="0 0 24 24" fill="none" stroke="#FE353D" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>`,
+  lock:  `<svg viewBox="0 0 24 24" fill="none" stroke="#FE353D" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>`,
+  calendar: `<svg viewBox="0 0 24 24" fill="none" stroke="#7C7C87" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>`,
+  shield: `<svg viewBox="0 0 24 24" fill="none" stroke="#7C7C87" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>`,
+  clock:  `<svg viewBox="0 0 24 24" fill="none" stroke="#7C7C87" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>`,
+  warn:   `<svg viewBox="0 0 24 24" fill="none" stroke="#856404" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>`,
+  info:   `<svg viewBox="0 0 24 24" fill="none" stroke="#7C7C87" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>`,
+  phone:  `<svg viewBox="0 0 24 24" fill="none" stroke="#7C7C87" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>`,
+  key:    `<svg viewBox="0 0 24 24" fill="none" stroke="#1AAE45" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 2l-2 2m-7.61 7.61a5.5 5.5 0 1 1-7.778 7.778 5.5 5.5 0 0 1 7.777-7.777zm0 0L15.5 7.5m0 0l3 3L22 7l-3-3m-3.5 3.5L19 4"/></svg>`,
+  checkCircle: `<svg viewBox="0 0 24 24" fill="none" stroke="#1AAE45" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>`,
+  question: `<svg viewBox="0 0 24 24" fill="none" stroke="#7C7C87" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>`,
+  support: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>`,
+  retry: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-3.91"/></svg>`,
+  pin: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>`,
+  home: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>`,
+};
+
+/* ================================================================
+   STEP PROGRESS for success screens (3 steps: Verify → Reset PIN → Done)
+================================================================ */
+function stepsHtml(step) {
+  // step 0 = verify, step 1 = create pin, step 2 = done (current screen is step 2)
+  const steps = [
+    { label: 'Verified' },
+    { label: 'New PIN Set' },
+    { label: 'Done!' },
+  ];
+  let html = '<div class="steps-row">';
+  steps.forEach((s, i) => {
+    const isDone   = i <  step;
+    const isActive = i === step;
+    html += `<div class="step-item">
+      <div class="step-circle ${isDone ? 'done' : isActive ? 'active' : 'pending'}">
+        ${isDone ? ICON.check : i + 1}
+      </div>
+      <span class="step-label-txt">${s.label}</span>
+    </div>`;
+    if (i < steps.length - 1) {
+      html += `<div class="step-line ${isDone ? 'done' : ''}"></div>`;
+    }
+  });
+  html += '</div>';
+  return html;
+}
+
+/* ================================================================
+   CONFETTI generator
+================================================================ */
+function confettiHtml() {
+  const colors = ['#1AAE45','#FE353D','#FFD700','#4C9BFF','#FF6B6B','#A3E635'];
+  let html = '<div class="confetti-wrap">';
+  for (let i = 0; i < 28; i++) {
+    const color = colors[i % colors.length];
+    const left  = Math.random() * 100;
+    const delay = (Math.random() * 0.8).toFixed(2);
+    const dur   = (1.2 + Math.random() * 1.2).toFixed(2);
+    const size  = 5 + Math.floor(Math.random() * 6);
+    const rot   = Math.floor(Math.random() * 360);
+    html += `<div class="confetti-dot" style="
+      left:${left}%; top:-10px;
+      width:${size}px; height:${size}px;
+      background:${color};
+      transform:rotate(${rot}deg);
+      animation-duration:${dur}s;
+      animation-delay:${delay}s;
+    "></div>`;
+  }
+  html += '</div>';
+  return html;
+}
+
+/* ================================================================
+   STATE DEFINITIONS
+================================================================ */
+const STATES = {
+
+  /* ── Birth Year: Success ─────────────────────────────────── */
+  'by-success': {
+    successLabel: '✓ BIRTH YEAR — SUCCESS',
+    failLabel:    '— (showing success state only)',
+    renderSuccess(frame) {
+      frame.innerHTML = `
+        ${makeHeader('Forgot PIN', 'PIN Reset')}
+        <div class="main-content">
+          ${confettiHtml()}
+          <span class="method-chip">
+            ${ICON.calendar}
+            Verified via Birth Year
+          </span>
+          <div class="result-icon-wrap success">
+            ${ICON.checkCircle.replace('stroke="#1AAE45"','stroke="#1AAE45"')}
+          </div>
+          <h2 class="result-title success">PIN Reset Successful!</h2>
+          <p class="result-subtitle">
+            Your birth year matched our records.<br>
+            Your new M-PESA PIN is now active and ready to use.
+          </p>
+          ${stepsHtml(2)}
+          <div class="detail-card success">
+            <div class="detail-row">
+              ${ICON.calendar}
+              <span class="detail-label">Verified with</span>
+              <span class="detail-value">Birth Year</span>
+            </div>
+            <div class="detail-row">
+              ${ICON.clock}
+              <span class="detail-label">Reset at</span>
+              <span class="detail-value">10:04 AM · Today</span>
+            </div>
+            <div class="detail-row">
+              ${ICON.phone}
+              <span class="detail-label">Account</span>
+              <span class="detail-value">+251 9•• ••• 427</span>
+            </div>
+          </div>
+          <div class="bottom-area">
+            <button class="btn-primary success-green">
+              ${ICON.home.replace('stroke="currentColor"','stroke="#FFF"')}
+              Go to Home
+            </button>
+          </div>
+        </div>`;
+    },
+    renderFail(frame) {
+      frame.innerHTML = `<div style="display:flex;align-items:center;justify-content:center;height:100%;color:#CCC;font-family:'Switzer',sans-serif;font-size:14px;text-align:center;padding:32px;">Select a "Failed" state<br>from the toolbar above</div>`;
+    },
+  },
+
+  /* ── Birth Year: Failed ──────────────────────────────────── */
+  'by-fail': {
+    successLabel: '— (showing failed state only)',
+    failLabel:    '✗ BIRTH YEAR — FAILED',
+    renderSuccess(frame) {
+      frame.innerHTML = `<div style="display:flex;align-items:center;justify-content:center;height:100%;color:#CCC;font-family:'Switzer',sans-serif;font-size:14px;text-align:center;padding:32px;">Select a "Success" state<br>from the toolbar above</div>`;
+    },
+    renderFail(frame) {
+      frame.innerHTML = `
+        ${makeHeader('Forgot PIN', 'Verify Identity')}
+        <div class="main-content">
+          <span class="method-chip">
+            ${ICON.calendar}
+            Birth Year Verification
+          </span>
+          <div class="result-icon-wrap fail">
+            ${ICON.lock}
+          </div>
+          <h2 class="result-title fail">Incorrect Birth Year</h2>
+          <p class="result-subtitle">
+            The birth year you entered doesn't match our records. Please double-check and try again.
+          </p>
+          <div class="attempt-badge">
+            ${ICON.warn}
+            <span>You have <span class="attempts-left">2 attempts</span> remaining before your account is temporarily locked.</span>
+          </div>
+          <div class="detail-card fail">
+            <div class="detail-row">
+              ${ICON.calendar}
+              <span class="detail-label">Entered year</span>
+              <span class="detail-value" style="color:#FE353D;">•••• (incorrect)</span>
+            </div>
+            <div class="detail-row">
+              ${ICON.info}
+              <span class="detail-label">Attempts used</span>
+              <span class="detail-value">1 of 3</span>
+            </div>
+            <div class="detail-row">
+              ${ICON.phone}
+              <span class="detail-label">Account</span>
+              <span class="detail-value">+251 9•• ••• 427</span>
+            </div>
+          </div>
+          <div class="bottom-area">
+            <button class="btn-primary">
+              ${ICON.retry.replace('stroke="currentColor"','stroke="#FFF"')}
+              Try Again
+            </button>
+            <button class="btn-secondary">
+              ${ICON.question.replace('stroke="#7C7C87"','stroke="currentColor"')}
+              Try Security Question Instead
+            </button>
+            <button class="btn-ghost">Contact Support</button>
+          </div>
+        </div>`;
+    },
+  },
+
+  /* ── Security Question: Success ──────────────────────────── */
+  'sq-success': {
+    successLabel: '✓ SECURITY QUESTION — SUCCESS',
+    failLabel:    '— (showing success state only)',
+    renderSuccess(frame) {
+      frame.innerHTML = `
+        ${makeHeader('Forgot PIN', 'PIN Reset')}
+        <div class="main-content">
+          ${confettiHtml()}
+          <span class="method-chip">
+            ${ICON.shield}
+            Verified via Security Question
+          </span>
+          <div class="result-icon-wrap success">
+            ${ICON.key.replace('stroke="#1AAE45"','stroke="#1AAE45"')}
+          </div>
+          <h2 class="result-title success">PIN Reset Successful!</h2>
+          <p class="result-subtitle">
+            Your security answer matched.<br>
+            Your new M-PESA PIN is now active and ready to use.
+          </p>
+          ${stepsHtml(2)}
+          <div class="detail-card success">
+            <div class="detail-row">
+              ${ICON.shield}
+              <span class="detail-label">Verified with</span>
+              <span class="detail-value">Security Question</span>
+            </div>
+            <div class="detail-row">
+              ${ICON.question}
+              <span class="detail-label">Question used</span>
+              <span class="detail-value">Mother's maiden name</span>
+            </div>
+            <div class="detail-row">
+              ${ICON.clock}
+              <span class="detail-label">Reset at</span>
+              <span class="detail-value">10:04 AM · Today</span>
+            </div>
+          </div>
+          <div class="bottom-area">
+            <button class="btn-primary success-green">
+              ${ICON.home.replace('stroke="currentColor"','stroke="#FFF"')}
+              Go to Home
+            </button>
+          </div>
+        </div>`;
+    },
+    renderFail(frame) {
+      frame.innerHTML = `<div style="display:flex;align-items:center;justify-content:center;height:100%;color:#CCC;font-family:'Switzer',sans-serif;font-size:14px;text-align:center;padding:32px;">Select a "Failed" state<br>from the toolbar above</div>`;
+    },
+  },
+
+  /* ── Security Question: Failed ───────────────────────────── */
+  'sq-fail': {
+    successLabel: '— (showing failed state only)',
+    failLabel:    '✗ SECURITY QUESTION — FAILED',
+    renderSuccess(frame) {
+      frame.innerHTML = `<div style="display:flex;align-items:center;justify-content:center;height:100%;color:#CCC;font-family:'Switzer',sans-serif;font-size:14px;text-align:center;padding:32px;">Select a "Success" state<br>from the toolbar above</div>`;
+    },
+    renderFail(frame) {
+      frame.innerHTML = `
+        ${makeHeader('Forgot PIN', 'Security Question')}
+        <div class="main-content">
+          <span class="method-chip">
+            ${ICON.shield}
+            Security Question Verification
+          </span>
+          <div class="result-icon-wrap fail">
+            ${ICON.xmark}
+          </div>
+          <h2 class="result-title fail">Incorrect Answer</h2>
+          <p class="result-subtitle">
+            Your answer doesn't match what was set during registration. Answers are case-insensitive.
+          </p>
+          <div class="attempt-badge">
+            ${ICON.warn}
+            <span>You have <span class="attempts-left">1 attempt</span> remaining. After that, your account will be locked for <strong>24 hours</strong>.</span>
+          </div>
+          <div class="detail-card fail">
+            <div class="detail-row">
+              ${ICON.shield}
+              <span class="detail-label">Question</span>
+              <span class="detail-value">Mother's maiden name</span>
+            </div>
+            <div class="detail-row">
+              ${ICON.info}
+              <span class="detail-label">Attempts used</span>
+              <span class="detail-value">2 of 3</span>
+            </div>
+            <div class="detail-row">
+              ${ICON.phone}
+              <span class="detail-label">Account</span>
+              <span class="detail-value">+251 9•• ••• 427</span>
+            </div>
+          </div>
+          <div class="bottom-area">
+            <button class="btn-primary">
+              ${ICON.retry.replace('stroke="currentColor"','stroke="#FFF"')}
+              Try Again
+            </button>
+            <button class="btn-secondary">
+              ${ICON.calendar.replace('stroke="#7C7C87"','stroke="currentColor"')}
+              Try Birth Year Instead
+            </button>
+            <button class="btn-ghost">Contact Support</button>
+          </div>
+        </div>`;
+    },
+  },
+
+};
+
+/* ================================================================
+   RENDER ENGINE — shows SUCCESS + FAIL side by side for each method
+================================================================ */
+let currentMethod = 'by';
+
+function showMethod(method) {
+  currentMethod = method;
+
+  // render success frame
+  STATES[method + '-success'].renderSuccess(document.getElementById('frame-success'));
+  // render fail frame
+  STATES[method + '-fail'].renderFail(document.getElementById('frame-fail'));
+
+  // update labels
+  const mLabel = method === 'by' ? 'BIRTH YEAR' : 'SECURITY QUESTION';
+  document.getElementById('label-success').textContent = `✓ ${mLabel} — SUCCESS`;
+  document.getElementById('label-fail').textContent    = `✗ ${mLabel} — FAILED`;
+
+  // update switcher buttons
+  document.querySelectorAll('.switcher-btn').forEach(b => b.classList.remove('active-success','active-fail'));
+  document.getElementById(`btn-${method}`).classList.add('active-success');
+
+  // ensure both frames fully visible
+  document.querySelectorAll('.frame-wrapper').forEach(fw => fw.style.opacity = '1');
+}
+
+// Initial render — start with Birth Year
+showMethod('by');
+</script>
+
+</body>
+</html>

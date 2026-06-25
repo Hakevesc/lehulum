@@ -1,0 +1,716 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Buy Airtime</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@400;500;600&display=swap');
+  @import url('https://api.fontshare.com/v2/css?f[]=switzer@400,500,600,700&display=swap');
+
+  :root {
+    --Primary: #FE353D;
+    --On-Surface: #1C1C21;
+    --On-Surface-Low: #7C7C87;
+    --On-Primary: #FFF1F2;
+    --Border: #E8E8EC;
+    --Background: #F5F5F5;
+    --Success: #1FC83B;
+    --Warning: #FF9800;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: 'Inter', sans-serif; background: transparent;
+    display: flex; justify-content: center; align-items: center;
+    min-height: 100vh; padding: 20px;
+  }
+  .phone-frame {
+    width: 360px; height: 780px; background: var(--Background); border-radius: 30px;
+    overflow: hidden; box-shadow: 0 20px 60px rgba(0,0,0,0.15);
+    display: flex; flex-direction: column; position: relative;
+  }
+
+  .status-bar { display: flex; justify-content: space-between; align-items: center; padding: 14px 24px 8px; background: var(--Background); flex-shrink: 0; }
+  .status-bar .time { font-size: 14px; font-weight: 600; color: var(--On-Surface); }
+  .status-icons { display: flex; align-items: center; gap: 6px; }
+  .status-icons svg { width: 18px; height: 18px; }
+
+  .header-nav { display: flex; align-items: center; justify-content: space-between; padding: 8px 16px 12px; background: var(--Background); flex-shrink: 0; }
+  .back-btn { width: 36px; height: 36px; border-radius: 50%; background: transparent; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.2s; flex-shrink: 0; }
+  .back-btn:hover { background: rgba(0,0,0,0.05); }
+  .back-btn svg { width: 22px; height: 22px; stroke: var(--On-Surface); stroke-width: 1.8px; fill: none; }
+  .header-title { color: var(--On-Surface); font-family: 'Switzer', sans-serif; font-size: 17px; font-weight: 500; letter-spacing: 0.3px; flex: 1; text-align: center; }
+
+  .scroll-content { flex: 1; overflow-y: auto; padding: 4px 20px 0; display: flex; flex-direction: column; gap: 14px; }
+  .bottom-bar { flex-shrink: 0; padding: 8px 20px 20px; background: var(--Background); }
+  .scroll-content::-webkit-scrollbar { width: 0; }
+
+  .section-label { color: var(--On-Surface-Low); font-family: 'Switzer', sans-serif; font-size: 11.5px; font-weight: 600; letter-spacing: 0.4px; text-transform: uppercase; }
+
+  /* === Phone section === */
+  .phone-section { display: flex; flex-direction: column; gap: 6px; }
+  .phone-input-container {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: #FFF;
+    border-radius: 14px;
+    padding: 6px 4px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+    width: 100%;
+  }
+  .phone-input-wrapper {
+    display: flex;
+    align-items: center;
+    flex: 1;
+    min-width: 0;
+    gap: 8px;
+    padding-left: 8px;
+  }
+  .phone-icon {
+    width: 20px;
+    height: 20px;
+    stroke: var(--On-Surface-Low);
+    stroke-width: 2;
+    fill: none;
+    flex-shrink: 0;
+  }
+  .phone-input {
+    flex: 1;
+    height: 46px;
+    border: none;
+    background: transparent;
+    padding: 0 6px;
+    min-width: 0;
+    width: 40px;
+    font-family: 'Switzer', sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--On-Surface);
+    outline: none;
+  }
+  .recipient-toggle {
+    display: flex;
+    background: var(--Background);
+    border-radius: 8px;
+    padding: 3px;
+    gap: 3px;
+    flex-shrink: 0;
+  }
+  .recipient-btn {
+    height: 40px;
+    padding: 0 10px;
+    border: none;
+    border-radius: 7px;
+    background: transparent;
+    font-family: 'Switzer', sans-serif;
+    font-size: 10px;
+    font-weight: 600;
+    color: var(--On-Surface-Low);
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 1px;
+    white-space: nowrap;
+    min-width: 42px;
+  }
+  .recipient-btn svg {
+    width: 16px;
+    height: 16px;
+    stroke: currentColor;
+    fill: none;
+    stroke-width: 2;
+  }
+  .recipient-btn.active {
+    background: #FFF;
+    color: var(--On-Surface);
+    box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+  }
+  .contacts-btn {
+    width: 40px;
+    height: 40px;
+    border-radius: 10px;
+    border: 1.5px solid var(--Border);
+    background: #FFF;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+    flex-shrink: 0;
+  }
+  .contacts-btn:hover {
+    border-color: var(--Primary);
+    background: var(--On-Primary);
+  }
+  .contacts-btn svg {
+    width: 18px;
+    height: 18px;
+    stroke: var(--On-Surface-Low);
+    stroke-width: 2;
+    fill: none;
+  }
+  /* === Service tabs (inspiration) === */
+  .service-tabs-container {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .service-tabs {
+    flex: 1;
+    background: var(--Background);
+    border-radius: 12px;
+    padding: 6px;
+    display: flex;
+    gap: 6px;
+  }
+  .service-tab {
+    flex: 1;
+    height: 44px;
+    border-radius: 10px;
+    border: none;
+    background: #FFF;
+    font-family: 'Switzer', sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--On-Surface-Low);
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+  }
+  .service-tab svg {
+    width: 18px;
+    height: 18px;
+    stroke: currentColor;
+    fill: none;
+    stroke-width: 2;
+  }
+  .service-tab.active {
+    background: #FFF;
+    color: var(--Primary);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+  }
+  .service-tab.inactive {
+    background: transparent;
+    color: var(--On-Surface-Low);
+    box-shadow: none;
+  }
+  .favorites-btn {
+    width: 44px;
+    height: 44px;
+    border-radius: 10px;
+    border: 1.5px solid var(--Border);
+    background: #FFF;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+    flex-shrink: 0;
+  }
+  .favorites-btn:hover {
+    border-color: var(--Warning);
+    background: #FFFCF0;
+  }
+  .favorites-btn svg {
+    width: 20px;
+    height: 20px;
+    stroke: #FFB800;
+    stroke-width: 2;
+    fill: #FFB800;
+  }
+
+  /* === Provider cards === */
+  .provider-row { display: flex; gap: 10px; }
+  .prov-card { flex: 1; background: #FFF; border: 1.5px solid var(--Border); border-radius: 14px; padding: 10px 12px; cursor: pointer; transition: all 0.18s; display: flex; align-items: center; gap: 10px; box-shadow: 0 2px 8px rgba(0,0,0,0.04); }
+  .prov-card:hover { border-color: var(--Primary); background: #FFF7F7; }
+  .prov-card.active { border-color: var(--Primary); background: #FFF1F2; box-shadow: 0 2px 10px rgba(254,53,61,0.12); }
+  .prov-card-logo { width: 32px; height: 32px; border-radius: 8px; object-fit: contain; background: #FFF; padding: 3px; border: 1px solid var(--Border); flex-shrink: 0; }
+  .prov-card-name { font-family: 'Switzer', sans-serif; font-size: 13px; font-weight: 600; color: var(--On-Surface); }
+
+  /* === Field error === */
+  .field-error { display: none; align-items: center; gap: 6px; padding-left: 4px; }
+  .field-error.show { display: flex; }
+  .field-error svg { width: 14px; height: 14px; stroke: var(--Primary); stroke-width: 2; fill: none; flex-shrink: 0; }
+  .field-error span { color: var(--Primary); font-family: 'Switzer', sans-serif; font-size: 12px; font-weight: 500; }
+
+  /* Airtime Amount grid */
+  .amount-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+  .amount-grid.hidden { display: none; }
+  
+  /* Package section */
+  .pkg-section { display: none; flex-direction: column; gap: 12px; }
+  .pkg-section.show { display: flex; }
+  .pkg-cat-row { display: flex; gap: 6px; flex-wrap: wrap; }
+  .pkg-cat-tab { padding: 7px 14px; border-radius: 20px; border: 1.5px solid var(--Border); background: #FFF; font-family: 'Switzer', sans-serif; font-size: 12px; font-weight: 600; color: var(--On-Surface-Low); cursor: pointer; transition: all 0.18s; }
+  .pkg-cat-tab:hover { border-color: var(--Primary); color: var(--Primary); }
+  .pkg-cat-tab.active { background: var(--Primary); border-color: var(--Primary); color: #FFF; box-shadow: 0 2px 8px rgba(254,53,61,0.2); }
+  .pkg-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; }
+  .pkg-card { background: #FFF; border: 1.5px solid var(--Border); border-radius: 14px; padding: 12px; cursor: pointer; transition: all 0.18s; display: flex; flex-direction: column; gap: 4px; box-shadow: 0 2px 8px rgba(0,0,0,0.04); position: relative; }
+  .pkg-card:hover { border-color: var(--Primary); background: #FFF7F7; transform: translateY(-1px); }
+  .pkg-card.active { border-color: var(--Primary); background: #FFF1F2; box-shadow: 0 2px 10px rgba(254,53,61,0.15); }
+  .pkg-card-title { font-family: 'Switzer', sans-serif; font-size: 14px; font-weight: 700; color: var(--On-Surface); }
+  .pkg-card-desc { font-family: 'Switzer', sans-serif; font-size: 11px; color: var(--On-Surface-Low); line-height: 1.3; }
+  .pkg-card-price { font-family: 'Switzer', sans-serif; font-size: 13px; font-weight: 700; color: var(--Primary); margin-top: 2px; }
+  .pkg-card-badge { position: absolute; top: -4px; right: -4px; background: var(--Warning); color: #FFF; font-family: 'Switzer', sans-serif; font-size: 9px; font-weight: 700; padding: 3px 7px; border-radius: 8px; line-height: 1; }
+  .pkg-card-fav { position: absolute; bottom: 6px; right: 6px; width: 18px; height: 18px; stroke: #B0B0B8; stroke-width: 2; fill: rgba(176,176,184,0.3); cursor: pointer; transition: all 0.15s; }
+  .pkg-card-fav:hover { stroke: #FFB800; fill: rgba(255,184,0,0.4); }
+  .pkg-card-fav.active { stroke: #FFB800; fill: #FFB800; }
+  .amt-card { background: #FFF; border: 1.5px solid var(--Border); border-radius: 14px; padding: 16px 8px; cursor: pointer; transition: all 0.18s; display: flex; flex-direction: column; align-items: center; gap: 2px; box-shadow: 0 2px 8px rgba(0,0,0,0.04); }
+  .amt-card:hover { border-color: var(--Primary); background: #FFF7F7; transform: translateY(-1px); }
+  .amt-card.active { border-color: var(--Primary); background: #FFF1F2; box-shadow: 0 2px 10px rgba(254,53,61,0.15); }
+  .amt-card-val { font-family: 'Switzer', sans-serif; font-size: 20px; font-weight: 700; color: var(--On-Surface); line-height: 1.2; }
+  .amt-card-cur { font-family: 'Inter', sans-serif; font-size: 11px; font-weight: 500; color: var(--On-Surface-Low); }
+
+  /* Continue button */
+  .continue-btn { width: 100%; height: 52px; border-radius: 14px; border: none; background: #E0E0E0; color: var(--On-Surface-Low); font-family: 'Poppins', sans-serif; font-size: 15px; font-weight: 500; cursor: not-allowed; transition: all 0.2s; flex-shrink: 0; }
+  .continue-btn.active { background: var(--Primary); color: #FFF; cursor: pointer; box-shadow: 0 4px 16px rgba(254,53,61,0.25); }
+  .continue-btn.active:hover { background: #E5303A; transform: translateY(-1px); }
+  .continue-btn.active:active { transform: scale(0.98); }
+
+  /* === Bottom sheets === */
+  .modal-overlay { position: absolute; inset: 0; z-index: 1000; background: rgba(0,0,0,0.5); display: none; align-items: flex-end; justify-content: center; }
+  .modal-overlay.show { display: flex; }
+  .bottom-sheet { width: 100%; background: #FFF; border-radius: 24px 24px 0 0; padding: 20px 20px 28px; animation: slideUpSheet 0.35s cubic-bezier(0.34,1.56,0.64,1); max-height: 70%; overflow-y: auto; }
+  .bottom-sheet::-webkit-scrollbar { width: 0; }
+  @keyframes slideUpSheet { from { transform: translateY(100%); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+  .sheet-grip { width: 40px; height: 4px; background: #D8D8DD; border-radius: 2px; margin: 0 auto 16px; }
+  .sheet-title { font-family: 'Switzer', sans-serif; font-size: 17px; font-weight: 700; color: var(--On-Surface); margin-bottom: 16px; text-align: center; }
+  .sheet-list { display: flex; flex-direction: column; gap: 4px; }
+  .sheet-item { display: flex; align-items: center; gap: 12px; padding: 12px 10px; border-radius: 14px; cursor: pointer; transition: background 0.15s; }
+  .sheet-item:hover { background: #FFF1F2; }
+  .sheet-avatar { width: 44px; height: 44px; border-radius: 50%; background: #E8E8EC; display: flex; align-items: center; justify-content: center; flex-shrink: 0; font-family: 'Switzer', sans-serif; font-size: 15px; font-weight: 600; color: var(--On-Surface); }
+  .sheet-item-info { flex: 1; }
+  .sheet-item-name { font-family: 'Switzer', sans-serif; font-size: 14px; font-weight: 600; color: var(--On-Surface); }
+  .sheet-item-sub { font-family: 'Switzer', sans-serif; font-size: 12px; color: var(--On-Surface-Low); margin-top: 1px; }
+  .sheet-item .fav-star { width: 16px; height: 16px; stroke: #FFB800; stroke-width: 2; fill: #FFB800; flex-shrink: 0; }
+</style>
+</head>
+<body>
+
+<div class="phone-frame">
+
+  <div class="status-bar">
+    <span class="time">10:00</span>
+    <div class="status-icons">
+      <svg viewBox="0 0 24 24" fill="none"><path d="M1 9l2 2c4.97-4.97 13.03-4.97 18 0l2-2C16.93 2.93 7.08 2.93 1 9z" fill="#1C1C21"/><path d="M5 13l2 2c2.76-2.76 7.24-2.76 10 0l2-2C15.14 9.14 8.87 9.14 5 13z" fill="#1C1C21"/><path d="M9 17l2 2c1.1-1.1 2.9-1.1 4 0l2-2c-2.21-2.21-5.79-2.21-8 0z" fill="#1C1C21"/></svg>
+      <svg viewBox="0 0 24 24" fill="none"><rect x="2" y="6" width="4" height="12" rx="1" fill="#1C1C21"/><rect x="8" y="4" width="4" height="14" rx="1" fill="#1C1C21"/><rect x="14" y="2" width="4" height="16" rx="1" fill="#1C1C21"/><rect x="20" y="0" width="4" height="18" rx="1" fill="#1C1C21" opacity="0.3"/></svg>
+      <svg viewBox="0 0 28 14" fill="none"><rect x="0" y="1" width="22" height="12" rx="2.5" stroke="#1C1C21" stroke-width="1.5"/><rect x="2" y="3" width="16" height="8" rx="1" fill="#1C1C21"/><rect x="24" y="4" width="2" height="6" rx="1" fill="#1C1C21"/></svg>
+    </div>
+  </div>
+
+  <div class="header-nav">
+      <button class="back-btn" onclick="goBack()">
+        <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+      </button>
+      <span class="header-title">Buy Airtime</span>
+      <div style="width:36px;"></div>
+  </div>
+
+  <div class="scroll-content">
+
+    <!-- Provider cards -->
+    <div class="provider-row" id="providerRow">
+      <!-- rendered by JS -->
+    </div>
+
+    <!-- Phone Number & Self/Others merged -->
+    <div class="phone-section">
+      <div class="phone-input-container">
+        <div class="phone-input-wrapper">
+          <svg class="phone-icon" viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.362 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.338 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+          <input class="phone-input" id="numberInput" type="tel" inputmode="numeric" placeholder="09XX XXX XXX" value="0712 131 415" readonly>
+        </div>
+        <div class="recipient-toggle">
+          <button class="recipient-btn active" id="tabSelf" onclick="setRecipientType('self')">
+            <svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+            <span>Self</span>
+          </button>
+          <button class="recipient-btn" id="tabOthers" onclick="setRecipientType('others')">
+            <svg viewBox="0 0 24 24"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+            <span>Other</span>
+          </button>
+        </div>
+        <button class="contacts-btn" onclick="openContacts()" aria-label="Select from contacts">
+          <svg viewBox="0 0 24 24" fill="none" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/>
+            <circle cx="9" cy="7" r="4"/>
+            <path d="M22 21v-2a4 4 0 0 0-3-3.87"/>
+            <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+          </svg>
+        </button>
+      </div>
+      <div class="field-error" id="fieldError">
+        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+        <span>Enter a valid 10-digit number starting with 09 or 07</span>
+      </div>
+    </div>
+
+    <!-- Airtime / Data.Voice tabs + Fav icon (for packages only) -->
+    <div class="service-tabs-container">
+      <div class="service-tabs">
+        <button class="service-tab active" id="tabAirtime" onclick="setPurchaseType('airtime')">
+          <svg viewBox="0 0 24 24"><rect x="4" y="2" width="16" height="20" rx="2"/><line x1="9" y1="22" x2="15" y2="22"/></svg>
+          Airtime
+        </button>
+        <button class="service-tab inactive" id="tabPackage" onclick="setPurchaseType('package')">
+          <svg viewBox="0 0 24 24"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg>
+          Data/Voice
+        </button>
+      </div>
+      <button class="favorites-btn" onclick="openFavPackages()" aria-label="Favourite packages">
+        <svg viewBox="0 0 24 24" fill="none" stroke-linecap="round" stroke-linejoin="round">
+          <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
+        </svg>
+      </button>
+    </div>
+
+    <!-- Airtime amounts (shown for airtime) -->
+    <span class="section-label" id="amountLabel">Select amount</span>
+    <div class="amount-grid" id="amountGrid">
+      <!-- rendered by JS -->
+    </div>
+    
+    <!-- Package section (shown for package) -->
+    <div class="pkg-section" id="pkgSection">
+      <span class="section-label">Package type</span>
+      <div class="pkg-cat-row" id="pkgCatRow">
+        <!-- rendered by JS -->
+      </div>
+      <div class="pkg-grid" id="pkgGrid">
+        <!-- rendered by JS -->
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Bottom bar: Continue button -->
+  <div class="bottom-bar">
+    <button class="continue-btn" id="continueBtn" onclick="proceed()">Continue</button>
+  </div>
+
+  <!-- Contacts bottom sheet -->
+  <div class="modal-overlay" id="contactsOverlay" onclick="if(event.target===this)closeContacts()">
+    <div class="bottom-sheet">
+      <div class="sheet-grip"></div>
+      <div class="sheet-title">Choose a contact</div>
+      <div class="sheet-list" id="contactList"></div>
+    </div>
+  </div>
+
+  <!-- Favourites bottom sheet (packages only) -->
+  <div class="modal-overlay" id="favOverlay" onclick="if(event.target===this)closeFavPackages()">
+    <div class="bottom-sheet">
+      <div class="sheet-grip"></div>
+      <div class="sheet-title">Favourite packages</div>
+      <div class="sheet-list" id="favList"></div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+  const REGISTERED = '0712131415';
+  const PROVIDERS = [
+    { id: 'safaricom', name: 'Safaricom',     logo: 'assets/banks logo/M-PESA-logo-icon.png' },
+    { id: 'ethio',     name: 'Ethio Telecom', logo: 'assets/ethio-tele-logo.jpg' }
+  ];
+  const AMOUNTS = [5, 10, 15, 25, 50, 100, 250, 500, 1000];
+  const contacts = [
+    { name: 'Henok Chala',     number: '0712131415' },
+    { name: 'Aster Mequanent', number: '0911223344' },
+    { name: 'Kidist Birhanu',  number: '0922334455' },
+    { name: 'Samuel Desta',    number: '0933445566' },
+    { name: 'Marta Solomon',   number: '0944556677' }
+  ];
+
+  let purchaseType = 'airtime';
+  let recipientType = 'self';
+  let providerIndex = 0;
+  let selectedAmount = null;
+  let digits = REGISTERED;
+
+  function initials(name) { return name.split(' ').map(p => p[0]).slice(0, 2).join('').toUpperCase(); }
+  function formatNumber(d) {
+    if (!d) return '';
+    return [d.slice(0,4), d.slice(4,7), d.slice(7,10)].filter(Boolean).join(' ');
+  }
+  function rawNumber(d) { return d.replace(/\s/g, ''); }
+  function isValid(d) { return d.length === 10 && (d.startsWith('09') || d.startsWith('07')); }
+  function isUnregistered(d) { return isValid(d) && d.endsWith('0000'); }
+
+  const PACKAGE_CATS = ['All', 'Data', 'Voice', 'SMS', 'Combo'];
+  const PACKAGES = [
+    { cat: 'Data',   title: '500 MB',     desc: 'Valid 30 days',    price: '50 Birr',  badge: '25% OFF' },
+    { cat: 'Data',   title: '1 GB',       desc: 'Valid 30 days',    price: '100 Birr' },
+    { cat: 'Data',   title: '2 GB',       desc: 'Valid 30 days',    price: '200 Birr' },
+    { cat: 'Data',   title: '5 GB',       desc: 'Valid 30 days',    price: '350 Birr', badge: 'HOT' },
+    { cat: 'Voice',  title: '100 Min',    desc: 'On-net calls',     price: '30 Birr' },
+    { cat: 'Voice',  title: '300 Min',    desc: 'All network',      price: '80 Birr' },
+    { cat: 'Voice',  title: '500 Min',    desc: 'All network',      price: '120 Birr' },
+    { cat: 'SMS',    title: '100 SMS',    desc: 'All network',      price: '20 Birr' },
+    { cat: 'SMS',    title: '500 SMS',    desc: 'All network',      price: '50 Birr' },
+    { cat: 'Combo',  title: '1GB+100M',   desc: 'Data + voice mix', price: '150 Birr', badge: '15% OFF' },
+    { cat: 'Combo',  title: '3GB+300M',   desc: 'Data + voice mix', price: '300 Birr' },
+    { cat: 'Combo',  title: '5GB+500M',   desc: 'Data + voice mix', price: '450 Birr' }
+  ];
+  let pkgCatIndex = 0;
+  let favPackages = new Set();
+  let selectedPkg = null;
+
+  function setPurchaseType(t) {
+    purchaseType = t;
+    const tabAirtime = document.getElementById('tabAirtime');
+    const tabPackage = document.getElementById('tabPackage');
+    if (t === 'airtime') {
+      tabAirtime.className = 'service-tab active';
+      tabPackage.className = 'service-tab inactive';
+    } else {
+      tabAirtime.className = 'service-tab inactive';
+      tabPackage.className = 'service-tab active';
+    }
+    const amountSection = document.getElementById('amountGrid');
+    const amountLabel = document.getElementById('amountLabel');
+    const pkgSection = document.getElementById('pkgSection');
+    if (t === 'airtime') {
+      amountLabel.style.display = '';
+      amountSection.classList.remove('hidden');
+      pkgSection.classList.remove('show');
+    } else {
+      amountLabel.style.display = 'none';
+      amountSection.classList.add('hidden');
+      pkgSection.classList.add('show');
+      renderPackageCats();
+      renderPackages();
+    }
+    updateContinue();
+  }
+
+  function setRecipientType(t) {
+    recipientType = t;
+    const btnSelf = document.getElementById('tabSelf');
+    const btnOthers = document.getElementById('tabOthers');
+    if (t === 'self') {
+      btnSelf.classList.add('active');
+      btnOthers.classList.remove('active');
+    } else {
+      btnSelf.classList.remove('active');
+      btnOthers.classList.add('active');
+    }
+    const input = document.getElementById('numberInput');
+    if (t === 'self') {
+      digits = REGISTERED;
+      input.value = formatNumber(REGISTERED);
+      input.readOnly = true;
+    } else {
+      if (digits === REGISTERED) {
+        digits = '';
+        input.value = '';
+      }
+      input.readOnly = false;
+      input.focus();
+    }
+    document.getElementById('fieldError').classList.remove('show');
+    updateContinue();
+  }
+
+  function renderProviders() {
+    const row = document.getElementById('providerRow');
+    row.innerHTML = PROVIDERS.map((p, i) => `
+      <div class="prov-card ${i === providerIndex ? 'active' : ''}" onclick="selectProvider(${i})">
+        <img class="prov-card-logo" src="${p.logo}" alt="${p.name}">
+        <span class="prov-card-name">${p.name}</span>
+      </div>`).join('');
+  }
+  function selectProvider(i) {
+    providerIndex = i;
+    document.querySelectorAll('.prov-card').forEach((el, idx) => el.classList.toggle('active', idx === i));
+  }
+
+  function renderAmounts() {
+    const grid = document.getElementById('amountGrid');
+    grid.innerHTML = AMOUNTS.map((a, i) => `
+      <div class="amt-card ${selectedAmount === i ? 'active' : ''}" onclick="selectAmount(${i})">
+        <span class="amt-card-val">${a}</span>
+        <span class="amt-card-cur">Birr</span>
+      </div>`).join('');
+  }
+  function selectAmount(i) {
+    selectedAmount = i;
+    document.querySelectorAll('.amt-card').forEach((el, idx) => el.classList.toggle('active', idx === i));
+    updateContinue();
+  }
+
+  function renderPackageCats() {
+    const row = document.getElementById('pkgCatRow');
+    row.innerHTML = PACKAGE_CATS.map((c, i) => `
+      <button class="pkg-cat-tab ${i === pkgCatIndex ? 'active' : ''}" onclick="selectPackageCat(${i})">${c}</button>
+    `).join('');
+    renderPackages();
+  }
+  function selectPackageCat(i) {
+    pkgCatIndex = i;
+    document.getElementById('pkgCatRow').querySelectorAll('.pkg-cat-tab').forEach((el, idx) => el.classList.toggle('active', idx === i));
+    renderPackages();
+  }
+  function renderPackages() {
+    const grid = document.getElementById('pkgGrid');
+    const cat = PACKAGE_CATS[pkgCatIndex];
+    const filtered = cat === 'All' ? PACKAGES : PACKAGES.filter(p => p.cat === cat);
+    grid.innerHTML = filtered.map((pkg, i) => {
+      const globalIdx = PACKAGES.indexOf(pkg);
+      const isFav = favPackages.has(globalIdx);
+      return `
+      <div class="pkg-card ${selectedPkg === globalIdx ? 'active' : ''}" onclick="selectPackage(${globalIdx})">
+        ${pkg.badge ? `<span class="pkg-card-badge">${pkg.badge}</span>` : ''}
+        <span class="pkg-card-title">${pkg.title}</span>
+        <span class="pkg-card-desc">${pkg.desc}</span>
+        <span class="pkg-card-price">${pkg.price}</span>
+        <svg class="pkg-card-fav ${isFav ? 'active' : ''}" onclick="event.stopPropagation();toggleFavPackage(${globalIdx})" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+      </div>`;
+    }).join('');
+  }
+  function selectPackage(i) {
+    selectedPkg = i;
+    document.querySelectorAll('.pkg-card').forEach((el) => el.classList.remove('active'));
+    const cards = document.getElementById('pkgGrid').querySelectorAll('.pkg-card');
+    const cat = PACKAGE_CATS[pkgCatIndex];
+    const filtered = cat === 'All' ? PACKAGES : PACKAGES.filter(p => p.cat === cat);
+    const idxInFiltered = filtered.indexOf(PACKAGES[i]);
+    if (idxInFiltered !== -1 && cards[idxInFiltered]) {
+      cards[idxInFiltered].classList.add('active');
+    }
+    updateContinue();
+  }
+
+  function toggleFavPackage(i) {
+    if (favPackages.has(i)) {
+      favPackages.delete(i);
+    } else {
+      favPackages.add(i);
+    }
+    renderPackages();
+  }
+
+  function updateContinue() {
+    const ok = recipientType === 'self' || isValid(rawNumber(digits));
+    const hasSelection = purchaseType === 'airtime' ? selectedAmount !== null : selectedPkg !== null;
+    const btn = document.getElementById('continueBtn');
+    const enabled = ok && hasSelection;
+    btn.classList.toggle('active', enabled);
+    btn.disabled = !enabled;
+  }
+
+  document.getElementById('numberInput').addEventListener('input', function(e) {
+    if (recipientType === 'self') return;
+    let val = this.value.replace(/\D/g, '').slice(0, 10);
+    digits = val;
+    this.value = val ? formatNumber(val) : '';
+    const err = document.getElementById('fieldError');
+    if (val.length === 10 && !isValid(val)) {
+      err.classList.add('show');
+    } else {
+      err.classList.remove('show');
+    }
+    updateContinue();
+  });
+
+  function openFavPackages() {
+    const list = document.getElementById('favList');
+    if (favPackages.size === 0) {
+      list.innerHTML = '<div style="text-align:center;padding:20px;color:var(--On-Surface-Low);font-family:Switzer,sans-serif;font-size:14px;">No favourite packages yet<br><span style="font-size:12px;">Tap the star icon on any package</span></div>';
+    } else {
+      const favPkgList = PACKAGES.filter((_, i) => favPackages.has(i));
+      list.innerHTML = favPkgList.map(pkg => {
+        const idx = PACKAGES.indexOf(pkg);
+        return `
+        <div class="sheet-item" onclick="closeFavPackages();setPurchaseType('package');selectPackage(${idx})">
+          <div class="sheet-avatar" style="background:var(--Primary);color:#FFF;border-radius:12px;">P</div>
+          <div class="sheet-item-info">
+            <div class="sheet-item-name">${pkg.title} - ${pkg.price}</div>
+            <div class="sheet-item-sub">${pkg.cat} • ${pkg.desc}</div>
+          </div>
+          <svg class="fav-star" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+        </div>`;
+      }).join('');
+    }
+    document.getElementById('favOverlay').classList.add('show');
+  }
+  function closeFavPackages() { document.getElementById('favOverlay').classList.remove('show'); }
+
+  function openContacts() {
+    document.getElementById('contactList').innerHTML = contacts.map((c, i) => `
+      <div class="sheet-item" onclick="pickContact(${i})">
+        <div class="sheet-avatar">${initials(c.name)}</div>
+        <div class="sheet-item-info">
+          <div class="sheet-item-name">${c.name}</div>
+          <div class="sheet-item-sub">${formatNumber(c.number)}</div>
+        </div>
+      </div>`).join('');
+    document.getElementById('contactsOverlay').classList.add('show');
+  }
+  function closeContacts() { document.getElementById('contactsOverlay').classList.remove('show'); }
+  function pickContact(i) {
+    const c = contacts[i];
+    closeContacts();
+    setRecipientType('others');
+    digits = rawNumber(c.number);
+    document.getElementById('numberInput').value = formatNumber(digits);
+  }
+
+  function persistAndGo(number, name) {
+    const p = PROVIDERS[providerIndex];
+    const amt = selectedAmount !== null ? AMOUNTS[selectedAmount] : 0;
+    sessionStorage.setItem('airtimeData', JSON.stringify({
+      purchaseType: purchaseType,
+      provider: p.name, providerAbbr: p.name.slice(0,2).toUpperCase(), providerColor: '#FE353D',
+      recipient: number, recipientName: name || (recipientType === 'self' ? 'My number' : ''),
+      amount: amt
+    }));
+    window.location.href = 'Airtime_Enter PIN.html';
+  }
+
+  function proceed() {
+    if (purchaseType === 'airtime') {
+      if (selectedAmount === null) return;
+      if (recipientType === 'self') { persistAndGo(REGISTERED, 'My number'); return; }
+      const num = rawNumber(digits);
+      if (!isValid(num)) return;
+      if (isUnregistered(num)) {
+        sessionStorage.setItem('airtimeEnteredNumber', formatNumber(num));
+        window.location.href = 'Airtime_Invalid Number.html';
+        return;
+      }
+      persistAndGo(num, '');
+    } else {
+      if (selectedPkg === null) return;
+      sessionStorage.setItem('packageData', JSON.stringify({
+        purchaseType: recipientType,
+        provider: PROVIDERS[providerIndex].name,
+        providerAbbr: PROVIDERS[providerIndex].name.slice(0,2).toUpperCase(),
+        providerColor: '#FE353D',
+        recipient: recipientType === 'self' ? REGISTERED : rawNumber(digits),
+        recipientName: recipientType === 'self' ? 'My number' : ''
+      }));
+      window.location.href = 'Package_Select.html';
+    }
+  }
+
+  function goBack() { window.location.href = 'Lehulum Home.html'; }
+
+  renderProviders();
+  renderAmounts();
+  document.getElementById('numberInput').value = formatNumber(REGISTERED);
+  updateContinue();
+</script>
+
+<script src="figma-export.js"></script>
+</body>
+</html>

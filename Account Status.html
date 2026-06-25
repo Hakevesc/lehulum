@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Account Status</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@400;500;600&display=swap');
+  @import url('https://api.fontshare.com/v2/css?f[]=switzer@400,500,600,700&display=swap');
+
+  :root {
+    --Primary: #FE353D;
+    --On-Surface: #1C1C21;
+    --On-Surface-Low: #7C7C87;
+    --Surface-Container: #FCFCFC;
+    --Gray-0: #FFF;
+    --Border: #E8E8EC;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Inter', sans-serif; background: transparent;
+    display: flex; justify-content: center; align-items: center;
+    min-height: 100vh; padding: 20px;
+  }
+
+  .phone-frame {
+    width: 360px; height: 780px; background: #F5F5F5;
+    border-radius: 30px; overflow: hidden; position: relative;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.15);
+  }
+  .app-content { height: 100%; overflow-y: auto; position: relative; display: flex; flex-direction: column; }
+  .app-content::-webkit-scrollbar { width: 0; }
+
+  /* ── Status Bar ── */
+  .status-bar {
+    position: relative; z-index: 5;
+    display: flex; justify-content: space-between; align-items: center;
+    width: 100%; padding: 14px 24px 8px; background: #F5F5F5;
+  }
+  .status-bar .time { font-size: 14px; font-weight: 600; color: var(--On-Surface); }
+  .status-icons { display: flex; align-items: center; gap: 6px; }
+  .status-icons svg { width: 18px; height: 18px; }
+
+  /* ── Header Navigation ── */
+  .header-nav {
+    position: relative; z-index: 5; width: 100%;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 12px 16px 12px; background: #F5F5F5;
+  }
+  .back-btn {
+    display: flex; align-items: center; justify-content: center;
+    background: transparent; border: none; cursor: pointer; transition: all 0.2s;
+    width: 36px; height: 36px; border-radius: 50%; flex-shrink: 0;
+  }
+  .back-btn:hover { background: rgba(0,0,0,0.05); }
+  .back-btn svg { width: 22px; height: 22px; stroke: var(--On-Surface); stroke-width: 1.8px; fill: none; }
+  .header-title { color: var(--On-Surface); font-family: 'Switzer', sans-serif; font-size: 17px; font-weight: 500; letter-spacing: 0.3px; flex: 1; text-align: center; }
+  .header-spacer { width: 36px; height: 36px; flex-shrink: 0; }
+
+  /* ── Main Content ── */
+  .main-content { padding: 8px 16px 24px; display: flex; flex-direction: column; flex: 1; width: 100%; }
+
+  /* ── Demo state switcher ── */
+  .preview-caption { color: var(--On-Surface-Low); font-family: 'Switzer', sans-serif; font-size: 11px; font-weight: 500; text-transform: uppercase; letter-spacing: 0.8px; margin: 6px 2px 8px; }
+  .state-switch {
+    display: flex; gap: 6px; background: #ECECEF; border-radius: 12px; padding: 4px; margin-bottom: 18px;
+  }
+  .state-tab {
+    flex: 1; text-align: center; padding: 8px 4px; border-radius: 9px;
+    font-family: 'Switzer', sans-serif; font-size: 11.5px; font-weight: 500;
+    color: var(--On-Surface-Low); cursor: pointer; transition: all 0.18s; border: none; background: transparent;
+  }
+  .state-tab.active { background: #FFF; color: var(--On-Surface); font-weight: 600; box-shadow: 0 1px 4px rgba(0,0,0,0.08); }
+
+  /* ── Hero status card ── */
+  .status-hero {
+    border-radius: 20px; padding: 28px 20px; display: flex; flex-direction: column; align-items: center;
+    text-align: center; transition: background 0.25s; margin-bottom: 16px;
+  }
+  .status-emblem {
+    width: 84px; height: 84px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center; margin-bottom: 18px; transition: all 0.25s;
+  }
+  .status-emblem svg { width: 42px; height: 42px; stroke-width: 2; fill: none; stroke-linecap: round; stroke-linejoin: round; }
+  .status-pill {
+    display: inline-flex; align-items: center; gap: 7px;
+    padding: 6px 14px; border-radius: 20px; margin-bottom: 14px;
+    font-family: 'Switzer', sans-serif; font-size: 13px; font-weight: 600; letter-spacing: 0.3px;
+  }
+  .status-pill .pill-dot { width: 8px; height: 8px; border-radius: 50%; }
+  .status-message { color: var(--On-Surface); font-family: 'Switzer', sans-serif; font-size: 15px; font-weight: 600; line-height: 1.5; max-width: 280px; }
+
+  /* ── Info card ── */
+  .info-card {
+    background: #FFF; border-radius: 16px; padding: 18px 16px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.04); margin-bottom: 14px;
+  }
+  .info-title { color: var(--On-Surface-Low); font-family: 'Switzer', sans-serif; font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.8px; margin-bottom: 10px; }
+  .info-desc { color: var(--On-Surface); font-family: 'Switzer', sans-serif; font-size: 13.5px; font-weight: 400; line-height: 1.6; }
+
+  /* ── Restrictions list ── */
+  .restrict-list { display: flex; flex-direction: column; gap: 10px; }
+  .restrict-row { display: flex; align-items: center; gap: 10px; }
+  .restrict-row .ic { width: 28px; height: 28px; border-radius: 8px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+  .restrict-row .ic svg { width: 15px; height: 15px; stroke-width: 2.2; fill: none; stroke-linecap: round; stroke-linejoin: round; }
+  .restrict-row .ic.allow { background: #EAFBEE; } .restrict-row .ic.allow svg { stroke: #1FC83B; }
+  .restrict-row .ic.deny  { background: #FFF1F2; } .restrict-row .ic.deny svg  { stroke: var(--Primary); }
+  .restrict-row span { color: var(--On-Surface); font-family: 'Switzer', sans-serif; font-size: 13px; font-weight: 400; }
+
+  /* ── CTA ── */
+  .cta-area { margin-top: auto; padding-top: 14px; }
+  .btn-primary {
+    width: 100%; height: 50px; border-radius: 14px; background: var(--Primary); color: #FFF1F2;
+    font-family: 'Poppins', sans-serif; font-size: 14px; font-weight: 500;
+    border: none; cursor: pointer; transition: all 0.2s; box-shadow: 0 4px 16px rgba(254,53,61,0.25);
+    display: flex; align-items: center; justify-content: center; gap: 8px;
+  }
+  .btn-primary:hover { background: #E5303A; transform: translateY(-1px); box-shadow: 0 6px 20px rgba(254,53,61,0.35); }
+  .btn-primary:active { transform: scale(0.98); }
+  .btn-primary svg { width: 17px; height: 17px; stroke: #FFF; stroke-width: 2; fill: none; }
+  .btn-primary.hidden { display: none; }
+</style>
+</head>
+<body>
+
+<div class="phone-frame">
+  <div class="app-content">
+
+    <!-- Status Bar -->
+    <div class="status-bar">
+      <span class="time">10:00</span>
+      <div class="status-icons">
+        <svg viewBox="0 0 24 24" fill="none"><rect x="2" y="6" width="4" height="12" rx="1" fill="#1C1C21"/><rect x="8" y="4" width="4" height="14" rx="1" fill="#1C1C21"/><rect x="14" y="2" width="4" height="16" rx="1" fill="#1C1C21"/><rect x="20" y="0" width="4" height="18" rx="1" fill="#1C1C21" opacity="0.3"/></svg>
+        <svg viewBox="0 0 24 24" fill="none"><path d="M5 12.55a11 11 0 0 1 14.08 0" stroke="#1C1C21" stroke-width="1.5" stroke-linecap="round"/><path d="M1.42 9a16 16 0 0 1 21.16 0" stroke="#1C1C21" stroke-width="1.5" stroke-linecap="round"/><path d="M8.53 16.11a6 6 0 0 1 6.95 0" stroke="#1C1C21" stroke-width="1.5" stroke-linecap="round"/><line x1="12" y1="20" x2="12.01" y2="20" stroke="#1C1C21" stroke-width="2" stroke-linecap="round"/></svg>
+        <svg viewBox="0 0 28 14" fill="none"><rect x="0" y="1" width="22" height="12" rx="2.5" stroke="#1C1C21" stroke-width="1.5"/><rect x="2" y="3" width="16" height="8" rx="1" fill="#1C1C21"/><rect x="24" y="4" width="2" height="6" rx="1" fill="#1C1C21"/></svg>
+      </div>
+    </div>
+
+    <!-- Header Navigation -->
+    <div class="header-nav">
+      <button class="back-btn" onclick="goBack()">
+        <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+      </button>
+      <span class="header-title">Account Status</span>
+      <div class="header-spacer"></div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+
+      <p class="preview-caption">Preview status (demo)</p>
+      <div class="state-switch">
+        <button class="state-tab active" data-key="active"    onclick="setStatus('active', this)">Active</button>
+        <button class="state-tab"        data-key="frozen"    onclick="setStatus('frozen', this)">Frozen</button>
+        <button class="state-tab"        data-key="suspended" onclick="setStatus('suspended', this)">Suspended</button>
+        <button class="state-tab"        data-key="capped"    onclick="setStatus('capped', this)">Capped</button>
+      </div>
+
+      <!-- Hero -->
+      <div class="status-hero" id="hero">
+        <div class="status-emblem" id="emblem"></div>
+        <div class="status-pill" id="pill"><span class="pill-dot" id="pillDot"></span><span id="pillLabel"></span></div>
+        <p class="status-message" id="message"></p>
+      </div>
+
+      <!-- What this means -->
+      <div class="info-card">
+        <p class="info-title">What this means</p>
+        <p class="info-desc" id="meaning"></p>
+      </div>
+
+      <!-- Restrictions -->
+      <div class="info-card">
+        <p class="info-title">Restrictions</p>
+        <div class="restrict-list" id="restrictions"></div>
+      </div>
+
+      <div class="cta-area">
+        <button class="btn-primary" id="cta" onclick="ctaAction()">
+          <span id="ctaLabel"></span>
+        </button>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<script>
+  const ICONS = {
+    check:  '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="8 12 11 15 16 9"/></svg>',
+    frozen: '<svg viewBox="0 0 24 24"><line x1="12" y1="2" x2="12" y2="22"/><line x1="2" y1="12" x2="22" y2="12"/><line x1="4.5" y1="4.5" x2="19.5" y2="19.5"/><line x1="19.5" y1="4.5" x2="4.5" y2="19.5"/></svg>',
+    pause:  '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="10" y1="9" x2="10" y2="15"/><line x1="14" y1="9" x2="14" y2="15"/></svg>',
+    cap:    '<svg viewBox="0 0 24 24"><path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>',
+    allow:  '<svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>',
+    deny:   '<svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>',
+    phone:  '<svg viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12a19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 3.6 1.27h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L7.91 9a16 16 0 0 0 6 6l1.06-1.06a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>',
+    up:     '<svg viewBox="0 0 24 24"><line x1="12" y1="19" x2="12" y2="5"/><polyline points="5 12 12 5 19 12"/></svg>'
+  };
+
+  const STATUSES = {
+    active: {
+      color: '#1FC83B', tint: '#EAFBEE', icon: 'check', label: 'Active',
+      message: 'Your account is active and in good standing.',
+      meaning: 'You can send money, receive funds, and use all M-PESA services without any restrictions.',
+      restrictions: [{ ok: true, text: 'No restrictions on your account' }],
+      cta: null
+    },
+    frozen: {
+      color: '#2D7FF9', tint: '#E8F1FF', icon: 'frozen', label: 'Frozen',
+      message: 'Your account is not active. Please contact customer support for assistance.',
+      meaning: 'Your identity has been frozen for review. You cannot transfer or receive funds, but you can still access the app for other services.',
+      restrictions: [
+        { ok: false, text: 'Cannot send money' },
+        { ok: false, text: 'Cannot receive funds' },
+        { ok: true,  text: 'Other app services available' }
+      ],
+      cta: { label: 'Contact Support', icon: 'phone', href: 'tel:700' }
+    },
+    suspended: {
+      color: '#F59E0B', tint: '#FFF6E6', icon: 'pause', label: 'Suspended',
+      message: 'Your account is not active. Please contact customer support for assistance.',
+      meaning: 'Your account has been temporarily suspended. Access to transactions is blocked until the issue is resolved.',
+      restrictions: [
+        { ok: false, text: 'All transactions blocked' },
+        { ok: false, text: 'Cannot receive funds' }
+      ],
+      cta: { label: 'Contact Support', icon: 'phone', href: 'tel:700' }
+    },
+    capped: {
+      color: '#FE353D', tint: '#FFF1F2', icon: 'cap', label: 'Capped',
+      message: 'You have reached your transaction limit for your current tier.',
+      meaning: 'Your account has reached its transaction or balance cap based on your KYC tier. Upgrade your tier to increase your limits.',
+      restrictions: [
+        { ok: false, text: 'Transaction limit reached' },
+        { ok: false, text: 'Balance cap reached' }
+      ],
+      cta: { label: 'Upgrade Tier', icon: 'up', href: 'Account Detail.html' }
+    }
+  };
+
+  let currentCta = null;
+
+  function setStatus(key, tabEl) {
+    const s = STATUSES[key];
+
+    document.querySelectorAll('.state-tab').forEach(t => t.classList.remove('active'));
+    if (tabEl) tabEl.classList.add('active');
+
+    const hero = document.getElementById('hero');
+    hero.style.background = s.tint;
+
+    const emblem = document.getElementById('emblem');
+    emblem.style.background = '#FFF';
+    emblem.innerHTML = ICONS[s.icon];
+    emblem.querySelector('svg').style.stroke = s.color;
+
+    const pill = document.getElementById('pill');
+    pill.style.background = s.tint;
+    pill.style.color = s.color;
+    document.getElementById('pillDot').style.background = s.color;
+    document.getElementById('pillLabel').textContent = s.label;
+
+    document.getElementById('message').textContent = s.message;
+    document.getElementById('meaning').textContent = s.meaning;
+
+    const list = document.getElementById('restrictions');
+    list.innerHTML = s.restrictions.map(r => `
+      <div class="restrict-row">
+        <div class="ic ${r.ok ? 'allow' : 'deny'}">${r.ok ? ICONS.allow : ICONS.deny}</div>
+        <span>${r.text}</span>
+      </div>`).join('');
+
+    const cta = document.getElementById('cta');
+    if (s.cta) {
+      cta.classList.remove('hidden');
+      cta.innerHTML = ICONS[s.cta.icon] + '<span>' + s.cta.label + '</span>';
+      currentCta = s.cta;
+    } else {
+      cta.classList.add('hidden');
+      currentCta = null;
+    }
+  }
+
+  function ctaAction() {
+    if (currentCta && currentCta.href) window.location.href = currentCta.href;
+  }
+
+  function goBack() {
+    if (document.referrer) { window.history.back(); }
+    else { window.location.href = 'Account.html'; }
+  }
+
+  // init
+  setStatus('active', document.querySelector('.state-tab'));
+</script>
+
+<!-- Export to Figma button (shared exporter) -->
+<script src="figma-export.js"></script>
+</body>
+</html>

@@ -1,0 +1,475 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Transfer to Bank - Select Bank</title>
+<style>
+    @import url("styles/component-keypad.css");
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@400;500;600&display=swap');
+  @import url('https://api.fontshare.com/v2/css?f[]=switzer@400,500,600,700&display=swap');
+
+  :root {
+    --Primary: #FE353D;
+    --Primary-Dark: #C41520;
+    --Primary-Darker: #A41016;
+    --Primary-Light: #FFF1F2;
+    --On-Surface: #1C1C21;
+    --On-Surface-Low: #7C7C87;
+    --Surface-Container: #FCFCFC;
+    --Gray-0: #FFF;
+    --On-Primary: #FFF1F2;
+    --Success: #1FC83B;
+    --Success-Light: #E8F9EC;
+    --Border: #E8E8EC;
+    --Background: #F5F5F5;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Inter', sans-serif;
+    background: transparent;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    padding: 20px;
+  }
+
+  .phone-frame {
+    width: 360px;
+    height: 780px;
+    background: var(--Background);
+    border-radius: 30px;
+    overflow: hidden;
+    position: relative;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
+  }
+
+  .app-content {
+    height: 100%;
+    overflow-y: auto;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+  }
+  .app-content::-webkit-scrollbar { width: 0; }
+
+  .status-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    padding: 14px 24px 8px;
+    background: var(--Background);
+  }
+  .status-bar .time { font-size: 14px; font-weight: 600; color: var(--On-Surface); }
+  .status-icons { display: flex; align-items: center; gap: 6px; }
+  .status-icons svg { width: 18px; height: 18px; }
+
+  .header-nav {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 8px 16px 12px;
+    background: var(--Background);
+  }
+  .back-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .back-btn:hover { background: rgba(0,0,0,0.05); }
+  .back-btn svg { width: 22px; height: 22px; stroke: var(--On-Surface); stroke-width: 1.8px; }
+
+  .header-title {
+    color: var(--On-Surface);
+    font-family: 'Switzer', sans-serif;
+    font-size: 17px;
+    font-weight: 500;
+    letter-spacing: 0.3px;
+    flex: 1;
+    text-align: center;
+  }
+
+  .main-content {
+    padding: 16px 20px 20px;
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    width: 100%;
+    gap: 14px;
+  }
+
+  .step-hint {
+    color: var(--On-Surface-Low);
+    font-family: 'Switzer', sans-serif;
+    font-size: 13px;
+    font-weight: 400;
+    line-height: 1.5;
+  }
+
+  /* Bank Selector Dropdown */
+  .bank-selector-wrap { position: relative; }
+  .bank-selector {
+    height: 56px;
+    background: #FFF;
+    border-radius: 14px;
+    padding: 0 16px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    cursor: pointer;
+    transition: all 0.2s;
+    border: 1.5px solid var(--Border);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+  }
+  .bank-selector:hover { border-color: var(--Primary); box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08); }
+  .bank-selector-left { display: flex; align-items: center; gap: 12px; flex: 1; }
+  .bank-logo { width: 34px; height: 34px; border-radius: 8px; overflow: hidden; flex-shrink: 0; background: #F5F5F5; display: flex; align-items: center; justify-content: center; }
+  .bank-logo img { width: 100%; height: 100%; object-fit: contain; padding: 4px; }
+  .bank-info { display: flex; flex-direction: column; gap: 2px; flex: 1; min-width: 0; }
+  .bank-name { color: var(--On-Surface); font-family: 'Switzer', sans-serif; font-size: 14px; font-weight: 600; letter-spacing: 0.2px; }
+  .bank-placeholder { color: var(--On-Surface-Low); font-family: 'Switzer', sans-serif; font-size: 14px; font-weight: 400; }
+  .bank-selector-right { display: flex; align-items: center; gap: 8px; }
+  .change-btn { color: var(--On-Surface); font-family: 'Switzer', sans-serif; font-size: 13px; font-weight: 600; cursor: pointer; display: none; }
+  .bank-selector.has-bank .change-btn { display: block; }
+  .bank-selector.has-bank .bank-placeholder { display: none; }
+  .chevron { width: 18px; height: 18px; color: var(--On-Surface); transition: transform 0.25s; }
+  .bank-selector.open .chevron { transform: rotate(180deg); }
+
+  /* Account Number Input */
+  .account-input-wrapper {
+    height: 52px;
+    background: #FFF;
+    border-radius: 14px;
+    padding: 0 16px;
+    display: flex;
+    align-items: center;
+    border: 1.5px solid var(--Border);
+    transition: all 0.2s;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+  }
+  .account-input-wrapper:focus-within { border-color: var(--Primary); box-shadow: 0 4px 12px rgba(254, 53, 61, 0.15); }
+  .account-input {
+    flex: 1; border: none; background: transparent;
+    font-family: 'Switzer', sans-serif; font-size: 18px; font-weight: 500;
+    color: var(--On-Surface); outline: none; letter-spacing: 1px;
+  }
+  .account-input::placeholder { color: var(--On-Surface-Low); font-weight: 400; letter-spacing: 0; }
+
+  /* Resolved name preview */
+  .name-preview {
+    display: none; align-items: center; gap: 10px; padding: 12px 14px;
+    background: var(--Success-Light); border-radius: 12px;
+  }
+  .name-preview.show { display: flex; }
+  .name-preview svg { width: 18px; height: 18px; stroke: var(--Success); stroke-width: 2.5; fill: none; flex-shrink: 0; }
+  .name-preview .np-text { color: #128a2a; font-family: 'Switzer', sans-serif; font-size: 13px; font-weight: 600; }
+
+  /* Fetching State */
+  .fetching-state {
+    display: none; align-items: center; gap: 10px; padding: 2px;
+    color: var(--On-Surface-Low); font-family: 'Switzer', sans-serif; font-size: 13px; font-weight: 400;
+  }
+  .fetching-state.show { display: flex; }
+  .spinner { width: 16px; height: 16px; border: 2px solid var(--Border); border-top-color: var(--Primary); border-radius: 50%; animation: spin 0.8s linear infinite; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  .bottom-section { margin-top: auto; display: flex; flex-direction: column; }
+
+  .continue-btn {
+    height: 52px; border-radius: 14px; border: none; background: #E0E0E0;
+    color: var(--On-Surface-Low); font-family: 'Poppins', sans-serif; font-size: 15px; font-weight: 500;
+    cursor: not-allowed; transition: all 0.2s; margin-top: 14px;
+  }
+  .continue-btn.active { background: var(--Primary); color: #FFF; cursor: pointer; box-shadow: 0 4px 16px rgba(254, 53, 61, 0.25); }
+  .continue-btn.active:hover { background: #E5303A; box-shadow: 0 6px 20px rgba(254, 53, 61, 0.35); transform: translateY(-1px); }
+  .continue-btn.active:active { transform: scale(0.98) translateY(0); }
+
+  /* Bank Dropdown Modal */
+  .bank-dropdown {
+    position: absolute; top: calc(100% + 6px); left: 0; right: 0; background: #FFF;
+    border-radius: 16px; box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15); z-index: 100;
+    display: none; max-height: 260px; overflow-y: auto;
+  }
+  .bank-dropdown.show { display: block; animation: dropdownSlide 0.2s ease-out; }
+  @keyframes dropdownSlide { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
+  .bank-option { padding: 13px 16px; display: flex; align-items: center; gap: 12px; cursor: pointer; transition: background 0.15s; border-bottom: 1px solid #F5F5F5; }
+  .bank-option:last-child { border-bottom: none; }
+  .bank-option:hover { background: #FAFAFA; }
+  .bank-option.selected { background: var(--Primary-Light); }
+  .bank-option-logo { width: 32px; height: 32px; border-radius: 8px; overflow: hidden; background: #F5F5F5; }
+  .bank-option-logo img { width: 100%; height: 100%; object-fit: contain; padding: 4px; }
+  .bank-option-name { flex: 1; color: var(--On-Surface); font-family: 'Switzer', sans-serif; font-size: 14px; font-weight: 500; }
+  .bank-option.selected .bank-option-name { color: var(--Primary); font-weight: 600; }
+</style>
+</head>
+<body>
+
+<div class="phone-frame">
+  <div class="app-content">
+
+    <div class="status-bar">
+      <span class="time">10:00</span>
+      <div class="status-icons">
+        <svg viewBox="0 0 24 24" fill="none"><path d="M1 9l2 2c4.97-4.97 13.03-4.97 18 0l2-2C16.93 2.93 7.08 2.93 1 9z" fill="#1C1C21"/><path d="M5 13l2 2c2.76-2.76 7.24-2.76 10 0l2-2C15.14 9.14 8.87 9.14 5 13z" fill="#1C1C21"/><path d="M9 17l2 2c1.1-1.1 2.9-1.1 4 0l2-2c-2.21-2.21-5.79-2.21-8 0z" fill="#1C1C21"/></svg>
+        <svg viewBox="0 0 24 24" fill="none"><rect x="2" y="6" width="4" height="12" rx="1" fill="#1C1C21"/><rect x="8" y="4" width="4" height="14" rx="1" fill="#1C1C21"/><rect x="14" y="2" width="4" height="16" rx="1" fill="#1C1C21"/><rect x="20" y="0" width="4" height="18" rx="1" fill="#1C1C21" opacity="0.3"/></svg>
+        <svg viewBox="0 0 28 14" fill="none"><rect x="0" y="1" width="22" height="12" rx="2.5" stroke="#1C1C21" stroke-width="1.5"/><rect x="2" y="3" width="16" height="8" rx="1" fill="#1C1C21"/><rect x="24" y="4" width="2" height="6" rx="1" fill="#1C1C21"/></svg>
+      </div>
+    </div>
+
+    <div class="header-nav">
+      <button class="back-btn" onclick="goBack()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M19 12H5M12 19l-7-7 7-7"/>
+        </svg>
+      </button>
+      <span class="header-title">Transfer to Bank</span>
+      <div style="width: 36px;"></div>
+    </div>
+
+    <div class="main-content">
+
+      <p class="step-hint">Choose the recipient's bank and enter their account number. We'll validate the account holder before you continue.</p>
+
+      <!-- Bank Selector -->
+      <div class="bank-selector-wrap">
+        <div class="bank-selector" id="bankSelector" onclick="toggleBankDropdown(event)">
+          <div class="bank-selector-left">
+            <div class="bank-logo" id="selectedBankLogo">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#FE353D" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="3 21 21 21 21 10"/>
+                <polyline points="3 10 3 21"/>
+                <line x1="9" y1="10" x2="9" y2="16"/>
+                <line x1="13" y1="10" x2="13" y2="16"/>
+                <line x1="17" y1="10" x2="17" y2="16"/>
+                <polygon points="3 6 21 6 12 1 3 6"/>
+              </svg>
+            </div>
+            <div class="bank-info">
+              <span class="bank-name" id="selectedBankName" style="display: none;">Awash Bank</span>
+              <span class="bank-placeholder">Select Bank</span>
+            </div>
+          </div>
+          <div class="bank-selector-right">
+            <span class="change-btn">Change</span>
+            <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="6 9 12 15 18 9"></polyline>
+            </svg>
+          </div>
+        </div>
+
+        <!-- Bank Dropdown -->
+        <div class="bank-dropdown" id="bankDropdown">
+          <div class="bank-option" onclick="selectBank('Awash Bank', 'assets/banks logo/awass-bank.png')">
+            <div class="bank-option-logo"><img src="assets/banks logo/awass-bank.png" alt="Awash Bank" onerror="this.style.display='none'"></div>
+            <span class="bank-option-name">Awash Bank</span>
+          </div>
+          <div class="bank-option" onclick="selectBank('Dashen Bank', 'assets/banks logo/dashen-bank.png')">
+            <div class="bank-option-logo"><img src="assets/banks logo/dashen-bank.png" alt="Dashen Bank" onerror="this.style.display='none'"></div>
+            <span class="bank-option-name">Dashen Bank</span>
+          </div>
+          <div class="bank-option" onclick="selectBank('CBE', 'assets/banks logo/cbe-logo.png')">
+            <div class="bank-option-logo"><img src="assets/banks logo/cbe-logo.png" alt="CBE" onerror="this.style.display='none'"></div>
+            <span class="bank-option-name">Commercial Bank of Ethiopia</span>
+          </div>
+          <div class="bank-option" onclick="selectBank('Abyssinia Bank', 'assets/banks logo/abyssinya-bank.png')">
+            <div class="bank-option-logo"><img src="assets/banks logo/abyssinya-bank.png" alt="Abyssinia Bank" onerror="this.style.display='none'"></div>
+            <span class="bank-option-name">Abyssinia Bank</span>
+          </div>
+          <div class="bank-option" onclick="selectBank('COOP Bank', 'assets/banks logo/coop-bank.png')">
+            <div class="bank-option-logo"><img src="assets/banks logo/coop-bank.png" alt="COOP Bank" onerror="this.style.display='none'"></div>
+            <span class="bank-option-name">Cooperative Bank of Oromia</span>
+          </div>
+          <div class="bank-option" onclick="selectBank('Zemen Bank', 'assets/banks logo/zemen-bank.png')">
+            <div class="bank-option-logo"><img src="assets/banks logo/zemen-bank.png" alt="Zemen Bank" onerror="this.style.display='none'"></div>
+            <span class="bank-option-name">Zemen Bank</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Account Number Input -->
+      <div class="account-input-wrapper">
+        <input type="tel" class="account-input" id="accountInput" placeholder="Account Number" maxlength="15" oninput="handleAccountInput()">
+      </div>
+
+      <!-- Fetching State -->
+      <div class="fetching-state" id="fetchingState">
+        <div class="spinner"></div>
+        <span>Fetching account name…</span>
+      </div>
+
+      <!-- Resolved name preview -->
+      <div class="name-preview" id="namePreview">
+        <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+        <span class="np-text" id="namePreviewText">Account holder found</span>
+      </div>
+
+      <div class="bottom-section">
+        <div class="keypad">
+          <button class="key" onclick="pressKey('1')">1</button>
+          <button class="key" onclick="pressKey('2')">2</button>
+          <button class="key" onclick="pressKey('3')">3</button>
+          <button class="key" onclick="pressKey('4')">4</button>
+          <button class="key" onclick="pressKey('5')">5</button>
+          <button class="key" onclick="pressKey('6')">6</button>
+          <button class="key" onclick="pressKey('7')">7</button>
+          <button class="key" onclick="pressKey('8')">8</button>
+          <button class="key" onclick="pressKey('9')">9</button>
+          <button class="key empty"></button>
+          <button class="key" onclick="pressKey('0')">0</button>
+          <button class="key delete" onclick="deleteKey()">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M21 4H8l-7 8 7 8h13a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2z"></path>
+              <line x1="18" y1="9" x2="12" y2="15"></line>
+              <line x1="12" y1="9" x2="18" y2="15"></line>
+            </svg>
+          </button>
+        </div>
+
+        <button class="continue-btn" id="continueBtn" onclick="continueTransfer()" disabled>Continue</button>
+      </div>
+
+    </div>
+
+  </div>
+</div>
+
+<script>
+  let selectedBank = null;
+  let typingTimeout;
+  let accountResolved = false;
+  let resolvedName = '';
+  let maskedAccount = '';
+  let fullAccount = '';
+
+  const sampleNames = ['Kidist Birhanu', 'Abel Tesfaye', 'Marta Solomon', 'Yonas Girma', 'Hanna Bekele', 'Samuel Desta'];
+
+  function toggleBankDropdown(e) {
+    if (e) e.stopPropagation();
+    document.getElementById('bankDropdown').classList.toggle('show');
+    document.getElementById('bankSelector').classList.toggle('open');
+  }
+
+  function selectBank(name, logo) {
+    selectedBank = { name, logo };
+    document.getElementById('selectedBankName').textContent = name;
+    document.getElementById('selectedBankName').style.display = 'block';
+    document.getElementById('selectedBankLogo').innerHTML = `<img src="${logo}" alt="${name}" onerror="this.style.display='none'">`;
+    document.getElementById('bankSelector').classList.add('has-bank');
+
+    document.querySelectorAll('.bank-option').forEach(opt => {
+      opt.classList.remove('selected');
+      if (opt.querySelector('.bank-option-name').textContent === name) opt.classList.add('selected');
+    });
+
+    document.getElementById('bankDropdown').classList.remove('show');
+    document.getElementById('bankSelector').classList.remove('open');
+    // Re-resolve if an account is already typed
+    if (document.getElementById('accountInput').value.length >= 8) handleAccountInput();
+    checkContinueButton();
+  }
+
+  function handleAccountInput() {
+    const input = document.getElementById('accountInput');
+    const fetchingState = document.getElementById('fetchingState');
+    clearTimeout(typingTimeout);
+
+    if (accountResolved) {
+      accountResolved = false;
+      document.getElementById('namePreview').classList.remove('show');
+      checkContinueButton();
+    }
+
+    if (selectedBank && input.value.length >= 8) {
+      typingTimeout = setTimeout(() => {
+        fetchingState.classList.add('show');
+        setTimeout(() => {
+          fetchingState.classList.remove('show');
+          showAccountFound(input.value);
+        }, 1200);
+      }, 600);
+    } else {
+      checkContinueButton();
+    }
+  }
+
+  function showAccountFound(accountValue) {
+    accountResolved = true;
+    fullAccount = accountValue;
+    resolvedName = sampleNames[Math.floor(Math.random() * sampleNames.length)];
+    maskedAccount = '****' + accountValue.slice(-4);
+
+    document.getElementById('namePreviewText').textContent = resolvedName + ' • ' + maskedAccount;
+    document.getElementById('namePreview').classList.add('show');
+    checkContinueButton();
+  }
+
+  function checkContinueButton() {
+    const btn = document.getElementById('continueBtn');
+    if (selectedBank && accountResolved) { btn.classList.add('active'); btn.disabled = false; }
+    else { btn.classList.remove('active'); btn.disabled = true; }
+  }
+
+  // Keypad fills the account number
+  function pressKey(key) {
+    const input = document.getElementById('accountInput');
+    if (input.value.length < 15) { input.value += key; handleAccountInput(); }
+  }
+  function deleteKey() {
+    const input = document.getElementById('accountInput');
+    input.value = input.value.slice(0, -1);
+    handleAccountInput();
+  }
+
+  // Continue → store recipient, go to validation (account ending 0000 fails validation)
+  function continueTransfer() {
+    if (!selectedBank || !accountResolved) return;
+    sessionStorage.setItem('sendTarget', JSON.stringify({
+      type: 'bank',
+      name: selectedBank.name,
+      logo: selectedBank.logo,
+      holder: resolvedName,
+      account: maskedAccount,
+      fullAccount: fullAccount
+    }));
+    if (fullAccount.endsWith('0000')) {
+      window.location.href = 'Transfer_Recipient Not Found.html';
+    } else {
+      window.location.href = 'Transfer_Recipient Validation.html';
+    }
+  }
+
+  function goBack() { window.location.href = 'Send Money Menu.html'; }
+
+  // Prefill the bank chosen on the Send Money modal
+  (function loadTarget() {
+    let target = null;
+    try { target = JSON.parse(sessionStorage.getItem('sendTarget') || 'null'); } catch (e) {}
+    if (target && target.type === 'bank' && target.logo) selectBank(target.name, target.logo);
+  })();
+
+  document.addEventListener('click', function (e) {
+    const selector = document.getElementById('bankSelector');
+    const dropdown = document.getElementById('bankDropdown');
+    if (!selector.contains(e.target) && !dropdown.contains(e.target)) {
+      dropdown.classList.remove('show');
+      selector.classList.remove('open');
+    }
+  });
+</script>
+
+<!-- Export to Figma button (shared exporter) -->
+<script src="figma-export.js"></script>
+</body>
+</html>

@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Choose Package</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@400;500;600&display=swap');
+  @import url('https://api.fontshare.com/v2/css?f[]=switzer@400,500,600,700&display=swap');
+
+  :root {
+    --Primary: #FE353D;
+    --On-Surface: #1C1C21;
+    --On-Surface-Low: #7C7C87;
+    --Border: #E8E8EC;
+    --Background: #F5F5F5;
+    --Success: #1FC83B;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'Inter', sans-serif; background: transparent; display: flex; justify-content: center; align-items: center; min-height: 100vh; padding: 20px; }
+  .phone-frame { width: 360px; height: 780px; background: var(--Background); border-radius: 30px; overflow: hidden; box-shadow: 0 20px 60px rgba(0,0,0,0.15); display: flex; flex-direction: column; }
+
+  .status-bar { display: flex; justify-content: space-between; align-items: center; padding: 14px 24px 8px; background: var(--Background); flex-shrink: 0; }
+  .status-bar .time { font-size: 14px; font-weight: 600; color: var(--On-Surface); }
+  .status-icons { display: flex; align-items: center; gap: 6px; }
+  .status-icons svg { width: 18px; height: 18px; }
+
+  .header-nav { display: flex; align-items: center; justify-content: space-between; padding: 8px 16px 10px; background: var(--Background); flex-shrink: 0; }
+  .back-btn { width: 36px; height: 36px; border-radius: 50%; background: transparent; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.2s; }
+  .back-btn:hover { background: rgba(0,0,0,0.05); }
+  .back-btn svg { width: 22px; height: 22px; stroke: var(--On-Surface); stroke-width: 1.8px; fill: none; }
+  .header-title { color: var(--On-Surface); font-family: 'Switzer', sans-serif; font-size: 17px; font-weight: 500; letter-spacing: 0.3px; flex: 1; text-align: center; }
+
+  /* Recipient chip */
+  .recipient-chip { flex-shrink: 0; margin: 0 16px 8px; background: #FFF; border-radius: 12px; padding: 10px 14px; display: flex; align-items: center; gap: 10px; box-shadow: 0 2px 8px rgba(0,0,0,0.04); }
+  .recipient-chip .avatar { width: 34px; height: 34px; border-radius: 9px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; font-family: 'Switzer', sans-serif; font-size: 12px; font-weight: 700; color: #FFF; }
+  .recipient-chip .num { font-family: 'Switzer', sans-serif; font-size: 13px; font-weight: 600; color: var(--On-Surface); letter-spacing: 0.5px; }
+  .recipient-chip .sub { font-family: 'Switzer', sans-serif; font-size: 11.5px; color: var(--On-Surface-Low); }
+
+  /* Category tabs */
+  .cats { flex-shrink: 0; display: flex; gap: 8px; overflow-x: auto; padding: 4px 16px 10px; }
+  .cats::-webkit-scrollbar { height: 0; }
+  .cat { flex-shrink: 0; height: 32px; padding: 0 14px; border-radius: 999px; border: 1.5px solid var(--Border); background: #FFF; font-family: 'Switzer', sans-serif; font-size: 12.5px; font-weight: 600; color: var(--On-Surface-Low); cursor: pointer; transition: all 0.15s; white-space: nowrap; }
+  .cat.active { border-color: var(--Primary); background: var(--Primary); color: #FFF; }
+
+  /* Package list */
+  .pkg-list { flex: 1; overflow-y: auto; padding: 2px 16px 20px; display: flex; flex-direction: column; gap: 10px; }
+  .pkg-list::-webkit-scrollbar { width: 0; }
+  .pkg { background: #FFF; border: 1.5px solid var(--Border); border-radius: 16px; padding: 14px 16px; cursor: pointer; transition: all 0.15s; box-shadow: 0 2px 8px rgba(0,0,0,0.04); }
+  .pkg:hover { border-color: #C5C5CB; }
+  .pkg.disabled { opacity: 0.55; cursor: not-allowed; background: #FAFAFA; }
+  .pkg-top { display: flex; justify-content: space-between; align-items: flex-start; gap: 10px; }
+  .pkg-name { font-family: 'Switzer', sans-serif; font-size: 15px; font-weight: 700; color: var(--On-Surface); }
+  .pkg-benefit { font-family: 'Switzer', sans-serif; font-size: 12.5px; color: var(--On-Surface-Low); margin-top: 3px; }
+  .pkg-price { font-family: 'Switzer', sans-serif; font-size: 16px; font-weight: 700; color: var(--Primary); white-space: nowrap; }
+  .pkg-price .cur { font-size: 11px; font-weight: 500; color: var(--On-Surface-Low); margin-left: 2px; }
+  .pkg-meta { display: flex; align-items: center; gap: 8px; margin-top: 10px; flex-wrap: wrap; }
+  .chip { display: inline-flex; align-items: center; gap: 4px; padding: 3px 8px; border-radius: 6px; font-family: 'Switzer', sans-serif; font-size: 10.5px; font-weight: 600; }
+  .chip svg { width: 11px; height: 11px; fill: none; stroke-width: 2; }
+  .chip.validity { background: #F2F2F4; color: var(--On-Surface-Low); }
+  .chip.validity svg { stroke: var(--On-Surface-Low); }
+  .chip.elig { background: rgba(31,200,59,0.08); color: var(--Success); }
+  .chip.elig svg { stroke: var(--Success); }
+  .chip.inelig { background: #F2F2F4; color: var(--On-Surface-Low); }
+  .chip.tag { background: #FFF1F2; color: var(--Primary); }
+  .empty-note { text-align: center; color: var(--On-Surface-Low); font-family: 'Switzer', sans-serif; font-size: 13px; padding: 30px 0; }
+</style>
+</head>
+<body>
+
+<div class="phone-frame">
+
+  <div class="status-bar">
+    <span class="time">10:00</span>
+    <div class="status-icons">
+      <svg viewBox="0 0 24 24" fill="none"><path d="M1 9l2 2c4.97-4.97 13.03-4.97 18 0l2-2C16.93 2.93 7.08 2.93 1 9z" fill="#1C1C21"/><path d="M5 13l2 2c2.76-2.76 7.24-2.76 10 0l2-2C15.14 9.14 8.87 9.14 5 13z" fill="#1C1C21"/><path d="M9 17l2 2c1.1-1.1 2.9-1.1 4 0l2-2c-2.21-2.21-5.79-2.21-8 0z" fill="#1C1C21"/></svg>
+      <svg viewBox="0 0 24 24" fill="none"><rect x="2" y="6" width="4" height="12" rx="1" fill="#1C1C21"/><rect x="8" y="4" width="4" height="14" rx="1" fill="#1C1C21"/><rect x="14" y="2" width="4" height="16" rx="1" fill="#1C1C21"/><rect x="20" y="0" width="4" height="18" rx="1" fill="#1C1C21" opacity="0.3"/></svg>
+      <svg viewBox="0 0 28 14" fill="none"><rect x="0" y="1" width="22" height="12" rx="2.5" stroke="#1C1C21" stroke-width="1.5"/><rect x="2" y="3" width="16" height="8" rx="1" fill="#1C1C21"/><rect x="24" y="4" width="2" height="6" rx="1" fill="#1C1C21"/></svg>
+    </div>
+  </div>
+
+  <div class="header-nav">
+    <button class="back-btn" onclick="goBack()">
+      <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+    </button>
+    <span class="header-title">Choose Package</span>
+    <div style="width:36px;"></div>
+  </div>
+
+  <div class="recipient-chip">
+    <div class="avatar" id="provIcon" style="background:#43B02A;">SC</div>
+    <div>
+      <div class="num" id="recipientNumber">0712 131 415</div>
+      <div class="sub"><span id="providerName">Safaricom</span> · <span id="typeText">For you</span></div>
+    </div>
+  </div>
+
+  <div class="cats" id="cats"></div>
+
+  <div class="pkg-list" id="pkgList"></div>
+
+</div>
+
+<script>
+  const MAIN = 12580.00;
+  const REWARD = 800.00;
+
+  const air = JSON.parse(sessionStorage.getItem('packageData') || '{"provider":"Safaricom","providerAbbr":"SC","providerColor":"#43B02A","recipient":"0712131415","purchaseType":"self"}');
+
+  function formatPhone(d) { d = String(d || ''); return [d.slice(0,4), d.slice(4,7), d.slice(7,10)].filter(Boolean).join(' '); }
+  function fmt(n) { return parseFloat(n || 0).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ','); }
+
+  document.getElementById('provIcon').textContent = air.providerAbbr || 'SC';
+  document.getElementById('provIcon').style.background = air.providerColor || '#43B02A';
+  document.getElementById('recipientNumber').textContent = formatPhone(air.recipient);
+  document.getElementById('providerName').textContent = air.provider || 'Safaricom';
+  document.getElementById('typeText').textContent = air.purchaseType === 'others' ? 'Gift' : 'For you';
+
+  // Category tabs (key + label)
+  const CATEGORIES = [
+    { key: 'popular',     label: 'Popular' },
+    { key: 'recommended', label: 'Recommended' },
+    { key: 'data',        label: 'Data' },
+    { key: 'voice',       label: 'Voice' },
+    { key: 'sms',         label: 'SMS' },
+    { key: 'daily',       label: 'Daily' },
+    { key: 'weekly',      label: 'Weekly' },
+    { key: 'monthly',     label: 'Monthly' }
+  ];
+
+  // Package catalog (varies subtly by provider via the "only" field)
+  const PACKAGES = [
+    { name: 'Daily Lite',        type: 'Data',  benefit: '200 MB data',                 validity: '1 day',   price: 15,    cats: ['data','daily','popular'], eligible: true },
+    { name: 'Daily Talk',        type: 'Voice', benefit: '30 mins all-network',         validity: '1 day',   price: 20,    cats: ['voice','daily'], eligible: true },
+    { name: 'Social Weekly',     type: 'Data',  benefit: '1 GB social bundle',          validity: '7 days',  price: 59,    cats: ['data','weekly','popular'], eligible: true },
+    { name: 'Weekly Data Plus',  type: 'Data',  benefit: '1.5 GB data',                 validity: '7 days',  price: 99,    cats: ['data','weekly','popular','recommended'], eligible: true },
+    { name: 'Voice 60',          type: 'Voice', benefit: '60 mins all-network',         validity: '7 days',  price: 75,    cats: ['voice','weekly'], eligible: true },
+    { name: 'SMS 100',           type: 'SMS',   benefit: '100 SMS',                     validity: '7 days',  price: 25,    cats: ['sms','weekly'], eligible: true },
+    { name: 'Combo Starter',     type: 'Combo', benefit: '1 GB + 50 min + 50 SMS',      validity: '7 days',  price: 129,   cats: ['data','voice','sms','weekly','popular','recommended'], eligible: true },
+    { name: 'Monthly 6GB',       type: 'Data',  benefit: '6 GB data',                   validity: '30 days', price: 399,   cats: ['data','monthly','recommended'], eligible: true },
+    { name: 'Voice 300',         type: 'Voice', benefit: '300 mins all-network',        validity: '30 days', price: 249,   cats: ['voice','monthly'], eligible: true },
+    { name: 'Big Monthly 12GB',  type: 'Data',  benefit: '12 GB data',                  validity: '30 days', price: 1299,  cats: ['data','monthly','recommended'], eligible: true },
+    { name: 'Annual Mega 120GB', type: 'Data',  benefit: '120 GB data',                 validity: '365 days',price: 13999, cats: ['data','monthly','recommended'], eligible: true },
+    { name: 'Premium 5G Unlimited', type: 'Data', benefit: 'Unlimited 5G data',         validity: '30 days', price: 2499,  cats: ['data','monthly'], eligible: false }
+  ];
+
+  let currentCat = 'popular';
+
+  function renderCats() {
+    document.getElementById('cats').innerHTML = CATEGORIES.map(function (c) {
+      return '<button class="cat ' + (c.key === currentCat ? 'active' : '') + '" onclick="selectCat(\'' + c.key + '\')">' + c.label + '</button>';
+    }).join('');
+  }
+  function selectCat(k) { currentCat = k; renderCats(); renderList(); }
+
+  function renderList() {
+    const items = PACKAGES.map(function (p, i) { return { p: p, i: i }; })
+      .filter(function (x) { return x.p.cats.indexOf(currentCat) !== -1; });
+    const list = document.getElementById('pkgList');
+    if (!items.length) { list.innerHTML = '<div class="empty-note">No packages in this category.</div>'; return; }
+    list.innerHTML = items.map(function (x) {
+      const p = x.p;
+      const popular = p.cats.indexOf('popular') !== -1;
+      const recommended = p.cats.indexOf('recommended') !== -1;
+      const tag = recommended ? '<span class="chip tag">Recommended</span>' : (popular ? '<span class="chip tag">Popular</span>' : '');
+      const elig = p.eligible
+        ? '<span class="chip elig"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>Eligible</span>'
+        : '<span class="chip inelig">Not eligible</span>';
+      return '<div class="pkg ' + (p.eligible ? '' : 'disabled') + '" onclick="selectPackage(' + x.i + ')">' +
+        '<div class="pkg-top">' +
+          '<div><div class="pkg-name">' + p.name + '</div><div class="pkg-benefit">' + p.benefit + '</div></div>' +
+          '<div class="pkg-price">' + fmt(p.price) + '<span class="cur">ETB</span></div>' +
+        '</div>' +
+        '<div class="pkg-meta">' +
+          '<span class="chip validity"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>' + p.validity + '</span>' +
+          '<span class="chip validity">' + p.type + '</span>' + elig + tag +
+        '</div>' +
+      '</div>';
+    }).join('');
+  }
+
+  function selectPackage(i) {
+    const p = PACKAGES[i];
+    if (!p.eligible) return;
+    const data = JSON.parse(sessionStorage.getItem('packageData') || '{}');
+    data.category = p.type;
+    data.packageName = p.name;
+    data.packageBenefit = p.benefit;
+    data.validity = p.validity;
+    data.payAmount = p.price.toFixed(2);
+    sessionStorage.setItem('packageData', JSON.stringify(data));
+
+    // Both accounts insufficient → overdraft journey
+    if (p.price > MAIN && p.price > REWARD) {
+      if (!sessionStorage.getItem('odStatus')) sessionStorage.setItem('odStatus', 'eligible');
+      window.location.href = 'Package_Overdraft Offer.html';
+      return;
+    }
+    window.location.href = 'Package_Review.html';
+  }
+
+  function goBack() { window.location.href = 'Package_Buy.html'; }
+
+  renderCats();
+  renderList();
+</script>
+
+<script src="figma-export.js"></script>
+</body>
+</html>

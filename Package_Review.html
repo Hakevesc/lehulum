@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Package - Confirm</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@400;500;600&display=swap');
+  @import url('https://api.fontshare.com/v2/css?f[]=switzer@400,500,600,700&display=swap');
+
+  :root { --Primary: #FE353D; --On-Surface: #1C1C21; --On-Surface-Low: #7C7C87; --Border: #E8E8EC; --Background: #F5F5F5; --Success: #1FC83B; }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'Inter', sans-serif; background: transparent; display: flex; justify-content: center; align-items: center; min-height: 100vh; padding: 20px; }
+  .phone-frame { width: 360px; height: 780px; background: var(--Background); border-radius: 30px; overflow: hidden; position: relative; box-shadow: 0 20px 60px rgba(0,0,0,0.15); }
+  .app-content { height: 100%; display: flex; flex-direction: column; }
+
+  .status-bar { flex-shrink: 0; display: flex; justify-content: space-between; align-items: center; width: 100%; padding: 14px 24px 8px; background: var(--Background); }
+  .status-bar .time { font-size: 14px; font-weight: 600; color: var(--On-Surface); }
+  .status-icons { display: flex; align-items: center; gap: 6px; }
+  .status-icons svg { width: 18px; height: 18px; }
+
+  .header-nav { flex-shrink: 0; width: 100%; display: flex; align-items: center; justify-content: space-between; padding: 8px 16px 12px; background: var(--Background); }
+  .back-btn { display: flex; align-items: center; justify-content: center; width: 36px; height: 36px; border-radius: 50%; background: transparent; border: none; cursor: pointer; transition: all 0.2s; }
+  .back-btn:hover { background: rgba(0,0,0,0.05); }
+  .back-btn svg { width: 22px; height: 22px; stroke: var(--On-Surface); stroke-width: 1.8px; fill: none; }
+  .header-title { color: var(--On-Surface); font-family: 'Switzer', sans-serif; font-size: 17px; font-weight: 500; letter-spacing: 0.3px; flex: 1; text-align: center; }
+
+  .scroll { flex: 1; overflow-y: auto; padding: 4px 20px 12px; display: flex; flex-direction: column; gap: 14px; }
+  .scroll::-webkit-scrollbar { width: 0; }
+
+  .recipient-card { background: #FFF; border-radius: 16px; padding: 14px 16px; display: flex; align-items: center; gap: 14px; box-shadow: 0 2px 8px rgba(0,0,0,0.04); }
+  .recipient-icon { width: 46px; height: 46px; border-radius: 13px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; font-family: 'Switzer', sans-serif; font-size: 14px; font-weight: 700; color: #FFF; }
+  .recipient-info { flex: 1; display: flex; flex-direction: column; gap: 3px; min-width: 0; }
+  .recipient-number { color: var(--On-Surface); font-family: 'Switzer', sans-serif; font-size: 15px; font-weight: 600; letter-spacing: 0.5px; }
+  .recipient-sub { color: var(--On-Surface-Low); font-family: 'Switzer', sans-serif; font-size: 12.5px; }
+
+  .pkg-banner { background: #FFF; border-radius: 16px; padding: 16px; box-shadow: 0 2px 8px rgba(0,0,0,0.04); }
+  .pkg-banner .pn { font-family: 'Switzer', sans-serif; font-size: 16px; font-weight: 700; color: var(--On-Surface); }
+  .pkg-banner .pb { font-family: 'Switzer', sans-serif; font-size: 12.5px; color: var(--On-Surface-Low); margin-top: 3px; }
+  .pkg-banner .meta { display: flex; gap: 8px; margin-top: 10px; }
+  .chip { display: inline-flex; align-items: center; gap: 4px; padding: 3px 8px; border-radius: 6px; font-family: 'Switzer', sans-serif; font-size: 10.5px; font-weight: 600; background: #F2F2F4; color: var(--On-Surface-Low); }
+
+  .breakdown { background: #FFF; border-radius: 16px; padding: 18px 16px; display: flex; flex-direction: column; gap: 13px; box-shadow: 0 2px 8px rgba(0,0,0,0.04); }
+  .b-row { display: flex; justify-content: space-between; align-items: center; gap: 12px; }
+  .b-row .label { color: var(--On-Surface-Low); font-family: 'Switzer', sans-serif; font-size: 13px; flex-shrink: 0; }
+  .b-row .value { color: var(--On-Surface); font-family: 'Switzer', sans-serif; font-size: 14px; font-weight: 600; text-align: right; }
+  .b-row .value.free { color: var(--Success); }
+  .b-divider { height: 1px; background: var(--Border); margin: 1px 0; }
+  .b-row.total .label { color: var(--On-Surface); font-size: 14px; font-weight: 600; }
+  .b-row.total .value { color: var(--Primary); font-size: 20px; font-weight: 700; }
+
+  .funding-title { color: var(--On-Surface-Low); font-family: 'Switzer', sans-serif; font-size: 11.5px; font-weight: 600; letter-spacing: 0.4px; text-transform: uppercase; }
+  .funding-selector { display: flex; gap: 10px; }
+  .fund-option { flex: 1; background: #FFF; border: 1.5px solid var(--Border); border-radius: 14px; padding: 11px 12px; cursor: pointer; transition: all 0.18s; display: flex; flex-direction: column; gap: 3px; }
+  .fund-option.selected { border-color: var(--Primary); background: #FFF7F7; box-shadow: 0 2px 10px rgba(254,53,61,0.12); }
+  .fund-option.disabled { opacity: 0.55; cursor: not-allowed; background: #FAFAFA; }
+  .fund-option .fo-top { display: flex; align-items: center; justify-content: space-between; }
+  .fund-option .fo-name { color: var(--On-Surface); font-family: 'Switzer', sans-serif; font-size: 13px; font-weight: 600; }
+  .fund-option .fo-bal { color: var(--On-Surface-Low); font-family: 'Switzer', sans-serif; font-size: 12px; font-weight: 500; }
+  .fund-option .radio { width: 16px; height: 16px; border-radius: 50%; border: 2px solid var(--Border); flex-shrink: 0; transition: all 0.18s; }
+  .fund-option.selected .radio { border-color: var(--Primary); background: radial-gradient(circle, var(--Primary) 0 5px, transparent 6px); }
+  .fund-option .fo-tag { color: var(--Primary); font-family: 'Switzer', sans-serif; font-size: 10px; font-weight: 600; display: none; }
+  .fund-option.disabled .fo-tag { display: block; }
+
+  .funding-od { background: #FFF; border-radius: 14px; padding: 12px 14px; display: none; align-items: center; gap: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.04); }
+  .funding-od.show { display: flex; }
+  .funding-od .icon { width: 38px; height: 38px; border-radius: 10px; background: #FFF1F2; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+  .funding-od .icon svg { width: 20px; height: 20px; stroke: var(--Primary); stroke-width: 2; fill: none; }
+  .funding-od .t { color: var(--On-Surface-Low); font-family: 'Switzer', sans-serif; font-size: 11.5px; }
+  .funding-od .v { color: var(--On-Surface); font-family: 'Switzer', sans-serif; font-size: 14px; font-weight: 600; }
+
+  .bottom-area { flex-shrink: 0; padding: 8px 20px 24px; display: flex; flex-direction: column; gap: 10px; background: var(--Background); }
+  .btn-primary { width: 100%; height: 52px; border-radius: 14px; background: var(--Primary); color: #FFF; font-family: 'Poppins', sans-serif; font-size: 15px; font-weight: 500; border: none; cursor: pointer; transition: all 0.2s; box-shadow: 0 4px 16px rgba(254,53,61,0.25); }
+  .btn-primary:hover { background: #E5303A; transform: translateY(-1px); box-shadow: 0 6px 20px rgba(254,53,61,0.35); }
+  .btn-primary:active { transform: scale(0.98); }
+  .btn-link { color: var(--On-Surface-Low); font-family: 'Switzer', sans-serif; font-size: 13px; font-weight: 500; cursor: pointer; background: none; border: none; padding: 6px 0; }
+  .btn-link:hover { color: var(--On-Surface); }
+</style>
+</head>
+<body>
+
+<div class="phone-frame">
+  <div class="app-content">
+
+    <div class="status-bar">
+      <span class="time">10:00</span>
+      <div class="status-icons">
+        <svg viewBox="0 0 24 24" fill="none"><path d="M1 9l2 2c4.97-4.97 13.03-4.97 18 0l2-2C16.93 2.93 7.08 2.93 1 9z" fill="#1C1C21"/><path d="M5 13l2 2c2.76-2.76 7.24-2.76 10 0l2-2C15.14 9.14 8.87 9.14 5 13z" fill="#1C1C21"/><path d="M9 17l2 2c1.1-1.1 2.9-1.1 4 0l2-2c-2.21-2.21-5.79-2.21-8 0z" fill="#1C1C21"/></svg>
+        <svg viewBox="0 0 24 24" fill="none"><rect x="2" y="6" width="4" height="12" rx="1" fill="#1C1C21"/><rect x="8" y="4" width="4" height="14" rx="1" fill="#1C1C21"/><rect x="14" y="2" width="4" height="16" rx="1" fill="#1C1C21"/><rect x="20" y="0" width="4" height="18" rx="1" fill="#1C1C21" opacity="0.3"/></svg>
+        <svg viewBox="0 0 28 14" fill="none"><rect x="0" y="1" width="22" height="12" rx="2.5" stroke="#1C1C21" stroke-width="1.5"/><rect x="2" y="3" width="16" height="8" rx="1" fill="#1C1C21"/><rect x="24" y="4" width="2" height="6" rx="1" fill="#1C1C21"/></svg>
+      </div>
+    </div>
+
+    <div class="header-nav">
+      <button class="back-btn" onclick="goBack()">
+        <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+      </button>
+      <span class="header-title">Confirm Purchase</span>
+      <div style="width: 36px;"></div>
+    </div>
+
+    <div class="scroll">
+
+      <div class="recipient-card">
+        <div class="recipient-icon" id="provIcon" style="background:#43B02A;">SC</div>
+        <div class="recipient-info">
+          <span class="recipient-number" id="recipientNumber">0712 131 415</span>
+          <span class="recipient-sub" id="providerSub">Safaricom · For you</span>
+        </div>
+      </div>
+
+      <div class="pkg-banner">
+        <div class="pn" id="pkgName">Weekly Data Plus</div>
+        <div class="pb" id="pkgBenefit">1.5 GB data</div>
+        <div class="meta">
+          <span class="chip" id="pkgCategory">Data</span>
+          <span class="chip" id="pkgValidity">7 days</span>
+        </div>
+      </div>
+
+      <div class="breakdown">
+        <div class="b-row"><span class="label">Recipient</span><span class="value" id="rowRecipient">0712 131 415</span></div>
+        <div class="b-row"><span class="label">Provider</span><span class="value" id="rowProvider">Safaricom</span></div>
+        <div class="b-divider"></div>
+        <div class="b-row"><span class="label">Package amount</span><span class="value" id="amount">0.00 ETB</span></div>
+        <div class="b-row"><span class="label">Applicable charges</span><span class="value free" id="fee">Free</span></div>
+        <div class="b-divider"></div>
+        <div class="b-row total"><span class="label">Total deduction</span><span class="value" id="total">0.00 ETB</span></div>
+      </div>
+
+      <!-- Account selection (Flow 7) -->
+      <span class="funding-title" id="fundingTitle">Pay from</span>
+      <div class="funding-selector" id="fundingSelector">
+        <div class="fund-option selected" id="optMain" onclick="selectAccount('main')">
+          <div class="fo-top"><span class="fo-name">Main Account</span><span class="radio"></span></div>
+          <span class="fo-bal" id="balMain">12,580.00 ETB</span>
+          <span class="fo-tag">Low balance</span>
+        </div>
+        <div class="fund-option" id="optReward" onclick="selectAccount('reward')">
+          <div class="fo-top"><span class="fo-name">Reward Account</span><span class="radio"></span></div>
+          <span class="fo-bal" id="balReward">800.00 ETB</span>
+          <span class="fo-tag">Low balance</span>
+        </div>
+      </div>
+      <div class="funding-od" id="fundingOd">
+        <div class="icon"><svg viewBox="0 0 24 24"><path d="M21 12V7H5a2 2 0 0 1 0-4h14v4"/><path d="M3 5v14a2 2 0 0 0 2 2h16v-5"/><path d="M18 12a2 2 0 0 0 0 4h4v-4Z"/></svg></div>
+        <div><div class="t">Paying from</div><div class="v">Errif Overdraft</div></div>
+      </div>
+
+    </div>
+
+    <div class="bottom-area">
+      <button class="btn-primary" onclick="confirmPay()">Confirm &amp; Pay</button>
+      <button class="btn-link" onclick="goBack()">Choose another package</button>
+    </div>
+
+  </div>
+</div>
+
+<script>
+  const MAIN = 12580.00;
+  const REWARD = 800.00;
+
+  const data = JSON.parse(sessionStorage.getItem('packageData') || '{}');
+  const fmt = n => parseFloat(n || 0).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+  function formatPhone(d) { d = String(d || ''); return [d.slice(0,4), d.slice(4,7), d.slice(7,10)].filter(Boolean).join(' '); }
+
+  const price = parseFloat(data.payAmount || '0');
+  const provider = data.provider || 'Safaricom';
+  const phone = formatPhone(data.recipient || '0712131415');
+  const isOverdraft = data.payAccount === 'overdraft';
+
+  document.getElementById('provIcon').textContent = data.providerAbbr || 'SC';
+  document.getElementById('provIcon').style.background = data.providerColor || '#43B02A';
+  document.getElementById('recipientNumber').textContent = phone;
+  document.getElementById('providerSub').textContent = provider + ' · ' + (data.purchaseType === 'others' ? 'Gift' : 'For you');
+  document.getElementById('pkgName').textContent = data.packageName || 'Package';
+  document.getElementById('pkgBenefit').textContent = data.packageBenefit || '';
+  document.getElementById('pkgCategory').textContent = (data.category || 'Data') + ' package';
+  document.getElementById('pkgValidity').textContent = data.validity || '—';
+  document.getElementById('rowRecipient').textContent = phone;
+  document.getElementById('rowProvider').textContent = provider;
+  document.getElementById('amount').textContent = fmt(price) + ' ETB';
+  document.getElementById('total').textContent = fmt(price) + ' ETB';
+  document.getElementById('balMain').textContent = fmt(MAIN) + ' ETB';
+  document.getElementById('balReward').textContent = fmt(REWARD) + ' ETB';
+
+  let selectedAccount = 'main';
+
+  function renderFunding() {
+    if (isOverdraft) {
+      document.getElementById('fundingSelector').style.display = 'none';
+      document.getElementById('fundingOd').classList.add('show');
+      return;
+    }
+    const canMain = price <= MAIN;
+    const canReward = price <= REWARD;
+    const optMain = document.getElementById('optMain');
+    const optReward = document.getElementById('optReward');
+    optMain.classList.toggle('disabled', !canMain);
+    optReward.classList.toggle('disabled', !canReward);
+    if (selectedAccount === 'main' && !canMain && canReward) selectedAccount = 'reward';
+    if (selectedAccount === 'reward' && !canReward && canMain) selectedAccount = 'main';
+    optMain.classList.toggle('selected', selectedAccount === 'main');
+    optReward.classList.toggle('selected', selectedAccount === 'reward');
+  }
+
+  function selectAccount(acct) {
+    const opt = document.getElementById(acct === 'main' ? 'optMain' : 'optReward');
+    if (opt.classList.contains('disabled')) return;
+    selectedAccount = acct;
+    renderFunding();
+  }
+
+  function confirmPay() {
+    const d = JSON.parse(sessionStorage.getItem('packageData') || '{}');
+    if (!isOverdraft) d.payAccount = selectedAccount;
+    d.fee = '0.00';
+    d.total = price.toFixed(2);
+    sessionStorage.setItem('packageData', JSON.stringify(d));
+    window.location.href = 'Package_Enter PIN.html';
+  }
+
+  function goBack() { window.location.href = 'Package_Select.html'; }
+
+  renderFunding();
+</script>
+
+<script src="figma-export.js"></script>
+</body>
+</html>
