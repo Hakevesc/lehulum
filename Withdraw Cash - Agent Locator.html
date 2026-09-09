@@ -83,17 +83,17 @@
   .agent-chip .sub { font-family: 'Switzer', sans-serif; font-size: 11.5px; color: var(--On-Surface-Low); }
 
   /* ── QR scanner viewport ── */
-  .qr-stage { background: #1C1C21; border-radius: 14px; height: 190px; position: relative; display: flex; align-items: center; justify-content: center; overflow: hidden; cursor: pointer; }
-  .qr-stage .grid-bg { position: absolute; inset: 0; background-image: linear-gradient(rgba(255,255,255,0.05) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.05) 1px, transparent 1px); background-size: 22px 22px; }
-  .qr-window { position: relative; width: 128px; height: 128px; }
-  .qr-window i { position: absolute; width: 26px; height: 26px; border: 3px solid var(--Primary); }
+  .qr-stage { background: #1C1C21; border-radius: 14px; min-height: 232px; position: relative; display: flex; flex-direction: column; align-items: center; justify-content: center; overflow: hidden; cursor: pointer; padding: 24px 16px 24px; gap: 24px; margin-bottom: 12px; }
+  .qr-stage .grid-bg { position: absolute; inset: 0; background-image: linear-gradient(rgba(255,255,255,0.05) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.05) 1px, transparent 1px); background-size: 22px 22px; pointer-events: none; }
+  .qr-window { position: relative; width: 100px; height: 100px; flex-shrink: 0; }
+  .qr-window i { position: absolute; width: 24px; height: 24px; border: 3px solid var(--Primary); }
   .qr-window i:nth-child(1) { top: 0; left: 0; border-right: none; border-bottom: none; border-radius: 8px 0 0 0; }
   .qr-window i:nth-child(2) { top: 0; right: 0; border-left: none; border-bottom: none; border-radius: 0 8px 0 0; }
   .qr-window i:nth-child(3) { bottom: 0; left: 0; border-right: none; border-top: none; border-radius: 0 0 0 8px; }
   .qr-window i:nth-child(4) { bottom: 0; right: 0; border-left: none; border-top: none; border-radius: 0 0 8px 0; }
   .qr-laser { position: absolute; left: 6px; right: 6px; height: 2px; background: var(--Primary); box-shadow: 0 0 10px rgba(254,53,61,0.9); border-radius: 2px; animation: sweep 2.2s ease-in-out infinite; }
-  @keyframes sweep { 0%, 100% { top: 8px; } 50% { top: 118px; } }
-  .qr-caption { position: absolute; bottom: 14px; left: 0; right: 0; text-align: center; font-family: 'Switzer', sans-serif; font-size: 11.5px; color: rgba(255,255,255,0.75); }
+  @keyframes sweep { 0%, 100% { top: 6px; } 50% { top: 92px; } }
+  .qr-caption { position: relative; z-index: 1; text-align: center; font-family: 'Switzer', sans-serif; font-size: 12px; line-height: 1.45; color: rgba(255,255,255,0.78); margin: 0; }
   .qr-actions { display: flex; gap: 10px; }
   .qr-action { flex: 1; height: 42px; border: 1.5px solid var(--Border); background: var(--Field); border-radius: 12px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 7px; font-family: 'Switzer', sans-serif; font-size: 12.5px; font-weight: 600; color: var(--On-Surface); transition: border-color 0.2s, background 0.2s; }
   .qr-action:hover { border-color: var(--Primary); background: #FFF; }
@@ -190,7 +190,6 @@
           <span class="field-label">Agent Short Code</span>
           <div class="field">
             <input id="codeInput" class="strong" type="text" inputmode="numeric" maxlength="6" placeholder="e.g. 323217" oninput="onCodeInput(this)">
-            <span class="suffix" id="codeCount">0/6</span>
           </div>
           <div class="msg warn" id="codeMsg">
             <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 8v5M12 16h.01"/></svg>
@@ -226,23 +225,13 @@
       <!-- ── QR panel ── -->
       <div class="panel" id="panelQr">
         <div class="form-card">
-          <div class="qr-stage" onclick="simulateScan()">
+          <div class="qr-stage">
             <div class="grid-bg"></div>
             <div class="qr-window">
               <i></i><i></i><i></i><i></i>
               <div class="qr-laser"></div>
             </div>
-            <div class="qr-caption">Point the camera at the agent's QR code</div>
-          </div>
-          <div class="qr-actions" style="margin-top:8px">
-            <button class="qr-action" onclick="simulateScan()">
-              <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2.5"/><circle cx="12" cy="12" r="3.2"/></svg>
-              Scan
-            </button>
-            <button class="qr-action" onclick="simulateScan()">
-              <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="2.5"/><path d="M3 16l5-4 4 3 3-2 6 4"/><circle cx="8.5" cy="9" r="1.5"/></svg>
-              From gallery
-            </button>
+            <div class="qr-caption">Point the camera at<br>the agent's QR code</div>
           </div>
           <div class="loading-chip" id="qrLoading">
             <div class="loading-spinner"></div>
@@ -358,6 +347,7 @@
   const MIN_AMT = 10, MAX_AMT = 10000, BALANCE = 12580;
   let tab = 'code';          // 'code' | 'qr'
   let agent = null;          // resolved agent for the active tab
+  let qrScanTimeout = null;  // timeout for auto-scan
 
   const $ = id => document.getElementById(id);
 
@@ -373,13 +363,18 @@
     $('qrChip').classList.remove('show');
     $('codeMsg').classList.remove('show');
     if (t === 'code') resolveCode($('codeInput').value.trim());
+
+    // Auto-scan after 10 seconds on QR tab
+    if (t === 'qr') {
+      clearTimeout(qrScanTimeout);
+      qrScanTimeout = setTimeout(() => simulateScan(), 10000);
+    }
     updateBtn();
   }
 
   /* ── Short code ── */
   function onCodeInput(el) {
     el.value = el.value.replace(/\D/g, '').slice(0, 6);
-    $('codeCount').textContent = el.value.length + '/6';
     resolveCode(el.value);
     updateBtn();
   }
@@ -470,7 +465,6 @@
     if (tab !== 'code') switchTab('code');
     const el = $('codeInput');
     el.value = code;
-    $('codeCount').textContent = code.length + '/6';
     resolveCode(code);
     updateBtn();
     $('amtCode').focus();

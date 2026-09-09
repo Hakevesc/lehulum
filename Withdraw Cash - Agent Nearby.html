@@ -145,7 +145,7 @@
         <div class="map-label" style="left:47%;top:58%;font-weight:700;color:#2B6BFF;">You</div>
       </div>
 
-      <div class="list-hint"><b id="agentCount"></b> near <span id="areaName">Bole, Addis Ababa</span> &mdash; sorted by distance.</div>
+      <div class="list-hint"><b id="agentCount"></b> authorized agents near <span id="areaName">Bole, Addis Ababa</span></div>
       <div id="agentList" class="agent-list"></div>
 
     </div>
@@ -188,8 +188,7 @@
     '</div>'
   ).join('');
 
-  document.getElementById('agentCount').textContent =
-    AGENTS.length + ' authorized agent' + (AGENTS.length === 1 ? '' : 's');
+  document.getElementById('agentCount').textContent = AGENTS.length;
 
   /* ── Location search ── */
   const AREAS = [
