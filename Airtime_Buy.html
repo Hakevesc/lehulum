@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Buy Airtime</title>
+<title>Buy Airtime / Packages</title>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@400;500;600&display=swap');
   @import url('https://api.fontshare.com/v2/css?f[]=switzer@400,500,600,700&display=swap');
@@ -54,8 +54,9 @@
     align-items: center;
     gap: 8px;
     background: #FFF;
-    border-radius: 14px;
-    padding: 6px 4px;
+    border: 1.5px solid var(--Border);
+    border-radius: 12px;
+    padding: 6px 10px 6px 4px;
     box-shadow: 0 2px 8px rgba(0,0,0,0.04);
     width: 100%;
   }
@@ -80,42 +81,33 @@
     height: 46px;
     border: none;
     background: transparent;
-    padding: 0 6px;
+    padding: 0 8px 0 14px;
     min-width: 0;
     width: 40px;
     font-family: 'Switzer', sans-serif;
-    font-size: 14px;
+    font-size: 16px;
     font-weight: 600;
     color: var(--On-Surface);
     outline: none;
   }
-  .recipient-toggle {
-    display: flex;
-    background: var(--Background);
-    border-radius: 8px;
-    padding: 3px;
-    gap: 3px;
-    flex-shrink: 0;
-  }
   .recipient-btn {
     height: 40px;
-    padding: 0 10px;
+    padding: 0 14px;
     border: none;
     border-radius: 7px;
     background: transparent;
-    font-family: 'Switzer', sans-serif;
-    font-size: 10px;
+    font-family:'Switzer', sans-serif;
+    font-size: 12px;
     font-weight: 600;
     color: var(--On-Surface-Low);
     cursor: pointer;
     transition: all 0.2s;
     display: flex;
-    flex-direction: column;
+    flex-direction: row;
     align-items: center;
     justify-content: center;
-    gap: 1px;
+    gap: 6px;
     white-space: nowrap;
-    min-width: 42px;
   }
   .recipient-btn svg {
     width: 16px;
@@ -157,37 +149,37 @@
   .service-tabs-container {
     display: flex;
     align-items: center;
-    gap: 8px;
   }
   .service-tabs {
     flex: 1;
-    background: var(--Background);
-    border-radius: 12px;
-    padding: 6px;
+    background: var(--Primary);
+    border: 1.5px solid var(--Primary);
+    border-radius: 14px;
+    padding: 3px;
     display: flex;
-    gap: 6px;
+    gap: 0;
   }
   .service-tab {
     flex: 1;
-    height: 44px;
-    border-radius: 10px;
+    height: 40px;
+    border-radius: 11px;
     border: none;
-    background: #FFF;
+    background: transparent;
     font-family: 'Switzer', sans-serif;
-    font-size: 14px;
+    font-size: 13px;
     font-weight: 600;
     color: var(--On-Surface-Low);
     cursor: pointer;
-    transition: all 0.2s;
+    transition: all 0.18s;
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 8px;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+    gap: 6px;
+    white-space: nowrap;
   }
   .service-tab svg {
-    width: 18px;
-    height: 18px;
+    width: 17px;
+    height: 17px;
     stroke: currentColor;
     fill: none;
     stroke-width: 2;
@@ -199,33 +191,19 @@
   }
   .service-tab.inactive {
     background: transparent;
-    color: var(--On-Surface-Low);
-    box-shadow: none;
+    color: rgba(255,255,255,0.7);
   }
-  .favorites-btn {
+  .service-tab.tab-fav {
+    flex: none;
     width: 44px;
-    height: 44px;
-    border-radius: 10px;
-    border: 1.5px solid var(--Border);
-    background: #FFF;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: all 0.2s;
-    flex-shrink: 0;
+    padding: 0;
+    color: rgba(255,255,255,0.7);
   }
-  .favorites-btn:hover {
-    border-color: var(--Warning);
-    background: #FFFCF0;
+  .service-tab.tab-fav svg {
+    width: 18px;
+    height: 18px;
   }
-  .favorites-btn svg {
-    width: 20px;
-    height: 20px;
-    stroke: #FFB800;
-    stroke-width: 2;
-    fill: #FFB800;
-  }
+
 
   /* === Provider cards === */
   .provider-row { display: flex; gap: 10px; }
@@ -233,7 +211,11 @@
   .prov-card:hover { border-color: var(--Primary); background: #FFF7F7; }
   .prov-card.active { border-color: var(--Primary); background: #FFF1F2; box-shadow: 0 2px 10px rgba(254,53,61,0.12); }
   .prov-card-logo { width: 32px; height: 32px; border-radius: 8px; object-fit: contain; background: #FFF; padding: 3px; border: 1px solid var(--Border); flex-shrink: 0; }
-  .prov-card-name { font-family: 'Switzer', sans-serif; font-size: 13px; font-weight: 600; color: var(--On-Surface); }
+  .prov-card-name { font-family: 'Switzer', sans-serif; font-size: 13px; font-weight: 600; color: var(--On-Surface); flex: 1; }
+  .prov-radio { width: 20px; height: 20px; border-radius: 50%; border: 2px solid var(--Border); background: #FFF; flex-shrink: 0; transition: all 0.18s; display: flex; align-items: center; justify-content: center; }
+  .prov-radio::after { content: ''; width: 10px; height: 10px; border-radius: 50%; background: transparent; transition: all 0.18s; }
+  .prov-card.active .prov-radio { border-color: var(--Primary); }
+  .prov-card.active .prov-radio::after { background: var(--Primary); }
 
   /* === Field error === */
   .field-error { display: none; align-items: center; gap: 6px; padding-left: 4px; }
@@ -241,7 +223,7 @@
   .field-error svg { width: 14px; height: 14px; stroke: var(--Primary); stroke-width: 2; fill: none; flex-shrink: 0; }
   .field-error span { color: var(--Primary); font-family: 'Switzer', sans-serif; font-size: 12px; font-weight: 500; }
 
-  /* Airtime Amount grid */
+  /* Airtime Amount grid - 3 per row */
   .amount-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
   .amount-grid.hidden { display: none; }
   
@@ -249,31 +231,63 @@
   .pkg-section { display: none; flex-direction: column; gap: 12px; }
   .pkg-section.show { display: flex; }
   .pkg-cat-row { display: flex; gap: 6px; flex-wrap: wrap; }
-  .pkg-cat-tab { padding: 7px 14px; border-radius: 20px; border: 1.5px solid var(--Border); background: #FFF; font-family: 'Switzer', sans-serif; font-size: 12px; font-weight: 600; color: var(--On-Surface-Low); cursor: pointer; transition: all 0.18s; }
-  .pkg-cat-tab:hover { border-color: var(--Primary); color: var(--Primary); }
+  .pkg-cat-tab { padding: 7px 14px; border-radius: 0; border: 1.5px solid var(--Border); border-right-width: 0.5px; background: #FFF; font-family: 'Switzer', sans-serif; font-size: 12px; font-weight: 600; color: var(--On-Surface-Low); cursor: pointer; transition: all 0.18s; white-space: nowrap; }
+  .pkg-cat-tab:last-child { border-right-width: 1.5px; border-radius: 0 20px 20px 0; }
+  .pkg-cat-tab:first-child { border-radius: 20px 0 0 20px; }
   .pkg-cat-tab.active { background: var(--Primary); border-color: var(--Primary); color: #FFF; box-shadow: 0 2px 8px rgba(254,53,61,0.2); }
-  .pkg-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; }
-  .pkg-card { background: #FFF; border: 1.5px solid var(--Border); border-radius: 14px; padding: 12px; cursor: pointer; transition: all 0.18s; display: flex; flex-direction: column; gap: 4px; box-shadow: 0 2px 8px rgba(0,0,0,0.04); position: relative; }
+  .pkg-cat-tab:hover { border-color: var(--Primary); color: var(--Primary); }
+  .pkg-cat-scroll { overflow-x: auto; white-space: nowrap; display: flex; gap: 0; padding: 0; -webkit-overflow-scrolling: touch; scrollbar-width: none; }
+  .pkg-cat-scroll::-webkit-scrollbar { display: none; }
+  .pkg-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 5px; align-content: start; }
+  .pkg-card { background: #FFF; border: 1.5px solid var(--Border); border-radius: 14px; padding: 10px; cursor: pointer; transition: all 0.18s; display: flex; flex-direction: column; gap: 5px; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04); position: relative; }
   .pkg-card:hover { border-color: var(--Primary); background: #FFF7F7; transform: translateY(-1px); }
-  .pkg-card.active { border-color: var(--Primary); background: #FFF1F2; box-shadow: 0 2px 10px rgba(254,53,61,0.15); }
-  .pkg-card-title { font-family: 'Switzer', sans-serif; font-size: 14px; font-weight: 700; color: var(--On-Surface); }
+  .pkg-card.active { border-color: var(--Primary); background: var(--Primary); box-shadow: 0 2px 10px rgba(254,53,61,0.15); }
+  .pkg-card.active .pkg-card-title { color: #FFF; }
+  .pkg-card-title { font-family: 'Switzer', sans-serif; font-size: 14px; font-weight: 700; color: var(--On-Surface); display: flex; align-items: center; justify-content: space-between; }
+  .pkg-card.active .pkg-card-desc { color: rgba(255,255,255,0.7); }
   .pkg-card-desc { font-family: 'Switzer', sans-serif; font-size: 11px; color: var(--On-Surface-Low); line-height: 1.3; }
-  .pkg-card-price { font-family: 'Switzer', sans-serif; font-size: 13px; font-weight: 700; color: var(--Primary); margin-top: 2px; }
+  .pkg-card.active .pkg-card-price { color: #FFF; }
+  .pkg-card-price { font-family: 'Switzer', sans-serif; font-size: 12px; font-weight: 700; color: var(--Primary); flex-shrink: 0; margin-left: auto; }
   .pkg-card-badge { position: absolute; top: -4px; right: -4px; background: var(--Warning); color: #FFF; font-family: 'Switzer', sans-serif; font-size: 9px; font-weight: 700; padding: 3px 7px; border-radius: 8px; line-height: 1; }
   .pkg-card-fav { position: absolute; bottom: 6px; right: 6px; width: 18px; height: 18px; stroke: #B0B0B8; stroke-width: 2; fill: rgba(176,176,184,0.3); cursor: pointer; transition: all 0.15s; }
   .pkg-card-fav:hover { stroke: #FFB800; fill: rgba(255,184,0,0.4); }
+  .pkg-subcat-title { font-family: 'Switzer', sans-serif; font-size: 12px; font-weight: 700; color: var(--On-Surface-Low); text-transform: uppercase; letter-spacing: 0.5px; padding: 8px 2px 4px; grid-column: 1 / -1; }
+  .pkg-subcat-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; grid-column: 1 / -1; }
+  .pkg-card.active .pkg-card-fav { stroke: rgba(255,255,255,0.6); fill: rgba(255,255,255,0.3); }
+  .pkg-card.active .pkg-card-fav.active { stroke: #FFF; fill: #FFF; }
+  .pkg-card.active .pkg-card-fav:hover { stroke: #FFF; fill: #FFF; }
   .pkg-card-fav.active { stroke: #FFB800; fill: #FFB800; }
-  .amt-card { background: #FFF; border: 1.5px solid var(--Border); border-radius: 14px; padding: 16px 8px; cursor: pointer; transition: all 0.18s; display: flex; flex-direction: column; align-items: center; gap: 2px; box-shadow: 0 2px 8px rgba(0,0,0,0.04); }
+  
+  /* Amount card - side by side layout */
+  .amt-card { background: #FFF; border: 1.5px solid var(--Border); border-radius: 14px; padding: 14px 12px; cursor: pointer; transition: all 0.18s; display: flex; flex-direction: row; align-items: center; justify-content: center; gap: 6px; box-shadow: 0 2px 8px rgba(0,0,0,0.04); }
   .amt-card:hover { border-color: var(--Primary); background: #FFF7F7; transform: translateY(-1px); }
-  .amt-card.active { border-color: var(--Primary); background: #FFF1F2; box-shadow: 0 2px 10px rgba(254,53,61,0.15); }
+  .amt-card.active { border-color: var(--Primary); background: var(--Primary); box-shadow: 0 2px 10px rgba(254,53,61,0.25); }
+  .amt-card.active .amt-card-val { color: #FFF; }
+  .amt-card.active .amt-card-cur { color: rgba(255,255,255,0.8); }
   .amt-card-val { font-family: 'Switzer', sans-serif; font-size: 20px; font-weight: 700; color: var(--On-Surface); line-height: 1.2; }
-  .amt-card-cur { font-family: 'Inter', sans-serif; font-size: 11px; font-weight: 500; color: var(--On-Surface-Low); }
+  .amt-card-cur { font-family: 'Inter', sans-serif; font-size: 13px; font-weight: 500; color: var(--On-Surface-Low); }
 
   /* Continue button */
   .continue-btn { width: 100%; height: 52px; border-radius: 14px; border: none; background: #E0E0E0; color: var(--On-Surface-Low); font-family: 'Poppins', sans-serif; font-size: 15px; font-weight: 500; cursor: not-allowed; transition: all 0.2s; flex-shrink: 0; }
   .continue-btn.active { background: var(--Primary); color: #FFF; cursor: pointer; box-shadow: 0 4px 16px rgba(254,53,61,0.25); }
   .continue-btn.active:hover { background: #E5303A; transform: translateY(-1px); }
   .continue-btn.active:active { transform: scale(0.98); }
+
+  /* === Funding selector (matching other pages) === */
+  .funding-selector { display: flex; gap: 10px; }
+  .fund-option { flex: 1; background: #FFF; border: 1.5px solid var(--Border); border-radius: 14px; padding: 11px 12px; cursor: pointer; transition: all 0.18s; display: flex; flex-direction: column; gap: 3px; }
+  .fund-option:hover { border-color: var(--Primary); background: #FFF7F7; }
+  .fund-option.selected { border-color: var(--Primary); background: #FFF1F2; box-shadow: 0 2px 10px rgba(254,53,61,0.12); }
+  .fund-option .fo-top { display: flex; align-items: center; justify-content: space-between; }
+  .fund-option .fo-name { font-family: 'Switzer', sans-serif; font-size: 13px; font-weight: 600; color: var(--On-Surface); }
+  .fund-option .radio { width: 18px; height: 18px; border-radius: 50%; border: 2px solid var(--Border); flex-shrink: 0; display: flex; align-items: center; justify-content: center; transition: all 0.18s; }
+  .fund-option .radio::after { content: ''; width: 9px; height: 9px; border-radius: 50%; background: transparent; transition: all 0.18s; }
+  .fund-option.selected .radio { border-color: var(--Primary); }
+  .fund-option.selected .radio::after { background: var(--Primary); }
+  .fund-option .fo-bal { font-family: 'Switzer', sans-serif; font-size: 12px; font-weight: 500; color: var(--On-Surface); }
+  .fund-option .fo-tag { display: none; font-family: 'Switzer', sans-serif; font-size: 10px; font-weight: 500; color: var(--Warning); }
+  .fund-option .fo-tag.show { display: inline; }
+  .account-select-label { color: var(--On-Surface-Low); font-family: 'Switzer', sans-serif; font-size: 11.5px; font-weight: 600; letter-spacing: 0.4px; text-transform: uppercase; }
 
   /* === Bottom sheets === */
   .modal-overlay { position: absolute; inset: 0; z-index: 1000; background: rgba(0,0,0,0.5); display: none; align-items: flex-end; justify-content: center; }
@@ -291,6 +305,38 @@
   .sheet-item-name { font-family: 'Switzer', sans-serif; font-size: 14px; font-weight: 600; color: var(--On-Surface); }
   .sheet-item-sub { font-family: 'Switzer', sans-serif; font-size: 12px; color: var(--On-Surface-Low); margin-top: 1px; }
   .sheet-item .fav-star { width: 16px; height: 16px; stroke: #FFB800; stroke-width: 2; fill: #FFB800; flex-shrink: 0; }
+
+  /* Custom amount box */
+  .custom-amount-box {
+    grid-column: 1 / -1;
+    margin-top: 10px;
+    margin-bottom: 4px;
+  }
+  .custom-amount-input {
+    width: 100%;
+    height: 55px;
+    border: 1.5px solid var(--Border);
+    border-radius: 12px;
+    background: #FFF;
+    padding: 0 16px;
+    font-family: 'Switzer', sans-serif;
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--On-Surface);
+    outline: none;
+    transition: border-color 0.2s;
+    box-sizing: border-box;
+  }
+  .custom-amount-input:focus {
+    border-color: var(--Primary);
+  }
+  .custom-amount-input::placeholder {
+    color: var(--On-Surface-Low);
+    font-weight: 400;
+  }
+  .amt-card {
+    position: relative;
+  }
 </style>
 </head>
 <body>
@@ -310,7 +356,7 @@
       <button class="back-btn" onclick="goBack()">
         <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
       </button>
-      <span class="header-title">Buy Airtime</span>
+      <span class="header-title">Buy Airtime/Packages</span>
       <div style="width:36px;"></div>
   </div>
 
@@ -325,25 +371,19 @@
     <div class="phone-section">
       <div class="phone-input-container">
         <div class="phone-input-wrapper">
-          <svg class="phone-icon" viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.362 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.338 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+          <svg class="phone-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2h10l4 4v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2z"/><line x1="8" y1="12" x2="16" y2="12"/><line x1="10" y1="8" x2="14" y2="8"/><line x1="10" y1="16" x2="14" y2="16"/></svg>
           <input class="phone-input" id="numberInput" type="tel" inputmode="numeric" placeholder="09XX XXX XXX" value="0712 131 415" readonly>
         </div>
         <div class="recipient-toggle">
-          <button class="recipient-btn active" id="tabSelf" onclick="setRecipientType('self')">
-            <svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-            <span>Self</span>
-          </button>
-          <button class="recipient-btn" id="tabOthers" onclick="setRecipientType('others')">
+          <button class="recipient-btn active" id="tabOthers" onclick="setRecipientType('others')">
             <svg viewBox="0 0 24 24"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
             <span>Other</span>
           </button>
         </div>
         <button class="contacts-btn" onclick="openContacts()" aria-label="Select from contacts">
-          <svg viewBox="0 0 24 24" fill="none" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/>
-            <circle cx="9" cy="7" r="4"/>
-            <path d="M22 21v-2a4 4 0 0 0-3-3.87"/>
-            <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+            <circle cx="12" cy="7" r="4"/>
           </svg>
         </button>
       </div>
@@ -353,7 +393,7 @@
       </div>
     </div>
 
-    <!-- Airtime / Data.Voice tabs + Fav icon (for packages only) -->
+    <!-- Airtime / Packages tabs + Fav icon -->
     <div class="service-tabs-container">
       <div class="service-tabs">
         <button class="service-tab active" id="tabAirtime" onclick="setPurchaseType('airtime')">
@@ -362,14 +402,14 @@
         </button>
         <button class="service-tab inactive" id="tabPackage" onclick="setPurchaseType('package')">
           <svg viewBox="0 0 24 24"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg>
-          Data/Voice
+          Packages
+        </button>
+        <button class="service-tab inactive tab-fav" id="tabFav" onclick="openFav()" aria-label="Favourite">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
+          </svg>
         </button>
       </div>
-      <button class="favorites-btn" onclick="openFavPackages()" aria-label="Favourite packages">
-        <svg viewBox="0 0 24 24" fill="none" stroke-linecap="round" stroke-linejoin="round">
-          <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
-        </svg>
-      </button>
     </div>
 
     <!-- Airtime amounts (shown for airtime) -->
@@ -378,10 +418,29 @@
       <!-- rendered by JS -->
     </div>
     
+    <!-- Account selection (funding selector like other pages) - shown for airtime -->
+    <div class="funding-selector" id="accountSelect">
+      <div class="fund-option selected" id="optMain" onclick="selectPayAccount('main')">
+        <div class="fo-top">
+          <span class="fo-name">Main Account</span>
+          <span class="radio" id="radioMain"></span>
+        </div>
+        <span class="fo-bal" id="balMain">12,580.00 ETB</span>
+        <span class="fo-tag">Low balance</span>
+      </div>
+      <div class="fund-option" id="optReward" onclick="selectPayAccount('reward')">
+        <div class="fo-top">
+          <span class="fo-name">Reward Account</span>
+          <span class="radio" id="radioReward"></span>
+        </div>
+        <span class="fo-bal" id="balReward">800.00 ETB</span>
+        <span class="fo-tag">Low balance</span>
+      </div>
+    </div>
+    
     <!-- Package section (shown for package) -->
     <div class="pkg-section" id="pkgSection">
-      <span class="section-label">Package type</span>
-      <div class="pkg-cat-row" id="pkgCatRow">
+      <div class="pkg-cat-scroll" id="pkgCatScroll">
         <!-- rendered by JS -->
       </div>
       <div class="pkg-grid" id="pkgGrid">
@@ -406,10 +465,10 @@
   </div>
 
   <!-- Favourites bottom sheet (packages only) -->
-  <div class="modal-overlay" id="favOverlay" onclick="if(event.target===this)closeFavPackages()">
+  <div class="modal-overlay" id="favOverlay" onclick="if(event.target===this)closeFav()">
     <div class="bottom-sheet">
       <div class="sheet-grip"></div>
-      <div class="sheet-title">Favourite packages</div>
+      <div class="sheet-title" id="favTitle">Favourites</div>
       <div class="sheet-list" id="favList"></div>
     </div>
   </div>
@@ -420,7 +479,7 @@
   const REGISTERED = '0712131415';
   const PROVIDERS = [
     { id: 'safaricom', name: 'Safaricom',     logo: 'assets/banks logo/M-PESA-logo-icon.png' },
-    { id: 'ethio',     name: 'Ethio Telecom', logo: 'assets/ethio-tele-logo.jpg' }
+    { id: 'ethio',     name: 'Ethiotele', logo: 'assets/ethio-tele-logo.jpg' }
   ];
   const AMOUNTS = [5, 10, 15, 25, 50, 100, 250, 500, 1000];
   const contacts = [
@@ -436,6 +495,7 @@
   let providerIndex = 0;
   let selectedAmount = null;
   let digits = REGISTERED;
+  let payAccount = 'main';
 
   function initials(name) { return name.split(' ').map(p => p[0]).slice(0, 2).join('').toUpperCase(); }
   function formatNumber(d) {
@@ -446,23 +506,37 @@
   function isValid(d) { return d.length === 10 && (d.startsWith('09') || d.startsWith('07')); }
   function isUnregistered(d) { return isValid(d) && d.endsWith('0000'); }
 
-  const PACKAGE_CATS = ['All', 'Data', 'Voice', 'SMS', 'Combo'];
+  const PACKAGE_CATS = ['Data', 'Voice', 'SMS', 'Combo', 'Unlimited'];
   const PACKAGES = [
-    { cat: 'Data',   title: '500 MB',     desc: 'Valid 30 days',    price: '50 Birr',  badge: '25% OFF' },
-    { cat: 'Data',   title: '1 GB',       desc: 'Valid 30 days',    price: '100 Birr' },
-    { cat: 'Data',   title: '2 GB',       desc: 'Valid 30 days',    price: '200 Birr' },
-    { cat: 'Data',   title: '5 GB',       desc: 'Valid 30 days',    price: '350 Birr', badge: 'HOT' },
+    { cat: 'Data',   subCat: 'Daily / Hourly', title: '100 MB',     desc: 'Valid 1 day',       price: '10 Birr' },
+    { cat: 'Data',   subCat: 'Daily / Hourly', title: '250 MB',     desc: 'Valid 1 day',       price: '25 Birr' },
+    { cat: 'Data',   subCat: 'Daily / Hourly', title: '500 MB',     desc: 'Valid 3 hours',     price: '30 Birr', badge: 'HOT' },
+    { cat: 'Data',   subCat: 'Weekly',         title: '1 GB',       desc: 'Valid 7 days',      price: '100 Birr' },
+    { cat: 'Data',   subCat: 'Weekly',         title: '2 GB',       desc: 'Valid 7 days',      price: '180 Birr' },
+    { cat: 'Data',   subCat: 'Monthly',        title: '2 GB',       desc: 'Valid 30 days',     price: '200 Birr' },
+    { cat: 'Data',   subCat: 'Monthly',        title: '5 GB',       desc: 'Valid 30 days',     price: '350 Birr', badge: '25% OFF' },
+    { cat: 'Voice',  title: '50 Min',     desc: 'On-net calls',     price: '15 Birr' },
     { cat: 'Voice',  title: '100 Min',    desc: 'On-net calls',     price: '30 Birr' },
     { cat: 'Voice',  title: '300 Min',    desc: 'All network',      price: '80 Birr' },
     { cat: 'Voice',  title: '500 Min',    desc: 'All network',      price: '120 Birr' },
+    { cat: 'SMS',    title: '50 SMS',     desc: 'All network',      price: '10 Birr' },
     { cat: 'SMS',    title: '100 SMS',    desc: 'All network',      price: '20 Birr' },
     { cat: 'SMS',    title: '500 SMS',    desc: 'All network',      price: '50 Birr' },
+    { cat: 'Combo',  title: '500M+50M',   desc: 'Data + voice mix', price: '80 Birr' },
     { cat: 'Combo',  title: '1GB+100M',   desc: 'Data + voice mix', price: '150 Birr', badge: '15% OFF' },
     { cat: 'Combo',  title: '3GB+300M',   desc: 'Data + voice mix', price: '300 Birr' },
-    { cat: 'Combo',  title: '5GB+500M',   desc: 'Data + voice mix', price: '450 Birr' }
+    { cat: 'Combo',  title: '5GB+500M',   desc: 'Data + voice mix', price: '450 Birr' },
+    { cat: 'Unlimited', subCat: 'Data',  title: '1 Day Data',         desc: 'Unlimited data 1 day',  price: '100 Birr' },
+    { cat: 'Unlimited', subCat: 'Data',  title: '7 Days Data',        desc: 'Unlimited data 7 days', price: '350 Birr' },
+    { cat: 'Unlimited', subCat: 'Data',  title: '30 Days Data',       desc: 'Unlimited data 30 days',price: '999 Birr' },
+    { cat: 'Unlimited', subCat: 'Voice', title: '1 Day Voice',        desc: 'Unlimited calls 1 day',  price: '50 Birr' },
+    { cat: 'Unlimited', subCat: 'Voice', title: '7 Days Voice',       desc: 'Unlimited calls 7 days', price: '200 Birr' },
+    { cat: 'Unlimited', subCat: 'Combo', title: '1 Day Combo',        desc: 'Data + voice unlimited', price: '120 Birr' },
+    { cat: 'Unlimited', subCat: 'Combo', title: '7 Days Combo',       desc: 'Data + voice unlimited', price: '500 Birr' }
   ];
   let pkgCatIndex = 0;
   let favPackages = new Set();
+  let customAmount = 0;
   let selectedPkg = null;
 
   function setPurchaseType(t) {
@@ -479,14 +553,17 @@
     const amountSection = document.getElementById('amountGrid');
     const amountLabel = document.getElementById('amountLabel');
     const pkgSection = document.getElementById('pkgSection');
+    const accountSelect = document.getElementById('accountSelect');
     if (t === 'airtime') {
       amountLabel.style.display = '';
       amountSection.classList.remove('hidden');
       pkgSection.classList.remove('show');
+      accountSelect.style.display = '';
     } else {
       amountLabel.style.display = 'none';
       amountSection.classList.add('hidden');
       pkgSection.classList.add('show');
+      accountSelect.style.display = 'none';
       renderPackageCats();
       renderPackages();
     }
@@ -495,28 +572,13 @@
 
   function setRecipientType(t) {
     recipientType = t;
-    const btnSelf = document.getElementById('tabSelf');
-    const btnOthers = document.getElementById('tabOthers');
-    if (t === 'self') {
-      btnSelf.classList.add('active');
-      btnOthers.classList.remove('active');
-    } else {
-      btnSelf.classList.remove('active');
-      btnOthers.classList.add('active');
-    }
     const input = document.getElementById('numberInput');
-    if (t === 'self') {
-      digits = REGISTERED;
-      input.value = formatNumber(REGISTERED);
-      input.readOnly = true;
-    } else {
-      if (digits === REGISTERED) {
-        digits = '';
-        input.value = '';
-      }
-      input.readOnly = false;
-      input.focus();
+    if (digits === REGISTERED) {
+      digits = '';
+      input.value = '';
     }
+    input.readOnly = false;
+    input.focus();
     document.getElementById('fieldError').classList.remove('show');
     updateContinue();
   }
@@ -527,6 +589,7 @@
       <div class="prov-card ${i === providerIndex ? 'active' : ''}" onclick="selectProvider(${i})">
         <img class="prov-card-logo" src="${p.logo}" alt="${p.name}">
         <span class="prov-card-name">${p.name}</span>
+        <span class="prov-radio"></span>
       </div>`).join('');
   }
   function selectProvider(i) {
@@ -541,15 +604,44 @@
         <span class="amt-card-val">${a}</span>
         <span class="amt-card-cur">Birr</span>
       </div>`).join('');
+    // Add custom amount box after grid
+    const customDiv = document.createElement('div');
+    customDiv.className = 'custom-amount-box';
+    const custInput = document.createElement('input');
+    custInput.className = 'custom-amount-input';
+    custInput.id = 'customAmountInput';
+    custInput.type = 'number';
+    custInput.inputMode = 'numeric';
+    custInput.placeholder = 'Other amount';
+    custInput.value = customAmount > 0 ? customAmount : '';
+    custInput.addEventListener('input', function() {
+      customAmount = parseInt(this.value) || 0;
+      if (customAmount > 0) {
+        selectedAmount = null;
+        document.querySelectorAll('.amt-card').forEach(el => el.classList.remove('active'));
+      }
+      updateContinue();
+    });
+    customDiv.appendChild(custInput);
+    grid.appendChild(customDiv);
   }
   function selectAmount(i) {
     selectedAmount = i;
+    customAmount = 0;
+    const custInput = document.getElementById('customAmountInput');
+    if (custInput) custInput.value = '';
     document.querySelectorAll('.amt-card').forEach((el, idx) => el.classList.toggle('active', idx === i));
     updateContinue();
   }
 
+  function selectPayAccount(type) {
+    payAccount = type;
+    document.querySelectorAll('.fund-option').forEach(el => el.classList.remove('selected'));
+    document.getElementById(type === 'main' ? 'optMain' : 'optReward').classList.add('selected');
+  }
+
   function renderPackageCats() {
-    const row = document.getElementById('pkgCatRow');
+    const row = document.getElementById('pkgCatScroll');
     row.innerHTML = PACKAGE_CATS.map((c, i) => `
       <button class="pkg-cat-tab ${i === pkgCatIndex ? 'active' : ''}" onclick="selectPackageCat(${i})">${c}</button>
     `).join('');
@@ -557,25 +649,48 @@
   }
   function selectPackageCat(i) {
     pkgCatIndex = i;
-    document.getElementById('pkgCatRow').querySelectorAll('.pkg-cat-tab').forEach((el, idx) => el.classList.toggle('active', idx === i));
+    document.getElementById('pkgCatScroll').querySelectorAll('.pkg-cat-tab').forEach((el, idx) => el.classList.toggle('active', idx === i));
     renderPackages();
   }
   function renderPackages() {
     const grid = document.getElementById('pkgGrid');
     const cat = PACKAGE_CATS[pkgCatIndex];
-    const filtered = cat === 'All' ? PACKAGES : PACKAGES.filter(p => p.cat === cat);
-    grid.innerHTML = filtered.map((pkg, i) => {
-      const globalIdx = PACKAGES.indexOf(pkg);
-      const isFav = favPackages.has(globalIdx);
-      return `
+    let filtered = cat === 'All' ? PACKAGES : PACKAGES.filter(p => p.cat === cat);
+    // Group by subCat if present
+    const groups = {};
+    filtered.forEach(pkg => {
+      const key = pkg.subCat || '_no_group';
+      if (!groups[key]) groups[key] = [];
+      groups[key].push(pkg);
+    });
+    let html = '';
+    const groupKeys = Object.keys(groups);
+    const hasGroups = groupKeys.length > 1 || (groupKeys.length === 1 && groupKeys[0] !== '_no_group');
+    if (hasGroups) {
+      groupKeys.forEach(key => {
+        if (key === '_no_group') {
+          groups[key].forEach(pkg => html += renderPkgCard(pkg));
+        } else {
+          html += `<div class="pkg-subcat-title">${key}</div><div class="pkg-subcat-grid">`;
+          groups[key].forEach(pkg => html += renderPkgCard(pkg));
+          html += '</div>';
+        }
+      });
+    } else {
+      html = filtered.map(pkg => renderPkgCard(pkg)).join('');
+    }
+    grid.innerHTML = html;
+  }
+  function renderPkgCard(pkg) {
+    const globalIdx = PACKAGES.indexOf(pkg);
+    const isFav = favPackages.has(globalIdx);
+    return `
       <div class="pkg-card ${selectedPkg === globalIdx ? 'active' : ''}" onclick="selectPackage(${globalIdx})">
         ${pkg.badge ? `<span class="pkg-card-badge">${pkg.badge}</span>` : ''}
-        <span class="pkg-card-title">${pkg.title}</span>
+        <span class="pkg-card-title"><span>${pkg.title}</span><span class="pkg-card-price">${pkg.price}</span></span>
         <span class="pkg-card-desc">${pkg.desc}</span>
-        <span class="pkg-card-price">${pkg.price}</span>
         <svg class="pkg-card-fav ${isFav ? 'active' : ''}" onclick="event.stopPropagation();toggleFavPackage(${globalIdx})" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
       </div>`;
-    }).join('');
   }
   function selectPackage(i) {
     selectedPkg = i;
@@ -601,7 +716,8 @@
 
   function updateContinue() {
     const ok = recipientType === 'self' || isValid(rawNumber(digits));
-    const hasSelection = purchaseType === 'airtime' ? selectedAmount !== null : selectedPkg !== null;
+    const hasAmount = selectedAmount !== null || customAmount > 0;
+    const hasSelection = purchaseType === 'airtime' ? hasAmount : selectedPkg !== null;
     const btn = document.getElementById('continueBtn');
     const enabled = ok && hasSelection;
     btn.classList.toggle('active', enabled);
@@ -609,7 +725,6 @@
   }
 
   document.getElementById('numberInput').addEventListener('input', function(e) {
-    if (recipientType === 'self') return;
     let val = this.value.replace(/\D/g, '').slice(0, 10);
     digits = val;
     this.value = val ? formatNumber(val) : '';
@@ -622,8 +737,10 @@
     updateContinue();
   });
 
-  function openFavPackages() {
+  function openFav() {
     const list = document.getElementById('favList');
+    const title = document.getElementById('favTitle');
+    title.textContent = 'Favourite packages';
     if (favPackages.size === 0) {
       list.innerHTML = '<div style="text-align:center;padding:20px;color:var(--On-Surface-Low);font-family:Switzer,sans-serif;font-size:14px;">No favourite packages yet<br><span style="font-size:12px;">Tap the star icon on any package</span></div>';
     } else {
@@ -631,7 +748,7 @@
       list.innerHTML = favPkgList.map(pkg => {
         const idx = PACKAGES.indexOf(pkg);
         return `
-        <div class="sheet-item" onclick="closeFavPackages();setPurchaseType('package');selectPackage(${idx})">
+        <div class="sheet-item" onclick="closeFav();setPurchaseType('package');selectPackage(${idx})">
           <div class="sheet-avatar" style="background:var(--Primary);color:#FFF;border-radius:12px;">P</div>
           <div class="sheet-item-info">
             <div class="sheet-item-name">${pkg.title} - ${pkg.price}</div>
@@ -643,7 +760,7 @@
     }
     document.getElementById('favOverlay').classList.add('show');
   }
-  function closeFavPackages() { document.getElementById('favOverlay').classList.remove('show'); }
+  function closeFav() { document.getElementById('favOverlay').classList.remove('show'); }
 
   function openContacts() {
     document.getElementById('contactList').innerHTML = contacts.map((c, i) => `
@@ -660,26 +777,26 @@
   function pickContact(i) {
     const c = contacts[i];
     closeContacts();
-    setRecipientType('others');
     digits = rawNumber(c.number);
     document.getElementById('numberInput').value = formatNumber(digits);
   }
 
   function persistAndGo(number, name) {
     const p = PROVIDERS[providerIndex];
-    const amt = selectedAmount !== null ? AMOUNTS[selectedAmount] : 0;
+    const amt = customAmount > 0 ? customAmount : (selectedAmount !== null ? AMOUNTS[selectedAmount] : 0);
     sessionStorage.setItem('airtimeData', JSON.stringify({
       purchaseType: purchaseType,
       provider: p.name, providerAbbr: p.name.slice(0,2).toUpperCase(), providerColor: '#FE353D',
       recipient: number, recipientName: name || (recipientType === 'self' ? 'My number' : ''),
-      amount: amt
+      amount: amt,
+      payAccount: payAccount
     }));
     window.location.href = 'Airtime_Enter PIN.html';
   }
 
   function proceed() {
     if (purchaseType === 'airtime') {
-      if (selectedAmount === null) return;
+      if (selectedAmount === null && customAmount <= 0) return;
       if (recipientType === 'self') { persistAndGo(REGISTERED, 'My number'); return; }
       const num = rawNumber(digits);
       if (!isValid(num)) return;
@@ -691,15 +808,22 @@
       persistAndGo(num, '');
     } else {
       if (selectedPkg === null) return;
-      sessionStorage.setItem('packageData', JSON.stringify({
-        purchaseType: recipientType,
+      const pkg = PACKAGES[selectedPkg];
+      const priceNum = parseInt(pkg.price) || 0;
+      sessionStorage.setItem('airtimeData', JSON.stringify({
+        purchaseType: 'package',
         provider: PROVIDERS[providerIndex].name,
         providerAbbr: PROVIDERS[providerIndex].name.slice(0,2).toUpperCase(),
         providerColor: '#FE353D',
-        recipient: recipientType === 'self' ? REGISTERED : rawNumber(digits),
-        recipientName: recipientType === 'self' ? 'My number' : ''
+        recipient: rawNumber(digits),
+        recipientName: '',
+        packageName: pkg.title,
+        packageDesc: pkg.desc,
+        packageCat: pkg.cat,
+        amount: priceNum,
+        payAccount: payAccount
       }));
-      window.location.href = 'Package_Select.html';
+      window.location.href = 'Airtime_Enter PIN.html';
     }
   }
 
@@ -707,7 +831,6 @@
 
   renderProviders();
   renderAmounts();
-  document.getElementById('numberInput').value = formatNumber(REGISTERED);
   updateContinue();
 </script>
 

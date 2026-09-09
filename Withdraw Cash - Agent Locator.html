@@ -1,0 +1,495 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Withdraw Cash</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@400;500;600&display=swap');
+  @import url('https://api.fontshare.com/v2/css?f[]=switzer@400,500,600,700&display=swap');
+
+  :root {
+    --Primary: #FE353D;
+    --On-Surface: #1C1C21;
+    --On-Surface-Low: #7C7C87;
+    --Border: #E8E8EC;
+    --Background: #F5F5F5;
+    --Field: #F7F7F8;
+    --Success: #1FC83B;
+    --Success-Light: #E8F9EC;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'Inter', sans-serif; background: transparent; display: flex; justify-content: center; align-items: center; min-height: 100vh; padding: 20px; }
+  .phone-frame { width: 360px; height: 780px; background: var(--Background); border-radius: 30px; overflow: hidden; position: relative; box-shadow: 0 20px 60px rgba(0,0,0,0.15); display: flex; flex-direction: column; }
+  .app-content { height: 100%; display: flex; flex-direction: column; }
+
+  .status-bar { display: flex; justify-content: space-between; align-items: center; padding: 14px 24px 8px; background: var(--Background); flex-shrink: 0; }
+  .status-bar .time { font-size: 14px; font-weight: 600; color: var(--On-Surface); }
+  .status-icons { display: flex; align-items: center; gap: 6px; }
+  .status-icons svg { width: 18px; height: 18px; }
+
+  .header-nav { display: flex; align-items: center; justify-content: space-between; padding: 8px 16px 12px; background: var(--Background); flex-shrink: 0; }
+  .back-btn { width: 36px; height: 36px; border-radius: 50%; background: transparent; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: background 0.2s; }
+  .back-btn:hover { background: rgba(0,0,0,0.05); }
+  .back-btn svg { width: 22px; height: 22px; stroke: var(--On-Surface); stroke-width: 1.8px; fill: none; }
+  .header-title { color: var(--On-Surface); font-family: 'Switzer', sans-serif; font-size: 17px; font-weight: 500; letter-spacing: 0.3px; flex: 1; text-align: center; }
+
+  .scroll { flex: 1; overflow-y: auto; padding: 0 16px 16px; display: flex; flex-direction: column; gap: 14px; }
+  .scroll::-webkit-scrollbar { width: 0; }
+
+  /* ── Top tabs ── */
+  .tabs { display: flex; background: #EDEDF0; border-radius: 14px; padding: 4px; gap: 4px; flex-shrink: 0; }
+  .tab { flex: 1; height: 40px; border: none; background: transparent; border-radius: 11px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 7px; font-family: 'Switzer', sans-serif; font-size: 13.5px; font-weight: 600; color: var(--On-Surface-Low); transition: background 0.2s, color 0.2s, box-shadow 0.2s; }
+  .tab svg { width: 17px; height: 17px; stroke: currentColor; stroke-width: 1.9; fill: none; }
+  .tab.active { background: #FFF; color: var(--Primary); box-shadow: 0 2px 8px rgba(0,0,0,0.08); }
+
+  .panel { display: none; flex-direction: column; gap: 14px; }
+  .panel.active { display: flex; }
+
+  /* ── Form card ── */
+  .form-card { background: #FFF; border-radius: 16px; padding: 16px; box-shadow: 0 2px 8px rgba(0,0,0,0.04); display: flex; flex-direction: column; gap: 8px; }
+  .field-label { font-family: 'Switzer', sans-serif; font-size: 14px; font-weight: 600; color: var(--On-Surface); margin-top: 6px; }
+  .field-label:first-child { margin-top: 0; }
+  .field { height: 50px; background: var(--Field); border: 1.5px solid var(--Border); border-radius: 12px; padding: 0 14px; display: flex; align-items: center; gap: 8px; transition: border-color 0.2s, box-shadow 0.2s, background 0.2s; }
+  .field:focus-within { border-color: var(--Primary); background: #FFF; box-shadow: 0 4px 12px rgba(254,53,61,0.12); }
+  .field input { flex: 1; min-width: 0; border: none; background: transparent; outline: none; font-family: 'Switzer', sans-serif; font-size: 15px; font-weight: 500; color: var(--On-Surface); }
+  .field input::placeholder { color: var(--On-Surface-Low); font-weight: 400; letter-spacing: 0; }
+  .field input.strong { font-size: 16px; font-weight: 700; letter-spacing: 0.6px; }
+  .field .suffix { font-family: 'Switzer', sans-serif; font-size: 13px; font-weight: 500; color: var(--On-Surface-Low); flex-shrink: 0; }
+  .balance-hint { font-family: 'Switzer', sans-serif; font-size: 11.5px; color: var(--On-Surface-Low); margin-top: 2px; }
+  .balance-hint b { color: var(--On-Surface); font-weight: 600; }
+
+  /* Inline validation message */
+  .msg { display: none; align-items: center; gap: 8px; font-family: 'Switzer', sans-serif; font-size: 12px; margin-top: 2px; }
+  .msg.show { display: flex; }
+  .msg svg { width: 15px; height: 15px; stroke-width: 2.4; fill: none; flex-shrink: 0; }
+  .msg.warn { color: var(--Primary); }
+  .msg.warn svg { stroke: var(--Primary); }
+
+  /* Resolved agent row */
+  .agent-chip { display: none; align-items: center; gap: 12px; background: #F2FAF4; border-radius: 12px; padding: 12px 14px; margin-top: 4px; }
+  .agent-chip.show { display: flex; }
+  .agent-chip .tick { width: 24px; height: 24px; border-radius: 50%; border: 1.8px solid var(--Success); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+  .agent-chip .tick svg { width: 13px; height: 13px; stroke: var(--Success); stroke-width: 3; fill: none; }
+  .agent-chip .info { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px; }
+  .agent-chip .nm { font-family: 'Switzer', sans-serif; font-size: 14px; font-weight: 500; color: var(--On-Surface); }
+  .agent-chip .sub { font-family: 'Switzer', sans-serif; font-size: 11.5px; color: var(--On-Surface-Low); }
+
+  /* ── QR scanner viewport ── */
+  .qr-stage { background: #1C1C21; border-radius: 14px; height: 190px; position: relative; display: flex; align-items: center; justify-content: center; overflow: hidden; cursor: pointer; }
+  .qr-stage .grid-bg { position: absolute; inset: 0; background-image: linear-gradient(rgba(255,255,255,0.05) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.05) 1px, transparent 1px); background-size: 22px 22px; }
+  .qr-window { position: relative; width: 128px; height: 128px; }
+  .qr-window i { position: absolute; width: 26px; height: 26px; border: 3px solid var(--Primary); }
+  .qr-window i:nth-child(1) { top: 0; left: 0; border-right: none; border-bottom: none; border-radius: 8px 0 0 0; }
+  .qr-window i:nth-child(2) { top: 0; right: 0; border-left: none; border-bottom: none; border-radius: 0 8px 0 0; }
+  .qr-window i:nth-child(3) { bottom: 0; left: 0; border-right: none; border-top: none; border-radius: 0 0 0 8px; }
+  .qr-window i:nth-child(4) { bottom: 0; right: 0; border-left: none; border-top: none; border-radius: 0 0 8px 0; }
+  .qr-laser { position: absolute; left: 6px; right: 6px; height: 2px; background: var(--Primary); box-shadow: 0 0 10px rgba(254,53,61,0.9); border-radius: 2px; animation: sweep 2.2s ease-in-out infinite; }
+  @keyframes sweep { 0%, 100% { top: 8px; } 50% { top: 118px; } }
+  .qr-caption { position: absolute; bottom: 14px; left: 0; right: 0; text-align: center; font-family: 'Switzer', sans-serif; font-size: 11.5px; color: rgba(255,255,255,0.75); }
+  .qr-actions { display: flex; gap: 10px; }
+  .qr-action { flex: 1; height: 42px; border: 1.5px solid var(--Border); background: var(--Field); border-radius: 12px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 7px; font-family: 'Switzer', sans-serif; font-size: 12.5px; font-weight: 600; color: var(--On-Surface); transition: border-color 0.2s, background 0.2s; }
+  .qr-action:hover { border-color: var(--Primary); background: #FFF; }
+  .qr-action svg { width: 16px; height: 16px; stroke: var(--Primary); stroke-width: 1.9; fill: none; }
+
+  /* ── Recent card ── */
+  .recent-card { background: #FFF; border-radius: 16px; padding: 16px; box-shadow: 0 2px 8px rgba(0,0,0,0.04); display: flex; flex-direction: column; gap: 12px; }
+  .recent-title { font-family: 'Switzer', sans-serif; font-size: 14px; font-weight: 600; color: var(--On-Surface); letter-spacing: 0.2px; }
+  .recent-list { display: flex; flex-direction: column; gap: 6px; }
+  .recent-item { display: flex; align-items: center; gap: 12px; padding: 7px 0; cursor: pointer; border-radius: 10px; transition: background 0.15s; }
+  .recent-item:hover { background: #FAFAFA; }
+  .recent-avatar { width: 40px; height: 40px; border-radius: 50%; overflow: hidden; flex-shrink: 0; background: #FFF; border: 1px solid #ECECEC; }
+  .recent-avatar img { width: 100%; height: 100%; object-fit: cover; }
+  .recent-info { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px; }
+  .recent-name { font-family: 'Switzer', sans-serif; font-size: 14px; font-weight: 600; color: var(--On-Surface); letter-spacing: 0.2px; }
+  .recent-sub { font-family: 'Switzer', sans-serif; font-size: 12px; color: var(--On-Surface-Low); }
+  .chev { width: 18px; height: 18px; stroke: var(--Primary); stroke-width: 2.4; fill: none; flex-shrink: 0; }
+
+  /* ── Bottom button ── */
+  .bottom-bar { flex-shrink: 0; padding: 10px 16px 18px; background: var(--Background); }
+  .continue-btn { width: 100%; height: 52px; border-radius: 14px; border: none; background: #E0E0E0; color: var(--On-Surface-Low); font-family: 'Poppins', sans-serif; font-size: 15px; font-weight: 500; cursor: not-allowed; transition: all 0.2s; }
+  .continue-btn.active { background: var(--Primary); color: #FFF; cursor: pointer; box-shadow: 0 4px 16px rgba(254,53,61,0.25); }
+  .continue-btn.active:hover { background: #E5303A; box-shadow: 0 6px 20px rgba(254,53,61,0.35); transform: translateY(-1px); }
+  .continue-btn.active:active { transform: scale(0.98) translateY(0); }
+
+  /* ── Confirmation bottom sheet ── */
+  .sheet-overlay { position: absolute; inset: 0; background: rgba(0,0,0,0.45); display: flex; align-items: flex-end; opacity: 0; pointer-events: none; transition: opacity 0.25s; z-index: 50; }
+  .sheet-overlay.show { opacity: 1; pointer-events: auto; }
+  .sheet { width: 100%; background: #FFF; border-radius: 24px 24px 0 0; padding: 12px 20px 22px; display: flex; flex-direction: column; transform: translateY(100%); transition: transform 0.3s cubic-bezier(0.2, 0.8, 0.3, 1); }
+  .sheet-overlay.show .sheet { transform: translateY(0); }
+  .sheet-grip { width: 44px; height: 4px; border-radius: 2px; background: #D8D8DE; margin: 0 auto 14px; }
+  .sheet-title { text-align: center; font-family: 'Switzer', sans-serif; font-size: 17px; font-weight: 700; color: var(--On-Surface); margin-bottom: 20px; }
+
+  .party-card { position: relative; border: 1.5px solid var(--Border); border-radius: 14px; padding: 14px; display: flex; align-items: center; gap: 12px; margin-bottom: 20px; }
+  .party-badge { position: absolute; top: -11px; right: 14px; background: #EDEDF0; color: var(--On-Surface-Low); font-family: 'Switzer', sans-serif; font-size: 9.5px; font-weight: 700; letter-spacing: 0.6px; padding: 4px 9px; border-radius: 6px; }
+  .party-avatar { width: 44px; height: 44px; border-radius: 50%; background: #FFE9EA; color: var(--Primary); display: flex; align-items: center; justify-content: center; font-family: 'Switzer', sans-serif; font-size: 14px; font-weight: 700; flex-shrink: 0; }
+  .party-info { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 3px; }
+  .party-name { font-family: 'Switzer', sans-serif; font-size: 15px; font-weight: 700; color: var(--On-Surface); }
+  .party-sub { font-family: 'Switzer', sans-serif; font-size: 12.5px; color: var(--On-Surface-Low); }
+
+  .sum-row { display: flex; align-items: center; justify-content: space-between; padding: 13px 2px; border-bottom: 1px solid #F0F0F3; }
+  .sum-row.total { border-bottom: none; }
+  .sum-key { font-family: 'Switzer', sans-serif; font-size: 13px; font-weight: 400; color: var(--On-Surface-Low); }
+  .sum-val { font-family: 'Switzer', sans-serif; font-size: 13.5px; font-weight: 700; color: var(--On-Surface); }
+  .sum-row.total .sum-val { color: var(--Primary); font-size: 15px; }
+
+  .sheet-actions { display: flex; gap: 12px; margin-top: 20px; }
+  .sheet-btn { flex: 1; height: 50px; border-radius: 12px; background: #FFF; cursor: pointer; font-family: 'Switzer', sans-serif; font-size: 14.5px; font-weight: 500; transition: background 0.15s, transform 0.12s; }
+  .sheet-btn:active { transform: scale(0.98); }
+  .sheet-btn.cancel { border: 1.5px solid var(--Border); color: var(--On-Surface-Low); }
+  .sheet-btn.cancel:hover { background: #FAFAFA; }
+  .sheet-btn.confirm { border: 1.5px solid var(--Primary); color: var(--Primary); font-weight: 600; }
+  .sheet-btn.confirm:hover { background: #FFF5F5; }
+</style>
+</head>
+<body>
+<div class="phone-frame">
+  <div class="app-content">
+
+    <div class="status-bar">
+      <span class="time">10:00</span>
+      <div class="status-icons">
+        <svg viewBox="0 0 24 24" fill="none"><path d="M1 9l2 2c4.97-4.97 13.03-4.97 18 0l2-2C16.93 2.93 7.08 2.93 1 9z" fill="#1C1C21"/><path d="M5 13l2 2c2.76-2.76 7.24-2.76 10 0l2-2C15.14 9.14 8.87 9.14 5 13z" fill="#1C1C21"/><path d="M9 17l2 2c1.1-1.1 2.9-1.1 4 0l2-2c-2.21-2.21-5.79-2.21-8 0z" fill="#1C1C21"/></svg>
+        <svg viewBox="0 0 24 24" fill="none"><rect x="2" y="6" width="4" height="12" rx="1" fill="#1C1C21"/><rect x="8" y="4" width="4" height="14" rx="1" fill="#1C1C21"/><rect x="14" y="2" width="4" height="16" rx="1" fill="#1C1C21"/><rect x="20" y="0" width="4" height="18" rx="1" fill="#1C1C21" opacity="0.3"/></svg>
+        <svg viewBox="0 0 28 14" fill="none"><rect x="0" y="1" width="22" height="12" rx="2.5" stroke="#1C1C21" stroke-width="1.5"/><rect x="2" y="3" width="16" height="8" rx="1" fill="#1C1C21"/><rect x="24" y="4" width="2" height="6" rx="1" fill="#1C1C21"/></svg>
+      </div>
+    </div>
+
+    <div class="header-nav">
+      <button class="back-btn" onclick="window.location.href='Withdraw Cash.html'">
+        <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+      </button>
+      <span class="header-title">Withdraw Cash</span>
+      <div style="width:36px;"></div>
+    </div>
+
+    <div class="scroll">
+
+      <!-- Top tabs -->
+      <div class="tabs">
+        <button class="tab active" id="tabCode" onclick="switchTab('code')">
+          <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="6" width="18" height="12" rx="2.5"/><path d="M7 12h1.5M11.2 12h1.6M15.5 12H17"/></svg>
+          Short Code
+        </button>
+        <button class="tab" id="tabQr" onclick="switchTab('qr')">
+          <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><rect x="3.5" y="3.5" width="7" height="7" rx="1.5"/><rect x="13.5" y="3.5" width="7" height="7" rx="1.5"/><rect x="3.5" y="13.5" width="7" height="7" rx="1.5"/><path d="M13.5 13.5h3v3M20.5 17v3.5H17"/></svg>
+          QR Code
+        </button>
+      </div>
+
+      <!-- ── Short code panel ── -->
+      <div class="panel active" id="panelCode">
+        <div class="form-card">
+          <span class="field-label">Agent Short Code</span>
+          <div class="field">
+            <input id="codeInput" class="strong" type="text" inputmode="numeric" maxlength="6" placeholder="e.g. 323217" oninput="onCodeInput(this)">
+            <span class="suffix" id="codeCount">0/6</span>
+          </div>
+          <div class="msg warn" id="codeMsg">
+            <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 8v5M12 16h.01"/></svg>
+            <span id="codeMsgTxt"></span>
+          </div>
+          <div class="agent-chip" id="codeChip">
+            <span class="tick"><svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></span>
+            <div class="info"><span class="nm"></span><span class="sub"></span></div>
+          </div>
+
+          <span class="field-label">Amount</span>
+          <div class="field">
+            <input id="amtCode" type="text" inputmode="decimal" placeholder="e.g. 120 Br" oninput="onAmountInput(this)">
+            <span class="suffix">Br</span>
+          </div>
+          <div class="balance-hint"><b>Balance:</b> 12,580.00 Br</div>
+          <div class="msg warn" id="amtMsgCode">
+            <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 8v5M12 16h.01"/></svg>
+            <span id="amtMsgCodeTxt"></span>
+          </div>
+
+          <span class="field-label">Note (Optional)</span>
+          <div class="field">
+            <input id="noteCode" type="text" placeholder="e.g. Rent money" maxlength="40">
+          </div>
+        </div>
+      </div>
+
+      <!-- ── QR panel ── -->
+      <div class="panel" id="panelQr">
+        <div class="form-card">
+          <div class="qr-stage" onclick="simulateScan()">
+            <div class="grid-bg"></div>
+            <div class="qr-window">
+              <i></i><i></i><i></i><i></i>
+              <div class="qr-laser"></div>
+            </div>
+            <div class="qr-caption">Point the camera at the agent's QR code</div>
+          </div>
+          <div class="qr-actions" style="margin-top:8px">
+            <button class="qr-action" onclick="simulateScan()">
+              <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2.5"/><circle cx="12" cy="12" r="3.2"/></svg>
+              Scan
+            </button>
+            <button class="qr-action" onclick="simulateScan()">
+              <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="2.5"/><path d="M3 16l5-4 4 3 3-2 6 4"/><circle cx="8.5" cy="9" r="1.5"/></svg>
+              From gallery
+            </button>
+          </div>
+          <div class="agent-chip" id="qrChip">
+            <span class="tick"><svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></span>
+            <div class="info"><span class="nm"></span><span class="sub"></span></div>
+          </div>
+
+          <span class="field-label">Amount</span>
+          <div class="field">
+            <input id="amtQr" type="text" inputmode="decimal" placeholder="e.g. 120 Br" oninput="onAmountInput(this)">
+            <span class="suffix">Br</span>
+          </div>
+          <div class="balance-hint"><b>Balance:</b> 12,580.00 Br</div>
+          <div class="msg warn" id="amtMsgQr">
+            <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 8v5M12 16h.01"/></svg>
+            <span id="amtMsgQrTxt"></span>
+          </div>
+
+          <span class="field-label">Note (Optional)</span>
+          <div class="field">
+            <input id="noteQr" type="text" placeholder="e.g. Rent money" maxlength="40">
+          </div>
+        </div>
+      </div>
+
+      <!-- Recent agents -->
+      <div class="recent-card">
+        <span class="recent-title">Recent</span>
+        <div class="recent-list">
+          <div class="recent-item" onclick="useRecent('323217')">
+            <div class="recent-avatar"><img src="assets/avatars/avatar-3.png" alt="Betty Merhat Agency"></div>
+            <div class="recent-info">
+              <span class="recent-name">Betty Merhat Agency</span>
+              <span class="recent-sub">323217</span>
+            </div>
+            <svg class="chev" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+          </div>
+          <div class="recent-item" onclick="useRecent('562394')">
+            <div class="recent-avatar"><img src="assets/avatars/avatar-1.png" alt="Kebede Retails"></div>
+            <div class="recent-info">
+              <span class="recent-name">Kebede Retails</span>
+              <span class="recent-sub">562394</span>
+            </div>
+            <svg class="chev" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+          </div>
+          <div class="recent-item" onclick="useRecent('204411')">
+            <div class="recent-avatar"><img src="assets/avatars/avatar-4.png" alt="Bole Mini-Mart"></div>
+            <div class="recent-info">
+              <span class="recent-name">Bole Mini-Mart</span>
+              <span class="recent-sub">204411</span>
+            </div>
+            <svg class="chev" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="bottom-bar">
+      <button class="continue-btn" id="continueBtn" onclick="continueFlow()" disabled>Continue</button>
+    </div>
+
+  </div>
+
+  <!-- Confirmation sheet -->
+  <div class="sheet-overlay" id="sheetOverlay" onclick="if(event.target===this)closeSheet()">
+    <div class="sheet">
+      <div class="sheet-grip"></div>
+      <div class="sheet-title">Confirmation</div>
+
+      <div class="party-card">
+        <span class="party-badge">AGENT</span>
+        <div class="party-avatar" id="cfAvatar"></div>
+        <div class="party-info">
+          <span class="party-name" id="cfName"></span>
+          <span class="party-sub" id="cfSub"></span>
+        </div>
+      </div>
+
+      <div class="sum-row">
+        <span class="sum-key">Withdrawal Amount:</span>
+        <span class="sum-val" id="cfAmount"></span>
+      </div>
+      <div class="sum-row">
+        <span class="sum-key">Fee:</span>
+        <span class="sum-val" id="cfFee"></span>
+      </div>
+      <div class="sum-row total">
+        <span class="sum-key">Total:</span>
+        <span class="sum-val" id="cfTotal"></span>
+      </div>
+
+      <div class="sheet-actions">
+        <button class="sheet-btn cancel" onclick="closeSheet()">Cancel</button>
+        <button class="sheet-btn confirm" onclick="confirmWithdraw()">Confirm</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  // Same roster the nearby-agent screen uses, so a resolved agent renders identically downstream.
+  const AGENTS = {
+    '323217': { abbr: 'BM', name: 'Betty Merhat Agency', code: '323217', dist: '0.8 km', addr: 'Bole Medhanialem, Addis Ababa' },
+    '562394': { abbr: 'KR', name: 'Kebede Retails', code: '562394', dist: '1.2 km', addr: 'Bole Airport Road, Addis Ababa' },
+    '778901': { abbr: 'MS', name: 'Meskerem Agent Services', code: '778901', dist: '2.1 km', addr: 'Mekanisa, Addis Ababa' },
+    '204411': { abbr: 'BM', name: 'Bole Mini-Mart', code: '204411', dist: '2.6 km', addr: 'Dembel City Center' }
+  };
+
+  const MIN_AMT = 10, MAX_AMT = 10000, BALANCE = 12580;
+  let tab = 'code';          // 'code' | 'qr'
+  let agent = null;          // resolved agent for the active tab
+
+  const $ = id => document.getElementById(id);
+
+  function switchTab(t) {
+    tab = t;
+    agent = null;
+    $('tabCode').classList.toggle('active', t === 'code');
+    $('tabQr').classList.toggle('active', t === 'qr');
+    $('panelCode').classList.toggle('active', t === 'code');
+    $('panelQr').classList.toggle('active', t === 'qr');
+    // Each tab resolves its own agent, so clear the other one's result.
+    $('codeChip').classList.remove('show');
+    $('qrChip').classList.remove('show');
+    $('codeMsg').classList.remove('show');
+    if (t === 'code') resolveCode($('codeInput').value.trim());
+    updateBtn();
+  }
+
+  /* ── Short code ── */
+  function onCodeInput(el) {
+    el.value = el.value.replace(/\D/g, '').slice(0, 6);
+    $('codeCount').textContent = el.value.length + '/6';
+    resolveCode(el.value);
+    updateBtn();
+  }
+
+  function resolveCode(code) {
+    const chip = $('codeChip'), msg = $('codeMsg');
+    agent = null;
+    if (code.length < 6) { chip.classList.remove('show'); msg.classList.remove('show'); return; }
+    const a = AGENTS[code];
+    if (a) {
+      agent = a;
+      chip.querySelector('.nm').textContent = a.name;
+      chip.querySelector('.sub').textContent = 'Agent No. ' + a.code + ' • ' + a.dist;
+      chip.classList.add('show');
+      msg.classList.remove('show');
+    } else {
+      chip.classList.remove('show');
+      $('codeMsgTxt').textContent = 'Agent not found. Check the short code and try again.';
+      msg.classList.add('show');
+    }
+  }
+
+  /* ── QR ── */
+  function simulateScan() {
+    // Prototype stand-in for the camera: resolves a known agent.
+    const a = AGENTS['562394'];
+    agent = a;
+    const chip = $('qrChip');
+    chip.querySelector('.nm').textContent = a.name;
+    chip.querySelector('.sub').textContent = 'Agent No. ' + a.code + ' • ' + a.dist;
+    chip.classList.add('show');
+    updateBtn();
+  }
+
+  /* ── Amount ── */
+  function onAmountInput(el) {
+    el.value = el.value.replace(/[^\d.]/g, '').replace(/(\..*)\./g, '$1');
+    validateAmount();
+    updateBtn();
+  }
+
+  function amountEl() { return tab === 'code' ? $('amtCode') : $('amtQr'); }
+  function amountMsg() { return tab === 'code' ? $('amtMsgCode') : $('amtMsgQr'); }
+  function amountMsgTxt() { return tab === 'code' ? $('amtMsgCodeTxt') : $('amtMsgQrTxt'); }
+
+  function validateAmount() {
+    const raw = amountEl().value.trim();
+    const msg = amountMsg();
+    if (raw === '') { msg.classList.remove('show'); return null; }
+    const n = parseFloat(raw);
+    let err = '';
+    if (isNaN(n) || n <= 0) err = 'Enter a valid amount.';
+    else if (n < MIN_AMT) err = 'Minimum withdrawal is ' + MIN_AMT + ' Br.';
+    else if (n > MAX_AMT) err = 'Maximum withdrawal is ' + MAX_AMT.toLocaleString() + ' Br per transaction.';
+    else if (n > BALANCE) err = 'Amount exceeds your available balance.';
+    if (err) { amountMsgTxt().textContent = err; msg.classList.add('show'); return null; }
+    msg.classList.remove('show');
+    return n;
+  }
+
+  function updateBtn() {
+    const ok = !!agent && validateAmount() !== null;
+    $('continueBtn').classList.toggle('active', ok);
+    $('continueBtn').disabled = !ok;
+  }
+
+  /* ── Recent ── */
+  function useRecent(code) {
+    if (tab !== 'code') switchTab('code');
+    const el = $('codeInput');
+    el.value = code;
+    $('codeCount').textContent = code.length + '/6';
+    resolveCode(code);
+    updateBtn();
+    $('amtCode').focus();
+  }
+
+  /* ── Confirmation sheet ── */
+  // Same fee table the review screen uses, so totals agree across the flow.
+  function computeFee(n) {
+    if (n <= 0) return 0;
+    if (n <= 2000) return 7;
+    if (n <= 5000) return 15;
+    if (n <= 8000) return 30;
+    return 45;
+  }
+
+  const fmt = n => parseFloat(n || 0).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+
+  function continueFlow() {
+    const amt = validateAmount();
+    if (!agent || amt === null) return;
+    const fee = computeFee(amt);
+    $('cfAvatar').textContent = agent.abbr;
+    $('cfName').textContent = agent.name;
+    $('cfSub').textContent = 'Agent No. ' + agent.code;
+    $('cfAmount').textContent = fmt(amt) + ' Br';
+    $('cfFee').textContent = fmt(fee) + ' Br';
+    $('cfTotal').textContent = fmt(amt + fee) + ' Br';
+    $('sheetOverlay').classList.add('show');
+  }
+
+  function closeSheet() { $('sheetOverlay').classList.remove('show'); }
+
+  function confirmWithdraw() {
+    const amt = validateAmount();
+    if (!agent || amt === null) return;
+    const fee = computeFee(amt);
+    const note = (tab === 'code' ? $('noteCode') : $('noteQr')).value.trim();
+    sessionStorage.setItem('withdrawData', JSON.stringify({
+      method: 'agent',
+      methodLabel: tab === 'qr' ? 'Agent QR Code' : 'Agent Short Code',
+      entry: tab,
+      agent: agent,
+      agentName: agent.name,
+      agentCode: agent.code,
+      agentDist: agent.dist,
+      amount: amt,
+      fee: fee,
+      total: amt + fee,
+      note: note,
+      time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+    }));
+    window.location.href = 'Withdraw Cash - Enter PIN.html';
+  }
+</script>
+</body>
+</html>

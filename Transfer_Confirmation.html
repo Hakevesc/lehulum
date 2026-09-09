@@ -146,16 +146,16 @@
       <!-- Breakdown -->
       <div class="breakdown">
         <div class="b-row">
-          <span class="label">Transfer amount</span>
+          <span class="label">Amount</span>
           <span class="value" id="amount">0.00 ETB</span>
         </div>
         <div class="b-row">
-          <span class="label">Applicable charges</span>
+          <span class="label">Fee</span>
           <span class="value" id="fee">5.00 ETB</span>
         </div>
         <div class="b-divider"></div>
         <div class="b-row total">
-          <span class="label">Total deduction</span>
+          <span class="label">Total Amount</span>
           <span class="value" id="total">0.00 ETB</span>
         </div>
       </div>
@@ -174,7 +174,7 @@
     </div>
 
     <div class="bottom-area">
-      <button class="btn-primary" onclick="confirmPay()">Confirm &amp; Pay</button>
+      <button class="btn-primary" onclick="confirmPay()">Confirm</button>
       <button class="btn-link" onclick="history.back()">Edit transfer</button>
     </div>
 
@@ -188,7 +188,6 @@
   const amount = sessionStorage.getItem('sendAmount') || '0.00';
   const fee = sessionStorage.getItem('sendFee') || '5.00';
   const total = sessionStorage.getItem('sendTotal') || amount;
-  const fund = sessionStorage.getItem('sendAccount') || 'main';
 
   function initials(name) {
     return (name || '?').split(' ').map(p => p[0]).slice(0, 2).join('').toUpperCase();
@@ -210,7 +209,8 @@
     document.getElementById('amount').textContent = amount + ' ETB';
     document.getElementById('fee').textContent = fee + ' ETB';
     document.getElementById('total').textContent = total + ' ETB';
-    document.getElementById('fundingAccount').textContent = fund === 'reward' ? 'Reward Account' : 'Main Account';
+    // Always show Main Account for bank/wallet transfers
+    document.getElementById('fundingAccount').textContent = 'Main Account';
   })();
 
   function confirmPay() {

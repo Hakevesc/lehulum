@@ -3,187 +3,127 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Buy Airtime - Confirm</title>
+<title>Buy Airtime / Package - Confirm</title>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@400;500;600&display=swap');
   @import url('https://api.fontshare.com/v2/css?f[]=switzer@400,500,600,700&display=swap');
-
-  :root {
-    --Primary: #FE353D;
-    --On-Surface: #1C1C21;
-    --On-Surface-Low: #7C7C87;
-    --Border: #E8E8EC;
-    --Background: #F5F5F5;
-    --Success: #1FC83B;
-  }
+  :root { --Primary: #FE353D; --On-Surface: #1C1C21; --On-Surface-Low: #7C7C87; --Border: #E8E8EC; --Background: #F5F5F5; --Success: #1FC83B; }
   * { margin: 0; padding: 0; box-sizing: border-box; }
   body { font-family: 'Inter', sans-serif; background: transparent; display: flex; justify-content: center; align-items: center; min-height: 100vh; padding: 20px; }
-  .phone-frame { width: 360px; height: 780px; background: var(--Background); border-radius: 30px; overflow: hidden; position: relative; box-shadow: 0 20px 60px rgba(0,0,0,0.15); }
-  .app-content { height: 100%; display: flex; flex-direction: column; }
-
-  .status-bar { flex-shrink: 0; display: flex; justify-content: space-between; align-items: center; width: 100%; padding: 14px 24px 8px; background: var(--Background); }
+  .phone-frame { width: 360px; height: 780px; background: var(--Background); border-radius: 30px; overflow: hidden; position: relative; box-shadow: 0 20px 60px rgba(0,0,0,0.15); display: flex; flex-direction: column; }
+  .status-bar { display: flex; justify-content: space-between; align-items: center; padding: 14px 24px 8px; background: var(--Background); flex-shrink: 0; }
   .status-bar .time { font-size: 14px; font-weight: 600; color: var(--On-Surface); }
   .status-icons { display: flex; align-items: center; gap: 6px; }
   .status-icons svg { width: 18px; height: 18px; }
-
-  .header-nav { flex-shrink: 0; width: 100%; display: flex; align-items: center; justify-content: space-between; padding: 8px 16px 12px; background: var(--Background); }
-  .back-btn { display: flex; align-items: center; justify-content: center; width: 36px; height: 36px; border-radius: 50%; background: transparent; border: none; cursor: pointer; transition: all 0.2s; }
-  .back-btn:hover { background: rgba(0,0,0,0.05); }
+  .header-nav { display: flex; align-items: center; justify-content: space-between; padding: 8px 16px 12px; background: var(--Background); flex-shrink: 0; }
+  .back-btn { width: 36px; height: 36px; border-radius: 50%; background: transparent; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; }
   .back-btn svg { width: 22px; height: 22px; stroke: var(--On-Surface); stroke-width: 1.8px; fill: none; }
   .header-title { color: var(--On-Surface); font-family: 'Switzer', sans-serif; font-size: 17px; font-weight: 500; letter-spacing: 0.3px; flex: 1; text-align: center; }
-
-  .scroll { flex: 1; overflow-y: auto; padding: 4px 20px 12px; display: flex; flex-direction: column; gap: 16px; }
+  .scroll { flex: 1; overflow-y: auto; padding: 4px 20px 12px; display: flex; flex-direction: column; gap: 14px; }
   .scroll::-webkit-scrollbar { width: 0; }
-
-  /* Recipient header card */
-  .recipient-card { background: #FFF; border-radius: 16px; padding: 16px; display: flex; align-items: center; gap: 14px; box-shadow: 0 2px 8px rgba(0,0,0,0.04); }
-  .recipient-icon { width: 48px; height: 48px; border-radius: 13px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; font-family: 'Switzer', sans-serif; font-size: 14px; font-weight: 700; color: #FFF; }
-  .recipient-info { flex: 1; display: flex; flex-direction: column; gap: 4px; min-width: 0; }
-  .recipient-number { color: var(--On-Surface); font-family: 'Switzer', sans-serif; font-size: 15px; font-weight: 600; letter-spacing: 0.5px; }
-  .recipient-sub { color: var(--On-Surface-Low); font-family: 'Switzer', sans-serif; font-size: 12.5px; }
-  .recipient-badge { display: inline-flex; align-items: center; gap: 4px; margin-top: 2px; padding: 3px 8px; border-radius: 6px; align-self: flex-start; background: rgba(31,200,59,0.08); color: var(--Success); font-family: 'Switzer', sans-serif; font-size: 11px; font-weight: 600; }
-  .recipient-badge svg { width: 11px; height: 11px; stroke: var(--Success); fill: none; stroke-width: 2.5; }
-
-  .breakdown { background: #FFF; border-radius: 16px; padding: 18px 16px; display: flex; flex-direction: column; gap: 14px; box-shadow: 0 2px 8px rgba(0,0,0,0.04); }
-  .b-row { display: flex; justify-content: space-between; align-items: center; gap: 12px; }
-  .b-row .label { color: var(--On-Surface-Low); font-family: 'Switzer', sans-serif; font-size: 13px; flex-shrink: 0; }
-  .b-row .value { color: var(--On-Surface); font-family: 'Switzer', sans-serif; font-size: 14px; font-weight: 600; text-align: right; }
-  .b-row .value.free { color: var(--Success); }
-  .b-divider { height: 1px; background: var(--Border); margin: 2px 0; }
-  .b-row.total .label { color: var(--On-Surface); font-size: 14px; font-weight: 600; }
-  .b-row.total .value { color: var(--Primary); font-size: 20px; font-weight: 700; }
-
-  .funding { background: #FFF; border-radius: 16px; padding: 14px 16px; display: flex; align-items: center; gap: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.04); }
-  .funding .icon { width: 38px; height: 38px; border-radius: 10px; background: #FFF1F2; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
-  .funding .icon svg { width: 20px; height: 20px; stroke: var(--Primary); stroke-width: 2; fill: none; }
-  .funding .info { flex: 1; display: flex; flex-direction: column; gap: 2px; }
-  .funding .info .t { color: var(--On-Surface-Low); font-family: 'Switzer', sans-serif; font-size: 11.5px; }
-  .funding .info .v { color: var(--On-Surface); font-family: 'Switzer', sans-serif; font-size: 14px; font-weight: 600; }
-
-  .bottom-area { flex-shrink: 0; padding: 8px 20px 24px; display: flex; flex-direction: column; gap: 10px; background: var(--Background); }
-  .btn-primary { width: 100%; height: 52px; border-radius: 14px; background: var(--Primary); color: #FFF; font-family: 'Poppins', sans-serif; font-size: 15px; font-weight: 500; border: none; cursor: pointer; transition: all 0.2s; box-shadow: 0 4px 16px rgba(254,53,61,0.25); }
-  .btn-primary:hover { background: #E5303A; transform: translateY(-1px); box-shadow: 0 6px 20px rgba(254,53,61,0.35); }
-  .btn-primary:active { transform: scale(0.98); }
-  .btn-link { color: var(--On-Surface-Low); font-family: 'Switzer', sans-serif; font-size: 13px; font-weight: 500; cursor: pointer; background: none; border: none; padding: 6px 0; transition: color 0.2s; }
-  .btn-link:hover { color: var(--On-Surface); }
+  .confirm-card { background: #FFF; border-radius: 16px; padding: 18px 16px; box-shadow: 0 2px 8px rgba(0,0,0,0.04); }
+  .confirm-icon { width: 48px; height: 48px; border-radius: 13px; display: flex; align-items: center; justify-content: center; font-family: 'Switzer', sans-serif; font-size: 14px; font-weight: 700; color: #FFF; flex-shrink: 0; }
+  .confirm-label { font-family: 'Switzer', sans-serif; font-size: 12px; color: var(--On-Surface-Low); margin-bottom: 4px; }
+  .confirm-value { font-family: 'Switzer', sans-serif; font-size: 24px; font-weight: 700; color: var(--Primary); }
+  .confirm-sub { font-family: 'Switzer', sans-serif; font-size: 13px; color: var(--On-Surface-Low); margin-top: 2px; }
+  .divider { height: 1px; background: #F0F0F0; margin: 14px 0; }
+  .pay-from { background: #FFF; border-radius: 16px; box-shadow: 0 2px 8px rgba(0,0,0,0.04); overflow: hidden; }
+  .pay-from-header { display: flex; align-items: center; justify-content: space-between; padding: 16px; cursor: pointer; user-select: none; }
+  .pay-from-header .left { display: flex; align-items: center; gap: 12px; }
+  .pay-from-header .left svg { width: 24px; height: 24px; stroke: var(--On-Surface); stroke-width: 1.8; fill: none; }
+  .pay-from-header .label { font-family: 'Switzer', sans-serif; font-size: 14px; font-weight: 600; color: var(--On-Surface); }
+  .pay-from-header .arrow { width: 20px; height: 20px; stroke: var(--On-Surface-Low); stroke-width: 2; fill: none; transition: transform 0.25s; }
+  .pay-from-header .arrow.open { transform: rotate(180deg); }
+  .pay-from-body { max-height: 0; overflow: hidden; transition: max-height 0.3s ease; }
+  .pay-from-body.open { max-height: 300px; }
+  .account-option { display: flex; align-items: center; gap: 12px; padding: 14px 16px; border-top: 1px solid #F0F0F0; cursor: pointer; transition: background 0.15s; }
+  .account-option:hover { background: #FFF8F8; }
+  .account-option .radio { width: 20px; height: 20px; border-radius: 50%; border: 2px solid var(--Border); flex-shrink: 0; display: flex; align-items: center; justify-content: center; transition: all 0.18s; }
+  .account-option .radio.active { border-color: var(--Primary); }
+  .account-option .radio::after { content: ''; width: 10px; height: 10px; border-radius: 50%; background: transparent; transition: all 0.18s; }
+  .account-option .radio.active::after { background: var(--Primary); }
+  .account-option .info { flex: 1; }
+  .account-option .name { font-family: 'Switzer', sans-serif; font-size: 14px; font-weight: 600; color: var(--On-Surface); }
+  .account-option .bal { font-family: 'Switzer', sans-serif; font-size: 12px; color: var(--On-Surface-Low); }
+  .btn-primary { height: 52px; border-radius: 14px; border: none; background: var(--Primary); color: #FFF; font-family: 'Poppins', sans-serif; font-size: 15px; font-weight: 500; cursor: pointer; transition: all 0.2s; box-shadow: 0 4px 16px rgba(254,53,61,0.25); width: 100%; flex-shrink: 0; }
+  .btn-primary:hover { background: #E5303A; transform: translateY(-1px); }
+  .btn-link { display: block; width: 100%; text-align: center; background: none; border: none; color: var(--On-Surface-Low); font-family: 'Switzer', sans-serif; font-size: 13px; font-weight: 500; cursor: pointer; padding: 12px 0; }
+  .bottom-area { padding: 8px 20px 20px; display: flex; flex-direction: column; gap: 4px; flex-shrink: 0; background: var(--Background); }
 </style>
 </head>
 <body>
 
 <div class="phone-frame">
-  <div class="app-content">
+  <div class="status-bar">
+    <span class="time">10:00</span>
+    <div class="status-icons"><svg viewBox="0 0 24 24" fill="none"><path d="M1 9l2 2c4.97-4.97 13.03-4.97 18 0l2-2C16.93 2.93 7.08 2.93 1 9z" fill="#1C1C21"/><path d="M5 13l2 2c2.76-2.76 7.24-2.76 10 0l2-2C15.14 9.14 8.87 9.14 5 13z" fill="#1C1C21"/><path d="M9 17l2 2c1.1-1.1 2.9-1.1 4 0l2-2c-2.21-2.21-5.79-2.21-8 0z" fill="#1C1C21"/></svg><svg viewBox="0 0 24 24" fill="none"><rect x="2" y="6" width="4" height="12" rx="1" fill="#1C1C21"/><rect x="8" y="4" width="4" height="14" rx="1" fill="#1C1C21"/><rect x="14" y="2" width="4" height="16" rx="1" fill="#1C1C21"/></svg><svg viewBox="0 0 28 14" fill="none"><rect x="0" y="1" width="22" height="12" rx="2.5" stroke="#1C1C21" stroke-width="1.5"/><rect x="2" y="3" width="16" height="8" rx="1" fill="#1C1C21"/><rect x="24" y="4" width="2" height="6" rx="1" fill="#1C1C21"/></svg></div>
+  </div>
 
-    <div class="status-bar">
-      <span class="time">10:00</span>
-      <div class="status-icons">
-        <svg viewBox="0 0 24 24" fill="none"><path d="M1 9l2 2c4.97-4.97 13.03-4.97 18 0l2-2C16.93 2.93 7.08 2.93 1 9z" fill="#1C1C21"/><path d="M5 13l2 2c2.76-2.76 7.24-2.76 10 0l2-2C15.14 9.14 8.87 9.14 5 13z" fill="#1C1C21"/><path d="M9 17l2 2c1.1-1.1 2.9-1.1 4 0l2-2c-2.21-2.21-5.79-2.21-8 0z" fill="#1C1C21"/></svg>
-        <svg viewBox="0 0 24 24" fill="none"><rect x="2" y="6" width="4" height="12" rx="1" fill="#1C1C21"/><rect x="8" y="4" width="4" height="14" rx="1" fill="#1C1C21"/><rect x="14" y="2" width="4" height="16" rx="1" fill="#1C1C21"/><rect x="20" y="0" width="4" height="18" rx="1" fill="#1C1C21" opacity="0.3"/></svg>
-        <svg viewBox="0 0 28 14" fill="none"><rect x="0" y="1" width="22" height="12" rx="2.5" stroke="#1C1C21" stroke-width="1.5"/><rect x="2" y="3" width="16" height="8" rx="1" fill="#1C1C21"/><rect x="24" y="4" width="2" height="6" rx="1" fill="#1C1C21"/></svg>
+  <div class="header-nav">
+    <button class="back-btn" onclick="goBack()"><svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg></button>
+    <span class="header-title">Confirm Purchase</span>
+    <div style="width:36px;"></div>
+  </div>
+
+  <div class="scroll">
+    <div class="confirm-card">
+      <div class="confirm-label" id="confirmLabel">Airtime amount</div>
+      <div class="confirm-value" id="confirmAmount">50.00 ETB</div>
+      <div class="confirm-sub" id="confirmSub">Safaricom</div>
+    </div>
+
+    <div class="confirm-card" style="padding:12px 16px;">
+      <div style="display:flex;justify-content:space-between;align-items:center;">
+        <span style="font-family:'Switzer',sans-serif;font-size:13px;color:var(--On-Surface-Low);">Paying from</span>
+        <span style="font-family:'Switzer',sans-serif;font-size:13px;font-weight:600;color:var(--On-Surface);" id="selectedAccount">Main Account</span>
       </div>
     </div>
 
-    <div class="header-nav">
-      <button class="back-btn" onclick="goBack()">
-        <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
-      </button>
-      <span class="header-title">Confirm Purchase</span>
-      <div style="width: 36px;"></div>
-    </div>
-
-    <div class="scroll">
-
-      <!-- Recipient -->
-      <div class="recipient-card">
-        <div class="recipient-icon" id="provIcon" style="background:#43B02A;">SC</div>
-        <div class="recipient-info">
-          <span class="recipient-number" id="recipientNumber">0712 131 415</span>
-          <span class="recipient-sub" id="providerName">Safaricom airtime</span>
-          <span class="recipient-badge">
-            <svg viewBox="0 0 24 24" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
-            <span id="typeBadge">For you</span>
-          </span>
-        </div>
+    <div class="confirm-card">
+      <div class="confirm-label">Order summary</div>
+      <div style="display:flex;justify-content:space-between;align-items:center;padding:4px 0;">
+        <span style="font-family:'Switzer',sans-serif;font-size:13px;color:var(--On-Surface-Low);">Service fee</span>
+        <span style="font-family:'Switzer',sans-serif;font-size:13px;font-weight:600;color:var(--Success);">Free</span>
       </div>
-
-      <!-- Breakdown -->
-      <div class="breakdown">
-        <div class="b-row">
-          <span class="label">Recipient</span>
-          <span class="value" id="rowRecipient">0712 131 415</span>
-        </div>
-        <div class="b-row">
-          <span class="label">Telecom provider</span>
-          <span class="value" id="rowProvider">Safaricom</span>
-        </div>
-        <div class="b-divider"></div>
-        <div class="b-row">
-          <span class="label">Airtime amount</span>
-          <span class="value" id="amount">0.00 ETB</span>
-        </div>
-        <div class="b-row">
-          <span class="label">Applicable charges</span>
-          <span class="value free" id="fee">Free</span>
-        </div>
-        <div class="b-divider"></div>
-        <div class="b-row total">
-          <span class="label">Total deduction</span>
-          <span class="value" id="total">0.00 ETB</span>
-        </div>
+      <div class="divider"></div>
+      <div style="display:flex;justify-content:space-between;align-items:center;">
+        <span style="font-family:'Switzer',sans-serif;font-size:14px;font-weight:700;color:var(--On-Surface);">Total</span>
+        <span style="font-family:'Switzer',sans-serif;font-size:18px;font-weight:700;color:var(--Primary);" id="totalAmount">50.00 ETB</span>
       </div>
-
-      <!-- Funding account -->
-      <div class="funding">
-        <div class="icon">
-          <svg viewBox="0 0 24 24"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg>
-        </div>
-        <div class="info">
-          <span class="t">Paying from</span>
-          <span class="v" id="fundingAccount">Main Account</span>
-        </div>
-      </div>
-
     </div>
+  </div>
 
-    <div class="bottom-area">
-      <button class="btn-primary" onclick="confirmPay()">Confirm &amp; Pay</button>
-      <button class="btn-link" onclick="goBack()">Edit purchase</button>
-    </div>
-
+  <div class="bottom-area">
+    <button class="btn-primary" onclick="confirmPurchase()">Confirm &amp; Pay</button>
+    <button class="btn-link" onclick="goBack()">Cancel</button>
   </div>
 </div>
 
 <script>
-  const air = JSON.parse(sessionStorage.getItem('airtimeData') || '{}');
+  const data = JSON.parse(sessionStorage.getItem('airtimeData') || '{}');
   const fmt = n => parseFloat(n || 0).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
-  function formatPhone(d) { d = String(d || ''); return [d.slice(0,4), d.slice(4,7), d.slice(7,10)].filter(Boolean).join(' '); }
 
-  const amount = fmt(air.payAmount || '0');
-  const feeNum = parseFloat(air.fee || '0');
-  const total  = fmt(air.total || air.payAmount || '0');
-  const ACCOUNT_LABELS = { main: 'Main Account', reward: 'Reward Account', overdraft: 'Errif Overdraft' };
-  const provider = air.provider || 'Safaricom';
-  const phone = formatPhone(air.recipient || '0712131415');
+  if (data.purchaseType === 'package') {
+    document.getElementById('confirmLabel').textContent = 'Package';
+    document.getElementById('confirmAmount').textContent = (data.packageName || 'Daily Unlimited') + ' - ' + (data.packageDesc || '');
+    document.getElementById('confirmSub').textContent = (data.packageCat || 'Data') + ' • ' + fmt(data.amount || '100') + ' ETB';
+  } else {
+    document.getElementById('confirmLabel').textContent = 'Airtime amount';
+    document.getElementById('confirmAmount').textContent = fmt(data.amount || '50') + ' ETB';
+    document.getElementById('confirmSub').textContent = (data.provider || 'Safaricom') + ' airtime';
+  }
 
-  document.getElementById('provIcon').textContent = air.providerAbbr || 'SC';
-  document.getElementById('provIcon').style.background = air.providerColor || '#43B02A';
-  document.getElementById('recipientNumber').textContent = phone;
-  document.getElementById('providerName').textContent = provider + ' airtime';
-  document.getElementById('typeBadge').textContent = air.purchaseType === 'others' ? 'Gift' : 'For you';
-  document.getElementById('rowRecipient').textContent = phone;
-  document.getElementById('rowProvider').textContent = provider;
-  document.getElementById('amount').textContent = amount + ' ETB';
+  document.getElementById('totalAmount').textContent = fmt(data.amount || '50') + ' ETB';
+  document.getElementById('selectedAccount').textContent = (data.payAccount || 'main') === 'main' ? 'Main Account' : 'Reward Account';
 
-  const feeEl = document.getElementById('fee');
-  if (feeNum > 0) { feeEl.textContent = feeNum.toFixed(2) + ' ETB'; feeEl.classList.remove('free'); }
-  else { feeEl.textContent = 'Free'; }
+  function confirmPurchase() {
+    window.location.href = 'Airtime Confirmation.html';
+  }
 
-  document.getElementById('total').textContent = total + ' ETB';
-  document.getElementById('fundingAccount').textContent = ACCOUNT_LABELS[air.payAccount] || 'Main Account';
-
-  function confirmPay() { window.location.href = 'Airtime_Enter PIN.html'; }
-  function goBack() { window.location.href = 'Airtime_Enter Amount.html'; }
+  function goBack() {
+    window.location.href = 'Airtime_Buy.html';
+  }
 </script>
-
 <script src="figma-export.js"></script>
 </body>
 </html>

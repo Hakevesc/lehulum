@@ -18,6 +18,7 @@
 <link rel="stylesheet" href="styles/component-banner-slider.css">
 <link rel="stylesheet" href="styles/component-transactions.css">
 <link rel="stylesheet" href="styles/component-qr-popup.css">
+<link rel="stylesheet" href="styles/component-announcement.css">
 
 <style>
 </style>
@@ -28,6 +29,8 @@
 <div id="app"></div>
 
 <script src="https://unpkg.com/lucide@latest"></script>
+<!-- Shared announcement registry (must load before the app script) -->
+<script src="announcements.js"></script>
 
 <script>
   // ============================================================
@@ -37,6 +40,17 @@
     // Only accept messages from the same origin
     if (event.data && event.data.type === 'showTestPopup') {
       showTestPopupInline(event.data.html, event.data.css || '');
+    }
+
+    // Re-trigger an announcement surface on demand (index.html test panel)
+    if (event.data && event.data.type === 'showAnnouncement') {
+      const variant = event.data.variant;
+      if (variant === 'popup')   showAnnouncementModal();
+      if (variant === 'tooltip') showAnnouncementTip();
+      if (variant === 'strip') {
+        const el = document.getElementById('annStrip');
+        if (el) { el.classList.remove('ann-hidden'); el.scrollIntoView({ block: 'center' }); }
+      }
     }
   });
 
@@ -64,12 +78,15 @@
         <div id="statusBarContainer"></div>
         <div class="app-content">
           <div id="welcomeAppBarContainer"></div>
+          <div id="announcementStripContainer"></div>
           <div id="balanceCardContainer"></div>
           <div id="actionsContainer"></div>
           <div id="bannerSliderContainer"></div>
           <div id="recentTransactionsContainer"></div>
         </div>
         <div id="qrPopupContainer"></div>
+        <div id="announcementTipContainer"></div>
+        <div id="announcementModalContainer"></div>
       </div>
     `,
 
@@ -90,7 +107,8 @@
           <div class="avatar"><span>AM</span></div>
         </div>
         <div class="title"><span>Good Morning, Aster 👋</span></div>
-        <div class="trailing-icon" onclick="window.location.href='Notification Center.html'" style="cursor:pointer">
+        <div class="trailing-icon" id="bellIcon" onclick="window.location.href='Notification Center.html'" style="cursor:pointer">
+          <span class="ann-bell-badge" id="annBellBadge"></span>
           <div class="icon-button">
             <div class="container">
               <div class="state-layer">
@@ -168,7 +186,7 @@
           </div>
           <span class="label">Airtime/<br>Package</span>
         </div>
-        <div class="primary-action">
+        <div class="primary-action" onclick="window.location.href='More Services.html'" style="cursor:pointer">
           <div class="icon-container">
             <img src="assets/More Services.svg" alt="More Services" style="width:40px;height:40px;object-fit:contain;">
           </div>
@@ -341,6 +359,21 @@
     `
   };
 
+  // ============================================================
+  // Announcements shown on the home screen, read from the shared
+  // registry in announcements.js (already prioritised, expired
+  // entries filtered out).
+  // ============================================================
+  const activeAnnouncements = window.MPESA_ANN ? window.MPESA_ANN.active() : [];
+
+  // The strip carries the top-priority item; the modal promotes the
+  // top campaign/offer, so the two never duplicate each other.
+  const stripItem = activeAnnouncements[0];
+  const modalItem = activeAnnouncements.find(a => a.type !== 'notice') || stripItem;
+
+  const annExpiryLabel = days =>
+    (days > 0 ? window.MPESA_ANN.expiryLabel(days) : null);
+
   // Component registry: which template goes into which container
   const componentMap = [
     { container: 'statusBarContainer', template: 'statusBar' },
@@ -406,6 +439,172 @@
 
     // 6. Initialize QR FAB Speed-dial
     initQrFab();
+
+    // 7. Initialize announcement entry points (strip / tooltip / popup)
+    initAnnouncements();
+  }
+
+  // ============================================================
+  // Announcement entry points
+  //   strip   — always visible, sits under the welcome bar
+  //   tooltip — anchored to the bell, auto-shows then auto-hides
+  //   popup   — once per session, promotes the top campaign
+  // ============================================================
+  function initAnnouncements() {
+    if (!activeAnnouncements.length) return;
+
+    renderAnnouncementStrip();
+    renderAnnouncementTip();
+    renderAnnouncementModal();
+
+    const badge = document.getElementById('annBellBadge');
+    if (badge) badge.textContent = activeAnnouncements.length;
+
+    // Tooltip appears shortly after load, then retreats on its own.
+    setTimeout(showAnnouncementTip, 900);
+    // Popup waits until the tooltip has cleared, and only once per session.
+    if (!sessionStorage.getItem('mpesa.annPopupSeen')) {
+      setTimeout(() => {
+        sessionStorage.setItem('mpesa.annPopupSeen', '1');
+        showAnnouncementModal();
+      }, 1800);
+    }
+  }
+
+  /* ---------- 1. inline info strip ---------- */
+  function renderAnnouncementStrip() {
+    const host = document.getElementById('announcementStripContainer');
+    if (!host || !stripItem) return;
+    host.innerHTML = `
+      <div class="ann-strip tone-${stripItem.type}" id="annStrip" onclick="openAnnouncements('${stripItem.id}')">
+        <div class="ann-strip-icon" style="background:${stripItem.iconBg}">${stripItem.glyph}</div>
+        <div class="ann-strip-body">
+          <span class="ann-strip-title">${stripItem.title}</span>
+          <span class="ann-strip-sub">${stripItem.short}</span>
+        </div>
+        <button class="ann-strip-close" aria-label="Dismiss"
+                onclick="event.stopPropagation();dismissAnnouncementStrip()">&times;</button>
+      </div>`;
+  }
+
+  function dismissAnnouncementStrip() {
+    const el = document.getElementById('annStrip');
+    if (el) el.classList.add('ann-hidden');
+  }
+
+  /* ---------- 2. bell tooltip ---------- */
+  function renderAnnouncementTip() {
+    const host = document.getElementById('announcementTipContainer');
+    if (!host) return;
+    const n = activeAnnouncements.length;
+    host.innerHTML = `
+      <div class="ann-tip ann-hidden" id="annTip" onclick="openAnnouncements()">
+        <div class="ann-tip-arrow" id="annTipArrow"></div>
+        <div class="ann-tip-head">
+          <div class="ann-tip-glyph">📣</div>
+          <span class="ann-tip-title">${n} new announcement${n > 1 ? 's' : ''}</span>
+          <button class="ann-tip-close" aria-label="Dismiss"
+                  onclick="event.stopPropagation();hideAnnouncementTip()">&times;</button>
+        </div>
+        <div class="ann-tip-text">${stripItem.short}. Tap to see all offers and notices.</div>
+        <span class="ann-tip-link">View announcements &rsaquo;</span>
+      </div>`;
+  }
+
+  // Anchored to the live position of the bell so it stays correct
+  // regardless of frame padding or status-bar height.
+  function positionAnnouncementTip() {
+    const tip = document.getElementById('annTip');
+    const bell = document.getElementById('bellIcon');
+    const frame = document.querySelector('.phone-frame');
+    const arrow = document.getElementById('annTipArrow');
+    if (!tip || !bell || !frame) return;
+
+    const f = frame.getBoundingClientRect();
+    const b = bell.getBoundingClientRect();
+
+    const right = Math.max(10, f.right - b.right - 4);
+    tip.style.top = (b.bottom - f.top + 10) + 'px';
+    tip.style.right = right + 'px';
+
+    // Point the arrow at the centre of the bell.
+    if (arrow) {
+      const tipRect = tip.getBoundingClientRect();
+      const bellCentreFromTipRight = tipRect.right - (b.left + b.width / 2);
+      arrow.style.right = Math.min(tip.offsetWidth - 20, Math.max(10, bellCentreFromTipRight - 8)) + 'px';
+    }
+  }
+
+  function showAnnouncementTip() {
+    const tip = document.getElementById('annTip');
+    if (!tip) return;
+    tip.classList.remove('ann-hidden');
+    positionAnnouncementTip();
+    clearTimeout(showAnnouncementTip._t);
+    showAnnouncementTip._t = setTimeout(hideAnnouncementTip, 6000);
+  }
+
+  function hideAnnouncementTip() {
+    const tip = document.getElementById('annTip');
+    if (tip) tip.classList.add('ann-hidden');
+  }
+
+  /* ---------- 3. popup modal ---------- */
+  function renderAnnouncementModal() {
+    const host = document.getElementById('announcementModalContainer');
+    if (!host || !modalItem) return;
+    const expiry = annExpiryLabel(modalItem.expiresInDays);
+    host.innerHTML = `
+      <div class="ann-modal ann-hidden" id="annModal"
+           onclick="if(event.target===this)hideAnnouncementModal()">
+        <div class="ann-modal-card">
+          <div class="ann-modal-art" style="background:${modalItem.gradient}">
+            <div class="ann-art-circle a1"></div>
+            <div class="ann-art-circle a2"></div>
+            <span class="ann-modal-badge">${modalItem.badge}</span>
+            <button class="ann-modal-close" aria-label="Close"
+                    onclick="hideAnnouncementModal()">&times;</button>
+            <span class="ann-art-glyph">${modalItem.glyph}</span>
+          </div>
+          <div class="ann-modal-body">
+            <h2 class="ann-modal-title">${modalItem.title}</h2>
+            <p class="ann-modal-text">${(modalItem.body || modalItem.desc).split('\n\n')[0]}</p>
+            ${expiry ? `<div class="ann-modal-expiry">⏳ ${expiry}</div>` : ''}
+            <div class="ann-modal-actions">
+              <button class="ann-btn primary"
+                      onclick="announcementCta('${modalItem.cta.href}','${modalItem.id}')">
+                ${modalItem.cta.label}
+              </button>
+              <button class="ann-btn ghost" onclick="hideAnnouncementModal()">Maybe later</button>
+            </div>
+          </div>
+        </div>
+      </div>`;
+  }
+
+  function showAnnouncementModal() {
+    hideAnnouncementTip();
+    const m = document.getElementById('annModal');
+    if (m) m.classList.remove('ann-hidden');
+  }
+
+  function hideAnnouncementModal() {
+    const m = document.getElementById('annModal');
+    if (m) m.classList.add('ann-hidden');
+  }
+
+  /* ---------- shared navigation ---------- */
+  // Redirection rule: a CTA with a journey goes straight there,
+  // otherwise the customer lands on the Announcements screen.
+  function announcementCta(href, id) {
+    if (href) { window.location.href = href; return; }
+    openAnnouncements(id);
+  }
+
+  function openAnnouncements(id) {
+    window.location.href = id
+      ? 'Announcement Detail.html?id=' + encodeURIComponent(id)
+      : 'Announcement.html';
   }
 
   // Banner Slider Functionality

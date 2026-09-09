@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Withdraw Cash</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@400;500;600&display=swap');
+  @import url('https://api.fontshare.com/v2/css?f[]=switzer@400,500,600,700&display=swap');
+
+  :root {
+    --Primary: #FE353D;
+    --On-Surface: #1C1C21;
+    --On-Surface-Low: #7C7C87;
+    --Border: #E8E8EC;
+    --Background: #F5F5F5;
+    --Field: #F7F7F8;
+    --Success: #1FC83B;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'Inter', sans-serif; background: transparent; display: flex; justify-content: center; align-items: center; min-height: 100vh; padding: 20px; }
+  .phone-frame { width: 360px; height: 780px; background: var(--Background); border-radius: 30px; overflow: hidden; position: relative; box-shadow: 0 20px 60px rgba(0,0,0,0.15); display: flex; flex-direction: column; }
+  .app-content { height: 100%; display: flex; flex-direction: column; }
+
+  .status-bar { display: flex; justify-content: space-between; align-items: center; padding: 14px 24px 8px; background: var(--Background); flex-shrink: 0; }
+  .status-bar .time { font-size: 14px; font-weight: 600; color: var(--On-Surface); }
+  .status-icons { display: flex; align-items: center; gap: 6px; }
+  .status-icons svg { width: 18px; height: 18px; }
+
+  .header-nav { display: flex; align-items: center; justify-content: space-between; padding: 8px 16px 12px; background: var(--Background); flex-shrink: 0; }
+  .back-btn { width: 36px; height: 36px; border-radius: 50%; background: transparent; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: background 0.2s; }
+  .back-btn:hover { background: rgba(0,0,0,0.05); }
+  .back-btn svg { width: 22px; height: 22px; stroke: var(--On-Surface); stroke-width: 1.8px; fill: none; }
+  .header-title { color: var(--On-Surface); font-family: 'Switzer', sans-serif; font-size: 17px; font-weight: 500; letter-spacing: 0.3px; flex: 1; text-align: center; }
+
+  .scroll { flex: 1; overflow-y: auto; padding: 0 16px 16px; display: flex; flex-direction: column; gap: 14px; }
+  .scroll::-webkit-scrollbar { width: 0; }
+
+  /* ── Form card ── */
+  .form-card { background: #FFF; border-radius: 16px; padding: 16px; box-shadow: 0 2px 8px rgba(0,0,0,0.04); display: flex; flex-direction: column; gap: 8px; }
+  .field-label { font-family: 'Switzer', sans-serif; font-size: 14px; font-weight: 600; color: var(--On-Surface); margin-top: 6px; }
+  .field-label:first-child { margin-top: 0; }
+  .field { height: 50px; background: var(--Field); border: 1.5px solid var(--Border); border-radius: 12px; padding: 0 14px; display: flex; align-items: center; gap: 8px; transition: border-color 0.2s, box-shadow 0.2s, background 0.2s; }
+  .field:focus-within { border-color: var(--Primary); background: #FFF; box-shadow: 0 4px 12px rgba(254,53,61,0.12); }
+  .field input { flex: 1; min-width: 0; border: none; background: transparent; outline: none; font-family: 'Switzer', sans-serif; font-size: 15px; font-weight: 500; color: var(--On-Surface); }
+  .field input::placeholder { color: var(--On-Surface-Low); font-weight: 400; }
+  .field .suffix { font-family: 'Switzer', sans-serif; font-size: 13px; font-weight: 500; color: var(--On-Surface-Low); flex-shrink: 0; }
+  .balance-hint { font-family: 'Switzer', sans-serif; font-size: 11.5px; color: var(--On-Surface-Low); margin-top: 2px; }
+  .balance-hint b { color: var(--On-Surface); font-weight: 600; }
+
+  .msg { display: none; align-items: center; gap: 8px; font-family: 'Switzer', sans-serif; font-size: 12px; margin-top: 2px; color: var(--Primary); }
+  .msg.show { display: flex; }
+  .msg svg { width: 15px; height: 15px; stroke: var(--Primary); stroke-width: 2.4; fill: none; flex-shrink: 0; }
+
+  /* ── Bank picker ── */
+  .select-field { cursor: pointer; justify-content: space-between; }
+  .select-value { flex: 1; font-family: 'Switzer', sans-serif; font-size: 15px; font-weight: 500; color: var(--On-Surface); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .select-value.placeholder { color: var(--On-Surface-Low); font-weight: 400; }
+  .select-chev { width: 18px; height: 18px; stroke: var(--Primary); stroke-width: 2.2; fill: none; flex-shrink: 0; transition: transform 0.2s; }
+  .select-field.open .select-chev { transform: rotate(180deg); }
+  .bank-list { display: none; flex-direction: column; border: 1.5px solid var(--Border); border-radius: 12px; overflow: hidden; margin-top: 6px; }
+  .bank-list.show { display: flex; }
+  .bank-opt { display: flex; align-items: center; gap: 11px; padding: 11px 13px; cursor: pointer; background: #FFF; transition: background 0.15s; border-bottom: 1px solid #F2F2F5; }
+  .bank-opt:last-child { border-bottom: none; }
+  .bank-opt:hover { background: #FAFAFA; }
+  .bank-opt img { width: 30px; height: 30px; object-fit: contain; flex-shrink: 0; }
+  .bank-opt .bo-info { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 1px; }
+  .bank-opt .bo-nm { font-family: 'Switzer', sans-serif; font-size: 13.5px; font-weight: 600; color: var(--On-Surface); }
+  .bank-opt .bo-sub { font-family: 'Switzer', sans-serif; font-size: 11px; color: var(--On-Surface-Low); }
+
+  /* ── Resolved ATM row ── */
+  .agent-chip { display: none; align-items: center; gap: 12px; background: #F2FAF4; border-radius: 12px; padding: 12px 14px; margin-top: 4px; }
+  .agent-chip.show { display: flex; }
+  .agent-chip .tick { width: 24px; height: 24px; border-radius: 50%; border: 1.8px solid var(--Success); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+  .agent-chip .tick svg { width: 13px; height: 13px; stroke: var(--Success); stroke-width: 3; fill: none; }
+  .agent-chip .info { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px; }
+  .agent-chip .nm { font-family: 'Switzer', sans-serif; font-size: 14px; font-weight: 500; color: var(--On-Surface); }
+  .agent-chip .sub { font-family: 'Switzer', sans-serif; font-size: 11.5px; color: var(--On-Surface-Low); }
+
+  /* ── Cardless notice ── */
+  .note-strip { display: flex; align-items: flex-start; gap: 10px; background: #FFF; border: 1.5px solid var(--Border); border-radius: 12px; padding: 11px 12px; }
+  .note-strip svg { width: 17px; height: 17px; stroke: var(--Primary); stroke-width: 2; fill: none; flex-shrink: 0; }
+  .note-strip .txt { font-family: 'Switzer', sans-serif; font-size: 11.8px; color: var(--On-Surface-Low); line-height: 1.5; }
+  .note-strip .txt b { color: var(--On-Surface); font-weight: 600; }
+
+  /* ── Recent card ── */
+  .recent-card { background: #FFF; border-radius: 16px; padding: 16px; box-shadow: 0 2px 8px rgba(0,0,0,0.04); display: flex; flex-direction: column; gap: 12px; }
+  .recent-title { font-family: 'Switzer', sans-serif; font-size: 14px; font-weight: 600; color: var(--On-Surface); letter-spacing: 0.2px; }
+  .recent-list { display: flex; flex-direction: column; gap: 6px; }
+  .recent-item { display: flex; align-items: center; gap: 12px; padding: 7px 0; cursor: pointer; border-radius: 10px; transition: background 0.15s; }
+  .recent-item:hover { background: #FAFAFA; }
+  .recent-avatar { width: 40px; height: 40px; border-radius: 50%; overflow: hidden; flex-shrink: 0; background: #FFF; border: 1px solid #ECECEC; display: flex; align-items: center; justify-content: center; }
+  .recent-avatar img { width: 100%; height: 100%; object-fit: contain; padding: 5px; }
+  .recent-info { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px; }
+  .recent-name { font-family: 'Switzer', sans-serif; font-size: 14px; font-weight: 600; color: var(--On-Surface); letter-spacing: 0.2px; }
+  .recent-sub { font-family: 'Switzer', sans-serif; font-size: 12px; color: var(--On-Surface-Low); }
+  .chev { width: 18px; height: 18px; stroke: var(--Primary); stroke-width: 2.4; fill: none; flex-shrink: 0; }
+
+  /* ── Bottom button ── */
+  .bottom-bar { flex-shrink: 0; padding: 10px 16px 18px; background: var(--Background); }
+  .continue-btn { width: 100%; height: 52px; border-radius: 14px; border: none; background: #E0E0E0; color: var(--On-Surface-Low); font-family: 'Poppins', sans-serif; font-size: 15px; font-weight: 500; cursor: not-allowed; transition: all 0.2s; }
+  .continue-btn.active { background: var(--Primary); color: #FFF; cursor: pointer; box-shadow: 0 4px 16px rgba(254,53,61,0.25); }
+  .continue-btn.active:hover { background: #E5303A; box-shadow: 0 6px 20px rgba(254,53,61,0.35); transform: translateY(-1px); }
+  .continue-btn.active:active { transform: scale(0.98) translateY(0); }
+
+  /* ── Confirmation bottom sheet ── */
+  .sheet-overlay { position: absolute; inset: 0; background: rgba(0,0,0,0.45); display: flex; align-items: flex-end; opacity: 0; pointer-events: none; transition: opacity 0.25s; z-index: 50; }
+  .sheet-overlay.show { opacity: 1; pointer-events: auto; }
+  .sheet { width: 100%; background: #FFF; border-radius: 24px 24px 0 0; padding: 12px 20px 22px; display: flex; flex-direction: column; transform: translateY(100%); transition: transform 0.3s cubic-bezier(0.2, 0.8, 0.3, 1); }
+  .sheet-overlay.show .sheet { transform: translateY(0); }
+  .sheet-grip { width: 44px; height: 4px; border-radius: 2px; background: #D8D8DE; margin: 0 auto 14px; }
+  .sheet-title { text-align: center; font-family: 'Switzer', sans-serif; font-size: 17px; font-weight: 700; color: var(--On-Surface); margin-bottom: 20px; }
+
+  .party-card { position: relative; border: 1.5px solid var(--Border); border-radius: 14px; padding: 14px; display: flex; align-items: center; gap: 12px; margin-bottom: 20px; }
+  .party-badge { position: absolute; top: -11px; right: 14px; background: #EDEDF0; color: var(--On-Surface-Low); font-family: 'Switzer', sans-serif; font-size: 9.5px; font-weight: 700; letter-spacing: 0.6px; padding: 4px 9px; border-radius: 6px; }
+  .party-avatar { width: 44px; height: 44px; border-radius: 50%; background: #FFF; border: 1px solid var(--Border); display: flex; align-items: center; justify-content: center; flex-shrink: 0; overflow: hidden; }
+  .party-avatar img { width: 30px; height: 30px; object-fit: contain; }
+  .party-info { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 3px; }
+  .party-name { font-family: 'Switzer', sans-serif; font-size: 15px; font-weight: 700; color: var(--On-Surface); }
+  .party-sub { font-family: 'Switzer', sans-serif; font-size: 12.5px; color: var(--On-Surface-Low); }
+
+  .sum-row { display: flex; align-items: center; justify-content: space-between; padding: 13px 2px; border-bottom: 1px solid #F0F0F3; }
+  .sum-row.total { border-bottom: none; }
+  .sum-key { font-family: 'Switzer', sans-serif; font-size: 13px; font-weight: 400; color: var(--On-Surface-Low); }
+  .sum-val { font-family: 'Switzer', sans-serif; font-size: 13.5px; font-weight: 700; color: var(--On-Surface); }
+  .sum-row.total .sum-val { color: var(--Primary); font-size: 15px; }
+
+  .sheet-actions { display: flex; gap: 12px; margin-top: 20px; }
+  .sheet-btn { flex: 1; height: 50px; border-radius: 12px; background: #FFF; cursor: pointer; font-family: 'Switzer', sans-serif; font-size: 14.5px; font-weight: 500; transition: background 0.15s, transform 0.12s; }
+  .sheet-btn:active { transform: scale(0.98); }
+  .sheet-btn.cancel { border: 1.5px solid var(--Border); color: var(--On-Surface-Low); }
+  .sheet-btn.cancel:hover { background: #FAFAFA; }
+  .sheet-btn.confirm { border: 1.5px solid var(--Primary); color: var(--Primary); font-weight: 600; }
+  .sheet-btn.confirm:hover { background: #FFF5F5; }
+</style>
+</head>
+<body>
+<div class="phone-frame">
+  <div class="app-content">
+
+    <div class="status-bar">
+      <span class="time">10:00</span>
+      <div class="status-icons">
+        <svg viewBox="0 0 24 24" fill="none"><path d="M1 9l2 2c4.97-4.97 13.03-4.97 18 0l2-2C16.93 2.93 7.08 2.93 1 9z" fill="#1C1C21"/><path d="M5 13l2 2c2.76-2.76 7.24-2.76 10 0l2-2C15.14 9.14 8.87 9.14 5 13z" fill="#1C1C21"/><path d="M9 17l2 2c1.1-1.1 2.9-1.1 4 0l2-2c-2.21-2.21-5.79-2.21-8 0z" fill="#1C1C21"/></svg>
+        <svg viewBox="0 0 24 24" fill="none"><rect x="2" y="6" width="4" height="12" rx="1" fill="#1C1C21"/><rect x="8" y="4" width="4" height="14" rx="1" fill="#1C1C21"/><rect x="14" y="2" width="4" height="16" rx="1" fill="#1C1C21"/><rect x="20" y="0" width="4" height="18" rx="1" fill="#1C1C21" opacity="0.3"/></svg>
+        <svg viewBox="0 0 28 14" fill="none"><rect x="0" y="1" width="22" height="12" rx="2.5" stroke="#1C1C21" stroke-width="1.5"/><rect x="2" y="3" width="16" height="8" rx="1" fill="#1C1C21"/><rect x="24" y="4" width="2" height="6" rx="1" fill="#1C1C21"/></svg>
+      </div>
+    </div>
+
+    <div class="header-nav">
+      <button class="back-btn" onclick="window.location.href='Withdraw Cash.html'">
+        <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+      </button>
+      <span class="header-title">Withdraw Cash</span>
+      <div style="width:36px;"></div>
+    </div>
+
+    <div class="scroll">
+
+      <div class="form-card">
+        <span class="field-label">Select Bank ATM</span>
+        <div class="field select-field" id="selectField" onclick="toggleBanks()">
+          <span class="select-value placeholder" id="bankValue">Choose a participating bank</span>
+          <svg class="select-chev" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+        </div>
+        <div class="bank-list" id="bankList"></div>
+        <div class="agent-chip" id="atmChip">
+          <span class="tick"><svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></span>
+          <div class="info"><span class="nm"></span><span class="sub"></span></div>
+        </div>
+
+        <span class="field-label">Amount</span>
+        <div class="field">
+          <input id="amt" type="text" inputmode="decimal" placeholder="e.g. 120 Br" oninput="onAmountInput(this)">
+          <span class="suffix">Br</span>
+        </div>
+        <div class="balance-hint"><b>Balance:</b> 12,580.00 Br</div>
+        <div class="msg" id="amtMsg">
+          <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 8v5M12 16h.01"/></svg>
+          <span id="amtMsgTxt"></span>
+        </div>
+
+        <span class="field-label">Note (Optional)</span>
+        <div class="field">
+          <input id="note" type="text" placeholder="e.g. Rent money" maxlength="40">
+        </div>
+      </div>
+
+      <div class="note-strip">
+        <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8h.01"/></svg>
+        <div class="txt"><b>Cardless withdrawal.</b> You'll get a voucher code to enter at the ATM. It is valid for 24 hours and can be used once.</div>
+      </div>
+
+      <div class="recent-card">
+        <span class="recent-title">Recent</span>
+        <div class="recent-list">
+          <div class="recent-item" onclick="useRecent('cbe')">
+            <div class="recent-avatar"><img src="assets/banks logo/cbe-logo.png" alt="CBE"></div>
+            <div class="recent-info">
+              <span class="recent-name">CBE ATM</span>
+              <span class="recent-sub">Bole Medhanialem</span>
+            </div>
+            <svg class="chev" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+          </div>
+          <div class="recent-item" onclick="useRecent('boa')">
+            <div class="recent-avatar"><img src="assets/banks logo/abyssinya-bank.png" alt="Bank of Abyssinia"></div>
+            <div class="recent-info">
+              <span class="recent-name">Bank of Abyssinia ATM</span>
+              <span class="recent-sub">Dembel City Center</span>
+            </div>
+            <svg class="chev" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+          </div>
+          <div class="recent-item" onclick="useRecent('awash')">
+            <div class="recent-avatar"><img src="assets/banks logo/awass-bank.png" alt="Awash Bank"></div>
+            <div class="recent-info">
+              <span class="recent-name">Awash Bank ATM</span>
+              <span class="recent-sub">Bole Airport Road</span>
+            </div>
+            <svg class="chev" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="bottom-bar">
+      <button class="continue-btn" id="continueBtn" onclick="continueFlow()" disabled>Continue</button>
+    </div>
+
+  </div>
+
+  <!-- Confirmation sheet -->
+  <div class="sheet-overlay" id="sheetOverlay" onclick="if(event.target===this)closeSheet()">
+    <div class="sheet">
+      <div class="sheet-grip"></div>
+      <div class="sheet-title">Confirmation</div>
+
+      <div class="party-card">
+        <span class="party-badge">ATM</span>
+        <div class="party-avatar"><img id="cfLogo" src="" alt=""></div>
+        <div class="party-info">
+          <span class="party-name" id="cfName"></span>
+          <span class="party-sub" id="cfSub"></span>
+        </div>
+      </div>
+
+      <div class="sum-row">
+        <span class="sum-key">Withdrawal Amount:</span>
+        <span class="sum-val" id="cfAmount"></span>
+      </div>
+      <div class="sum-row">
+        <span class="sum-key">Fee:</span>
+        <span class="sum-val" id="cfFee"></span>
+      </div>
+      <div class="sum-row total">
+        <span class="sum-key">Total:</span>
+        <span class="sum-val" id="cfTotal"></span>
+      </div>
+
+      <div class="sheet-actions">
+        <button class="sheet-btn cancel" onclick="closeSheet()">Cancel</button>
+        <button class="sheet-btn confirm" onclick="confirmWithdraw()">Confirm</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  const ATMS = {
+    cbe:    { key: 'cbe',    name: 'CBE ATM',               bank: 'Commercial Bank of Ethiopia', loc: 'Bole Medhanialem',   logo: 'assets/banks logo/cbe-logo.png' },
+    boa:    { key: 'boa',    name: 'Bank of Abyssinia ATM', bank: 'Bank of Abyssinia',           loc: 'Dembel City Center', logo: 'assets/banks logo/abyssinya-bank.png' },
+    awash:  { key: 'awash',  name: 'Awash Bank ATM',        bank: 'Awash Bank',                  loc: 'Bole Airport Road',  logo: 'assets/banks logo/awass-bank.png' },
+    dashen: { key: 'dashen', name: 'Dashen Bank ATM',       bank: 'Dashen Bank',                 loc: 'Kazanchis',          logo: 'assets/banks logo/dashen-bank.png' }
+  };
+
+  const MIN_AMT = 10, MAX_AMT = 10000, BALANCE = 12580;
+  let atm = null;
+
+  const $ = id => document.getElementById(id);
+
+  /* ── Bank picker ── */
+  (function renderBanks() {
+    $('bankList').innerHTML = Object.values(ATMS).map(a =>
+      '<div class="bank-opt" onclick="pickBank(\'' + a.key + '\')">' +
+        '<img src="' + a.logo + '" alt="">' +
+        '<div class="bo-info"><span class="bo-nm">' + a.name + '</span>' +
+        '<span class="bo-sub">' + a.loc + '</span></div>' +
+      '</div>').join('');
+  })();
+
+  function toggleBanks() {
+    $('bankList').classList.toggle('show');
+    $('selectField').classList.toggle('open');
+  }
+
+  function pickBank(key) {
+    const a = ATMS[key];
+    if (!a) return;
+    atm = a;
+    $('bankValue').textContent = a.name;
+    $('bankValue').classList.remove('placeholder');
+    $('bankList').classList.remove('show');
+    $('selectField').classList.remove('open');
+    const chip = $('atmChip');
+    chip.querySelector('.nm').textContent = a.name;
+    chip.querySelector('.sub').textContent = a.bank + ' • ' + a.loc;
+    chip.classList.add('show');
+    updateBtn();
+  }
+
+  function useRecent(key) { pickBank(key); $('amt').focus(); }
+
+  /* ── Amount ── */
+  function onAmountInput(el) {
+    el.value = el.value.replace(/[^\d.]/g, '').replace(/(\..*)\./g, '$1');
+    validateAmount();
+    updateBtn();
+  }
+
+  function validateAmount() {
+    const raw = $('amt').value.trim();
+    const msg = $('amtMsg');
+    if (raw === '') { msg.classList.remove('show'); return null; }
+    const n = parseFloat(raw);
+    let err = '';
+    if (isNaN(n) || n <= 0) err = 'Enter a valid amount.';
+    else if (n < MIN_AMT) err = 'Minimum withdrawal is ' + MIN_AMT + ' Br.';
+    else if (n > MAX_AMT) err = 'Maximum withdrawal is ' + MAX_AMT.toLocaleString() + ' Br per transaction.';
+    else if (n > BALANCE) err = 'Amount exceeds your available balance.';
+    if (err) { $('amtMsgTxt').textContent = err; msg.classList.add('show'); return null; }
+    msg.classList.remove('show');
+    return n;
+  }
+
+  function updateBtn() {
+    const ok = !!atm && validateAmount() !== null;
+    $('continueBtn').classList.toggle('active', ok);
+    $('continueBtn').disabled = !ok;
+  }
+
+  /* ── Confirmation sheet ── */
+  // Same fee table the review screen uses, so totals agree across the flow.
+  function computeFee(n) {
+    if (n <= 0) return 0;
+    if (n <= 2000) return 7;
+    if (n <= 5000) return 15;
+    if (n <= 8000) return 30;
+    return 45;
+  }
+
+  const fmt = n => parseFloat(n || 0).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+
+  function continueFlow() {
+    const amount = validateAmount();
+    if (!atm || amount === null) return;
+    const fee = computeFee(amount);
+    $('cfLogo').src = atm.logo;
+    $('cfName').textContent = atm.name;
+    $('cfSub').textContent = atm.bank + ' • ' + atm.loc;
+    $('cfAmount').textContent = fmt(amount) + ' Br';
+    $('cfFee').textContent = fmt(fee) + ' Br';
+    $('cfTotal').textContent = fmt(amount + fee) + ' Br';
+    $('sheetOverlay').classList.add('show');
+  }
+
+  function closeSheet() { $('sheetOverlay').classList.remove('show'); }
+
+  function confirmWithdraw() {
+    const amount = validateAmount();
+    if (!atm || amount === null) return;
+    const fee = computeFee(amount);
+    sessionStorage.setItem('withdrawData', JSON.stringify({
+      method: 'atm',
+      methodLabel: 'ATM Cardless',
+      atm: atm,
+      atmName: atm.name,
+      atmBank: atm.bank,
+      atmLoc: atm.loc,
+      amount: amount,
+      fee: fee,
+      total: amount + fee,
+      note: $('note').value.trim(),
+      time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+    }));
+    window.location.href = 'Withdraw Cash - Enter PIN.html';
+  }
+</script>
+</body>
+</html>

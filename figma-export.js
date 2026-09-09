@@ -292,7 +292,11 @@
   //    The group-saving flow uses .sc/.ph instead of .screen/.phone ──
   var SCREEN_SEL = '.screen, .sc';
   var PHONE_SEL = '.phone, .ph, .phone-frame';
+  var PAGE_SEL = '.page';
   function getActivePhone() {
+    // PDF receipts use .page (A4) - try that first
+    var pageEl = document.querySelector(PAGE_SEL);
+    if (pageEl) return pageEl;
     var local = document.querySelector('.screen.active .phone, .sc.active .ph') ||
                 document.querySelector(PHONE_SEL);
     if (local) return local;
@@ -344,7 +348,30 @@
       c.height = Math.max(2, Math.round(rect.height * 2));
       c.getContext('2d').drawImage(el, 0, 0, c.width, c.height);
       return c.toDataURL('image/png');
-    } catch (e) { return null; } // CORS-tainted images can't be read
+    } catch (e) {
+      // Canvas drawImage failed (CORS / file:// protocol).
+      // Fallback: fetch the image as a blob and convert to base64.
+      try {
+        var src = el.src || el.getAttribute('src');
+        if (!src) return null;
+        // For data URIs, return as-is
+        if (src.indexOf('data:') === 0) return src;
+        // For relative URLs, resolve against the document base
+        var absoluteSrc = new URL(src, document.baseURI).href;
+        // Use synchronous XHR to get the image bytes
+        var xhr = new XMLHttpRequest();
+        xhr.open('GET', absoluteSrc, false); // synchronous
+        xhr.overrideMimeType('text/plain; charset=x-user-defined');
+        xhr.send();
+        if (xhr.status !== 0 && xhr.status !== 200) return null;
+        var binary = '';
+        var bytes = xhr.responseText;
+        for (var i = 0; i < bytes.length; i++) {
+          binary += String.fromCharCode(bytes.charCodeAt(i) & 0xff);
+        }
+        return 'data:image/png;base64,' + btoa(binary);
+      } catch (e2) { return null; }
+    }
   }
 
   // Serialize an <svg> to standalone markup so the plugin can rebuild it as

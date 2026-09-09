@@ -1,0 +1,856 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Announcements</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@400;500;600&family=Barlow:wght@400&display=swap');
+  @import url('https://api.fontshare.com/v2/css?f[]=switzer@400,500,600,700&display=swap');
+
+  :root {
+    --Primary: #FE353D;
+    --Primary-Dark: #C41520;
+    --Primary-Darker: #A41016;
+    --On-Surface: #1C1C21;
+    --On-Surface-Low: #7C7C87;
+    --Surface-Container: #FCFCFC;
+    --Gray-0: #FFF;
+    --On-Primary: #FFF1F2;
+    --Success: #1FC83B;
+    --Success-Light: #E8F9EC;
+    --Primary-Light: #FFF1F2;
+    --Warning-Light: #FFF8E1;
+    --Warning: #FF9800;
+    --Info: #0F62FE;
+    --Info-Light: #E8F0FF;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Inter', sans-serif;
+    background: transparent;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    padding: 20px;
+  }
+
+  .phone-frame {
+    width: 360px;
+    height: 780px;
+    background: #F5F5F5;
+    border-radius: 30px;
+    overflow: hidden;
+    position: relative;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
+  }
+
+  .app-content {
+    height: 100%;
+    overflow-y: auto;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+  }
+  .app-content::-webkit-scrollbar { width: 0; }
+
+  /* Status Bar */
+  .status-bar {
+    position: relative;
+    z-index: 5;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    padding: 14px 24px 8px;
+    background: #F5F5F5;
+  }
+  .status-bar .time { font-size: 14px; font-weight: 600; color: var(--On-Surface); }
+  .status-icons { display: flex; align-items: center; gap: 6px; }
+  .status-icons svg { width: 18px; height: 18px; }
+
+  /* Header Navigation */
+  .header-nav {
+    position: relative;
+    z-index: 5;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 16px 20px 0;
+    background: #F5F5F5;
+  }
+
+  .back-btn {
+    position: absolute;
+    left: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    transition: all 0.2s;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+  }
+  .back-btn:hover { background: rgba(0,0,0,0.05); transform: scale(1.05); }
+  .back-btn svg { width: 24px; height: 24px; stroke: var(--On-Surface); stroke-width: 1.5px; }
+
+  .header-title {
+    color: var(--On-Surface);
+    font-family: 'Switzer', sans-serif;
+    font-size: 18px;
+    font-weight: 500;
+    letter-spacing: 0.3px;
+  }
+
+  /* Main Content */
+  .main-content {
+    padding: 16px 0 24px;
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    width: 100%;
+  }
+
+  /* ===== HIGH PRIORITY STRIP ===== */
+  .priority-strip {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    margin: 0 20px 16px;
+    padding: 12px 14px;
+    border-radius: 14px;
+    background: var(--Warning-Light);
+    border-left: 3px solid var(--Warning);
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .priority-strip:hover { transform: translateX(2px); }
+  .priority-strip:active { transform: scale(0.985); }
+  .priority-strip .ps-icon {
+    width: 28px; height: 28px; border-radius: 9px;
+    background: rgba(255, 152, 0, 0.18);
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+  }
+  .priority-strip .ps-icon i, .priority-strip .ps-icon svg {
+    width: 16px !important; height: 16px !important;
+    color: var(--Warning); stroke-width: 2.2px;
+  }
+  .priority-strip .ps-body { flex: 1; min-width: 0; }
+  .priority-strip .ps-title {
+    display: block;
+    font-family: 'Switzer', sans-serif;
+    font-size: 13px; font-weight: 600;
+    color: var(--On-Surface);
+    letter-spacing: 0.2px;
+  }
+  .priority-strip .ps-desc {
+    display: block;
+    font-size: 11.5px; line-height: 1.5;
+    color: var(--On-Surface-Low);
+    margin-top: 2px;
+  }
+  .priority-strip .ps-arrow {
+    color: var(--On-Surface-Low);
+    font-size: 16px;
+    flex-shrink: 0;
+    align-self: center;
+  }
+
+  /* ===== SECTION HEADER ===== */
+  .section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 20px;
+    margin-bottom: 10px;
+  }
+  .section-header .title {
+    color: var(--On-Surface);
+    font-family: 'Switzer', sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+    letter-spacing: 0.3px;
+  }
+  .section-header .see-all {
+    color: var(--On-Surface-Low);
+    font-family: 'Switzer', sans-serif;
+    font-size: 13px;
+    font-weight: 400;
+    cursor: pointer;
+    transition: color 0.2s;
+  }
+  .section-header .see-all:hover { color: var(--Primary); }
+
+  /* ===== FEATURED BANNER CAROUSEL ===== */
+  .carousel {
+    display: flex;
+    gap: 12px;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    padding: 0 20px 4px;
+    margin-bottom: 10px;
+    scrollbar-width: none;
+  }
+  .carousel::-webkit-scrollbar { display: none; }
+
+  .banner {
+    position: relative;
+    flex: 0 0 300px;
+    height: 158px;
+    border-radius: 20px;
+    overflow: hidden;
+    scroll-snap-align: center;
+    cursor: pointer;
+    padding: 16px 18px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    box-shadow: 0 8px 22px rgba(0, 0, 0, 0.12);
+    transition: transform 0.2s, box-shadow 0.2s;
+  }
+  .banner:hover { transform: translateY(-2px); box-shadow: 0 12px 28px rgba(0,0,0,0.18); }
+  .banner:active { transform: scale(0.985); }
+
+  /* Lightweight CSS artwork — no image requests */
+  .banner .art-circle {
+    position: absolute;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.13);
+    pointer-events: none;
+  }
+  .banner .art-circle.c1 { width: 150px; height: 150px; right: -46px; top: -54px; }
+  .banner .art-circle.c2 { width: 92px;  height: 92px;  right: 22px;  bottom: -40px; background: rgba(255,255,255,0.09); }
+  .banner .art-glyph {
+    position: absolute;
+    right: 16px; top: 50%;
+    transform: translateY(-50%);
+    font-size: 54px;
+    opacity: 0.9;
+    pointer-events: none;
+    filter: drop-shadow(0 4px 10px rgba(0,0,0,0.18));
+  }
+
+  .banner-top { position: relative; z-index: 2; display: flex; align-items: center; gap: 6px; }
+  .banner-badge {
+    display: inline-flex; align-items: center; gap: 4px;
+    padding: 3px 9px;
+    border-radius: 20px;
+    background: rgba(255,255,255,0.22);
+    backdrop-filter: blur(4px);
+    color: #FFF;
+    font-family: 'Switzer', sans-serif;
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.4px;
+    text-transform: uppercase;
+  }
+  .banner-badge.urgent { background: rgba(0,0,0,0.28); }
+
+  .banner-body { position: relative; z-index: 2; max-width: 190px; }
+  .banner-title {
+    color: #FFF;
+    font-family: 'Switzer', sans-serif;
+    font-size: 19px;
+    font-weight: 700;
+    line-height: 1.2;
+    letter-spacing: 0.2px;
+  }
+  .banner-sub {
+    color: rgba(255,255,255,0.88);
+    font-size: 11.5px;
+    line-height: 1.45;
+    margin-top: 5px;
+  }
+
+  .banner-cta {
+    position: relative; z-index: 2;
+    align-self: flex-start;
+    display: inline-flex; align-items: center; gap: 6px;
+    height: 30px;
+    padding: 0 14px;
+    border: none;
+    border-radius: 15px;
+    background: #FFF;
+    color: var(--On-Surface);
+    font-family: 'Switzer', sans-serif;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .banner-cta:hover { transform: translateX(2px); box-shadow: 0 4px 12px rgba(0,0,0,0.2); }
+  .banner-cta i, .banner-cta svg { width: 13px !important; height: 13px !important; stroke-width: 2.5px; }
+
+  /* Carousel dots */
+  .carousel-dots {
+    display: flex;
+    justify-content: center;
+    gap: 6px;
+    margin-bottom: 22px;
+  }
+  .dot {
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: #D5D5DA;
+    transition: all 0.25s;
+  }
+  .dot.active { width: 18px; border-radius: 3px; background: var(--Primary); }
+
+  /* ===== TRENDING SERVICES ===== */
+  .trending-row {
+    display: flex;
+    gap: 10px;
+    overflow-x: auto;
+    padding: 0 20px 4px;
+    margin-bottom: 22px;
+    scrollbar-width: none;
+  }
+  .trending-row::-webkit-scrollbar { display: none; }
+
+  .trend-card {
+    flex: 0 0 auto;
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    padding: 9px 14px 9px 10px;
+    border-radius: 14px;
+    background: #FFF;
+    border: 1px solid #EFEFF2;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .trend-card:hover { border-color: var(--Primary); transform: translateY(-2px); }
+  .trend-card:active { transform: scale(0.97); }
+  .trend-icon {
+    width: 32px; height: 32px;
+    border-radius: 10px;
+    background: var(--Primary-Light);
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+  }
+  .trend-icon i, .trend-icon svg {
+    width: 17px !important; height: 17px !important;
+    color: var(--Primary); stroke-width: 2px;
+  }
+  .trend-icon.success { background: var(--Success-Light); }
+  .trend-icon.success i, .trend-icon.success svg { color: var(--Success); }
+  .trend-icon.info { background: var(--Info-Light); }
+  .trend-icon.info i, .trend-icon.info svg { color: var(--Info); }
+  .trend-icon.warning { background: var(--Warning-Light); }
+  .trend-icon.warning i, .trend-icon.warning svg { color: var(--Warning); }
+
+  .trend-text { display: flex; flex-direction: column; }
+  .trend-name {
+    font-family: 'Switzer', sans-serif;
+    font-size: 12.5px; font-weight: 600;
+    color: var(--On-Surface);
+    white-space: nowrap;
+  }
+  .trend-meta {
+    font-size: 10.5px;
+    color: var(--On-Surface-Low);
+    white-space: nowrap;
+    margin-top: 1px;
+  }
+
+  /* ===== FILTER TABS ===== */
+  .filter-tabs {
+    display: flex;
+    gap: 8px;
+    overflow-x: auto;
+    padding: 0 20px 4px;
+    margin-bottom: 14px;
+    scrollbar-width: none;
+  }
+  .filter-tabs::-webkit-scrollbar { display: none; }
+
+  .filter-tab {
+    flex: 0 0 auto;
+    height: 34px;
+    padding: 0 16px;
+    border-radius: 17px;
+    border: none;
+    font-family: 'Switzer', sans-serif;
+    font-size: 12.5px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    white-space: nowrap;
+  }
+  .filter-tab.active {
+    background: var(--Primary);
+    color: #FFF;
+    box-shadow: 0 4px 12px rgba(254, 53, 61, 0.25);
+  }
+  .filter-tab.inactive { background: #E0E0E0; color: var(--On-Surface-Low); }
+  .filter-tab.inactive:hover { background: #D0D0D0; }
+  .filter-tab.active:hover { background: #E5303A; transform: translateY(-1px); }
+
+  /* ===== ANNOUNCEMENT LIST ===== */
+  .announce-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding: 0 20px;
+  }
+
+  .announce-card {
+    display: flex;
+    gap: 12px;
+    padding: 13px 12px;
+    border-radius: 16px;
+    background: #FFF;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .announce-card:hover { background: #FAFAFA; transform: translateX(2px); }
+  .announce-card:active { transform: scale(0.98); }
+
+  /* Compact CSS thumbnail — stands in for campaign artwork */
+  .announce-thumb {
+    width: 52px; height: 52px;
+    border-radius: 14px;
+    flex-shrink: 0;
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+  }
+  .announce-thumb::after {
+    content: '';
+    position: absolute;
+    width: 46px; height: 46px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.14);
+    right: -18px; top: -18px;
+  }
+
+  .announce-body { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 3px; }
+
+  .announce-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 8px;
+  }
+  .announce-title {
+    color: var(--On-Surface);
+    font-family: 'Switzer', sans-serif;
+    font-size: 13.5px;
+    font-weight: 600;
+    letter-spacing: 0.2px;
+    flex: 1;
+  }
+  .announce-date {
+    color: var(--On-Surface-Low);
+    font-family: 'Switzer', sans-serif;
+    font-size: 10.5px;
+    flex-shrink: 0;
+    white-space: nowrap;
+    padding-top: 1px;
+  }
+  .announce-desc {
+    color: var(--On-Surface-Low);
+    font-size: 11.5px;
+    line-height: 1.5;
+    letter-spacing: 0.1px;
+  }
+
+  .announce-foot {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 5px;
+    flex-wrap: wrap;
+  }
+
+  .chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    height: 20px;
+    padding: 0 8px;
+    border-radius: 10px;
+    font-family: 'Switzer', sans-serif;
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.3px;
+  }
+  .chip.new     { background: var(--Success-Light); color: #12912B; }
+  .chip.expiry  { background: var(--Primary-Light); color: var(--Primary); }
+  .chip.type    { background: #F1F1F4; color: var(--On-Surface-Low); }
+  .chip.pinned  { background: var(--Warning-Light); color: #B36A00; }
+
+  .card-cta {
+    margin-left: auto;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    height: 26px;
+    padding: 0 12px;
+    border: none;
+    border-radius: 13px;
+    background: var(--Primary-Light);
+    color: var(--Primary);
+    font-family: 'Switzer', sans-serif;
+    font-size: 11.5px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .card-cta:hover { background: var(--Primary); color: #FFF; }
+  .card-cta i, .card-cta svg { width: 12px !important; height: 12px !important; stroke-width: 2.5px; }
+
+  /* ===== EMPTY STATE ===== */
+  .empty-state {
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 48px 30px;
+    text-align: center;
+  }
+  .empty-state.active { display: flex; }
+  .empty-icon {
+    width: 72px; height: 72px;
+    margin-bottom: 18px;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .empty-icon i, .empty-icon svg {
+    width: 72px !important; height: 72px !important;
+    color: #D0D0D0; stroke-width: 1.4px;
+  }
+  .empty-title {
+    color: var(--On-Surface);
+    font-family: 'Switzer', sans-serif;
+    font-size: 16px; font-weight: 600;
+    margin-bottom: 8px;
+    letter-spacing: 0.3px;
+  }
+  .empty-subtitle {
+    color: var(--On-Surface-Low);
+    font-size: 13px;
+    line-height: 1.6;
+    max-width: 250px;
+  }
+
+  /* ===== ARCHIVE FOOTER ===== */
+  .archive-note {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    margin: 18px 20px 0;
+    padding: 10px;
+    border-radius: 12px;
+    background: #EFEFF2;
+    color: var(--On-Surface-Low);
+    font-family: 'Switzer', sans-serif;
+    font-size: 11px;
+    letter-spacing: 0.2px;
+  }
+  .archive-note i, .archive-note svg { width: 13px !important; height: 13px !important; stroke-width: 2px; }
+</style>
+</head>
+<body>
+
+<div class="phone-frame">
+  <div class="app-content">
+
+    <!-- Status Bar -->
+    <div class="status-bar">
+      <span class="time">10:00</span>
+      <div class="status-icons">
+        <svg viewBox="0 0 24 24" fill="none">
+          <rect x="2" y="6" width="4" height="12" rx="1" fill="#1C1C21"/>
+          <rect x="8" y="4" width="4" height="14" rx="1" fill="#1C1C21"/>
+          <rect x="14" y="2" width="4" height="16" rx="1" fill="#1C1C21"/>
+          <rect x="20" y="0" width="4" height="18" rx="1" fill="#1C1C21" opacity="0.3"/>
+        </svg>
+        <svg viewBox="0 0 24 24" fill="none">
+          <path d="M5 12.55a11 11 0 0 1 14.08 0" stroke="#1C1C21" stroke-width="1.5" stroke-linecap="round"/>
+          <path d="M1.42 9a16 16 0 0 1 21.16 0" stroke="#1C1C21" stroke-width="1.5" stroke-linecap="round"/>
+          <path d="M8.53 16.11a6 6 0 0 1 6.95 0" stroke="#1C1C21" stroke-width="1.5" stroke-linecap="round"/>
+          <line x1="12" y1="20" x2="12.01" y2="20" stroke="#1C1C21" stroke-width="2" stroke-linecap="round"/>
+        </svg>
+        <svg viewBox="0 0 28 14" fill="none">
+          <rect x="0" y="1" width="22" height="12" rx="2.5" stroke="#1C1C21" stroke-width="1.5"/>
+          <rect x="2" y="3" width="16" height="8" rx="1" fill="#1C1C21"/>
+          <rect x="24" y="4" width="2" height="6" rx="1" fill="#1C1C21"/>
+        </svg>
+      </div>
+    </div>
+
+    <!-- Header Navigation -->
+    <div class="header-nav">
+      <button class="back-btn" onclick="goBack()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M19 12H5M12 19l-7-7 7-7"/>
+        </svg>
+      </button>
+      <span class="header-title">Announcements</span>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+
+      <!-- High-priority operational notice (pinned to top) -->
+      <div id="priorityStrip"></div>
+
+      <!-- Featured banners -->
+      <div class="section-header">
+        <span class="title">Featured</span>
+        <span class="see-all" onclick="showAll()">See all</span>
+      </div>
+      <div class="carousel" id="carousel"></div>
+      <div class="carousel-dots" id="carouselDots"></div>
+
+      <!-- Trending services -->
+      <div class="section-header">
+        <span class="title">Trending Services</span>
+      </div>
+      <div class="trending-row" id="trendingRow"></div>
+
+      <!-- Latest announcements -->
+      <div class="section-header">
+        <span class="title">Latest Announcements</span>
+      </div>
+      <div class="filter-tabs" id="filterTabs"></div>
+      <div class="announce-list" id="announceList"></div>
+
+      <div class="empty-state" id="emptyState">
+        <div class="empty-icon"><i data-lucide="megaphone"></i></div>
+        <div class="empty-title">Nothing here right now</div>
+        <div class="empty-subtitle">There are no active announcements in this category. Check back soon for new offers and updates.</div>
+      </div>
+
+      <div class="archive-note" id="archiveNote"></div>
+
+    </div>
+
+  </div>
+</div>
+
+<!-- Lucide Icons -->
+<script src="https://unpkg.com/lucide@latest"></script>
+<!-- Shared announcement registry -->
+<script src="announcements.js"></script>
+<script>
+  // ============================================================
+  // Announcement data comes from the shared registry in
+  // announcements.js, which also backs the home screen and the
+  // detail view. Business rules (prioritisation, expiry) live there.
+  // ============================================================
+  const A = window.MPESA_ANN;
+  const TYPE_LABEL = A.TYPE_LABEL;
+  const TRENDING = window.MPESA_TRENDING;
+
+  const active = A.active();
+  const archivedCount = A.archivedCount();
+
+  const publishedLabel = d => A.publishedLabel(d);
+  const expiryLabel = d => (d > 0 ? A.expiryLabel(d) : null);
+
+  const FILTERS = [
+    { key: 'all',      label: 'All' },
+    { key: 'promo',    label: 'Promotions' },
+    { key: 'campaign', label: 'Campaigns' },
+    { key: 'launch',   label: 'Features' },
+    { key: 'notice',   label: 'Notices' },
+    { key: 'seasonal', label: 'Seasonal' }
+  ];
+
+  let activeFilter = 'all';
+
+  // ============================================================
+  // RENDER
+  // ============================================================
+
+  function renderPriorityStrip() {
+    const host = document.getElementById('priorityStrip');
+    const item = active.find(a => a.pinned && a.priority === 3);
+    if (!item) { host.innerHTML = ''; return; }
+    host.innerHTML = `
+      <div class="priority-strip" onclick="openDetail('${item.id}')">
+        <div class="ps-icon"><i data-lucide="${item.icon || 'alert-triangle'}"></i></div>
+        <div class="ps-body">
+          <span class="ps-title">${item.title}</span>
+          <span class="ps-desc">${item.desc}</span>
+        </div>
+        <span class="ps-arrow">›</span>
+      </div>`;
+  }
+
+  function renderCarousel() {
+    const featured = active.filter(a => a.featured);
+    const host = document.getElementById('carousel');
+    host.innerHTML = featured.map(a => {
+      const ending = expiryLabel(a.expiresInDays);
+      return `
+      <div class="banner" style="background:${a.gradient}" onclick="openDetail('${a.id}')">
+        <div class="art-circle c1"></div>
+        <div class="art-circle c2"></div>
+        <div class="art-glyph">${a.glyph}</div>
+        <div class="banner-top">
+          ${a.badge ? `<span class="banner-badge">${a.badge}</span>` : ''}
+          ${ending ? `<span class="banner-badge urgent">${ending}</span>` : ''}
+        </div>
+        <div class="banner-body">
+          <div class="banner-title">${a.title}</div>
+          <div class="banner-sub">${a.desc}</div>
+        </div>
+        ${a.cta && a.cta.label ? `
+          <button class="banner-cta" onclick="event.stopPropagation();goTo('${a.cta.href}','${a.id}')">
+            ${a.cta.label}<i data-lucide="arrow-right"></i>
+          </button>` : ''}
+      </div>`;
+    }).join('');
+
+    const dots = document.getElementById('carouselDots');
+    dots.innerHTML = featured.map((_, i) =>
+      `<div class="dot ${i === 0 ? 'active' : ''}"></div>`).join('');
+
+    host.addEventListener('scroll', syncDots);
+    syncDots();
+  }
+
+  // Highlights the dot whose banner is closest to the centre of the viewport.
+  // Derived from live geometry so it holds at any banner width.
+  function syncDots() {
+    const host = document.getElementById('carousel');
+    const banners = host.querySelectorAll('.banner');
+    if (!banners.length) return;
+
+    const centre = host.scrollLeft + host.clientWidth / 2;
+    let best = 0, bestGap = Infinity;
+    banners.forEach((b, i) => {
+      const gap = Math.abs((b.offsetLeft + b.offsetWidth / 2) - centre);
+      if (gap < bestGap) { bestGap = gap; best = i; }
+    });
+
+    document.getElementById('carouselDots')
+      .querySelectorAll('.dot')
+      .forEach((d, i) => d.classList.toggle('active', i === best));
+  }
+
+  function renderTrending() {
+    document.getElementById('trendingRow').innerHTML = TRENDING.map(t => `
+      <div class="trend-card" onclick="goTo('${t.href}')">
+        <div class="trend-icon ${t.tone}"><i data-lucide="${t.icon}"></i></div>
+        <div class="trend-text">
+          <span class="trend-name">${t.name}</span>
+          <span class="trend-meta">${t.meta}</span>
+        </div>
+      </div>`).join('');
+  }
+
+  function renderFilters() {
+    document.getElementById('filterTabs').innerHTML = FILTERS.map(f => `
+      <button class="filter-tab ${f.key === activeFilter ? 'active' : 'inactive'}"
+              onclick="setFilter('${f.key}')">${f.label}</button>`).join('');
+  }
+
+  function renderList() {
+    const items = activeFilter === 'all'
+      ? active
+      : active.filter(a => a.type === activeFilter);
+
+    const list = document.getElementById('announceList');
+    const empty = document.getElementById('emptyState');
+
+    empty.classList.toggle('active', items.length === 0);
+
+    list.innerHTML = items.map(a => {
+      const ending = expiryLabel(a.expiresInDays);
+      return `
+      <div class="announce-card" onclick="openDetail('${a.id}')">
+        <div class="announce-thumb" style="background:${a.gradient}">${a.glyph}</div>
+        <div class="announce-body">
+          <div class="announce-top">
+            <span class="announce-title">${a.title}</span>
+            <span class="announce-date">${publishedLabel(a.publishedDaysAgo)}</span>
+          </div>
+          <p class="announce-desc">${a.desc}</p>
+          <div class="announce-foot">
+            ${a.priority === 3 ? `<span class="chip pinned">Important</span>` : ''}
+            ${a.publishedDaysAgo <= 1 ? `<span class="chip new">New</span>` : ''}
+            ${ending ? `<span class="chip expiry">${ending}</span>` : ''}
+            <span class="chip type">${TYPE_LABEL[a.type]}</span>
+            ${a.cta && a.cta.label ? `
+              <button class="card-cta" onclick="event.stopPropagation();goTo('${a.cta.href}','${a.id}')">
+                ${a.cta.label}<i data-lucide="arrow-right"></i>
+              </button>` : ''}
+          </div>
+        </div>
+      </div>`;
+    }).join('');
+  }
+
+  function renderArchiveNote() {
+    document.getElementById('archiveNote').innerHTML = archivedCount
+      ? `<i data-lucide="archive"></i> ${archivedCount} expired announcement${archivedCount > 1 ? 's' : ''} archived automatically`
+      : '';
+  }
+
+  function renderAll() {
+    renderPriorityStrip();
+    renderCarousel();
+    renderTrending();
+    renderFilters();
+    renderList();
+    renderArchiveNote();
+    lucide.createIcons();
+  }
+
+  // ============================================================
+  // ACTIONS
+  // ============================================================
+
+  function setFilter(key) {
+    activeFilter = key;
+    renderFilters();
+    renderList();
+    lucide.createIcons();
+  }
+
+  // Redirection: a CTA sends the customer into the related journey.
+  // Announcements without a journey fall back to the detail screen.
+  function goTo(href, fallbackId) {
+    if (href) { window.location.href = href; return; }
+    if (fallbackId) openDetail(fallbackId);
+  }
+
+  function openDetail(id) {
+    if (!A.find(id)) return;
+    window.location.href = 'Announcement Detail.html?id=' + encodeURIComponent(id);
+  }
+
+  function showAll() {
+    setFilter('all');
+    document.getElementById('filterTabs').scrollIntoView({ behavior: 'smooth', block: 'center' });
+  }
+
+  function goBack() {
+    window.location.href = 'Lehulum Home.html';
+  }
+
+  renderAll();
+</script>
+
+<!-- Export to Figma button (shared exporter) -->
+<script src="figma-export.js"></script>
+</body>
+</html>

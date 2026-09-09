@@ -177,7 +177,7 @@
 
       <div class="wallet-chip">
         <div class="logo"><img id="walletLogo" src="assets/banks logo/M-PESA-logo-icon.png" alt="M-PESA" onerror="this.style.display='none'"></div>
-        <span class="text">Sending via <span id="walletName">M-PESA</span></span>
+        <span class="text"><span id="walletName">M-PESA</span></span>
       </div>
 
       <div class="entry-label">Recipient mobile number</div>
@@ -257,17 +257,27 @@
     return [a, b, c].filter(Boolean).join(' ');
   }
 
+  let walletName = '';
+
+  function getWalletPrefix() {
+    // M-PESA → 07, Telebirr/Ethiotele → 09
+    if (walletName.toLowerCase().includes('mpesa') || walletName.toLowerCase().includes('m-pesa')) return '07';
+    return '09';
+  }
+
   function isValid(d) {
-    return d.length === 10 && (d.startsWith('09') || d.startsWith('07'));
+    const prefix = getWalletPrefix();
+    return d.length === 10 && d.startsWith(prefix);
   }
 
   function render() {
     const el = document.getElementById('numberValue');
     const err = document.getElementById('fieldError');
     const btn = document.getElementById('continueBtn');
+    const prefix = getWalletPrefix();
 
     if (digits.length === 0) {
-      el.textContent = '09XX XXX XXX';
+      el.textContent = prefix + 'XX XXX XXX';
       el.classList.add('placeholder');
     } else {
       el.textContent = formatNumber(digits);
@@ -315,6 +325,8 @@
     return '+251 9** *** ' + d.slice(-3);
   }
 
+  const sampleNames = ['Henok Chala', 'Kidist Birhanu', 'Abel Tesfaye', 'Marta Solomon', 'Yonas Girma', 'Hanna Bekele'];
+
   function storeAndGo(number, holder) {
     let target = {};
     try { target = JSON.parse(sessionStorage.getItem('sendTarget') || '{}'); } catch (e) {}
@@ -322,8 +334,9 @@
     target.phone = maskNumber(number);
     target.fullNumber = number;
     if (holder) target.holder = holder;          // pre-known when picked from contacts
+    else target.holder = sampleNames[Math.floor(Math.random() * sampleNames.length)];
     sessionStorage.setItem('sendTarget', JSON.stringify(target));
-    window.location.href = 'Transfer_Recipient Validation.html';
+    window.location.href = 'Transfer to Wallet_Enter Amount.html';
   }
 
   function continueToValidation() {
@@ -338,6 +351,7 @@
     try { target = JSON.parse(sessionStorage.getItem('sendTarget') || 'null'); } catch (e) {}
     if (target && target.type === 'wallet') {
       if (target.name) {
+        walletName = target.name;
         document.getElementById('walletName').textContent = target.name;
         document.getElementById('headerTitle').textContent = 'Send to ' + target.name;
       }
@@ -345,6 +359,13 @@
         const img = document.getElementById('walletLogo');
         img.src = target.logo; img.alt = target.name || 'wallet'; img.style.display = '';
       }
+    }
+    // Update placeholder and error message based on wallet
+    const prefix = getWalletPrefix();
+    document.getElementById('numberValue').textContent = prefix + 'XX XXX XXX';
+    const errMsg = document.querySelector('.field-error span');
+    if (errMsg) {
+      errMsg.textContent = 'Enter a valid 10-digit number starting with ' + prefix;
     }
   })();
 

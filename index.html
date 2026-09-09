@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+ <!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
@@ -292,6 +292,10 @@
     { group: 'Home', label: 'Scan QR',               file: 'Scan QR.html',                     icon: 'scan' },
     { group: 'Home', label: 'Verify Receipt',        file: 'Verify Receipt.html',              icon: 'shield' },
 
+    { group: 'Announcements', label: 'Announcements',        file: 'Announcement.html',        icon: 'megaphone' },
+    { group: 'Announcements', label: 'Announcement Detail',  file: 'Announcement Detail.html', icon: 'info' },
+    { group: 'Announcements', label: 'Announcements (Empty)',file: 'Announcement Empty.html',  icon: 'megaphone' },
+
     { group: 'Bill Payment',     label: 'Pay Bill (Menu)',      file: 'Pay Bill.html',                      icon: 'receipt' },
     { group: 'Bill Payment',     label: 'Select Biller',      file: 'Bill Payment_Select Biller.html',    icon: 'statement' },
     { group: 'Bill Payment',     label: 'Enter Account',      file: 'Bill Payment_Enter Account.html',    icon: 'statement' },
@@ -326,44 +330,26 @@
     { group: 'Merchant Payment', label: 'Error · Timeout',              file: 'Merchant Payment_Timeout.html',              icon: 'info' },
     { group: 'Merchant Payment', label: 'Error · Service Unavailable',  file: 'Merchant Payment_Service Unavailable.html',  icon: 'info' },
 
-    { group: 'Airtime', label: 'Buy Airtime (Entry)',  file: 'Airtime_Buy.html',                   icon: 'smartphone' },
-    { group: 'Airtime', label: 'Enter Amount',         file: 'Airtime_Enter Amount.html',          icon: 'money' },
-    { group: 'Airtime', label: 'Confirm Purchase',     file: 'Airtime_Review.html',                icon: 'check' },
-    { group: 'Airtime', label: 'Enter PIN',            file: 'Airtime_Enter PIN.html',             icon: 'lock' },
-    { group: 'Airtime', label: 'Receipt',              file: 'Airtime Confirmation.html',          icon: 'receipt' },
-    { group: 'Airtime', label: 'Overdraft · Offer',     file: 'Airtime_Overdraft Offer.html',      icon: 'info' },
-    { group: 'Airtime', label: 'Overdraft · Activate',  file: 'Airtime_Overdraft Activate.html',   icon: 'money' },
-    { group: 'Airtime', label: 'Overdraft · Terms',     file: 'Airtime_Overdraft Terms.html',      icon: 'shield' },
-    { group: 'Airtime', label: 'Overdraft · Activated', file: 'Airtime_Overdraft Activated.html',  icon: 'check' },
-    { group: 'Airtime', label: 'Error · Invalid Number',       file: 'Airtime_Invalid Number.html',         icon: 'info' },
-    { group: 'Airtime', label: 'Error · Insufficient Balance', file: 'Airtime_Insufficient Balance.html',   icon: 'info' },
-    { group: 'Airtime', label: 'Error · Limit Exceeded',       file: 'Airtime_Limit Exceeded.html',         icon: 'info' },
-    { group: 'Airtime', label: 'Error · Purchase Failed',      file: 'Airtime_Failed.html',                 icon: 'info' },
-    { group: 'Airtime', label: 'Error · Timeout',              file: 'Airtime_Timeout.html',                icon: 'info' },
-    { group: 'Airtime', label: 'Error · Service Unavailable',  file: 'Airtime_Service Unavailable.html',    icon: 'info' },
-
-    { group: 'Packages', label: 'Buy Package (Entry)', file: 'Package_Buy.html',                   icon: 'smartphone' },
-    { group: 'Packages', label: 'Choose Package',      file: 'Package_Select.html',                icon: 'statement' },
-    { group: 'Packages', label: 'Confirm Purchase',    file: 'Package_Review.html',                icon: 'check' },
-    { group: 'Packages', label: 'Enter PIN',           file: 'Package_Enter PIN.html',             icon: 'lock' },
-    { group: 'Packages', label: 'Receipt',             file: 'Package Confirmation.html',          icon: 'receipt' },
-    { group: 'Packages', label: 'Overdraft · Offer',     file: 'Package_Overdraft Offer.html',      icon: 'info' },
-    { group: 'Packages', label: 'Overdraft · Activate',  file: 'Package_Overdraft Activate.html',   icon: 'money' },
-    { group: 'Packages', label: 'Overdraft · Terms',     file: 'Package_Overdraft Terms.html',      icon: 'shield' },
-    { group: 'Packages', label: 'Overdraft · Activated', file: 'Package_Overdraft Activated.html',  icon: 'check' },
-    { group: 'Packages', label: 'Error · Invalid Number',       file: 'Package_Invalid Number.html',        icon: 'info' },
-    { group: 'Packages', label: 'Error · Insufficient Balance', file: 'Package_Insufficient Balance.html',  icon: 'info' },
-    { group: 'Packages', label: 'Error · Purchase Failed',      file: 'Package_Failed.html',                icon: 'info' },
-    { group: 'Packages', label: 'Error · Timeout',              file: 'Package_Timeout.html',               icon: 'info' },
-    { group: 'Packages', label: 'Error · Service Unavailable',  file: 'Package_Service Unavailable.html',   icon: 'info' },
+    { group: 'Airtime / Package', label: 'Buy Airtime / Package (Entry)',  file: 'Airtime_Buy.html',                   icon: 'smartphone' },
+    { group: 'Airtime / Package', label: 'Confirm Purchase',     file: 'Airtime_Review.html',                icon: 'check' },
+    { group: 'Airtime / Package', label: 'Enter PIN',            file: 'Airtime_Enter PIN.html',             icon: 'lock' },
+    { group: 'Airtime / Package', label: 'Receipt',              file: 'Airtime Confirmation.html',          icon: 'receipt' },
+    { group: 'Airtime / Package', label: 'Overdraft · Offer',     file: 'Airtime_Overdraft Offer.html',      icon: 'info' },
+    { group: 'Airtime / Package', label: 'Overdraft · Activate',  file: 'Airtime_Overdraft Activate.html',   icon: 'money' },
+    { group: 'Airtime / Package', label: 'Overdraft · Terms',     file: 'Airtime_Overdraft Terms.html',      icon: 'shield' },
+    { group: 'Airtime / Package', label: 'Overdraft · Activated', file: 'Airtime_Overdraft Activated.html',  icon: 'check' },
+    { group: 'Airtime / Package', label: 'Error · Invalid Number',       file: 'Airtime_Invalid Number.html',         icon: 'info' },
+    { group: 'Airtime / Package', label: 'Error · Insufficient Balance', file: 'Airtime_Insufficient Balance.html',   icon: 'info' },
+    { group: 'Airtime / Package', label: 'Error · Limit Exceeded',       file: 'Airtime_Limit Exceeded.html',         icon: 'info' },
+    { group: 'Airtime / Package', label: 'Error · Purchase Failed',      file: 'Airtime_Failed.html',                 icon: 'info' },
+    { group: 'Airtime / Package', label: 'Error · Timeout',              file: 'Airtime_Timeout.html',                icon: 'info' },
+    { group: 'Airtime / Package', label: 'Error · Service Unavailable',  file: 'Airtime_Service Unavailable.html',    icon: 'info' },
 
     // ── Transfer journey (PRD P1) ──
     { group: 'Transfer', label: 'Send Money Menu',             file: 'Send Money Menu.html',                    icon: 'send' },
     { group: 'Transfer', label: 'Wallet · Enter Recipient',    file: 'Transfer to Wallet_Enter Recipient.html', icon: 'user' },
     { group: 'Transfer', label: 'Bank · Select Bank',          file: 'Transfer_Select Bank.html',               icon: 'bank' },
-    { group: 'Transfer', label: 'Recipient Validation',        file: 'Transfer_Recipient Validation.html',      icon: 'shield' },
     { group: 'Transfer', label: 'Wallet · Enter Amount',       file: 'Transfer to Wallet_Enter Amount.html',    icon: 'money' },
-    { group: 'Transfer', label: 'Bank · Enter Amount',         file: 'Transfer_Enter Amount.html',              icon: 'money' },
     { group: 'Transfer', label: 'Confirmation',                file: 'Transfer_Confirmation.html',              icon: 'check' },
     { group: 'Transfer', label: 'Wallet · Enter PIN',          file: 'Transfer to Wallet_Enter PIN.html',       icon: 'lock' },
     { group: 'Transfer', label: 'Bank · Enter PIN',            file: 'Transfer_Enter PIN.html',                 icon: 'lock' },
@@ -375,6 +361,18 @@
     { group: 'Transfer', label: 'Error · Transfer Failed',     file: 'Transfer_Failed.html',                    icon: 'info' },
     { group: 'Transfer', label: 'Error · Timeout',             file: 'Transfer_Timeout.html',                   icon: 'info' },
     { group: 'Transfer', label: 'Error · Service Unavailable', file: 'Transfer_Service Unavailable.html',       icon: 'info' },
+
+    // ── Withdraw Cash journey (P1) ──
+    { group: 'Withdraw', label: 'More Services (Hub)',        file: 'More Services.html',                           icon: 'grid' },
+    { group: 'Withdraw', label: 'Withdraw Cash (Menu)',       file: 'Withdraw Cash.html',                           icon: 'withdraw' },
+    { group: 'Withdraw', label: 'Agent · Short Code / QR',    file: 'Withdraw Cash - Agent Locator.html',           icon: 'money' },
+    { group: 'Withdraw', label: 'Agent · Nearby Locator',     file: 'Withdraw Cash - Agent Nearby.html',            icon: 'map' },
+    { group: 'Withdraw', label: 'Agent · Details',            file: 'Withdraw Cash - Agent Details.html',           icon: 'bank' },
+    { group: 'Withdraw', label: 'ATM · Select Bank',          file: 'Withdraw Cash - ATM Locator.html',             icon: 'atm' },
+    { group: 'Withdraw', label: 'Enter PIN',                  file: 'Withdraw Cash - Enter PIN.html',              icon: 'lock' },
+    { group: 'Withdraw', label: 'Confirmation Receipt',       file: 'Withdraw Cash - Receipt.html',                icon: 'voucher' },
+    { group: 'Withdraw', label: 'ATM Instructions',           file: 'Withdraw Cash - ATM Instructions.html',       icon: 'atm' },
+    { group: 'Withdraw', label: 'Error · Insufficient Balance',file: 'Withdraw Cash - Insufficient Balance.html',  icon: 'info' },
                 { group: 'Transactions', label: 'Transaction Receipt', file: 'Send Money Recipet PDF.html', icon: 'receipt' },
         { group: 'Transactions', label: 'Transaction Statment', file: 'Transaction Statment PDF.html', icon: 'receipt' },
     { group: 'Transactions', label: 'Merchant Draw Statement', file: 'Merchant Draw Statement PDF.html', icon: 'pdf' },
@@ -461,6 +459,12 @@
     info: '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>',
     download: '<svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>',
     calendar: '<svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>',
+    megaphone: '<svg viewBox="0 0 24 24"><path d="m3 11 18-5v12L3 14v-3z"/><path d="M11.6 16.8a3 3 0 1 1-5.8-1.6"/></svg>',
+    grid: '<svg viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" rx="1"/><line x1="9.3" y1="7" x2="9.3" y2="17"/><line x1="14.7" y1="7" x2="14.7" y2="17"/><line x1="7" y1="9.3" x2="17" y2="9.3"/><line x1="7" y1="14.7" x2="17" y2="14.7"/></svg>',
+    withdraw: '<svg viewBox="0 0 24 24"><rect x="6" y="5" width="13" height="15" rx="1.5"/><rect x="9" y="9" width="7" height="6" rx="1"/><path d="M19 12h5M19 8l2 2M19 16l2-2"/></svg>',
+    map: '<svg viewBox="0 0 24 24"><path d="M3 5h18M3 5v14M21 5v14M8 8h6M15 12h5"/><circle cx="18" cy="16" r="1.6"/></svg>',
+    voucher: '<svg viewBox="0 0 24 24"><rect x="4" y="3" width="16" height="18" rx="2"/><line x1="7" y1="9" x2="7" y2="15"/><line x1="10" y1="9" x2="10" y2="15"/><line x1="13" y1="9" x2="13" y2="15"/><line x1="16" y1="9" x2="16" y2="15"/><line x1="19" y1="9" x2="19" y2="15"/></svg>',
+    atm: '<svg viewBox="0 0 24 24"><rect x="4" y="2" width="16" height="20" rx="2"/><rect x="7" y="6" width="10" height="6" rx="1"/><path d="M7 15h10"/></svg>',
   };
 
   // ============================================================
@@ -561,6 +565,10 @@
   // Test Scenarios - HTML/CSS templates to inject into Lehulum Home
   // ============================================================
   const testScenarios = [
+    // Announcement entry points — handled natively by Lehulum Home
+    { id: 'annPopup',   name: 'Announcement · Popup',   desc: 'Campaign modal on app open',       icon: '📣', html: '', css: '' },
+    { id: 'annTooltip', name: 'Announcement · Tooltip', desc: 'Tooltip anchored to the bell',     icon: '💬', html: '', css: '' },
+    { id: 'annStrip',   name: 'Announcement · Info Bar',desc: 'Inline strip under the app bar',   icon: 'ℹ️', html: '', css: '' },
     {
       id: 'updateNotice', name: 'Update Notice PopUp', desc: 'Automatic update notification modal', icon: '🚀',
       html: `
@@ -821,6 +829,28 @@
 
   function runTestScenario(scenarioId) {
     closeTestPanel();
+
+    // Announcement surfaces are built into Lehulum Home — just ask it to show one.
+    const annVariant = { annPopup: 'popup', annTooltip: 'tooltip', annStrip: 'strip' }[scenarioId];
+    if (annVariant) {
+      const frame = document.getElementById('pageIframe');
+      const run = () => frame.contentWindow.postMessage(
+        { type: 'showAnnouncement', variant: annVariant }, '*');
+      if (frame.getAttribute('src') === 'Lehulum Home.html') {
+        run();
+      } else {
+        frame.addEventListener('load', function onLoad() {
+          frame.removeEventListener('load', onLoad);
+          setTimeout(run, 300);
+        });
+        frame.src = 'Lehulum Home.html';
+      }
+      document.getElementById('pageTitle').textContent =
+        '🧪 ' + testScenarios.find(s => s.id === scenarioId).name;
+      document.getElementById('pagePath').textContent = 'Lehulum Home.html + Announcement';
+      return;
+    }
+
     const scenario = testScenarios.find(s => s.id === scenarioId);
     if (!scenario) return;
 

@@ -575,26 +575,36 @@
         <!-- Dashed Divider -->
         <div class="dashed-divider"></div>
 
-        <!-- Transaction Details -->
+        <!-- Transaction Details - Wallet Receipt Order -->
         <div class="transaction-details">
           <div class="detail-row">
-            <span class="label">Transaction Type</span>
-            <span class="value">Wallet Transfer</span>
+            <span class="label">Sender Name</span>
+            <span class="value" id="senderName">Henok Chala</span>
           </div>
 
           <div class="detail-row">
-            <span class="label">Beneficiary's Wallet</span>
-            <span class="value" id="beneficiaryWallet">M-PESA</span>
+            <span class="label">Sender Phone Number</span>
+            <span class="value">0712131415</span>
           </div>
 
           <div class="detail-row">
-            <span class="label">Beneficiary's Number</span>
+            <span class="label">Receiver Name</span>
+            <span class="value" id="beneficiaryName">Henok Chala</span>
+          </div>
+
+          <div class="detail-row">
+            <span class="label">Receiver Phone No.</span>
             <span class="value" id="beneficiaryNumber">0712131415</span>
           </div>
 
           <div class="detail-row">
-            <span class="label">Sender's M-PESA Number</span>
-            <span class="value">0712131415</span>
+            <span class="label">Fee</span>
+            <span class="value" id="feeAmount">5.00 ETB</span>
+          </div>
+
+          <div class="detail-row">
+            <span class="label">Transaction Type</span>
+            <span class="value">Wallet Transfer</span>
           </div>
 
           <div class="detail-row">
@@ -609,14 +619,14 @@
           </div>
 
           <div class="detail-row">
-            <span class="label">Date and time</span>
+            <span class="label">Date</span>
             <span class="value">12/12/2024 at 8:34 AM</span>
           </div>
         </div>
 
         <!-- Amount Section -->
         <div class="amount-section">
-          <div class="beneficiary-name" id="beneficiaryName">Henok Chala</div>
+          <div class="beneficiary-name" id="amountBeneficiaryName">Henok Chala</div>
           <div class="amount-display">
             <span class="amount-value" id="amountValue">-950.00</span>
             <span class="amount-currency">ETB</span>
@@ -671,13 +681,14 @@
   // Transaction data for QR code generation
   const transactionData = {
     type: 'Wallet Transfer',
-    beneficiaryWallet: 'M-PESA',
-    beneficiaryNumber: '0712131415',
-    beneficiaryName: 'Henok Chala',
+    senderName: 'Henok Chala',
     senderNumber: '0712131415',
+    beneficiaryName: 'Henok Chala',
+    beneficiaryNumber: '0712131415',
     transactionId: 'fxt45632578',
     amount: '-950.00',
     currency: 'ETB',
+    fee: '5.00',
     date: '12/12/2024',
     time: '8:34 AM'
   };
@@ -687,17 +698,15 @@
     let target = null;
     try { target = JSON.parse(sessionStorage.getItem('sendTarget') || 'null'); } catch (e) {}
     const total = sessionStorage.getItem('sendTotal') || sessionStorage.getItem('sendAmount');
+    const fee = sessionStorage.getItem('sendFee') || '5.00';
 
     if (target && target.type === 'wallet') {
-      if (target.name) {
-        transactionData.beneficiaryWallet = target.name;
-        const el = document.getElementById('beneficiaryWallet');
-        if (el) el.textContent = target.name;
-      }
       if (target.holder) {
         transactionData.beneficiaryName = target.holder;
         const n = document.getElementById('beneficiaryName');
         if (n) n.textContent = target.holder;
+        const amtEl = document.getElementById('amountBeneficiaryName');
+        if (amtEl) amtEl.textContent = target.holder;
       }
       if (target.phone) {
         transactionData.beneficiaryNumber = target.phone;
@@ -709,6 +718,11 @@
       transactionData.amount = '-' + total;
       const amt = document.getElementById('amountValue');
       if (amt) amt.textContent = '-' + total;
+    }
+    if (fee) {
+      transactionData.fee = fee;
+      const feeEl = document.getElementById('feeAmount');
+      if (feeEl) feeEl.textContent = fee + ' ETB';
     }
   }
 

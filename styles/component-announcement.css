@@ -1,0 +1,350 @@
+/* ============================================================
+   Component: Announcement entry points (home screen)
+
+   Three surfaces, all fed by the same announcement record:
+     1. .ann-strip   — inline info bar under the welcome bar
+     2. .ann-tip     — tooltip anchored to the notification bell
+     3. .ann-modal   — full-screen popup for the top campaign
+
+   All selectors are ann- prefixed to avoid clashing with the
+   banner slider, which already owns .banner-* and .dot.
+   ============================================================ */
+
+/* ---------- shared bell badge ---------- */
+.ann-bell-badge {
+  position: absolute;
+  top: 2px;
+  right: 2px;
+  min-width: 16px;
+  height: 16px;
+  padding: 0 4px;
+  border-radius: 8px;
+  background: var(--Primary);
+  border: 2px solid #F5F5F5;
+  color: #FFF;
+  font-family: var(--Font-Family, 'Switzer', sans-serif);
+  font-size: 9px;
+  font-weight: 600;
+  line-height: 12px;
+  text-align: center;
+  pointer-events: none;
+}
+.trailing-icon { position: relative; }
+
+/* ============================================================
+   1. INLINE INFO STRIP
+   ============================================================ */
+.ann-strip {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  padding: 10px 12px;
+  margin-bottom: 12px;
+  border-radius: 14px;
+  background: #FFF;
+  border-left: 3px solid var(--Primary);
+  cursor: pointer;
+  transition: transform 0.18s, box-shadow 0.18s;
+  animation: annStripIn 0.35s ease-out;
+}
+.ann-strip:hover { transform: translateX(2px); box-shadow: 0 4px 14px rgba(0,0,0,0.07); }
+.ann-strip:active { transform: scale(0.985); }
+.ann-strip.ann-hidden { display: none; }
+
+/* tone variants — matches the announcement's priority */
+.ann-strip.tone-notice   { border-left-color: #FF9800; }
+.ann-strip.tone-campaign { border-left-color: var(--Success); }
+.ann-strip.tone-promo    { border-left-color: var(--Primary); }
+.ann-strip.tone-launch   { border-left-color: #6C5CE7; }
+.ann-strip.tone-seasonal { border-left-color: #FFB300; }
+
+@keyframes annStripIn {
+  from { opacity: 0; transform: translateY(-6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.ann-strip-icon {
+  width: 32px;
+  height: 32px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  font-size: 16px;
+}
+.ann-strip-body { flex: 1; min-width: 0; }
+.ann-strip-title {
+  display: block;
+  color: var(--On-Surface);
+  font-family: var(--Font-Family, 'Switzer', sans-serif);
+  font-size: 12.5px;
+  font-weight: 600;
+  letter-spacing: 0.2px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.ann-strip-sub {
+  display: block;
+  color: var(--On-Surface-Low);
+  font-family: var(--Font-Family, 'Switzer', sans-serif);
+  font-size: 11px;
+  line-height: 1.45;
+  margin-top: 1px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.ann-strip-close {
+  width: 24px;
+  height: 24px;
+  border: none;
+  border-radius: 50%;
+  background: transparent;
+  color: var(--On-Surface-Low);
+  font-size: 16px;
+  line-height: 1;
+  cursor: pointer;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.15s;
+}
+.ann-strip-close:hover { background: #F0F0F0; }
+
+/* ============================================================
+   2. BELL TOOLTIP
+   ============================================================ */
+.ann-tip {
+  position: absolute;
+  z-index: 60;
+  width: 232px;
+  padding: 13px 14px;
+  border-radius: 14px;
+  background: #1A1A1F;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.28);
+  animation: annTipIn 0.28s cubic-bezier(0.34, 1.4, 0.64, 1);
+  cursor: pointer;
+}
+.ann-tip.ann-hidden { display: none; }
+
+@keyframes annTipIn {
+  from { opacity: 0; transform: translateY(-8px) scale(0.96); }
+  to   { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+.ann-tip-arrow {
+  position: absolute;
+  top: -7px;
+  width: 0;
+  height: 0;
+  border-left: 8px solid transparent;
+  border-right: 8px solid transparent;
+  border-bottom: 8px solid #1A1A1F;
+}
+.ann-tip-head {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 7px;
+}
+.ann-tip-glyph {
+  width: 26px;
+  height: 26px;
+  border-radius: 8px;
+  background: rgba(255,255,255,0.1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  flex-shrink: 0;
+}
+.ann-tip-title {
+  color: #FFF;
+  font-family: var(--Font-Family, 'Switzer', sans-serif);
+  font-size: 12.5px;
+  font-weight: 600;
+  letter-spacing: 0.2px;
+  flex: 1;
+}
+.ann-tip-close {
+  width: 20px;
+  height: 20px;
+  border: none;
+  border-radius: 50%;
+  background: transparent;
+  color: rgba(255,255,255,0.55);
+  font-size: 15px;
+  line-height: 1;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+.ann-tip-close:hover { background: rgba(255,255,255,0.12); color: #FFF; }
+.ann-tip-text {
+  color: rgba(255,255,255,0.68);
+  font-family: var(--Font-Family, 'Switzer', sans-serif);
+  font-size: 11.5px;
+  line-height: 1.5;
+}
+.ann-tip-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  margin-top: 9px;
+  color: #FF7B80;
+  font-family: var(--Font-Family, 'Switzer', sans-serif);
+  font-size: 11.5px;
+  font-weight: 600;
+}
+
+/* ============================================================
+   3. POPUP MODAL
+   ============================================================ */
+.ann-modal {
+  position: absolute;
+  inset: 0;
+  z-index: 80;
+  background: rgba(0,0,0,0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 22px;
+  animation: annFade 0.22s ease-out;
+}
+.ann-modal.ann-hidden { display: none; }
+
+@keyframes annFade { from { opacity: 0; } to { opacity: 1; } }
+
+.ann-modal-card {
+  width: 100%;
+  max-width: 300px;
+  background: #FFF;
+  border-radius: 22px;
+  overflow: hidden;
+  box-shadow: 0 22px 60px rgba(0,0,0,0.32);
+  animation: annPop 0.36s cubic-bezier(0.34, 1.5, 0.64, 1);
+}
+
+@keyframes annPop {
+  from { opacity: 0; transform: translateY(18px) scale(0.94); }
+  to   { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+/* lightweight CSS artwork header — no image request */
+.ann-modal-art {
+  position: relative;
+  height: 122px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+.ann-modal-art .ann-art-circle {
+  position: absolute;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.13);
+  pointer-events: none;
+}
+.ann-modal-art .ann-art-circle.a1 { width: 150px; height: 150px; right: -46px; top: -60px; }
+.ann-modal-art .ann-art-circle.a2 { width: 96px;  height: 96px;  left: -34px; bottom: -44px; background: rgba(255,255,255,0.09); }
+.ann-modal-art .ann-art-glyph {
+  position: relative;
+  font-size: 54px;
+  filter: drop-shadow(0 6px 14px rgba(0,0,0,0.22));
+}
+.ann-modal-badge {
+  position: absolute;
+  top: 12px;
+  left: 14px;
+  padding: 4px 10px;
+  border-radius: 20px;
+  background: rgba(255,255,255,0.24);
+  backdrop-filter: blur(4px);
+  color: #FFF;
+  font-family: var(--Font-Family, 'Switzer', sans-serif);
+  font-size: 9.5px;
+  font-weight: 600;
+  letter-spacing: 0.4px;
+  text-transform: uppercase;
+}
+.ann-modal-close {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  width: 28px;
+  height: 28px;
+  border: none;
+  border-radius: 50%;
+  background: rgba(0,0,0,0.22);
+  color: #FFF;
+  font-size: 16px;
+  line-height: 1;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.15s;
+}
+.ann-modal-close:hover { background: rgba(0,0,0,0.4); }
+
+.ann-modal-body { padding: 18px 18px 20px; text-align: center; }
+.ann-modal-title {
+  color: var(--On-Surface);
+  font-family: var(--Font-Family, 'Switzer', sans-serif);
+  font-size: 18px;
+  font-weight: 600;
+  line-height: 1.3;
+  letter-spacing: 0.2px;
+  margin-bottom: 8px;
+}
+.ann-modal-text {
+  color: var(--On-Surface-Low);
+  font-family: var(--Font-Family, 'Switzer', sans-serif);
+  font-size: 12.5px;
+  line-height: 1.6;
+  margin-bottom: 8px;
+}
+.ann-modal-expiry {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 4px 10px;
+  margin-bottom: 16px;
+  border-radius: 10px;
+  background: var(--On-Primary);
+  color: var(--Primary);
+  font-family: var(--Font-Family, 'Switzer', sans-serif);
+  font-size: 10.5px;
+  font-weight: 600;
+  letter-spacing: 0.3px;
+}
+.ann-modal-actions { display: flex; flex-direction: column; gap: 9px; }
+.ann-btn {
+  width: 100%;
+  height: 46px;
+  border: none;
+  border-radius: 13px;
+  font-family: var(--Font-Family, 'Switzer', sans-serif);
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: 0.3px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.ann-btn.primary {
+  background: var(--Primary);
+  color: #FFF;
+  box-shadow: 0 4px 16px rgba(254,53,61,0.25);
+}
+.ann-btn.primary:hover { background: #E5303A; transform: translateY(-1px); }
+.ann-btn.primary:active { transform: scale(0.98); }
+.ann-btn.ghost {
+  height: 38px;
+  background: transparent;
+  color: var(--On-Surface-Low);
+  font-weight: 500;
+}
+.ann-btn.ghost:hover { color: var(--On-Surface); }

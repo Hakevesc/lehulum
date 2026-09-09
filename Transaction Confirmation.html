@@ -575,26 +575,41 @@
         <!-- Dashed Divider -->
         <div class="dashed-divider"></div>
 
-        <!-- Transaction Details -->
+        <!-- Transaction Details - Bank Receipt Order -->
         <div class="transaction-details">
+          <div class="detail-row">
+            <span class="label">Sender Name</span>
+            <span class="value" id="senderName">Henok Chala</span>
+          </div>
+
+          <div class="detail-row">
+            <span class="label">Sender Phone Number</span>
+            <span class="value">0712131415</span>
+          </div>
+
+          <div class="detail-row">
+            <span class="label">A/C Holder Name</span>
+            <span class="value" id="accountHolderName">Kidist Birhanu</span>
+          </div>
+
+          <div class="detail-row">
+            <span class="label">Receiver Bank A/C</span>
+            <span class="value" id="beneficiaryAccount">****4341</span>
+          </div>
+
+          <div class="detail-row">
+            <span class="label">Receiver Name</span>
+            <span class="value" id="beneficiaryName">Kidist Birhanu</span>
+          </div>
+
+          <div class="detail-row">
+            <span class="label">Fee</span>
+            <span class="value" id="feeAmount">5.00 ETB</span>
+          </div>
+
           <div class="detail-row">
             <span class="label">Transaction Type</span>
             <span class="value">Bank Transfer</span>
-          </div>
-
-          <div class="detail-row">
-            <span class="label">Beneficiary's Bank</span>
-            <span class="value" id="beneficiaryBank">Abyssinia Bank</span>
-          </div>
-
-          <div class="detail-row">
-            <span class="label">Beneficiary's Account Number</span>
-            <span class="value" id="beneficiaryAccount">978784356436</span>
-          </div>
-
-          <div class="detail-row">
-            <span class="label">Sender's M-PESA Number</span>
-            <span class="value">0712131415</span>
           </div>
 
           <div class="detail-row">
@@ -609,14 +624,14 @@
           </div>
 
           <div class="detail-row">
-            <span class="label">Date and time</span>
+            <span class="label">Date</span>
             <span class="value">12/12/2024 at 8:34 AM</span>
           </div>
         </div>
 
         <!-- Amount Section -->
         <div class="amount-section">
-          <div class="beneficiary-name" id="beneficiaryName">Kidist Alemayehu Tadesse</div>
+          <div class="beneficiary-name" id="amountBeneficiaryName">Kidist Birhanu</div>
           <div class="amount-display">
             <span class="amount-value" id="amountValue">-1,050.20</span>
             <span class="amount-currency">ETB</span>
@@ -671,13 +686,15 @@
   // Transaction data for QR code generation
   const transactionData = {
     type: 'Bank Transfer',
-    beneficiaryBank: 'Abyssinia Bank',
-    beneficiaryAccount: '978784356436',
-    beneficiaryName: 'Kidist Alemayehu Tadesse',
+    senderName: 'Henok Chala',
     senderNumber: '0712131415',
+    accountHolderName: 'Kidist Birhanu',
+    beneficiaryAccount: '****4341',
+    beneficiaryName: 'Kidist Birhanu',
     transactionId: 'fxt45632578',
     amount: '-1,050.20',
     currency: 'ETB',
+    fee: '5.00',
     date: '12/12/2024',
     time: '8:34 AM'
   };
@@ -687,12 +704,40 @@
     let target = null;
     try { target = JSON.parse(sessionStorage.getItem('sendTarget') || 'null'); } catch (e) {}
     const total = sessionStorage.getItem('sendTotal') || sessionStorage.getItem('sendAmount');
+    const fee = sessionStorage.getItem('sendFee') || '5.00';
+    
+    // Sender info
+    transactionData.senderName = 'Henok Chala'; // demo static sender
+    
     if (target) {
-      if (target.name) { transactionData.beneficiaryBank = target.name; const b = document.getElementById('beneficiaryBank'); if (b) b.textContent = target.name; }
-      if (target.account) { transactionData.beneficiaryAccount = target.account; const a = document.getElementById('beneficiaryAccount'); if (a) a.textContent = target.account; }
-      if (target.holder) { transactionData.beneficiaryName = target.holder; const n = document.getElementById('beneficiaryName'); if (n) n.textContent = target.holder; }
+      // Account holder name = target.holder
+      if (target.holder) {
+        transactionData.accountHolderName = target.holder;
+        transactionData.beneficiaryName = target.holder;
+        const nEl = document.getElementById('beneficiaryName');
+        if (nEl) nEl.textContent = target.holder;
+        const aEl = document.getElementById('accountHolderName');
+        if (aEl) aEl.textContent = target.holder;
+        const amtEl = document.getElementById('amountBeneficiaryName');
+        if (amtEl) amtEl.textContent = target.holder;
+      }
+      // Receiver Bank A/C
+      if (target.account) {
+        transactionData.beneficiaryAccount = target.account;
+        const acctEl = document.getElementById('beneficiaryAccount');
+        if (acctEl) acctEl.textContent = target.account;
+      }
     }
-    if (total) { transactionData.amount = '-' + total; const amt = document.getElementById('amountValue'); if (amt) amt.textContent = '-' + total; }
+    if (total) {
+      transactionData.amount = '-' + total;
+      const amt = document.getElementById('amountValue');
+      if (amt) amt.textContent = '-' + total;
+    }
+    if (fee) {
+      transactionData.fee = fee;
+      const feeEl = document.getElementById('feeAmount');
+      if (feeEl) feeEl.textContent = fee + ' ETB';
+    }
   }
 
   // Generate QR Code from transaction data
@@ -772,7 +817,6 @@
   }
 
   function addToFavorite() {
-    // Navigate to Add Favourites page with transaction data
     const data = {
       accountName: transactionData.beneficiaryName,
       transactionId: transactionData.transactionId,

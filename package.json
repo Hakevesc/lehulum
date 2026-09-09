@@ -8,8 +8,9 @@
     "ai:server": "node server.js",
     "ai:preview": "npx serve ai-preview.html --port 3000",
     "dev": "npx vite",
-    "build": "cp index.html 404.html"
-    "start": "node server.js"
+    "build": "cp index.html 404.html",
+    "start": "node server.js",
+    "figma:embed": "node scripts/figma-embed-images.cjs"
   },
   "dependencies": {
     "@google/generative-ai": "^0.21.0",

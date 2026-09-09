@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Withdraw Cash - Agent Details</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@400;500;600&display=swap');
+  @import url('https://api.fontshare.com/v2/css?f[]=switzer@400,500,600,700&display=swap');
+
+  :root {
+    --Primary: #FE353D;
+    --On-Surface: #1C1C21;
+    --On-Surface-Low: #7C7C87;
+    --Border: #E8E8EC;
+    --Background: #F5F5F5;
+    --Success: #1FC83B;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'Inter', sans-serif; background: transparent; display: flex; justify-content: center; align-items: center; min-height: 100vh; padding: 20px; }
+  .phone-frame { width: 360px; height: 780px; background: var(--Background); border-radius: 30px; overflow: hidden; position: relative; box-shadow: 0 20px 60px rgba(0,0,0,0.15); display: flex; flex-direction: column; }
+  .app-content { height: 100%; display: flex; flex-direction: column; }
+
+  .status-bar { display: flex; justify-content: space-between; align-items: center; padding: 14px 24px 8px; background: var(--Background); flex-shrink: 0; }
+  .status-bar .time { font-size: 14px; font-weight: 600; color: var(--On-Surface); }
+  .status-icons { display: flex; align-items: center; gap: 6px; }
+  .status-icons svg { width: 18px; height: 18px; }
+
+  .header-nav { display: flex; align-items: center; justify-content: space-between; padding: 8px 16px 12px; background: var(--Background); flex-shrink: 0; }
+  .back-btn { width: 36px; height: 36px; border-radius: 50%; background: transparent; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: background 0.2s; }
+  .back-btn:hover { background: rgba(0,0,0,0.05); }
+  .back-btn svg { width: 22px; height: 22px; stroke: var(--On-Surface); stroke-width: 1.8px; fill: none; }
+  .header-title { color: var(--On-Surface); font-family: 'Switzer', sans-serif; font-size: 17px; font-weight: 500; letter-spacing: 0.3px; flex: 1; text-align: center; }
+
+  .scroll { flex: 1; overflow-y: auto; padding: 4px 16px 16px; display: flex; flex-direction: column; gap: 14px; }
+  .scroll::-webkit-scrollbar { width: 0; }
+
+  /* ── Agent card with floating badge (same language as the confirmation screen) ── */
+  .payee-card { position: relative; background: #FFF; border-radius: 16px; padding: 16px 14px; display: flex; align-items: center; gap: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.04); margin-top: 12px; }
+  .payee-badge { position: absolute; top: -11px; right: 14px; background: #EDEDF0; color: var(--On-Surface-Low); font-family: 'Switzer', sans-serif; font-size: 9.5px; font-weight: 700; letter-spacing: 0.6px; padding: 4px 9px; border-radius: 6px; }
+  .payee-avatar { width: 46px; height: 46px; border-radius: 50%; background: #FFE9EA; color: var(--Primary); display: flex; align-items: center; justify-content: center; font-family: 'Switzer', sans-serif; font-size: 14px; font-weight: 700; flex-shrink: 0; }
+  .payee-info { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 4px; }
+  .payee-name { font-family: 'Switzer', sans-serif; font-size: 15.5px; font-weight: 700; color: var(--On-Surface); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .payee-sub { font-family: 'Switzer', sans-serif; font-size: 12.5px; color: var(--On-Surface-Low); }
+  .payee-sub b { color: var(--On-Surface); font-weight: 600; }
+
+  /* ── Detail rows ── */
+  .summary-card { background: #FFF; border-radius: 16px; padding: 4px 16px 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.04); }
+  .sum-row { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 14px 0; border-bottom: 1px solid #F0F0F3; }
+  .sum-row:last-child { border-bottom: none; }
+  .sum-key { display: flex; align-items: center; gap: 10px; font-family: 'Switzer', sans-serif; font-size: 13px; font-weight: 400; color: var(--On-Surface-Low); flex-shrink: 0; }
+  .sum-key svg { width: 17px; height: 17px; stroke: var(--On-Surface-Low); stroke-width: 1.8; fill: none; flex-shrink: 0; }
+  .sum-val { font-family: 'Switzer', sans-serif; font-size: 13px; font-weight: 700; color: var(--On-Surface); text-align: right; }
+  .sum-val.ok { color: var(--Success); }
+
+  /* ── Amount entry (same field styling as the locator screens) ── */
+  .form-card { background: #FFF; border-radius: 16px; padding: 16px; box-shadow: 0 2px 8px rgba(0,0,0,0.04); display: flex; flex-direction: column; gap: 8px; }
+  .field-label { font-family: 'Switzer', sans-serif; font-size: 14px; font-weight: 600; color: var(--On-Surface); }
+  .field { height: 50px; background: #F7F7F8; border: 1.5px solid var(--Border); border-radius: 12px; padding: 0 14px; display: flex; align-items: center; gap: 8px; transition: border-color 0.2s, box-shadow 0.2s, background 0.2s; }
+  .field:focus-within { border-color: var(--Primary); background: #FFF; box-shadow: 0 4px 12px rgba(254,53,61,0.12); }
+  .field input { flex: 1; min-width: 0; border: none; background: transparent; outline: none; font-family: 'Switzer', sans-serif; font-size: 15px; font-weight: 500; color: var(--On-Surface); }
+  .field input::placeholder { color: var(--On-Surface-Low); font-weight: 400; }
+  .field .suffix { font-family: 'Switzer', sans-serif; font-size: 13px; font-weight: 500; color: var(--On-Surface-Low); flex-shrink: 0; }
+  .balance-hint { font-family: 'Switzer', sans-serif; font-size: 11.5px; color: var(--On-Surface-Low); margin-top: 2px; }
+  .balance-hint b { color: var(--On-Surface); font-weight: 600; }
+  .msg { display: none; align-items: center; gap: 8px; font-family: 'Switzer', sans-serif; font-size: 12px; margin-top: 2px; color: var(--Primary); }
+  .msg.show { display: flex; }
+  .msg svg { width: 15px; height: 15px; stroke: var(--Primary); stroke-width: 2.4; fill: none; flex-shrink: 0; }
+
+  /* ── Call / Directions (same as the confirmation screen) ── */
+  .contact-row { display: flex; gap: 10px; }
+  .contact-btn { flex: 1; height: 46px; border: 1.5px solid var(--Border); background: #FFF; border-radius: 12px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 7px; font-family: 'Switzer', sans-serif; font-size: 12.5px; font-weight: 600; color: var(--On-Surface); transition: border-color 0.2s, background 0.2s; }
+  .contact-btn:hover { border-color: var(--Primary); background: #FFF5F5; }
+  .contact-btn:active { transform: scale(0.98); }
+  .contact-btn svg { width: 16px; height: 16px; stroke: var(--Primary); stroke-width: 1.9; fill: none; flex-shrink: 0; }
+
+  /* ── Confirmation bottom sheet ── */
+  .sheet-overlay { position: absolute; inset: 0; background: rgba(0,0,0,0.45); display: flex; align-items: flex-end; opacity: 0; pointer-events: none; transition: opacity 0.25s; z-index: 50; }
+  .sheet-overlay.show { opacity: 1; pointer-events: auto; }
+  .sheet { width: 100%; background: #FFF; border-radius: 24px 24px 0 0; padding: 12px 20px 22px; display: flex; flex-direction: column; transform: translateY(100%); transition: transform 0.3s cubic-bezier(0.2, 0.8, 0.3, 1); }
+  .sheet-overlay.show .sheet { transform: translateY(0); }
+  .sheet-grip { width: 44px; height: 4px; border-radius: 2px; background: #D8D8DE; margin: 0 auto 14px; }
+  .sheet-title { text-align: center; font-family: 'Switzer', sans-serif; font-size: 17px; font-weight: 700; color: var(--On-Surface); margin-bottom: 20px; }
+  .sheet .party-card { position: relative; border: 1.5px solid var(--Border); border-radius: 14px; padding: 14px; display: flex; align-items: center; gap: 12px; margin-bottom: 20px; background: #FFF; }
+  .sheet .party-badge { position: absolute; top: -11px; right: 14px; background: #EDEDF0; color: var(--On-Surface-Low); font-family: 'Switzer', sans-serif; font-size: 9.5px; font-weight: 700; letter-spacing: 0.6px; padding: 4px 9px; border-radius: 6px; }
+  .sheet .party-avatar { width: 44px; height: 44px; border-radius: 50%; background: #FFE9EA; color: var(--Primary); display: flex; align-items: center; justify-content: center; font-family: 'Switzer', sans-serif; font-size: 14px; font-weight: 700; flex-shrink: 0; }
+  .sheet .party-info { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 3px; }
+  .sheet .party-name { font-family: 'Switzer', sans-serif; font-size: 15px; font-weight: 700; color: var(--On-Surface); }
+  .sheet .party-sub { font-family: 'Switzer', sans-serif; font-size: 12.5px; color: var(--On-Surface-Low); }
+  .sum-row2 { display: flex; align-items: center; justify-content: space-between; padding: 13px 2px; border-bottom: 1px solid #F0F0F3; }
+  .sum-row2.total { border-bottom: none; }
+  .sum-key2 { font-family: 'Switzer', sans-serif; font-size: 13px; font-weight: 400; color: var(--On-Surface-Low); }
+  .sum-val2 { font-family: 'Switzer', sans-serif; font-size: 13.5px; font-weight: 700; color: var(--On-Surface); }
+  .sum-row2.total .sum-val2 { color: var(--Primary); font-size: 15px; }
+  .sheet-actions { display: flex; gap: 12px; margin-top: 20px; }
+  .sheet-btn { flex: 1; height: 50px; border-radius: 12px; background: #FFF; cursor: pointer; font-family: 'Switzer', sans-serif; font-size: 14.5px; font-weight: 500; transition: background 0.15s, transform 0.12s; }
+  .sheet-btn:active { transform: scale(0.98); }
+  .sheet-btn.cancel { border: 1.5px solid var(--Border); color: var(--On-Surface-Low); }
+  .sheet-btn.cancel:hover { background: #FAFAFA; }
+  .sheet-btn.confirm { border: 1.5px solid var(--Primary); color: var(--Primary); font-weight: 600; }
+  .sheet-btn.confirm:hover { background: #FFF5F5; }
+
+  /* ── Bottom ── */
+  .bottom-bar { flex-shrink: 0; padding: 10px 16px 18px; background: var(--Background); }
+  .btn-primary { width: 100%; height: 52px; border-radius: 14px; border: none; background: #E0E0E0; color: var(--On-Surface-Low); font-family: 'Poppins', sans-serif; font-size: 15px; font-weight: 500; cursor: not-allowed; transition: all 0.2s; }
+  .btn-primary.active { background: var(--Primary); color: #FFF; cursor: pointer; box-shadow: 0 4px 16px rgba(254,53,61,0.25); }
+  .btn-primary.active:hover { background: #E5303A; transform: translateY(-1px); }
+  .btn-primary.active:active { transform: scale(0.98) translateY(0); }
+</style>
+</head>
+<body>
+<div class="phone-frame">
+  <div class="app-content">
+
+    <div class="status-bar">
+      <span class="time">10:00</span>
+      <div class="status-icons">
+        <svg viewBox="0 0 24 24" fill="none"><path d="M1 9l2 2c4.97-4.97 13.03-4.97 18 0l2-2C16.93 2.93 7.08 2.93 1 9z" fill="#1C1C21"/><path d="M5 13l2 2c2.76-2.76 7.24-2.76 10 0l2-2C15.14 9.14 8.87 9.14 5 13z" fill="#1C1C21"/><path d="M9 17l2 2c1.1-1.1 2.9-1.1 4 0l2-2c-2.21-2.21-5.79-2.21-8 0z" fill="#1C1C21"/></svg>
+        <svg viewBox="0 0 24 24" fill="none"><rect x="2" y="6" width="4" height="12" rx="1" fill="#1C1C21"/><rect x="8" y="4" width="4" height="14" rx="1" fill="#1C1C21"/><rect x="14" y="2" width="4" height="16" rx="1" fill="#1C1C21"/><rect x="20" y="0" width="4" height="18" rx="1" fill="#1C1C21" opacity="0.3"/></svg>
+        <svg viewBox="0 0 28 14" fill="none"><rect x="0" y="1" width="22" height="12" rx="2.5" stroke="#1C1C21" stroke-width="1.5"/><rect x="2" y="3" width="16" height="8" rx="1" fill="#1C1C21"/><rect x="24" y="4" width="2" height="6" rx="1" fill="#1C1C21"/></svg>
+      </div>
+    </div>
+
+    <div class="header-nav">
+      <button class="back-btn" onclick="window.location.href='Withdraw Cash - Agent Nearby.html'">
+        <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+      </button>
+      <span class="header-title">Agent Details</span>
+      <div style="width:36px;"></div>
+    </div>
+
+    <div class="scroll">
+
+      <div class="payee-card">
+        <span class="payee-badge">AGENT</span>
+        <div class="payee-avatar" id="agAvatar">AG</div>
+        <div class="payee-info">
+          <span class="payee-name" id="agName">Agent</span>
+          <span class="payee-sub"><b>Agent No.</b> <span id="agCode">&mdash;</span></span>
+        </div>
+      </div>
+
+      <div class="summary-card">
+        <div class="sum-row">
+          <span class="sum-key">
+            <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s7-5.7 7-11a7 7 0 1 0-14 0c0 5.3 7 11 7 11z"/><circle cx="12" cy="10" r="2.4"/></svg>
+            Address
+          </span>
+          <span class="sum-val" id="agAddr">&mdash;</span>
+        </div>
+        <div class="sum-row">
+          <span class="sum-key">
+            <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12h4l3 8 4-16 3 8h4"/></svg>
+            Distance
+          </span>
+          <span class="sum-val" id="agDist">&mdash;</span>
+        </div>
+        <div class="sum-row">
+          <span class="sum-key">
+            <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3.5 2"/></svg>
+            Working hours
+          </span>
+          <span class="sum-val" id="agHours">&mdash;</span>
+        </div>
+        <div class="sum-row">
+          <span class="sum-key">
+            <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><rect x="2.5" y="6" width="19" height="13" rx="2.5"/><circle cx="12" cy="12.5" r="2.6"/></svg>
+            Cash withdrawal
+          </span>
+          <span class="sum-val ok">Available</span>
+        </div>
+      </div>
+
+      <div class="form-card">
+        <span class="field-label">Amount</span>
+        <div class="field">
+          <input id="amt" type="text" inputmode="decimal" placeholder="e.g. 120 Br" oninput="onAmountInput(this)">
+          <span class="suffix">Br</span>
+        </div>
+        <div class="balance-hint"><b>Balance:</b> 12,580.00 Br</div>
+        <div class="msg" id="amtMsg">
+          <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 8v5M12 16h.01"/></svg>
+          <span id="amtMsgTxt"></span>
+        </div>
+      </div>
+
+      <div class="contact-row">
+        <button class="contact-btn" onclick="callAgent()">
+          <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16.9v2.5a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 1.1 3.7 2 2 0 0 1 3.1 1.5h2.5a2 2 0 0 1 2 1.7c.1 1 .4 1.9.7 2.8a2 2 0 0 1-.5 2.1L6.7 9.3a16 16 0 0 0 6 6l1.2-1.1a2 2 0 0 1 2.1-.5c.9.3 1.8.6 2.8.7a2 2 0 0 1 1.7 2z"/></svg>
+          Call
+        </button>
+        <button class="contact-btn" onclick="directions()">
+          <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s7-5.7 7-11a7 7 0 1 0-14 0c0 5.3 7 11 7 11z"/><circle cx="12" cy="10" r="2.4"/></svg>
+          Directions
+        </button>
+      </div>
+
+    </div>
+
+    <div class="bottom-bar">
+      <button class="btn-primary" id="continueBtn" onclick="continueFlow()" disabled>Continue</button>
+    </div>
+
+  </div>
+
+  <!-- Confirmation sheet -->
+  <div class="sheet-overlay" id="sheetOverlay" onclick="if(event.target===this)closeSheet()">
+    <div class="sheet">
+      <div class="sheet-grip"></div>
+      <div class="sheet-title">Confirmation</div>
+
+      <div class="party-card">
+        <span class="party-badge">AGENT</span>
+        <div class="party-avatar" id="cfAvatar"></div>
+        <div class="party-info">
+          <span class="party-name" id="cfName"></span>
+          <span class="party-sub" id="cfSub"></span>
+        </div>
+      </div>
+
+      <div class="sum-row2">
+        <span class="sum-key2">Withdrawal Amount:</span>
+        <span class="sum-val2" id="cfAmount"></span>
+      </div>
+      <div class="sum-row2">
+        <span class="sum-key2">Fee:</span>
+        <span class="sum-val2" id="cfFee"></span>
+      </div>
+      <div class="sum-row2 total">
+        <span class="sum-key2">Total:</span>
+        <span class="sum-val2" id="cfTotal"></span>
+      </div>
+
+      <div class="sheet-actions">
+        <button class="sheet-btn cancel" onclick="closeSheet()">Cancel</button>
+        <button class="sheet-btn confirm" onclick="confirmWithdraw()">Confirm</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  const data = JSON.parse(sessionStorage.getItem('withdrawData') || '{}');
+  const a = data.agent || { abbr: 'BM', name: 'Betty Merhat Agency', code: '323217', dist: '0.8 km', addr: 'Bole Medhanialem, Addis Ababa', open: true };
+  const $ = id => document.getElementById(id);
+
+  $('agAvatar').textContent = a.abbr || 'AG';
+  $('agName').textContent = a.name || 'Agent';
+  $('agCode').textContent = a.code || '—';
+  $('agAddr').textContent = a.addr || '—';
+  $('agDist').textContent = a.dist ? (a.dist + (a.eta ? ' · ' + a.eta : '')) : '—';
+  $('agHours').textContent = a.open ? '7:00 – 19:00' : '8:00 – 18:00';
+
+  function callAgent() {
+    window.location.href = 'tel:' + (a.phone || '+251700000000');
+  }
+
+  function directions() {
+    const q = encodeURIComponent(a.addr || a.name || 'M-PESA agent');
+    window.open('https://www.google.com/maps/search/?api=1&query=' + q, '_blank');
+  }
+
+  /* ── Amount ── */
+  const MIN_AMT = 10, MAX_AMT = 10000, BALANCE = 12580;
+
+  function onAmountInput(el) {
+    el.value = el.value.replace(/[^\d.]/g, '').replace(/(\..*)\./g, '$1');
+    validateAmount();
+    updateBtn();
+  }
+
+  function validateAmount() {
+    const raw = $('amt').value.trim();
+    const msg = $('amtMsg');
+    if (raw === '') { msg.classList.remove('show'); return null; }
+    const n = parseFloat(raw);
+    let err = '';
+    if (isNaN(n) || n <= 0) err = 'Enter a valid amount.';
+    else if (n < MIN_AMT) err = 'Minimum withdrawal is ' + MIN_AMT + ' Br.';
+    else if (n > MAX_AMT) err = 'Maximum withdrawal is ' + MAX_AMT.toLocaleString() + ' Br per transaction.';
+    else if (n > BALANCE) err = 'Amount exceeds your available balance.';
+    if (err) { $('amtMsgTxt').textContent = err; msg.classList.add('show'); return null; }
+    msg.classList.remove('show');
+    return n;
+  }
+
+  function updateBtn() {
+    const ok = validateAmount() !== null;
+    $('continueBtn').classList.toggle('active', ok);
+    $('continueBtn').disabled = !ok;
+  }
+
+  /* ── Confirmation sheet ── */
+  // Same fee table the rest of the flow uses, so totals agree everywhere.
+  function computeFee(n) {
+    if (n <= 0) return 0;
+    if (n <= 2000) return 7;
+    if (n <= 5000) return 15;
+    if (n <= 8000) return 30;
+    return 45;
+  }
+
+  const fmt = n => parseFloat(n || 0).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+
+  function continueFlow() {
+    const amount = validateAmount();
+    if (amount === null) return;
+    const fee = computeFee(amount);
+    $('cfAvatar').textContent = a.abbr || 'AG';
+    $('cfName').textContent = a.name || 'Agent';
+    $('cfSub').textContent = 'Agent No. ' + (a.code || '—');
+    $('cfAmount').textContent = fmt(amount) + ' Br';
+    $('cfFee').textContent = fmt(fee) + ' Br';
+    $('cfTotal').textContent = fmt(amount + fee) + ' Br';
+    $('sheetOverlay').classList.add('show');
+  }
+
+  function closeSheet() { $('sheetOverlay').classList.remove('show'); }
+
+  function confirmWithdraw() {
+    const amount = validateAmount();
+    if (amount === null) return;
+    const fee = computeFee(amount);
+    data.method = 'nearby';
+    data.methodLabel = 'Nearby Agent';
+    data.agent = a;
+    data.agentName = a.name;
+    data.agentCode = a.code;
+    data.agentDist = a.dist;
+    data.amount = amount;
+    data.fee = fee;
+    data.total = amount + fee;
+    sessionStorage.setItem('withdrawData', JSON.stringify(data));
+    window.location.href = 'Withdraw Cash - Enter PIN.html';
+  }
+</script>
+</body>
+</html>

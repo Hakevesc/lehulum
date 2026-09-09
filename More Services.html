@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>More Services</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+  @import url('https://api.fontshare.com/v2/css?f[]=switzer@400,500,600,700&display=swap');
+
+  :root {
+    --Primary: #FE353D;
+    --Primary-Container: #FFDFE0;
+    --On-Surface: #1C1C21;
+    --On-Surface-Low: #7C7C87;
+    --Border: #E8E8EC;
+    --Background: #F5F5F5;
+    --Purple: #7B2FF7;
+    --Purple-Container: #EFE4FF;
+    --Ink: #1C1C21;
+    --Ink-Container: #ECECF0;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'Inter', sans-serif; background: transparent; display: flex; justify-content: center; align-items: center; min-height: 100vh; padding: 20px; }
+  .phone-frame { width: 360px; height: 780px; background: var(--Background); border-radius: 30px; overflow: hidden; position: relative; box-shadow: 0 20px 60px rgba(0,0,0,0.15); display: flex; flex-direction: column; }
+  .app-content { height: 100%; display: flex; flex-direction: column; }
+
+  /* ── Status bar ── */
+  .status-bar { display: flex; justify-content: space-between; align-items: center; padding: 14px 24px 8px; background: var(--Background); flex-shrink: 0; }
+  .status-bar .time { font-size: 14px; font-weight: 600; color: var(--On-Surface); }
+  .status-icons { display: flex; align-items: center; gap: 6px; }
+  .status-icons svg { width: 18px; height: 18px; }
+
+  /* ── Header ── */
+  .header-nav { display: flex; align-items: center; justify-content: space-between; padding: 8px 16px 12px; background: var(--Background); flex-shrink: 0; }
+  .back-btn { width: 36px; height: 36px; border-radius: 50%; background: transparent; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: background 0.2s; }
+  .back-btn:hover { background: rgba(0,0,0,0.05); }
+  .back-btn svg { width: 22px; height: 22px; stroke: var(--On-Surface); stroke-width: 1.8px; fill: none; }
+  .header-title { color: var(--On-Surface); font-family: 'Switzer', sans-serif; font-size: 17px; font-weight: 500; letter-spacing: 0.3px; flex: 1; text-align: center; }
+
+  .scroll { flex: 1; overflow-y: auto; padding: 0 16px 24px; display: flex; flex-direction: column; gap: 16px; }
+  .scroll::-webkit-scrollbar { width: 0; }
+
+  /* ── Search ── */
+  .search-row { display: flex; align-items: center; gap: 8px; background: #FFF; border: 1.5px solid var(--Border); border-radius: 12px; padding: 10px 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.04); }
+  .search-row svg { width: 18px; height: 18px; stroke: var(--On-Surface-Low); stroke-width: 2; fill: none; flex-shrink: 0; }
+  .search-input { flex: 1; border: none; background: transparent; font-family: 'Switzer', sans-serif; font-size: 14px; color: var(--On-Surface); outline: none; }
+  .search-input::placeholder { color: var(--On-Surface-Low); }
+
+  /* ── Top 3 feature actions (replaces the promo banner) ── */
+  .feature-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+  .feature-btn { background: #FFF; border: 1px solid var(--Border); border-radius: 16px; padding: 14px 8px 12px; display: flex; flex-direction: column; align-items: center; gap: 8px; cursor: pointer; transition: transform 0.15s, box-shadow 0.15s; box-shadow: 0 2px 8px rgba(0,0,0,0.04); }
+  .feature-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 16px rgba(0,0,0,0.08); }
+  .feature-btn:active { transform: translateY(0); }
+  .feature-chip { width: 42px; height: 42px; border-radius: 13px; display: flex; align-items: center; justify-content: center; background: var(--Primary-Container); }
+  .feature-chip svg { width: 22px; height: 22px; stroke: var(--Primary); stroke-width: 1.8; fill: none; stroke-linecap: round; stroke-linejoin: round; }
+  .feature-chip.purple { background: var(--Purple-Container); }
+  .feature-chip.purple svg { stroke: var(--Purple); }
+  .feature-chip.ink { background: var(--Ink-Container); }
+  .feature-chip.ink svg { stroke: var(--Ink); }
+  .feature-btn .label { font-family: 'Switzer', sans-serif; font-size: 12px; font-weight: 600; color: var(--On-Surface); text-align: center; line-height: 1.25; }
+
+  /* ── Section title ── */
+  .section-title { font-family: 'Switzer', sans-serif; font-size: 16px; font-weight: 600; color: var(--On-Surface); margin-top: 2px; }
+
+  /* ── Popular services grid ── */
+  .services-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+  .service-tile { background: #FFF; border: 1px solid var(--Border); border-radius: 16px; padding: 14px 8px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 9px; cursor: pointer; transition: transform 0.15s, box-shadow 0.15s; box-shadow: 0 2px 8px rgba(0,0,0,0.04); min-height: 104px; }
+  .service-tile:hover { transform: translateY(-2px); box-shadow: 0 6px 16px rgba(0,0,0,0.08); }
+  .tile-icon { width: 44px; height: 44px; border-radius: 14px; display: flex; align-items: center; justify-content: center; background: var(--Primary); flex-shrink: 0; }
+  .tile-icon svg { width: 23px; height: 23px; stroke: #FFF; stroke-width: 1.8; fill: none; stroke-linecap: round; stroke-linejoin: round; }
+  .tile-icon.soft { background: var(--Primary-Container); }
+  .tile-icon.soft svg { stroke: var(--Primary); }
+  .tile-icon.purple { background: var(--Purple); }
+  .tile-icon.ink { background: var(--Ink); }
+  .tile-label { font-family: 'Switzer', sans-serif; font-size: 12px; font-weight: 600; color: var(--On-Surface); text-align: center; line-height: 1.3; }
+  .soon-pill { font-family: 'Switzer', sans-serif; font-size: 9px; font-weight: 600; color: var(--Purple); background: var(--Purple-Container); border-radius: 6px; padding: 2px 6px; letter-spacing: 0.2px; }
+
+  .empty-state { display: none; text-align: center; font-family: 'Switzer', sans-serif; font-size: 13px; color: var(--On-Surface-Low); padding: 24px 0; }
+
+  /* ── Promo banner ── */
+  .promo-banner { position: relative; border-radius: 16px; overflow: hidden; background: linear-gradient(135deg, #6D28D9 0%, #8B2FD6 55%, #A233C9 100%); padding: 20px 150px 20px 18px; min-height: 132px; display: flex; flex-direction: column; justify-content: center; gap: 6px; cursor: pointer; }
+  .promo-banner h3 { font-family: 'Switzer', sans-serif; font-size: 15px; font-weight: 700; color: #FFF; line-height: 1.25; position: relative; z-index: 2; }
+  .promo-banner p { font-family: 'Switzer', sans-serif; font-size: 10.5px; font-weight: 400; color: rgba(255,255,255,0.85); line-height: 1.4; position: relative; z-index: 2; }
+
+  /* Photo bleeds off the right edge, fading into the purple */
+  .promo-art { position: absolute; right: 0; top: 0; bottom: 0; width: 152px; overflow: hidden; pointer-events: none; }
+  .promo-art img { width: 100%; height: 100%; object-fit: cover; object-position: 50% 30%; display: block; }
+  .promo-fade { position: absolute; inset: 0; background: linear-gradient(90deg, #8B2FD6 0%, rgba(139,47,214,0.55) 38%, rgba(139,47,214,0) 72%); }
+
+  /* CTA sits on the right, over the photo */
+  .promo-cta { position: absolute; right: 14px; bottom: 14px; z-index: 3; background: #FFF; color: #6D28D9; font-family: 'Switzer', sans-serif; font-size: 11.5px; font-weight: 700; border: none; border-radius: 999px; padding: 8px 16px; cursor: pointer; box-shadow: 0 4px 14px rgba(0,0,0,0.28); transition: transform 0.15s; }
+  .promo-cta:hover { transform: scale(1.05); }
+
+  .promo-spark { position: absolute; border-radius: 7px; border: 1.5px solid rgba(255,255,255,0.28); z-index: 2; }
+  .promo-spark.a { width: 18px; height: 18px; top: 14px; right: 148px; transform: rotate(18deg); }
+  .promo-spark.b { width: 13px; height: 13px; bottom: 18px; right: 154px; transform: rotate(-12deg); }
+</style>
+</head>
+<body>
+<div class="phone-frame">
+  <div class="app-content">
+
+    <div class="status-bar">
+      <span class="time">10:00</span>
+      <div class="status-icons">
+        <svg viewBox="0 0 24 24" fill="none"><path d="M1 9l2 2c4.97-4.97 13.03-4.97 18 0l2-2C16.93 2.93 7.08 2.93 1 9z" fill="#1C1C21"/><path d="M5 13l2 2c2.76-2.76 7.24-2.76 10 0l2-2C15.14 9.14 8.87 9.14 5 13z" fill="#1C1C21"/><path d="M9 17l2 2c1.1-1.1 2.9-1.1 4 0l2-2c-2.21-2.21-5.79-2.21-8 0z" fill="#1C1C21"/></svg>
+        <svg viewBox="0 0 24 24" fill="none"><rect x="2" y="6" width="4" height="12" rx="1" fill="#1C1C21"/><rect x="8" y="4" width="4" height="14" rx="1" fill="#1C1C21"/><rect x="14" y="2" width="4" height="16" rx="1" fill="#1C1C21"/><rect x="20" y="0" width="4" height="18" rx="1" fill="#1C1C21" opacity="0.3"/></svg>
+        <svg viewBox="0 0 28 14" fill="none"><rect x="0" y="1" width="22" height="12" rx="2.5" stroke="#1C1C21" stroke-width="1.5"/><rect x="2" y="3" width="16" height="8" rx="1" fill="#1C1C21"/><rect x="24" y="4" width="2" height="6" rx="1" fill="#1C1C21"/></svg>
+      </div>
+    </div>
+
+    <div class="header-nav">
+      <button class="back-btn" onclick="window.location.href='Lehulum Home.html'">
+        <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+      </button>
+      <span class="header-title">More Services</span>
+      <div style="width:36px;"></div>
+    </div>
+
+    <div class="scroll">
+
+      <div class="search-row">
+        <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><line x1="16" y1="16" x2="21" y2="21"/></svg>
+        <input class="search-input" type="text" placeholder="Search services" oninput="filterServices(this.value)">
+      </div>
+
+      <!-- Three primary money actions (in place of the top promo banner) -->
+      <div class="feature-row">
+        <div class="feature-btn" onclick="window.location.href='Withdraw Cash.html'">
+          <div class="feature-chip">
+            <svg viewBox="0 0 24 24"><rect x="3" y="6" width="18" height="12" rx="2.5"/><circle cx="12" cy="12" r="2.5"/><path d="M7 12h.01M17 12h.01"/></svg>
+          </div>
+          <span class="label">Withdraw</span>
+        </div>
+        <div class="feature-btn" onclick="window.location.href='Agency Banking Cashout.html'">
+          <div class="feature-chip purple">
+            <svg viewBox="0 0 24 24"><path d="M4 9h13l-2.6-2.6M20 15H7l2.6 2.6"/></svg>
+          </div>
+          <span class="label">Cash In/<br>Cash Out</span>
+        </div>
+        <div class="feature-btn" onclick="window.location.href='M-PESA Customer Cash In.html'">
+          <div class="feature-chip ink">
+            <svg viewBox="0 0 24 24"><path d="M12 3v11M8.5 10.5L12 14l3.5-3.5"/><path d="M4 16v3a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-3"/></svg>
+          </div>
+          <span class="label">Deposit</span>
+        </div>
+      </div>
+
+      <!-- Promo banner -->
+      <div class="promo-banner" onclick="window.location.href='Pay Merchant.html'">
+        <span class="promo-spark a"></span>
+        <span class="promo-spark b"></span>
+        <h3>Buy AI Credits<br>with M-PESA</h3>
+        <p>Pay easily and redeem<br>on Dala platform.</p>
+        <div class="promo-art">
+          <img src="https://images.unsplash.com/photo-1485827404703-89b55fcc595e?w=400&q=80"
+               alt="AI assistant robot" loading="lazy">
+          <span class="promo-fade"></span>
+        </div>
+        <button class="promo-cta" onclick="event.stopPropagation(); window.location.href='Pay Merchant.html'">Buy Now</button>
+      </div>
+
+      <div class="section-title">Popular Services</div>
+
+      <div class="services-grid" id="servicesGrid">
+
+        <div class="service-tile" data-name="ride taxi transport" onclick="window.location.href='Pay Merchant.html'">
+          <div class="tile-icon soft">
+            <svg viewBox="0 0 24 24"><path d="M3 16.5v-3.7l1.9-4.4A2 2 0 0 1 6.7 7h10.6a2 2 0 0 1 1.8 1.4l1.9 4.4v3.7a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1z"/><path d="M4.2 12.8h15.6"/><path d="M6 17.5V19M18 17.5V19"/></svg>
+          </div>
+          <span class="tile-label">Ride</span>
+        </div>
+
+        <div class="service-tile" data-name="beu food delivery" onclick="window.location.href='Pay Merchant.html'">
+          <div class="tile-icon">
+            <svg viewBox="0 0 24 24"><path d="M4 9.5h16"/><path d="M5 9.5c0-2.8 3.1-4.6 7-4.6s7 1.8 7 4.6"/><path d="M3.5 13h17"/><path d="M5.5 16.5h13a3 3 0 0 1-3 2.5h-7a3 3 0 0 1-3-2.5z"/></svg>
+          </div>
+          <span class="tile-label">Beu</span>
+        </div>
+
+        <div class="service-tile" data-name="qetero booking appointment" onclick="window.location.href='Pay Merchant.html'">
+          <div class="tile-icon">
+            <svg viewBox="0 0 24 24"><rect x="3.5" y="5" width="17" height="15" rx="2.5"/><path d="M3.5 9.5h17M8 3.5v3M16 3.5v3"/><rect x="7" y="12.5" width="4" height="3.5" rx="0.8"/></svg>
+          </div>
+          <span class="tile-label">Qetero</span>
+        </div>
+
+        <div class="service-tile" data-name="z-mall zmall shopping" onclick="window.location.href='Pay Merchant.html'">
+          <div class="tile-icon purple">
+            <svg viewBox="0 0 24 24"><path d="M5 8h14l-1.2 11.2a1.5 1.5 0 0 1-1.5 1.3H7.7a1.5 1.5 0 0 1-1.5-1.3z"/><path d="M9 8V6.2A3 3 0 0 1 12 3.2a3 3 0 0 1 3 3V8"/></svg>
+          </div>
+          <span class="tile-label">Z-mall</span>
+        </div>
+
+        <div class="service-tile" data-name="tomoca coffee" onclick="window.location.href='Pay Merchant.html'">
+          <div class="tile-icon">
+            <svg viewBox="0 0 24 24"><path d="M4 9.5h13v5a4.5 4.5 0 0 1-4.5 4.5h-4A4.5 4.5 0 0 1 4 14.5z"/><path d="M17 11h1.5a2.5 2.5 0 0 1 0 5H17"/><path d="M8 6.5c0-1 1-1.4 1-2.4M12 6.5c0-1 1-1.4 1-2.4"/></svg>
+          </div>
+          <span class="tile-label">Tomoca</span>
+        </div>
+
+        <div class="service-tile" data-name="yene guzo travel trip" onclick="window.location.href='Pay Merchant.html'">
+          <div class="tile-icon purple">
+            <svg viewBox="0 0 24 24"><circle cx="17" cy="6.5" r="2.4"/><circle cx="7" cy="12" r="2.4"/><circle cx="17" cy="17.5" r="2.4"/><path d="M9.2 10.8l5.6-3.1M9.2 13.2l5.6 3.1"/></svg>
+          </div>
+          <span class="tile-label">Yene Guzo</span>
+        </div>
+
+        <div class="service-tile" data-name="parking" onclick="window.location.href='Pay Merchant.html'">
+          <div class="tile-icon ink">
+            <svg viewBox="0 0 24 24"><rect x="3.5" y="3.5" width="17" height="17" rx="4"/><path d="M9.5 17V7.5h3.2a2.9 2.9 0 0 1 0 5.8H9.5"/></svg>
+          </div>
+          <span class="tile-label">Parking</span>
+        </div>
+
+        <div class="service-tile" data-name="dala ai credits" onclick="window.location.href='Pay Merchant.html'">
+          <div class="tile-icon purple">
+            <svg viewBox="0 0 24 24"><rect x="4" y="7.5" width="16" height="11" rx="3.5"/><path d="M12 3.5v4M8.8 12.3h.01M15.2 12.3h.01M9.5 15.6h5"/></svg>
+          </div>
+          <span class="tile-label">Dala</span>
+        </div>
+
+        <div class="service-tile" data-name="ethiopian airlines flight" onclick="window.location.href='Bill Payment_Select Biller.html'">
+          <div class="tile-icon ink">
+            <svg viewBox="0 0 24 24"><path d="M21 15.6l-8.4-2.3V7.6a1.6 1.6 0 0 0-3.2 0v5.7L3 15.6v1.7l6.4-1.4v2.8l-2 1.4v1.2l3.6-.9 3.6.9v-1.2l-2-1.4v-2.8l6.4 1.4z"/></svg>
+          </div>
+          <span class="tile-label">Ethiopian<br>Airlines</span>
+          <span class="soon-pill">Coming soon</span>
+        </div>
+
+      </div>
+
+      <div class="empty-state" id="emptyState">No services match your search.</div>
+
+    </div>
+  </div>
+</div>
+
+<script>
+  function filterServices(v) {
+    const q = (v || '').trim().toLowerCase();
+    let visible = 0;
+    document.querySelectorAll('#servicesGrid .service-tile').forEach(t => {
+      const label = (t.querySelector('.tile-label').textContent || '').toLowerCase().replace(/\s+/g, ' ');
+      const keys = t.dataset.name || '';
+      const match = q === '' || label.indexOf(q) !== -1 || keys.indexOf(q) !== -1;
+      t.style.display = match ? '' : 'none';
+      if (match) visible++;
+    });
+    document.getElementById('emptyState').style.display = visible === 0 ? 'block' : 'none';
+  }
+</script>
+</body>
+</html>

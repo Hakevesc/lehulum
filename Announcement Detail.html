@@ -1,0 +1,751 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Announcement Details</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+  @import url('https://api.fontshare.com/v2/css?f[]=switzer@400,500,600,700&display=swap');
+
+  :root {
+    --Primary: #FE353D;
+    --Primary-Dark: #C41520;
+    --Primary-Darker: #A41016;
+    --On-Surface: #1C1C21;
+    --On-Surface-Low: #7C7C87;
+    --Gray-0: #FFF;
+    --Success: #1FC83B;
+    --Success-Light: #E8F9EC;
+    --Primary-Light: #FFF1F2;
+    --Warning: #FF9800;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Inter', sans-serif;
+    background: transparent;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    padding: 20px;
+  }
+
+  .phone-frame {
+    width: 360px;
+    height: 780px;
+    background: #FFF;
+    border-radius: 30px;
+    overflow: hidden;
+    position: relative;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* Status Bar */
+  .status-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    padding: 14px 24px 6px;
+    flex-shrink: 0;
+  }
+  .status-bar .time { font-size: 14px; font-weight: 600; color: var(--On-Surface); }
+  .status-icons { display: flex; align-items: center; gap: 6px; }
+  .status-icons svg { width: 18px; height: 18px; }
+
+  /* Header — back button then left-aligned title */
+  .header-nav {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 8px 18px 12px;
+    flex-shrink: 0;
+  }
+  .back-btn {
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    border: none;
+    background: #F4F4F6;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s;
+    flex-shrink: 0;
+  }
+  .back-btn:hover { background: #E9E9ED; transform: scale(1.05); }
+  .back-btn:active { transform: scale(0.94); }
+  .back-btn svg { width: 20px; height: 20px; stroke: var(--On-Surface); stroke-width: 2.2px; fill: none; }
+  .header-title {
+    color: var(--On-Surface);
+    font-family: 'Switzer', sans-serif;
+    font-size: 19px;
+    font-weight: 600;
+    letter-spacing: 0.2px;
+  }
+
+  /* Scroll area */
+  .scroll-area {
+    flex: 1;
+    overflow-y: auto;
+    padding: 0 18px 16px;
+  }
+  .scroll-area::-webkit-scrollbar { width: 0; }
+
+  /* ============================================================
+     COVER — shared shell
+     ============================================================ */
+  .cover {
+    border-radius: 20px;
+    overflow: hidden;
+    margin-bottom: 22px;
+  }
+
+  /* ---- variant: notice (tinted, icon + illustration) ---- */
+  .cover.notice { padding: 18px 16px 16px; position: relative; }
+  .cover.notice .cover-head {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 16px;
+  }
+  .cover-icon {
+    width: 52px;
+    height: 52px;
+    border-radius: 50%;
+    background: #FFF;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+  }
+  .cover-icon i, .cover-icon svg { width: 24px !important; height: 24px !important; stroke-width: 2px; }
+  .cover-badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 7px 14px;
+    border-radius: 20px;
+    font-family: 'Switzer', sans-serif;
+    font-size: 12.5px;
+    font-weight: 600;
+    letter-spacing: 0.2px;
+  }
+  .cover.notice .cover-title {
+    color: var(--On-Surface);
+    font-family: 'Switzer', sans-serif;
+    font-size: 19px;
+    font-weight: 700;
+    line-height: 1.25;
+    letter-spacing: 0.1px;
+    max-width: 185px;
+    position: relative;
+    z-index: 2;
+  }
+  .cover.notice .cover-kicker {
+    color: var(--On-Surface-Low);
+    font-size: 12.5px;
+    line-height: 1.5;
+    margin-top: 7px;
+    max-width: 185px;
+    position: relative;
+    z-index: 2;
+  }
+  /* decorative glyph — kept clear of the copy column on the left */
+  .cover-glyph {
+    position: absolute;
+    right: 10px;
+    top: 84px;
+    font-size: 70px;
+    line-height: 1;
+    opacity: 0.95;
+    pointer-events: none;
+    filter: drop-shadow(0 6px 14px rgba(0,0,0,0.14));
+  }
+
+  /* ---- variant: photo (promotional) ---- */
+  .cover.photo { position: relative; background: #1C1C21; }
+  .cover-photo-img {
+    width: 100%;
+    height: 196px;
+    object-fit: cover;
+    display: block;
+  }
+  /* scrim and copy cover the image only — never the stat row below it */
+  .cover-scrim {
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 196px;
+    background: linear-gradient(180deg, rgba(0,0,0,0.42) 0%, rgba(0,0,0,0.05) 38%, rgba(0,0,0,0.78) 100%);
+  }
+  .cover-photo-content {
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 196px;
+    padding: 14px 16px 16px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+  }
+  .cover.photo .cover-badge {
+    align-self: flex-start;
+    background: rgba(255,255,255,0.22);
+    backdrop-filter: blur(6px);
+    color: #FFF;
+    font-size: 11.5px;
+    padding: 6px 12px;
+  }
+  .cover.photo .cover-title {
+    color: #FFF;
+    font-family: 'Switzer', sans-serif;
+    font-size: 32px;
+    font-weight: 700;
+    line-height: 1.05;
+    letter-spacing: -0.2px;
+    text-shadow: 0 2px 12px rgba(0,0,0,0.35);
+  }
+  .cover.photo .cover-kicker {
+    color: rgba(255,255,255,0.92);
+    font-family: 'Switzer', sans-serif;
+    font-size: 14px;
+    font-weight: 500;
+    margin-top: 4px;
+    text-shadow: 0 2px 10px rgba(0,0,0,0.4);
+  }
+
+  /* ---- stat row (shared by both covers) ---- */
+  .cover-stats {
+    display: flex;
+    align-items: stretch;
+    background: #FFF;
+    border-radius: 14px;
+    padding: 12px 4px;
+    position: relative;
+    z-index: 2;
+  }
+  .cover.notice .cover-stats { margin-top: 18px; box-shadow: 0 1px 4px rgba(0,0,0,0.04); }
+  .cover.photo  .cover-stats { margin: 0; border-radius: 0; box-shadow: none; border-top: 1px solid #F0F0F3; }
+
+  .cover-stat {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 0 10px;
+    min-width: 0;
+  }
+  .cover-stat > div { min-width: 0; }
+  .cover-stat + .cover-stat { border-left: 1px solid #ECECEF; }
+  .cover-stat i, .cover-stat svg {
+    width: 19px !important; height: 19px !important;
+    color: var(--On-Surface-Low);
+    stroke-width: 1.9px;
+    flex-shrink: 0;
+  }
+  .cover-stat-label {
+    display: block;
+    color: var(--On-Surface-Low);
+    font-size: 10.5px;
+    letter-spacing: 0.1px;
+  }
+  .cover-stat-value {
+    display: block;
+    color: var(--On-Surface);
+    font-family: 'Switzer', sans-serif;
+    font-size: 12px;
+    font-weight: 600;
+    margin-top: 1px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  /* ============================================================
+     SECTIONS
+     ============================================================ */
+  .section-title {
+    color: var(--On-Surface);
+    font-family: 'Switzer', sans-serif;
+    font-size: 16px;
+    font-weight: 700;
+    letter-spacing: 0.1px;
+    margin-bottom: 8px;
+  }
+  .section-intro {
+    color: var(--On-Surface-Low);
+    font-size: 13px;
+    line-height: 1.6;
+    margin-bottom: 16px;
+  }
+
+  /* highlight rows */
+  .highlights { margin-bottom: 20px; }
+  .highlight {
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+    padding: 13px 0;
+  }
+  .highlight + .highlight { border-top: 1px solid #F0F0F3; }
+  .highlight-icon {
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    background: #F5F5F7;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+  .highlight-icon i, .highlight-icon svg { width: 21px !important; height: 21px !important; stroke-width: 1.9px; }
+  .highlight-title {
+    display: block;
+    color: var(--On-Surface);
+    font-family: 'Switzer', sans-serif;
+    font-size: 14.5px;
+    font-weight: 600;
+    letter-spacing: 0.1px;
+  }
+  .highlight-desc {
+    display: block;
+    color: var(--On-Surface-Low);
+    font-size: 12.5px;
+    line-height: 1.5;
+    margin-top: 3px;
+  }
+
+  /* info cards */
+  .info-card {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 14px;
+    border-radius: 16px;
+    margin-bottom: 12px;
+  }
+  .info-card.good { background: #F1FAF3; border: 1px solid #DCEFE1; }
+  .info-card.tip  { background: #EFF5FF; border: 1px solid #DBE7FA; }
+  .info-icon {
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+  .info-card.good .info-icon { background: #D6F0DC; }
+  .info-card.good .info-icon i, .info-card.good .info-icon svg { color: #17A03A; }
+  .info-card.tip .info-icon { background: transparent; }
+  .info-card.tip .info-icon i, .info-card.tip .info-icon svg { color: #0F62FE; }
+  .info-icon i, .info-icon svg { width: 19px !important; height: 19px !important; stroke-width: 2px; }
+  .info-title {
+    display: block;
+    color: var(--On-Surface);
+    font-family: 'Switzer', sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+    letter-spacing: 0.1px;
+  }
+  .info-text {
+    display: block;
+    color: var(--On-Surface-Low);
+    font-size: 12.5px;
+    line-height: 1.55;
+    margin-top: 3px;
+  }
+
+  /* support row */
+  .support-card {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 14px;
+    border-radius: 16px;
+    border: 1px solid #EAEAEE;
+    background: #FFF;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .support-card:hover { border-color: #D8D8DE; box-shadow: 0 4px 14px rgba(0,0,0,0.05); }
+  .support-card:active { transform: scale(0.99); }
+  .support-icon {
+    width: 30px; height: 30px;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+  }
+  .support-icon i, .support-icon svg {
+    width: 24px !important; height: 24px !important;
+    color: var(--On-Surface-Low); stroke-width: 1.6px;
+  }
+  .support-body { flex: 1; min-width: 0; }
+  .support-title {
+    display: block;
+    color: var(--On-Surface);
+    font-family: 'Switzer', sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+  }
+  .support-sub {
+    display: block;
+    color: var(--On-Surface-Low);
+    font-size: 12px;
+    margin-top: 2px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .support-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 3px;
+    color: var(--Primary-Dark);
+    font-family: 'Switzer', sans-serif;
+    font-size: 12.5px;
+    font-weight: 600;
+    flex-shrink: 0;
+    white-space: nowrap;
+  }
+  .support-link i, .support-link svg { width: 15px !important; height: 15px !important; stroke-width: 2.6px; }
+
+  /* terms (collapsible) */
+  .terms-toggle {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    padding: 13px 2px;
+    margin-top: 4px;
+    border: none;
+    background: transparent;
+    cursor: pointer;
+    color: var(--On-Surface);
+    font-family: 'Switzer', sans-serif;
+    font-size: 13.5px;
+    font-weight: 600;
+  }
+  .terms-toggle i, .terms-toggle svg {
+    width: 17px !important; height: 17px !important;
+    color: var(--On-Surface-Low); stroke-width: 2.2px;
+    transition: transform 0.22s;
+  }
+  .terms-toggle.open i, .terms-toggle.open svg { transform: rotate(180deg); }
+  .terms-body { display: none; padding: 0 2px 8px; }
+  .terms-body.open { display: block; }
+  .terms-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 9px;
+    color: var(--On-Surface-Low);
+    font-size: 12.5px;
+    line-height: 1.55;
+    padding: 5px 0;
+  }
+  .terms-item .bullet {
+    width: 5px; height: 5px;
+    border-radius: 50%;
+    background: #C9C9D0;
+    flex-shrink: 0;
+    margin-top: 7px;
+  }
+
+  /* ============================================================
+     STICKY FOOTER CTA
+     ============================================================ */
+  .footer {
+    flex-shrink: 0;
+    padding: 12px 18px 20px;
+    background: #FFF;
+    box-shadow: 0 -6px 20px rgba(0,0,0,0.06);
+  }
+  .cta-btn {
+    width: 100%;
+    height: 54px;
+    border: none;
+    border-radius: 15px;
+    background: linear-gradient(180deg, #D01A22 0%, #A41016 100%);
+    color: #FFF;
+    font-family: 'Switzer', sans-serif;
+    font-size: 16px;
+    font-weight: 600;
+    letter-spacing: 0.3px;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    box-shadow: 0 6px 18px rgba(164,16,22,0.28);
+  }
+  .cta-btn:hover { filter: brightness(1.06); transform: translateY(-1px); box-shadow: 0 8px 22px rgba(164,16,22,0.34); }
+  .cta-btn:active { transform: scale(0.985); }
+  .cta-btn i, .cta-btn svg { width: 18px !important; height: 18px !important; stroke-width: 2.4px; }
+
+  .cta-secondary {
+    width: 100%;
+    height: 40px;
+    margin-top: 6px;
+    border: none;
+    background: transparent;
+    color: var(--On-Surface-Low);
+    font-family: 'Switzer', sans-serif;
+    font-size: 13.5px;
+    font-weight: 500;
+    cursor: pointer;
+  }
+  .cta-secondary:hover { color: var(--On-Surface); }
+
+  /* home indicator */
+  .home-bar {
+    width: 128px;
+    height: 5px;
+    border-radius: 3px;
+    background: #1C1C21;
+    margin: 6px auto 0;
+    opacity: 0.85;
+  }
+</style>
+</head>
+<body>
+
+<div class="phone-frame">
+
+  <!-- Status Bar -->
+  <div class="status-bar">
+    <span class="time">10:00</span>
+    <div class="status-icons">
+      <svg viewBox="0 0 24 24" fill="none">
+        <rect x="2" y="6" width="4" height="12" rx="1" fill="#1C1C21"/>
+        <rect x="8" y="4" width="4" height="14" rx="1" fill="#1C1C21"/>
+        <rect x="14" y="2" width="4" height="16" rx="1" fill="#1C1C21"/>
+        <rect x="20" y="0" width="4" height="18" rx="1" fill="#1C1C21"/>
+      </svg>
+      <svg viewBox="0 0 24 24" fill="none">
+        <path d="M5 12.55a11 11 0 0 1 14.08 0" stroke="#1C1C21" stroke-width="1.8" stroke-linecap="round"/>
+        <path d="M1.42 9a16 16 0 0 1 21.16 0" stroke="#1C1C21" stroke-width="1.8" stroke-linecap="round"/>
+        <path d="M8.53 16.11a6 6 0 0 1 6.95 0" stroke="#1C1C21" stroke-width="1.8" stroke-linecap="round"/>
+        <line x1="12" y1="20" x2="12.01" y2="20" stroke="#1C1C21" stroke-width="2.2" stroke-linecap="round"/>
+      </svg>
+      <svg viewBox="0 0 28 14" fill="none">
+        <rect x="0" y="1" width="22" height="12" rx="3" stroke="#1C1C21" stroke-width="1.5"/>
+        <rect x="2" y="3" width="18" height="8" rx="1.5" fill="#1C1C21"/>
+        <rect x="24" y="4" width="2" height="6" rx="1" fill="#1C1C21"/>
+      </svg>
+    </div>
+  </div>
+
+  <!-- Header -->
+  <div class="header-nav">
+    <button class="back-btn" onclick="goBack()" aria-label="Back">
+      <svg viewBox="0 0 24 24" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M15 18l-6-6 6-6"/>
+      </svg>
+    </button>
+    <span class="header-title">Announcement Details</span>
+  </div>
+
+  <!-- Scrollable content -->
+  <div class="scroll-area">
+    <div id="cover"></div>
+
+    <div id="intro"></div>
+    <div class="highlights" id="highlights"></div>
+    <div id="infoCards"></div>
+    <div id="support"></div>
+    <div id="terms"></div>
+  </div>
+
+  <!-- Sticky CTA -->
+  <div class="footer" id="footer"></div>
+
+</div>
+
+<!-- Lucide Icons -->
+<script src="https://unpkg.com/lucide@latest"></script>
+<!-- Shared announcement registry -->
+<script src="announcements.js"></script>
+<script>
+  const A = window.MPESA_ANN;
+
+  // Resolved from the shared registry by ?id=. Falls back to the top
+  // active announcement when opened directly (e.g. the index sidebar).
+  function loadAnnouncement() {
+    const wantedId = new URLSearchParams(location.search).get('id');
+    return (wantedId && A.find(wantedId)) || A.active()[0] || window.MPESA_ANNOUNCEMENTS[0];
+  }
+
+  const item = loadAnnouncement();
+  // Records without a bespoke detail block fall back to their list copy.
+  const d = item.detail || {};
+
+  const esc = s => String(s == null ? '' : s);
+
+  /* ---------- cover ---------- */
+  function renderCover() {
+    const host = document.getElementById('cover');
+    const stats = d.stats || [];
+    const statsHtml = stats.length ? `
+      <div class="cover-stats">
+        ${stats.map(s => `
+          <div class="cover-stat">
+            <i data-lucide="${esc(s.icon)}"></i>
+            <div>
+              <span class="cover-stat-label">${esc(s.label)}</span>
+              <span class="cover-stat-value">${esc(s.value)}</span>
+            </div>
+          </div>`).join('')}
+      </div>` : '';
+
+    if (d.cover === 'photo' && d.image) {
+      // Promotional cover: photo led, headline only, no body copy.
+      host.innerHTML = `
+        <div class="cover photo">
+          <img class="cover-photo-img" src="${esc(d.image)}" alt="${esc(item.title)}">
+          <div class="cover-scrim"></div>
+          <div class="cover-photo-content">
+            <span class="cover-badge">${esc(d.badge || item.badge || '')}</span>
+            <div>
+              <div class="cover-title">${esc(d.headline || item.title)}</div>
+              <div class="cover-kicker">${esc(d.kicker || '')}</div>
+            </div>
+          </div>
+          ${statsHtml}
+        </div>`;
+      return;
+    }
+
+    // Notice cover: tinted panel, icon chip, badge, illustration glyph.
+    const accent = d.accent || '#E67E00';
+    host.innerHTML = `
+      <div class="cover notice" style="background:${esc(d.coverBg || 'linear-gradient(160deg,#F3F3F6 0%,#FAFAFC 100%)')}">
+        <div class="cover-head">
+          <div class="cover-icon"><i data-lucide="${esc(d.icon || 'megaphone')}" style="color:${accent}"></i></div>
+          <span class="cover-badge" style="background:${esc(d.badgeBg || '#ECECEF')};color:${accent}">
+            ${esc(d.badge || item.badge || A.TYPE_LABEL[item.type])}
+          </span>
+        </div>
+        <div class="cover-glyph">${esc(item.glyph || '📣')}</div>
+        <div class="cover-title">${esc(d.headline || item.title)}</div>
+        <div class="cover-kicker">${esc(d.kicker || item.desc)}</div>
+        ${statsHtml}
+      </div>`;
+  }
+
+  /* ---------- body sections ---------- */
+  function renderIntro() {
+    const title = d.introTitle || 'Details';
+    const text = d.intro || (item.body || item.desc).split('\n\n')[0];
+    document.getElementById('intro').innerHTML = `
+      <div class="section-title">${esc(title)}</div>
+      <p class="section-intro">${esc(text)}</p>`;
+  }
+
+  function renderHighlights() {
+    const list = d.highlights || [];
+    document.getElementById('highlights').innerHTML = list.map(h => `
+      <div class="highlight">
+        <div class="highlight-icon">
+          <i data-lucide="${esc(h.icon)}" style="color:${esc(d.accent || '#E67E00')}"></i>
+        </div>
+        <div>
+          <span class="highlight-title">${esc(h.title)}</span>
+          <span class="highlight-desc">${esc(h.desc)}</span>
+        </div>
+      </div>`).join('');
+  }
+
+  function renderInfoCards() {
+    let html = '';
+    if (d.reassure) {
+      html += `
+        <div class="info-card good">
+          <div class="info-icon"><i data-lucide="shield-check"></i></div>
+          <div>
+            <span class="info-title">${esc(d.reassure.title)}</span>
+            <span class="info-text">${esc(d.reassure.text)}</span>
+          </div>
+        </div>`;
+    }
+    if (d.tip) {
+      html += `
+        <div class="info-card tip">
+          <div class="info-icon"><i data-lucide="info"></i></div>
+          <div>
+            <span class="info-title">${esc(d.tip.title)}</span>
+            <span class="info-text">${esc(d.tip.text)}</span>
+          </div>
+        </div>`;
+    }
+    document.getElementById('infoCards').innerHTML = html;
+  }
+
+  function renderSupport() {
+    if (!d.support) { document.getElementById('support').innerHTML = ''; return; }
+    document.getElementById('support').innerHTML = `
+      <div class="support-card" onclick="contactSupport()">
+        <div class="support-icon"><i data-lucide="headset"></i></div>
+        <div class="support-body">
+          <span class="support-title">Need help?</span>
+          <span class="support-sub">Chat with our team.</span>
+        </div>
+        <span class="support-link">Contact Support <i data-lucide="chevron-right"></i></span>
+      </div>`;
+  }
+
+  function renderTerms() {
+    const terms = item.terms || [];
+    if (!terms.length) { document.getElementById('terms').innerHTML = ''; return; }
+    document.getElementById('terms').innerHTML = `
+      <button class="terms-toggle" id="termsToggle" onclick="toggleTerms()">
+        Terms &amp; conditions
+        <i data-lucide="chevron-down"></i>
+      </button>
+      <div class="terms-body" id="termsBody">
+        ${terms.map(t => `<div class="terms-item"><span class="bullet"></span><span>${esc(t)}</span></div>`).join('')}
+      </div>`;
+  }
+
+  function toggleTerms() {
+    document.getElementById('termsToggle').classList.toggle('open');
+    document.getElementById('termsBody').classList.toggle('open');
+  }
+
+  /* ---------- footer CTA ---------- */
+  // Redirection rule: the primary CTA drops the customer into the
+  // related journey. Without one, it simply dismisses.
+  function renderFooter() {
+    const href = item.cta && item.cta.href;
+    const label = d.ctaLabel || (item.cta && item.cta.label) || 'Got it';
+    document.getElementById('footer').innerHTML = `
+      <button class="cta-btn" onclick="${href ? `go('${esc(href)}')` : 'goBack()'}">
+        ${esc(label)}${href ? '<i data-lucide="arrow-right"></i>' : ''}
+      </button>
+      ${href ? '<button class="cta-secondary" onclick="goBack()">Maybe later</button>' : ''}
+      <div class="home-bar"></div>`;
+  }
+
+  function go(href) { window.location.href = href; }
+  function goBack() { window.location.href = 'Announcement.html'; }
+  function contactSupport() { window.location.href = 'Feedback Tool.html'; }
+
+  renderCover();
+  renderIntro();
+  renderHighlights();
+  renderInfoCards();
+  renderSupport();
+  renderTerms();
+  renderFooter();
+  lucide.createIcons();
+</script>
+
+<!-- Export to Figma button (shared exporter) -->
+<script src="figma-export.js"></script>
+</body>
+</html>

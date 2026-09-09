@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Announcements — Empty</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@400;500;600&family=Barlow:wght@400&display=swap');
+  @import url('https://api.fontshare.com/v2/css?f[]=switzer@400,500,600,700&display=swap');
+
+  :root {
+    --Primary: #FE353D;
+    --On-Surface: #1C1C21;
+    --On-Surface-Low: #7C7C87;
+    --Primary-Light: #FFF1F2;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Inter', sans-serif;
+    background: transparent;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    padding: 20px;
+  }
+
+  .phone-frame {
+    width: 360px;
+    height: 780px;
+    background: #F5F5F5;
+    border-radius: 30px;
+    overflow: hidden;
+    position: relative;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
+  }
+
+  .app-content {
+    height: 100%;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+  }
+  .app-content::-webkit-scrollbar { width: 0; }
+
+  /* Status Bar */
+  .status-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    padding: 14px 24px 8px;
+    background: #F5F5F5;
+  }
+  .status-bar .time { font-size: 14px; font-weight: 600; color: var(--On-Surface); }
+  .status-icons { display: flex; align-items: center; gap: 6px; }
+  .status-icons svg { width: 18px; height: 18px; }
+
+  /* Header */
+  .header-nav {
+    position: relative;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 16px 20px 0;
+    background: #F5F5F5;
+  }
+  .back-btn {
+    position: absolute;
+    left: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    transition: all 0.2s;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+  }
+  .back-btn:hover { background: rgba(0,0,0,0.05); transform: scale(1.05); }
+  .back-btn svg { width: 24px; height: 24px; stroke: var(--On-Surface); stroke-width: 1.5px; }
+  .header-title {
+    color: var(--On-Surface);
+    font-family: 'Switzer', sans-serif;
+    font-size: 18px;
+    font-weight: 500;
+    letter-spacing: 0.3px;
+  }
+
+  /* Empty State */
+  .empty-state {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 40px 34px 90px;
+    text-align: center;
+  }
+  .empty-icon {
+    width: 88px; height: 88px;
+    margin-bottom: 26px;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .empty-icon i, .empty-icon svg {
+    width: 88px !important; height: 88px !important;
+    color: #D0D0D0; stroke-width: 1.3px;
+  }
+  .empty-title {
+    color: var(--On-Surface);
+    font-family: 'Switzer', sans-serif;
+    font-size: 18px;
+    font-weight: 600;
+    margin-bottom: 12px;
+    letter-spacing: 0.3px;
+  }
+  .empty-subtitle {
+    color: var(--On-Surface-Low);
+    font-size: 14px;
+    line-height: 1.6;
+    max-width: 262px;
+    margin-bottom: 26px;
+  }
+  .empty-cta {
+    height: 46px;
+    padding: 0 26px;
+    border: none;
+    border-radius: 23px;
+    background: var(--Primary-Light);
+    color: var(--Primary);
+    font-family: 'Switzer', sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .empty-cta:hover { background: var(--Primary); color: #FFF; transform: translateY(-1px); }
+  .empty-cta:active { transform: scale(0.98); }
+  .empty-cta i, .empty-cta svg { width: 16px !important; height: 16px !important; stroke-width: 2.4px; }
+</style>
+</head>
+<body>
+
+<div class="phone-frame">
+  <div class="app-content">
+
+    <!-- Status Bar -->
+    <div class="status-bar">
+      <span class="time">10:00</span>
+      <div class="status-icons">
+        <svg viewBox="0 0 24 24" fill="none">
+          <rect x="2" y="6" width="4" height="12" rx="1" fill="#1C1C21"/>
+          <rect x="8" y="4" width="4" height="14" rx="1" fill="#1C1C21"/>
+          <rect x="14" y="2" width="4" height="16" rx="1" fill="#1C1C21"/>
+          <rect x="20" y="0" width="4" height="18" rx="1" fill="#1C1C21" opacity="0.3"/>
+        </svg>
+        <svg viewBox="0 0 24 24" fill="none">
+          <path d="M5 12.55a11 11 0 0 1 14.08 0" stroke="#1C1C21" stroke-width="1.5" stroke-linecap="round"/>
+          <path d="M1.42 9a16 16 0 0 1 21.16 0" stroke="#1C1C21" stroke-width="1.5" stroke-linecap="round"/>
+          <path d="M8.53 16.11a6 6 0 0 1 6.95 0" stroke="#1C1C21" stroke-width="1.5" stroke-linecap="round"/>
+          <line x1="12" y1="20" x2="12.01" y2="20" stroke="#1C1C21" stroke-width="2" stroke-linecap="round"/>
+        </svg>
+        <svg viewBox="0 0 28 14" fill="none">
+          <rect x="0" y="1" width="22" height="12" rx="2.5" stroke="#1C1C21" stroke-width="1.5"/>
+          <rect x="2" y="3" width="16" height="8" rx="1" fill="#1C1C21"/>
+          <rect x="24" y="4" width="2" height="6" rx="1" fill="#1C1C21"/>
+        </svg>
+      </div>
+    </div>
+
+    <!-- Header -->
+    <div class="header-nav">
+      <button class="back-btn" onclick="goBack()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M19 12H5M12 19l-7-7 7-7"/>
+        </svg>
+      </button>
+      <span class="header-title">Announcements</span>
+    </div>
+
+    <!-- Empty State -->
+    <div class="empty-state">
+      <div class="empty-icon"><i data-lucide="megaphone-off"></i></div>
+      <div class="empty-title">No announcements right now</div>
+      <div class="empty-subtitle">
+        All campaigns and notices have run their course and been archived.
+        We'll let you know as soon as something new arrives.
+      </div>
+      <button class="empty-cta" onclick="goHome()">
+        <i data-lucide="home"></i> Back to Home
+      </button>
+    </div>
+
+  </div>
+</div>
+
+<!-- Lucide Icons -->
+<script src="https://unpkg.com/lucide@latest"></script>
+<script>
+  lucide.createIcons();
+
+  function goBack() { window.location.href = 'Lehulum Home.html'; }
+  function goHome() { window.location.href = 'Lehulum Home.html'; }
+</script>
+
+<!-- Export to Figma button (shared exporter) -->
+<script src="figma-export.js"></script>
+</body>
+</html>

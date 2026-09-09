@@ -147,7 +147,10 @@
   .chevron { width: 18px; height: 18px; color: var(--On-Surface); transition: transform 0.25s; }
   .bank-selector.open .chevron { transform: rotate(180deg); }
 
-  /* Account Number Input */
+  /* Account Number Input with dropdown */
+  .account-input-wrap {
+    position: relative;
+  }
   .account-input-wrapper {
     height: 52px;
     background: #FFF;
@@ -167,6 +170,40 @@
   }
   .account-input::placeholder { color: var(--On-Surface-Low); font-weight: 400; letter-spacing: 0; }
 
+  .account-drop-btn {
+    width: 32px; height: 32px; border-radius: 8px; border: none;
+    background: transparent; cursor: pointer; display: flex;
+    align-items: center; justify-content: center; flex-shrink: 0;
+    transition: background 0.15s;
+  }
+  .account-drop-btn:hover { background: #F5F5F5; }
+  .account-drop-btn svg { width: 18px; height: 18px; stroke: var(--On-Surface-Low); stroke-width: 1.8; fill: none; }
+
+  /* Account dropdown list */
+  .account-dropdown {
+    position: absolute; top: calc(100% + 6px); left: 0; right: 0;
+    background: #FFF; border-radius: 16px; box-shadow: 0 8px 32px rgba(0,0,0,0.15);
+    z-index: 100; display: none; max-height: 220px; overflow-y: auto;
+  }
+  .account-dropdown::-webkit-scrollbar { width: 6px; }
+  .account-dropdown::-webkit-scrollbar-track { background: transparent; }
+  .account-dropdown::-webkit-scrollbar-thumb { background: #D0D0D0; border-radius: 3px; }
+  .account-dropdown::-webkit-scrollbar-thumb:hover { background: #B0B0B0; }
+  .account-dropdown.show { display: block; animation: dropdownSlide 0.2s ease-out; }
+  @keyframes dropdownSlide { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
+  .account-option { padding: 12px 16px; display: flex; align-items: center; gap: 12px; cursor: pointer; transition: background 0.15s; border-bottom: 1px solid #F5F5F5; }
+  .account-option:last-child { border-bottom: none; }
+  .account-option:hover { background: #FAFAFA; }
+  .account-option .ao-icon { width: 36px; height: 36px; border-radius: 10px; background: #FFF1F2; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+  .account-option .ao-icon svg { width: 18px; height: 18px; stroke: var(--Primary); stroke-width: 2; fill: none; }
+  .account-option .ao-info { flex: 1; display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+  .account-option .ao-name { color: var(--On-Surface); font-family: 'Switzer', sans-serif; font-size: 13px; font-weight: 600; }
+  .account-option .ao-sub { color: var(--On-Surface-Low); font-family: 'Switzer', sans-serif; font-size: 11.5px; }
+  .account-option .ao-bank { color: var(--On-Surface-Low); font-family: 'Switzer', sans-serif; font-size: 10px; font-weight: 500; }
+  .account-option .ao-check { width: 18px; height: 18px; border-radius: 50%; border: 2px solid var(--Border); flex-shrink: 0; display: flex; align-items: center; justify-content: center; }
+  .account-option.selected .ao-check { border-color: var(--Primary); background: var(--Primary); }
+  .account-option.selected .ao-check svg { width: 10px; height: 10px; stroke: #FFF; stroke-width: 3; fill: none; }
+
   /* Resolved name preview */
   .name-preview {
     display: none; align-items: center; gap: 10px; padding: 12px 14px;
@@ -175,6 +212,28 @@
   .name-preview.show { display: flex; }
   .name-preview svg { width: 18px; height: 18px; stroke: var(--Success); stroke-width: 2.5; fill: none; flex-shrink: 0; }
   .name-preview .np-text { color: #128a2a; font-family: 'Switzer', sans-serif; font-size: 13px; font-weight: 600; }
+
+  /* Amount Input */
+  .amount-input-wrapper {
+    height: 52px;
+    background: #FFF;
+    border-radius: 14px;
+    padding: 0 16px;
+    display: flex;
+    align-items: center;
+    border: 1.5px solid var(--Border);
+    transition: all 0.2s;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+  }
+  .amount-input-wrapper:focus-within { border-color: var(--Primary); box-shadow: 0 4px 12px rgba(254, 53, 61, 0.15); }
+  .amount-prefix { color: var(--On-Surface); font-family: 'Switzer', sans-serif; font-size: 18px; font-weight: 600; margin-right: 6px; }
+  .amount-input {
+    flex: 1; border: none; background: transparent;
+    font-family: 'Switzer', sans-serif; font-size: 18px; font-weight: 500;
+    color: var(--On-Surface); outline: none;
+  }
+  .amount-input::placeholder { color: var(--On-Surface-Low); font-weight: 400; }
+  .amount-suffix { color: var(--On-Surface-Low); font-family: 'Switzer', sans-serif; font-size: 13px; font-weight: 500; }
 
   /* Fetching State */
   .fetching-state {
@@ -202,6 +261,10 @@
     border-radius: 16px; box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15); z-index: 100;
     display: none; max-height: 260px; overflow-y: auto;
   }
+  .bank-dropdown::-webkit-scrollbar { width: 6px; }
+  .bank-dropdown::-webkit-scrollbar-track { background: transparent; }
+  .bank-dropdown::-webkit-scrollbar-thumb { background: #D0D0D0; border-radius: 3px; }
+  .bank-dropdown::-webkit-scrollbar-thumb:hover { background: #B0B0B0; }
   .bank-dropdown.show { display: block; animation: dropdownSlide 0.2s ease-out; }
   @keyframes dropdownSlide { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
   .bank-option { padding: 13px 16px; display: flex; align-items: center; gap: 12px; cursor: pointer; transition: background 0.15s; border-bottom: 1px solid #F5F5F5; }
@@ -239,8 +302,6 @@
     </div>
 
     <div class="main-content">
-
-      <p class="step-hint">Choose the recipient's bank and enter their account number. We'll validate the account holder before you continue.</p>
 
       <!-- Bank Selector -->
       <div class="bank-selector-wrap">
@@ -298,9 +359,25 @@
         </div>
       </div>
 
-      <!-- Account Number Input -->
-      <div class="account-input-wrapper">
-        <input type="tel" class="account-input" id="accountInput" placeholder="Account Number" maxlength="15" oninput="handleAccountInput()">
+      <!-- Account Number Input with dropdown -->
+      <div class="account-input-wrap">
+        <div class="account-input-wrapper">
+          <input type="tel" class="account-input" id="accountInput" placeholder="Account Number" maxlength="15" oninput="handleAccountInput()" autocomplete="off">
+          <button class="account-drop-btn" id="accountDropBtn" onclick="toggleAccountDropdown(event)" type="button">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="10"/>
+              <polyline points="12 6 12 12 16 14"/>
+            </svg>
+          </button>
+        </div>
+        <!-- Account dropdown list -->
+        <div class="account-dropdown" id="accountDropdown"></div>
+      </div>
+
+      <!-- Amount Input -->
+      <div class="amount-input-wrapper">
+        <span class="amount-prefix">ETB</span>
+        <input type="tel" class="amount-input" id="amountInput" placeholder="0.00" oninput="handleAmountInput()" autocomplete="off">
       </div>
 
       <!-- Fetching State -->
@@ -355,6 +432,98 @@
 
   const sampleNames = ['Kidist Birhanu', 'Abel Tesfaye', 'Marta Solomon', 'Yonas Girma', 'Hanna Bekele', 'Samuel Desta'];
 
+  // ── Amount ──
+  const FEE = 25.00;
+  let currentAmount = 0.00;
+
+  function formatAmount(num) {
+    return num.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+  }
+
+  function handleAmountInput() {
+    const input = document.getElementById('amountInput');
+    const val = input.value.replace(/[^0-9]/g, '');
+    const di = val.indexOf('.');
+    if (di !== -1 && val.length - di > 3) return;
+    input.value = val;
+    currentAmount = val === '' ? 0 : parseFloat(val);
+    if (isNaN(currentAmount)) currentAmount = 0;
+    checkContinueButton();
+  }
+
+  // ── Recent / saved accounts for dropdown ──
+  const recentAccounts = [
+    { number: '1000234567', name: 'Kidist Birhanu', bank: 'CBE' },
+    { number: '2000345678', name: 'Abel Tesfaye', bank: 'Awash Bank' },
+    { number: '3000456789', name: 'Marta Solomon', bank: 'Dashen Bank' },
+    { number: '4000567890', name: 'Yonas Girma', bank: 'Abyssinia Bank' },
+    { number: '5000678901', name: 'Hanna Bekele', bank: 'COOP Bank' },
+    { number: '6000789012', name: 'Samuel Desta', bank: 'CBE' }
+  ];
+
+  function getFilteredAccounts() {
+    const input = document.getElementById('accountInput').value.trim();
+    if (!input) return recentAccounts;
+    return recentAccounts.filter(a =>
+      a.number.includes(input) || a.name.toLowerCase().includes(input.toLowerCase())
+    );
+  }
+
+  function renderAccountDropdown(filtered) {
+    const list = document.getElementById('accountDropdown');
+    if (!filtered || filtered.length === 0) {
+      list.innerHTML = '<div class="account-option" style="justify-content:center;color:var(--On-Surface-Low);font-size:13px;padding:16px;">No matching accounts</div>';
+      return;
+    }
+    list.innerHTML = filtered.map((a, i) => `
+      <div class="account-option" onclick="selectAccountOption(${i})" data-index="${i}">
+        <div class="ao-icon">
+          <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg>
+        </div>
+        <div class="ao-info">
+          <span class="ao-name">${a.name}</span>
+          <span class="ao-sub">${a.number}</span>
+          <span class="ao-bank">${a.bank}</span>
+        </div>
+        <div class="ao-check"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></div>
+      </div>
+    `).join('');
+  }
+
+  function showAccountDropdown() {
+    const filtered = getFilteredAccounts();
+    renderAccountDropdown(filtered);
+    document.getElementById('accountDropdown').classList.add('show');
+    document.getElementById('accountDropBtn').classList.add('open');
+  }
+
+  function hideAccountDropdown() {
+    document.getElementById('accountDropdown').classList.remove('show');
+    document.getElementById('accountDropBtn').classList.remove('open');
+  }
+
+  function toggleAccountDropdown(e) {
+    if (e) e.stopPropagation();
+    const dd = document.getElementById('accountDropdown');
+    if (dd.classList.contains('show')) {
+      hideAccountDropdown();
+    } else {
+      showAccountDropdown();
+    }
+  }
+
+  function selectAccountOption(index) {
+    const filtered = getFilteredAccounts();
+    const acct = filtered[index];
+    if (!acct) return;
+    document.getElementById('accountInput').value = acct.number;
+    hideAccountDropdown();
+    // Auto-resolve the account
+    if (selectedBank) {
+      showAccountFound(acct.number);
+    }
+  }
+
   function toggleBankDropdown(e) {
     if (e) e.stopPropagation();
     document.getElementById('bankDropdown').classList.toggle('show');
@@ -384,6 +553,13 @@
     const input = document.getElementById('accountInput');
     const fetchingState = document.getElementById('fetchingState');
     clearTimeout(typingTimeout);
+
+    // Show matching accounts dropdown while typing
+    if (input.value.length > 0) {
+      showAccountDropdown();
+    } else {
+      hideAccountDropdown();
+    }
 
     if (accountResolved) {
       accountResolved = false;
@@ -417,24 +593,51 @@
 
   function checkContinueButton() {
     const btn = document.getElementById('continueBtn');
-    if (selectedBank && accountResolved) { btn.classList.add('active'); btn.disabled = false; }
+    const hasAmount = currentAmount > 0;
+    if (selectedBank && accountResolved && hasAmount) { btn.classList.add('active'); btn.disabled = false; }
     else { btn.classList.remove('active'); btn.disabled = true; }
   }
 
-  // Keypad fills the account number
+  // Keypad fills the account number first, then amount
+  let inputMode = 'account'; // 'account' or 'amount'
+
   function pressKey(key) {
-    const input = document.getElementById('accountInput');
-    if (input.value.length < 15) { input.value += key; handleAccountInput(); }
+    if (inputMode === 'account') {
+      const input = document.getElementById('accountInput');
+      if (input.value.length < 15) { input.value += key; handleAccountInput(); }
+    } else {
+      const input = document.getElementById('amountInput');
+      input.value += key;
+      handleAmountInput();
+    }
   }
   function deleteKey() {
-    const input = document.getElementById('accountInput');
-    input.value = input.value.slice(0, -1);
-    handleAccountInput();
+    if (inputMode === 'account') {
+      const input = document.getElementById('accountInput');
+      input.value = input.value.slice(0, -1);
+      handleAccountInput();
+    } else {
+      const input = document.getElementById('amountInput');
+      input.value = input.value.slice(0, -1);
+      handleAmountInput();
+    }
   }
 
-  // Continue → store recipient, go to validation (account ending 0000 fails validation)
+  // Focus on account field by default, switch to amount when account is resolved
+  (function initInputFocus() {
+    setTimeout(() => document.getElementById('accountInput').focus(), 300);
+  })();
+
+  // Switch input mode when clicking on amount field
+  document.addEventListener('focusin', function(e) {
+    if (e.target.id === 'amountInput') inputMode = 'amount';
+    else if (e.target.id === 'accountInput') inputMode = 'account';
+  });
+
+  // Continue → store recipient + amount, go to Confirm Transfer
   function continueTransfer() {
-    if (!selectedBank || !accountResolved) return;
+    if (!selectedBank || !accountResolved || currentAmount <= 0) return;
+    const total = currentAmount + FEE;
     sessionStorage.setItem('sendTarget', JSON.stringify({
       type: 'bank',
       name: selectedBank.name,
@@ -443,11 +646,11 @@
       account: maskedAccount,
       fullAccount: fullAccount
     }));
-    if (fullAccount.endsWith('0000')) {
-      window.location.href = 'Transfer_Recipient Not Found.html';
-    } else {
-      window.location.href = 'Transfer_Recipient Validation.html';
-    }
+    sessionStorage.setItem('sendAmount', formatAmount(currentAmount));
+    sessionStorage.setItem('sendFee', formatAmount(FEE));
+    sessionStorage.setItem('sendTotal', formatAmount(total));
+    sessionStorage.setItem('sendAccount', 'main');
+    window.location.href = 'Transfer_Confirmation.html';
   }
 
   function goBack() { window.location.href = 'Send Money Menu.html'; }
@@ -460,11 +663,19 @@
   })();
 
   document.addEventListener('click', function (e) {
+    // Bank dropdown outside click
     const selector = document.getElementById('bankSelector');
     const dropdown = document.getElementById('bankDropdown');
     if (!selector.contains(e.target) && !dropdown.contains(e.target)) {
       dropdown.classList.remove('show');
       selector.classList.remove('open');
+    }
+    // Account dropdown outside click
+    const accWrap = document.querySelector('.account-input-wrap');
+    const accDropdown = document.getElementById('accountDropdown');
+    if (accWrap && !accWrap.contains(e.target)) {
+      accDropdown.classList.remove('show');
+      document.getElementById('accountDropBtn').classList.remove('open');
     }
   });
 </script>

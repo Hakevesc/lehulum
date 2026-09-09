@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Send Money</title>
+<title>Transfer Money</title>
 <link rel="stylesheet" href="styles/design-tokens.css">
 <link rel="stylesheet" href="styles/base.css">
 <link rel="stylesheet" href="styles/component-status-bar.css">
@@ -327,6 +327,58 @@
     letter-spacing: 0.1px;
   }
 
+  /* Quick Transfer - Square Icon Only Scroll */
+  .quick-transfer-scroll {
+    display: flex;
+    gap: 12px;
+    overflow-x: auto;
+    padding-bottom: 4px;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+
+  .quick-transfer-scroll::-webkit-scrollbar {
+    display: none;
+  }
+
+  .quick-icon {
+    flex-shrink: 0;
+    width: 56px;
+    height: 56px;
+    border-radius: 14px;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #FFF;
+    cursor: pointer;
+    transition: all 0.2s;
+    border: 1.5px solid #ECECEC;
+    padding: 8px;
+  }
+
+  .quick-icon:hover {
+    transform: scale(1.08);
+    box-shadow: 0 6px 20px rgba(0,0,0,0.06);
+  }
+
+  .quick-icon:active {
+    transform: scale(0.95);
+  }
+
+  .quick-icon img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+  }
+
+  /* Brand accent borders - soft gray with low opacity */
+  .quick-icon.cbe { border-color: rgba(26, 107, 55, 0.25); }
+  .quick-icon.boa { border-color: rgba(0, 61, 122, 0.25); }
+  .quick-icon.mpesa { border-color: rgba(254, 53, 61, 0.25); }
+  .quick-icon.telebirr { border-color: rgba(0, 166, 81, 0.25); }
+  .quick-icon.awash { border-color: rgba(0, 157, 224, 0.25); }
+
   /* Frequent Transactions */
   .frequent-list {
     display: flex;
@@ -565,7 +617,7 @@
           <path d="M19 12H5M12 19l-7-7 7-7"/>
         </svg>
       </button>
-      <span class="header-title">Send Money</span>
+      <span class="header-title">Transfer Money</span>
     </div>
 
     <!-- Main Content -->
@@ -581,8 +633,8 @@
             </svg>
           </div>
           <div class="label-wrap">
-            <span class="label-line">Send to</span>
-            <span class="label-line">Wallet</span>
+            <span class="label-line">Transfer</span>
+            <span class="label-line">to Wallet</span>
           </div>
           <svg class="chevron-down" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round">
             <polyline points="6 9 12 15 18 9"/>
@@ -600,8 +652,8 @@
             </svg>
           </div>
           <div class="label-wrap">
-            <span class="label-line">Send to</span>
-            <span class="label-line">Bank</span>
+            <span class="label-line">Transfer</span>
+            <span class="label-line">to Bank</span>
           </div>
           <svg class="chevron-down" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round">
             <polyline points="6 9 12 15 18 9"/>
@@ -612,7 +664,7 @@
       <!-- My Favorites (no card styling, uses avatar photos or bank logos) -->
       <div class="favorites-section">
         <div class="section-header">
-          <span class="section-title">My Favorites</span>
+          <span class="section-title">Favorites</span>
           <span class="see-all" onclick="manageFavorites()">See All</span>
         </div>
         <div class="favorites-scroll">
@@ -645,6 +697,30 @@
               <img src="assets/avatars/avatar-2.png" alt="Aster">
             </div>
             <span class="favorite-name">Aster</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Quick Transfer - Square Icon Only -->
+      <div class="section-card">
+        <div class="section-header">
+          <span class="section-title">Quick Transfer</span>
+        </div>
+        <div class="quick-transfer-scroll">
+          <div class="quick-icon cbe" onclick="selectTopBank('CBE', 'bank')">
+            <img src="assets/banks logo/cbe-logo.png" alt="CBE">
+          </div>
+          <div class="quick-icon boa" onclick="selectTopBank('BOA', 'bank')">
+            <img src="assets/banks logo/abyssinya-bank.png" alt="BOA">
+          </div>
+          <div class="quick-icon awash" onclick="selectTopBank('Awash Bank', 'bank')">
+            <img src="assets/banks logo/awass-bank.png" alt="Awash Bank">
+          </div>
+          <div class="quick-icon mpesa" onclick="selectTopBank('M-PESA', 'wallet')">
+            <img src="assets/banks logo/M-PESA-logo-icon.png" alt="M-PESA">
+          </div>
+          <div class="quick-icon telebirr" onclick="selectTopBank('Telebirr', 'wallet')">
+            <img src="assets/wallets/telebirr.png" alt="Telebirr">
           </div>
         </div>
       </div>
@@ -693,62 +769,6 @@
           </div>
         </div>
       </div>
-
-      <!-- Recent Transactions (styled as recent-transactions component card) -->
-      <div class="recent-transactions section-card">
-        <div class="header">
-          <span class="transactions-title">Transactions</span>
-          <span class="see-all" onclick="seeAllTransactions()">See all</span>
-        </div>
-        <div class="transactions-list">
-          <div class="transaction-card">
-            <div class="left">
-              <div class="logo">
-                <img src="assets/banks logo/cbe-logo.png" alt="CBE" onerror="this.style.display='none'">
-              </div>
-              <div class="name-type">
-                <span class="name">Aster Mequanent</span>
-                <span class="type">Bank</span>
-              </div>
-            </div>
-            <div class="right">
-              <span class="amount positive">+220.00</span>
-              <span class="date">Today</span>
-            </div>
-          </div>
-          <div class="transaction-card">
-            <div class="left">
-              <div class="logo">
-                <img src="assets/banks logo/M-PESA-logo-icon.png" alt="M-PESA" onerror="this.style.display='none'">
-              </div>
-              <div class="name-type">
-                <span class="name">Henok Chala</span>
-                <span class="type">Airtime</span>
-              </div>
-            </div>
-            <div class="right">
-              <span class="amount negative">-1,020.00</span>
-              <span class="date">Today</span>
-            </div>
-          </div>
-          <div class="transaction-card">
-            <div class="left">
-              <div class="logo">
-                <img src="assets/banks logo/M-PESA-logo-icon.png" alt="M-PESA" onerror="this.style.display='none'">
-              </div>
-              <div class="name-type">
-                <span class="name">Henok Chala</span>
-                <span class="type">Airtime</span>
-              </div>
-            </div>
-            <div class="right">
-              <span class="amount negative">-220.00</span>
-              <span class="date">Today</span>
-            </div>
-          </div>
-        </div>
-      </div>
-
     </div>
 
   </div>
@@ -865,7 +885,29 @@
     window.location.href = 'Manage Favourites.html';
   }
 
-  // Send to frequent contact → trusted saved bank recipient, skip to amount
+  // Select top bank or wallet → go directly
+  function selectTopBank(name, type) {
+    if (type === 'wallet') {
+      // For wallets like M-PESA, Telebirr → open wallet modal
+      selectedType = 'wallet';
+      document.querySelectorAll('.type-option').forEach(opt => opt.classList.remove('selected'));
+      document.querySelector('.type-option.mpesa-wallet').classList.add('selected');
+      openWalletModal();
+    } else {
+      // For banks like CBE, BOA → go directly to bank selection page with bank preselected
+      const bank = bankOptions.find(b => b.name === name || b.name.includes(name));
+      if (bank) {
+        sessionStorage.setItem('sendTarget', JSON.stringify({
+          name: bank.name, sub: bank.sub, logo: bank.logo, type: 'bank'
+        }));
+        window.location.href = bank.link;
+      } else {
+        openBankModal();
+      }
+    }
+  }
+
+  // Send to frequent contact → trusted saved bank recipient, go to bank select page (with bank pre-filled)
   function sendTo(name, bank, logo, account) {
     sessionStorage.setItem('sendTarget', JSON.stringify({
       type: 'bank',
@@ -874,7 +916,7 @@
       holder: name,
       account: account
     }));
-    window.location.href = 'Transfer_Enter Amount.html';
+    window.location.href = 'Transfer_Select Bank.html';
   }
 
   // See all transactions

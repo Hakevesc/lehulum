@@ -1,0 +1,5858 @@
+[
+  {
+    "component_id": "btn_primary",
+    "name": "Primary Button",
+    "category": "Actions",
+    "subcategory": "Buttons",
+    "visual_properties": {
+      "height": "48px",
+      "width": "auto",
+      "background": "#FE353D",
+      "border_radius": "12px",
+      "typography": "Poppins 14px Medium, letter-spacing 0.3px",
+      "colors": { "background": "#FE353D", "text": "#FFFFFF", "hover_bg": "#E5303A", "shadow": "0 4px 12px rgba(254,53,61,0.25)" },
+      "spacing": { "padding": "12px 20px", "gap": "8px" }
+    },
+    "behavior": {
+      "states": ["default", "hover", "pressed", "disabled", "loading"],
+      "interactions": "Tap/click triggers primary action; hover lifts 1px and darkens background",
+      "animations": "transition all 0.2s; hover translateY(-1px)"
+    },
+    "usage_rules": {
+      "use_when": ["Confirming a transaction", "Primary CTA on a screen"],
+      "never_use_when": ["Destructive actions (use Danger)", "Secondary/cancellation actions"],
+      "max_per_screen": 2,
+      "required_companions": ["Status Bar", "App Bar"],
+      "excluded_screens": []
+    },
+    "context_mapping": {
+      "flows": ["Send Money", "Bill Payment", "Airtime", "Signup", "Login"],
+      "screen_types": ["Confirmation", "Form", "Review"],
+      "priority_score": 9,
+      "typical_position": "Bottom of content, above footer/nav"
+    },
+    "accessibility": {
+      "min_touch_target": "48px",
+      "screen_reader_label": "Button with contextual action text",
+      "color_contrast_ratio": "4.5:1 (white on #FE353D)"
+    },
+    "localization": {
+      "supports_rtl": false,
+      "swahili_compatibility": true,
+      "text_max_length": 30
+    },
+    "compliance": {
+      "regulatory_required": false,
+      "authority": "",
+      "rule_reference": ""
+    }
+  },
+  {
+    "component_id": "btn_secondary",
+    "name": "Secondary Button",
+    "category": "Actions",
+    "subcategory": "Buttons",
+    "visual_properties": {
+      "height": "48px",
+      "width": "auto",
+      "background": "#F0F0F2",
+      "border_radius": "12px",
+      "typography": "Poppins 14px Medium, letter-spacing 0.3px",
+      "colors": { "background": "#F0F0F2", "text": "#1C1C21", "hover_bg": "#E5E5E8" },
+      "spacing": { "padding": "12px 20px", "gap": "8px" }
+    },
+    "behavior": {
+      "states": ["default", "hover", "pressed", "disabled"],
+      "interactions": "Tap/click triggers secondary action; hover lightens background",
+      "animations": "transition all 0.2s"
+    },
+    "usage_rules": {
+      "use_when": ["Cancellation", "\"Remind me later\"", "Returning to previous step"],
+      "never_use_when": ["Primary/destructive actions"],
+      "max_per_screen": 2,
+      "required_companions": ["Primary Button"],
+      "excluded_screens": []
+    },
+    "context_mapping": {
+      "flows": ["Send Money", "Signup", "Fayda Link", "Dialogs"],
+      "screen_types": ["Confirmation", "Dialog", "Form"],
+      "priority_score": 7,
+      "typical_position": "Adjacent to primary button or below it"
+    },
+    "accessibility": {
+      "min_touch_target": "48px",
+      "screen_reader_label": "Secondary button with contextual action text",
+      "color_contrast_ratio": "4.5:1 (#1C1C21 on #F0F0F2)"
+    },
+    "localization": {
+      "supports_rtl": false,
+      "swahili_compatibility": true,
+      "text_max_length": 30
+    },
+    "compliance": {
+      "regulatory_required": false,
+      "authority": "",
+      "rule_reference": ""
+    }
+  },
+  {
+    "component_id": "btn_ghost",
+    "name": "Ghost Button",
+    "category": "Actions",
+    "subcategory": "Buttons",
+    "visual_properties": {
+      "height": "48px",
+      "width": "auto",
+      "background": "transparent",
+      "border_radius": "12px",
+      "typography": "Poppins 14px Medium",
+      "colors": { "background": "transparent", "text": "#FE353D", "border": "1.5px solid #FE353D", "hover_bg": "#FFF1F2" },
+      "spacing": { "padding": "12px 20px", "gap": "8px" }
+    },
+    "behavior": {
+      "states": ["default", "hover", "pressed", "disabled"],
+      "interactions": "Tap/click triggers outlined tertiary action",
+      "animations": "transition all 0.2s"
+    },
+    "usage_rules": {
+      "use_when": ["Low-emphasis actions", "When a bordered outline communicates available state"],
+      "never_use_when": ["Primary CTA", "Destructive actions"],
+      "max_per_screen": 2,
+      "required_companions": [],
+      "excluded_screens": []
+    },
+    "context_mapping": {
+      "flows": ["General secondary flows"],
+      "screen_types": ["Form", "Review"],
+      "priority_score": 5,
+      "typical_position": "Secondary position"
+    },
+    "accessibility": {
+      "min_touch_target": "48px",
+      "screen_reader_label": "Ghost button with contextual action text",
+      "color_contrast_ratio": "4.5:1 (#FE353D on white)"
+    },
+    "localization": {
+      "supports_rtl": false,
+      "swahili_compatibility": true,
+      "text_max_length": 30
+    },
+    "compliance": {
+      "regulatory_required": false,
+      "authority": "",
+      "rule_reference": ""
+    }
+  },
+  {
+    "component_id": "btn_danger",
+    "name": "Danger Button",
+    "category": "Actions",
+    "subcategory": "Buttons",
+    "visual_properties": {
+      "height": "48px",
+      "width": "auto",
+      "background": "#FE353D",
+      "border_radius": "12px",
+      "typography": "Poppins 14px Medium",
+      "colors": { "background": "#FE353D", "text": "#FFFFFF", "hover_bg": "#E5303A" },
+      "spacing": { "padding": "12px 20px", "gap": "8px" }
+    },
+    "behavior": {
+      "states": ["default", "hover", "pressed", "disabled"],
+      "interactions": "Tap/click triggers destructive confirmation",
+      "animations": "transition all 0.2s"
+    },
+    "usage_rules": {
+      "use_when": ["Deleting/reversing transactions", "Destructive confirmations in dialogs"],
+      "never_use_when": ["Positive confirmations", "Navigation"],
+      "max_per_screen": 1,
+      "required_companions": ["Alert Dialog", "Bottom Sheet", "Cancel button"],
+      "excluded_screens": []
+    },
+    "context_mapping": {
+      "flows": ["Delete favorite", "Reverse transaction", "Remove account"],
+      "screen_types": ["Dialog", "Bottom Sheet"],
+      "priority_score": 7,
+      "typical_position": "First action in destructive dialog"
+    },
+    "accessibility": {
+      "min_touch_target": "48px",
+      "screen_reader_label": "Danger button - irreversible action",
+      "color_contrast_ratio": "4.5:1 (white on #FE353D)"
+    },
+    "localization": {
+      "supports_rtl": false,
+      "swahili_compatibility": true,
+      "text_max_length": 20
+    },
+    "compliance": {
+      "regulatory_required": false,
+      "authority": "",
+      "rule_reference": ""
+    }
+  },
+  {
+    "component_id": "btn_text",
+    "name": "Text Button",
+    "category": "Actions",
+    "subcategory": "Buttons",
+    "visual_properties": {
+      "height": "36px",
+      "width": "auto",
+      "background": "transparent",
+      "border_radius": "8px",
+      "typography": "Poppins 13px",
+      "colors": { "background": "transparent", "text": "#FE353D", "hover_bg": "#FFF1F2" },
+      "spacing": { "padding": "8px 12px", "gap": "6px" }
+    },
+    "behavior": {
+      "states": ["default", "hover", "pressed", "disabled"],
+      "interactions": "Tap/click triggers low-emphasis inline action (e.g., \"See all\")",
+      "animations": "transition all 0.2s"
+    },
+    "usage_rules": {
+      "use_when": ["\"See all\" links", "Inline text actions", "Read-more"],
+      "never_use_when": ["Primary CTA"],
+      "max_per_screen": 4,
+      "required_companions": [],
+      "excluded_screens": []
+    },
+    "context_mapping": {
+      "flows": ["Transaction history", "Lists"],
+      "screen_types": ["List", "Home"],
+      "priority_score": 4,
+      "typical_position": "Inline near list headers"
+    },
+    "accessibility": {
+      "min_touch_target": "36px",
+      "screen_reader_label": "Text link action",
+      "color_contrast_ratio": "4.5:1 (#FE353D on white)"
+    },
+    "localization": {
+      "supports_rtl": false,
+      "swahili_compatibility": true,
+      "text_max_length": 25
+    },
+    "compliance": {
+      "regulatory_required": false,
+      "authority": "",
+      "rule_reference": ""
+    }
+  },
+  {
+    "component_id": "btn_icon",
+    "name": "Icon Button",
+    "category": "Actions",
+    "subcategory": "Buttons",
+    "visual_properties": {
+      "height": "40px",
+      "width": "40px",
+      "background": "#FCFCFC",
+      "border_radius": "50%",
+      "typography": "—",
+      "colors": { "background": "#FCFCFC", "icon": "#1C1C21", "hover_bg": "#F0F0F2" },
+      "spacing": { "padding": "0", "gap": "0" }
+    },
+    "behavior": {
+      "states": ["default", "hover", "pressed", "disabled"],
+      "interactions": "Tap/click triggers icon-only action (bell, share, download)",
+      "animations": "transition all 0.2s"
+    },
+    "usage_rules": {
+      "use_when": ["Icon-only actions with recognizable icons"],
+      "never_use_when": ["Critical actions without label or tooltip"],
+      "max_per_screen": 4,
+      "required_companions": ["Tooltip", "screen_reader_label"],
+      "excluded_screens": []
+    },
+    "context_mapping": {
+      "flows": ["Notifications", "Share", "Download"],
+      "screen_types": ["Receipt", "Home", "Profile"],
+      "priority_score": 5,
+      "typical_position": "In app bar or actions row"
+    },
+    "accessibility": {
+      "min_touch_target": "40px",
+      "screen_reader_label": "Icon button with aria-label describing action",
+      "color_contrast_ratio": "3:1 (icon on background)"
+    },
+    "localization": {
+      "supports_rtl": false,
+      "swahili_compatibility": true,
+      "text_max_length": null
+    },
+    "compliance": {
+      "regulatory_required": false,
+      "authority": "",
+      "rule_reference": ""
+    }
+  },
+  {
+    "component_id": "btn_copy",
+    "name": "Copy Button",
+    "category": "Actions",
+    "subcategory": "Buttons",
+    "visual_properties": {
+      "height": "32px",
+      "width": "auto",
+      "background": "#FFF1F2",
+      "border_radius": "8px",
+      "typography": "Switzer 12px Medium",
+      "colors": { "background": "#FFF1F2", "text": "#FE353D", "hover_bg": "#FFE0E2" },
+      "spacing": { "padding": "6px 12px", "gap": "6px" }
+    },
+    "behavior": {
+      "states": ["default", "hover", "copied"],
+      "interactions": "Tap copies associated identifier (transaction ID, referral code) to clipboard; shows confirmation",
+      "animations": "transition all 0.2s"
+    },
+    "usage_rules": {
+      "use_when": ["Copying transaction IDs", "Copying referral codes"],
+      "never_use_when": ["Display-only identifiers with no copy need"],
+      "max_per_screen": 2,
+      "required_companions": ["Dark Toast (copied confirmation)"],
+      "excluded_screens": []
+    },
+    "context_mapping": {
+      "flows": ["Receipt", "Referral", "Account details"],
+      "screen_types": ["Receipt", "Confirmation"],
+      "priority_score": 6,
+      "typical_position": "Inline next to the copyable value"
+    },
+    "accessibility": {
+      "min_touch_target": "32px",
+      "screen_reader_label": "Copy button - copies [value] to clipboard",
+      "color_contrast_ratio": "4.5:1 (#FE353D on #FFF1F2)"
+    },
+    "localization": {
+      "supports_rtl": false,
+      "swahili_compatibility": true,
+      "text_max_length": 15
+    },
+    "compliance": {
+      "regulatory_required": false,
+      "authority": "",
+      "rule_reference": ""
+    }
+  },
+  {
+    "component_id": "btn_icon_text",
+    "name": "Icon + Text Button",
+    "category": "Actions",
+    "subcategory": "Buttons",
+    "visual_properties": {
+      "height": "auto",
+      "width": "auto",
+      "background": "transparent",
+      "border_radius": "8px",
+      "typography": "Switzer/Inter 12-14px",
+      "colors": { "background": "transparent", "icon": "#FE353D", "text": "#1C1C21" },
+      "spacing": { "padding": "12px 16px", "gap": "8px" }
+    },
+    "behavior": {
+      "states": ["default", "hover", "pressed", "disabled"],
+      "interactions": "Tap/click triggers action with icon+label (Add to Favorite, Send Again, Reverse)",
+      "animations": "transition all 0.2s"
+    },
+    "usage_rules": {
+      "use_when": ["Repeating actions with clear iconography"],
+      "never_use_when": ["Actions needing full-width emphasis"],
+      "max_per_screen": 4,
+      "required_companions": [],
+      "excluded_screens": []
+    },
+    "context_mapping": {
+      "flows": ["Receipt actions", "Manage favorites"],
+      "screen_types": ["Receipt", "Confirmation"],
+      "priority_score": 5,
+      "typical_position": "Bottom actions row"
+    },
+    "accessibility": {
+      "min_touch_target": "48px",
+      "screen_reader_label": "Action button - [label text]",
+      "color_contrast_ratio": "4.5:1"
+    },
+    "localization": {
+      "supports_rtl": false,
+      "swahili_compatibility": true,
+      "text_max_length": 20
+    },
+    "compliance": {
+      "regulatory_required": false,
+      "authority": "",
+      "rule_reference": ""
+    }
+  },
+  {
+    "component_id": "qr_fab",
+    "name": "QR Speed-Dial FAB",
+    "category": "Actions",
+    "subcategory": "Floating Action Button",
+    "visual_properties": {
+      "height": "56px (FAB)",
+      "width": "56px (FAB)",
+      "background": "#ED1C24 → #A41016 gradient",
+      "border_radius": "50% (FAB); 12px (menu items)",
+      "typography": "Switzer 13px",
+      "colors": { "background": "linear-gradient(180deg,#A41016,#ED1C24)", "icon": "#FFFFFF", "label": "#FE353D", "menu_bg": "#FFFFFF" },
+      "spacing": { "padding": "menu item 12px", "gap": "8px" }
+    },
+    "behavior": {
+      "states": ["closed", "open", "hover"],
+      "interactions": "Tap FAB expands/collapses speed-dial menu (My QR Code, Scan QR, Verify Receipt); tap item navigates",
+      "animations": "expand/collapse with fade; FAB press feedback"
+    },
+    "usage_rules": {
+      "use_when": ["Primary QR actions on home screen"],
+      "never_use_when": ["Screens without QR functionality"],
+      "max_per_screen": 1,
+      "required_companions": ["Bottom Navigation", "Home screen"],
+      "excluded_screens": ["PAY PIN entry", "Receipts"]
+    },
+    "context_mapping": {
+      "flows": ["Scan QR", "My QR Code", "Verify Receipt"],
+      "screen_types": ["Home"],
+      "priority_score": 8,
+      "typical_position": "Floating above bottom nav, right-aligned"
+    },
+    "accessibility": {
+      "min_touch_target": "56px",
+      "screen_reader_label": "QR actions menu button",
+      "color_contrast_ratio": "4.5:1 (white on red gradient)"
+    },
+    "localization": {
+      "supports_rtl": false,
+      "swahili_compatibility": true,
+      "text_max_length": 20
+    },
+    "compliance": {
+      "regulatory_required": false,
+      "authority": "",
+      "rule_reference": ""
+    }
+  },
+  {
+    "component_id": "input_text",
+    "name": "Text Field",
+    "category": "Input",
+    "subcategory": "Text Fields",
+    "visual_properties": {
+      "height": "48px",
+      "width": "100%",
+      "background": "#FFFFFF",
+      "border_radius": "12px",
+      "typography": "Switzer 14px Medium",
+      "colors": { "background": "#FFFFFF", "border": "#E8E8EC", "focus_border": "#FE353D", "placeholder": "#7C7C87", "text": "#1C1C21", "label": "#7C7C87" },
+      "spacing": { "padding": "0 14px", "label_margin": "0 0 6px 0", "gap": "4px" }
+    },
+    "behavior": {
+      "states": ["default", "focus", "disabled", "error", "filled"],
+      "interactions": "Tap focuses field; keyboard input; focus shows red border + 3px ring rgba(254,53,61,0.1)",
+      "animations": "transition all 0.2s"
+    },
+    "usage_rules": {
+      "use_when": ["Capturing structured text input", "Profile/forms"],
+      "never_use_when": ["Numeric-only input (use Amount/Phone)", "PIN input"],
+      "max_per_screen": 8,
+      "required_companions": ["Input Label", "Submit Button"],
+      "excluded_screens": []
+    },
+    "context_mapping": {
+      "flows": ["Signup", "Profile edit", "Form entry"],
+      "screen_types": ["Form", "Profile", "Auth"],
+      "priority_score": 8,
+      "typical_position": "Within a form card / stacked in vertical form"
+    },
+    "accessibility": {
+      "min_touch_target": "48px",
+      "screen_reader_label": "Text input with label text",
+      "color_contrast_ratio": "4.5:1 (label #7C7C87 on white)"
+    },
+    "localization": {
+      "supports_rtl": false,
+      "swahili_compatibility": true,
+      "text_max_length": null
+    },
+    "compliance": {
+      "regulatory_required": false,
+      "authority": "",
+      "rule_reference": ""
+    }
+  },
+  {
+    "component_id": "input_amount",
+    "name": "Amount Input",
+    "category": "Input",
+    "subcategory": "Text Fields",
+    "visual_properties": {
+      "height": "52px",
+      "width": "100%",
+      "background": "#FFFFFF",
+      "border_radius": "12px",
+      "typography": "Switzer 18px SemiBold (value); Switzer 14px SemiBold (currency)",
+      "colors": { "background": "#FFFFFF", "border": "#E8E8EC", "focus_border": "#FE353D", "currency": "#7C7C87", "value": "#1C1C21" },
+      "spacing": { "padding": "0 14px", "gap": "8px" }
+    },
+    "behavior": {
+      "states": ["default", "focus", "disabled", "insufficient(red)"],
+      "interactions": "Tap focuses; numeric keyboard; value right-aligned; currency prefix (ETB/Birr)",
+      "animations": "transition all 0.2s"
+    },
+    "usage_rules": {
+      "use_when": ["Entering monetary amounts with currency"],
+      "never_use_when": ["General text"], 
+      "max_per_screen": 1,
+      "required_companions": ["Balance Info", "Fee Display", "Insufficient Warning"],
+      "excluded_screens": []
+    },
+    "context_mapping": {
+      "flows": ["Send Money", "Bill Payment", "Merchant Payment", "Airtime", "Package"],
+      "screen_types": ["Amount Entry"],
+      "priority_score": 9,
+      "typical_position": "Centered in amount entry screen"
+    },
+    "accessibility": {
+      "min_touch_target": "52px",
+      "screen_reader_label": "Amount input with currency prefix",
+      "color_contrast_ratio": "4.5:1"
+    },
+    "localization": {
+      "supports_rtl": false,
+      "swahili_compatibility": true,
+      "text_max_length": 12
+    },
+    "compliance": {
+      "regulatory_required": false,
+      "authority": "",
+      "rule_reference": ""
+    }
+  },
+  {
+    "component_id": "input_phone",
+    "name": "Phone Input",
+    "category": "Input",
+    "subcategory": "Text Fields",
+    "visual_properties": {
+      "height": "48px",
+      "width": "100%",
+      "background": "#FFFFFF",
+      "border_radius": "12px",
+      "typography": "Switzer 14px Medium",
+      "colors": { "background": "#FFFFFF", "border": "#E8E8EC", "prefix": "#1C1C21", "prefix_bg": "#F5F5F7", "placeholder": "#7C7C87" },
+      "spacing": { "padding": "0 14px", "prefix_padding": "0 12px" }
+    },
+    "behavior": {
+      "states": ["default", "focus", "disabled", "filled"],
+      "interactions": "Country-code prefix (+251) tappable; numeric entry",
+      "animations": "transition all 0.2s"
+    },
+    "usage_rules": {
+      "use_when": ["Entering phone/mobile numbers with country code"],
+      "never_use_when": ["General text input"],
+      "max_per_screen": 1,
+      "required_companions": ["Input Label", "Submit Button"],
+      "excluded_screens": []
+    },
+    "context_mapping": {
+      "flows": ["Signup", "Login", "Transfer recipient"],
+      "screen_types": ["Auth", "Form"],
+      "priority_score": 8,
+      "typical_position": "In a stacked form"
+    },
+    "accessibility": {
+      "min_touch_target": "48px",
+      "screen_reader_label": "Phone number input with country code",
+      "color_contrast_ratio": "4.5:1"
+    },
+    "localization": {
+      "supports_rtl": false,
+      "swahili_compatibility": true,
+      "text_max_length": 15
+    },
+    "compliance": {
+      "regulatory_required": false,
+      "authority": "",
+      "rule_reference": ""
+    }
+  },
+  {
+    "component_id": "input_search",
+    "name": "Search Box",
+    "category": "Input",
+    "subcategory": "Text Fields",
+    "visual_properties": {
+      "height": "44px",
+      "width": "100%",
+      "background": "#FFFFFF",
+      "border_radius": "12px",
+      "typography": "Switzer 14px",
+      "colors": { "background": "#FFFFFF", "border": "#E8E8EC", "icon": "#7C7C87", "placeholder": "#7C7C87" },
+      "spacing": { "padding": "0 14px", "gap": "10px" }
+    },
+    "behavior": {
+      "states": ["default", "focus", "disabled"],
+      "interactions": "Tap focuses; type to filter; optional filter button",
+      "animations": "transition all 0.2s"
+    },
+    "usage_rules": {
+      "use_when": ["Searching lists, transactions, contacts"],
+      "never_use_when": ["Data entry"],
+      "max_per_screen": 1,
+      "required_companions": ["Filter Button", "Transaction List"],
+      "excluded_screens": []
+    },
+    "context_mapping": {
+      "flows": ["Transaction History", "Manage Favorites", "Bank Selector"],
+      "screen_types": ["List", "Search"],
+      "priority_score": 7,
+      "typical_position": "Top of list screen, below app bar"
+    },
+    "accessibility": {
+      "min_touch_target": "44px",
+      "screen_reader_label": "Search field",
+      "color_contrast_ratio": "4.5:1"
+    },
+    "localization": {
+      "supports_rtl": false,
+      "swahili_compatibility": true,
+      "text_max_length": 50
+    },
+    "compliance": {
+      "regulatory_required": false,
+      "authority": "",
+      "rule_reference": ""
+    }
+  },
+  {
+    "component_id": "input_dropdown",
+    "name": "Dropdown / Select",
+    "category": "Input",
+    "subcategory": "Selection",
+    "visual_properties": {
+      "height": "48px (trigger)",
+      "width": "100%",
+      "background": "#FFFFFF",
+      "border_radius": "12px",
+      "typography": "Switzer 14px Medium",
+      "colors": { "background": "#FFFFFF", "border": "#E8E8EC", "trigger": "#1C1C21", "option_selected": "#FE353D", "option_selected_bg": "#FFF1F2" },
+      "spacing": { "padding": "0 14px", "option_padding": "12px 16px" }
+    },
+    "behavior": {
+      "states": ["closed", "open", "selected", "disabled"],
+      "interactions": "Tap trigger opens option menu; select option; chevron rotates 180° on open",
+      "animations": "fadeIn 0.15s ease; chevron rotate"
+    },
+    "usage_rules": {
+      "use_when": ["Selecting from a predefined list (banks, filters, time ranges)"],
+      "never_use_when": ["More than ~10 options (use searchable list)"],
+      "max_per_screen": 3,
+      "required_companions": ["Input Label"],
+      "excluded_screens": []
+    },
+    "context_mapping": {
+      "flows": ["Bank selection", "Transaction filters", "Wallets"],
+      "screen_types": ["Form", "List"],
+      "priority_score": 7,
+      "typical_position": "In a form or above a filterable list"
+    },
+    "accessibility": {
+      "min_touch_target": "48px",
+      "screen_reader_label": "Dropdown select - [label]",
+      "color_contrast_ratio": "4.5:1"
+    },
+    "localization": {
+      "supports_rtl": false,
+      "swahili_compatibility": true,
+      "text_max_length": 40
+    },
+    "compliance": {
+      "regulatory_required": false,
+      "authority": "",
+      "rule_reference": ""
+    }
+  },
+  {
+    "component_id": "input_bank_selector",
+    "name": "Bank Selector",
+    "category": "Input",
+    "subcategory": "Selection",
+    "visual_properties": {
+      "height": "52px",
+      "width": "100%",
+      "background": "#FFFFFF",
+      "border_radius": "12px",
+      "typography": "Switzer 14px SemiBold",
+      "colors": { "background": "#FFFFFF", "border": "#E8E8EC", "logo_bg": "#F5F5F7", "name": "#1C1C21" },
+      "spacing": { "padding": "12px", "gap": "12px" }
+    },
+    "behavior": {
+      "states": ["default", "open-list", "selected"],
+      "interactions": "Tap selector shows bank list; tap bank option to select; chevron on right",
+      "animations": "transition all 0.2s"
+    },
+    "usage_rules": {
+      "use_when": ["Choosing destination/bank account"],
+      "never_use_when": ["General single-select (use dropdown)"],
+      "max_per_screen": 1,
+      "required_companions": ["Bank List", "Account Number Input"],
+      "excluded_screens": []
+    },
+    "context_mapping": {
+      "flows": ["Transfer to Bank", "Bill Payment"],
+      "screen_types": ["Form", "Selection"],
+      "priority_score": 8,
+      "typical_position": "Top of bank selection form"
+    },
+    "accessibility": {
+      "min_touch_target": "52px",
+      "screen_reader_label": "Bank selector",
+      "color_contrast_ratio": "4.5:1"
+    },
+    "localization": {
+      "supports_rtl": false,
+      "swahili_compatibility": true,
+      "text_max_length": 30
+    },
+    "compliance": {
+      "regulatory_required": false,
+      "authority": "",
+      "rule_reference": ""
+    }
+  },
+  {
+    "component_id": "input_pin",
+    "name": "PIN Input",
+    "category": "Input",
+    "subcategory": "PIN / Security",
+    "visual_properties": {
+      "height": "56px (per box)",
+      "width": "56px (per box)",
+      "background": "#FFFFFF",
+      "border_radius": "14px",
+      "typography": "—",
+      "colors": { "background": "#FFFFFF", "border": "#E8E8EC", "active_border": "#FE353D", "active_bg": "#FFF1F2", "dot": "#1C1C21" },
+      "spacing": { "gap": "16px" }
+    },
+    "behavior": {
+      "states": ["empty", "filled", "active(blinking cursor)"],
+      "interactions": "Tap activates focusing box; dots fill as digits entered; active box shows blinking red cursor",
+      "animations": "blink 1s step-end infinite on active cursor"
+    },
+    "usage_rules": {
+      "use_when": ["PIN entry for all money movements, auth"],
+      "never_use_when": ["OTP entry (use OTP boxes)"],
+      "max_per_screen": 1,
+      "required_companions": ["Keypad", "Auth Header", "Confirm button"],
+      "excluded_screens": ["Home", "Receipt"]
+    },
+    "context_mapping": {
+      "flows": ["All payment flows", "Login", "PIN creation", "PIN change"],
+      "screen_types": ["Auth", "Security"],
+      "priority_score": 10,
+      "typical_position": "Centered below auth header"
+    },
+    "accessibility": {
+      "min_touch_target": "56px",
+      "screen_reader_label": "PIN input, {n} of 4 digits entered",
+      "color_contrast_ratio": "4.5:1"
+    },
+    "localization": {
+      "supports_rtl": false,
+      "swahili_compatibility": true,
+      "text_max_length": 4
+    },
+    "compliance": {
+      "regulatory_required": true,
+      "authority": "M-PESA security policy",
+      "rule_reference": "PIN must not be displayed; masked dots only"
+    }
+  },
+  {
+    "component_id": "input_otp",
+    "name": "OTP Input",
+    "category": "Input",
+    "subcategory": "PIN / Security",
+    "visual_properties": {
+      "height": "52px (per box)",
+      "width": "44px (per box)",
+      "background": "#FFFFFF",
+      "border_radius": "10px",
+      "typography": "Switzer 20px SemiBold",
+      "colors": { "background": "#FFFFFF", "border": "#E8E8EC", "filled_border": "#FE353D", "filled_bg": "#FFF1F2", "filled_text": "#FE353D" },
+      "spacing": { "gap": "10px" }
+    },
+    "behavior": {
+      "states": ["empty", "filled", "active"],
+      "interactions": "Enter digits in boxes; filled box shows red border/tint; resend timer + resend link below",
+      "animations": "transition all 0.2s"
+    },
+    "usage_rules": {
+      "use_when": ["One-time password / verification codes"],
+      "never_use_when": ["A secret PIN (use masked PIN input)"],
+      "max_per_screen": 1,
+      "required_companions": ["Resend Timer", "Submit button"],
+      "excluded_screens": []
+    },
+    "context_mapping": {
+      "flows": ["OTP Verification", "Fayda", "Verification"],
+      "screen_types": ["Auth", "Verification"],
+      "priority_score": 8,
+      "typical_position": "Centered below auth header"
+    },
+    "accessibility": {
+      "min_touch_target": "52px",
+      "screen_reader_label": "OTP input, box {n}",
+      "color_contrast_ratio": "4.5:1"
+    },
+    "localization": {
+      "supports_rtl": false,
+      "swahili_compatibility": true,
+      "text_max_length": 6
+    },
+    "compliance": {
+      "regulatory_required": false,
+      "authority": "",
+      "rule_reference": ""
+    }
+  },
+  {
+    "component_id": "input_checkbox",
+    "name": "Checkbox",
+    "category": "Input",
+    "subcategory": "Selection",
+    "visual_properties": {
+      "height": "22px (box)",
+      "width": "22px (box)",
+      "background": "#FFFFFF",
+      "border_radius": "6px",
+      "typography": "Switzer 13px",
+      "colors": { "unchecked_border": "#E8E8EC", "checked_bg": "#FE353D", "check": "#FFFFFF", "label": "#1C1C21" },
+      "spacing": { "gap": "10px" }
+    },
+    "behavior": {
+      "states": ["unchecked", "checked", "disabled"],
+      "interactions": "Tap toggles; checked shows red fill with white checkmark",
+      "animations": "opacity 0.2s on checkmark"
+    },
+    "usage_rules": {
+      "use_when": ["Multi-select options", "Terms acceptance", "Persistence settings"],
+      "never_use_when": ["Mutually exclusive options (use radio)"],
+      "max_per_screen": 6,
+      "required_companions": [],
+      "excluded_screens": []
+    },
+    "context_mapping": {
+      "flows": ["Signup terms", "Settings", "Form"],
+      "screen_types": ["Form", "Auth"],
+      "priority_score": 6,
+      "typical_position": "Stacked in a group"
+    },
+    "accessibility": {
+      "min_touch_target": "44px (with label)",
+      "screen_reader_label": "Checkbox - [label text]",
+      "color_contrast_ratio": "4.5:1"
+    },
+    "localization": {
+      "supports_rtl": false,
+      "swahili_compatibility": true,
+      "text_max_length": 60
+    },
+    "compliance": {
+      "regulatory_required": false,
+      "authority": "",
+      "rule_reference": ""
+    }
+  },
+  {
+    "component_id": "input_radio",
+    "name": "Radio",
+    "category": "Input",
+    "subcategory": "Selection",
+    "visual_properties": {
+      "height": "22px (circle)",
+      "width": "22px (circle)",
+      "background": "#FFFFFF",
+      "border_radius": "50%",
+      "typography": "Switzer 13px",
+      "colors": { "unchecked_border": "#E8E8EC", "checked_border": "#FE353D", "checked_dot": "#FE353D", "label": "#1C1C21" },
+      "spacing": { "gap": "10px" }
+    },
+    "behavior": {
+      "states": ["unselected", "selected", "disabled"],
+      "interactions": "Tap selects; selected shows red ring with red dot; only one per group",
+      "animations": "transform 0.2s on dot scale"
+    },
+    "usage_rules": {
+      "use_when": ["Mutually exclusive single selection (time ranges, payment method)"],
+      "never_use_when": ["Multiple selections (use checkbox)"],
+      "max_per_screen": 5,
+      "required_companions": [],
+      "excluded_screens": []
+    },
+    "context_mapping": {
+      "flows": ["Statement ranges", "Payment methods"],
+      "screen_types": ["Form", "Selection"],
+      "priority_score": 6,
+      "typical_position": "Stacked in a group"
+    },
+    "accessibility": {
+      "min_touch_target": "44px (with label)",
+      "screen_reader_label": "Radio option - [label text]",
+      "color_contrast_ratio": "4.5:1"
+    },
+    "localization": {
+      "supports_rtl": false,
+      "swahili_compatibility": true,
+      "text_max_length": 40
+    },
+    "compliance": {
+      "regulatory_required": false,
+      "authority": "",
+      "rule_reference": ""
+    }
+  },
+  {
+    "component_id": "input_toggle",
+    "name": "Toggle / Switch",
+    "category": "Input",
+    "subcategory": "Selection",
+    "visual_properties": {
+      "height": "24px",
+      "width": "44px",
+      "background": "#D0D0D5 (off) / #FE353D (on)",
+      "border_radius": "24px",
+      "typography": "Switzer 14px Medium (label)",
+      "colors": { "off": "#D0D0D5", "on": "#FE353D", "knob": "#FFFFFF" },
+      "spacing": { "knob": "20px", "knob_margin": "2px" }
+    },
+    "behavior": {
+      "states": ["off", "on", "disabled"],
+      "interactions": "Tap toggles; knob slides 20px; used for settings (notifications, biometrics)",
+      "animations": "transition 0.3s"
+    },
+    "usage_rules": {
+      "use_when": ["Binary on/off settings"],
+      "never_use_when": ["Form submissions", "Multi-state"],
+      "max_per_screen": 5,
+      "required_companions": ["Label"],
+      "excluded_screens": []
+    },
+    "context_mapping": {
+      "flows": ["Settings", "Biometric login", "Notifications"],
+      "screen_types": ["Settings", "Menu"],
+      "priority_score": 6,
+      "typical_position": "Row with label on left, switch on right"
+    },
+    "accessibility": {
+      "min_touch_target": "44px (row height)",
+      "screen_reader_label": "Toggle - [label], currently [on/off]",
+      "color_contrast_ratio": "3:1 (handles distinct states)"
+    },
+    "localization": {
+      "supports_rtl": false,
+      "swahili_compatibility": true,
+      "text_max_length": 30
+    },
+    "compliance": {
+      "regulatory_required": false,
+      "authority": "",
+      "rule_reference": ""
+    }
+  },
+  {
+    "component_id": "input_password_strength",
+    "name": "Password Strength Meter",
+    "category": "Input",
+    "subcategory": "Advanced Forms",
+    "visual_properties": {
+      "height": "4px (bars)",
+      "width": "100% (4 bars)",
+      "background": "#F0F0F2 (empty)",
+      "border_radius": "2px",
+      "typography": "Switzer 11px",
+      "colors": { "weak": "#FE353D", "medium": "#FF9800", "strong": "#1FC83B", "empty": "#F0F0F2" },
+      "spacing": { "gap": "4px", "margin_top": "6px" }
+    },
+    "behavior": {
+      "states": ["weak", "medium", "strong"],
+      "interactions": "Live-updates as password typed; fills colored segments",
+      "animations": "transition on fill"
+    },
+    "usage_rules": {
+      "use_when": ["Password creation/change"],
+      "never_use_when": ["PIN (numeric only)"],
+      "max_per_screen": 1,
+      "required_companions": ["Password Field", "Strength Label"],
+      "excluded_screens": []
+    },
+    "context_mapping": {
+      "flows": ["Signup", "Password reset"],
+      "screen_types": ["Auth"],
+      "priority_score": 5,
+      "typical_position": "Below password field"
+    },
+    "accessibility": {
+      "min_touch_target": "— (informational)",
+      "screen_reader_label": "Password strength: [weak/medium/strong]",
+      "color_contrast_ratio": "3:1"
+    },
+    "localization": {
+      "supports_rtl": false,
+      "swahili_compatibility": true,
+      "text_max_length": null
+    },
+    "compliance": {
+      "regulatory_required": false,
+      "authority": "",
+      "rule_reference": ""
+    }
+  },
+  {
+    "component_id": "input_char_counter",
+    "name": "TextArea Character Counter",
+    "category": "Input",
+    "subcategory": "Advanced Forms",
+    "visual_properties": {
+      "height": "auto",
+      "width": "100%",
+      "background": "transparent",
+      "border_radius": "—",
+      "typography": "Switzer 11px",
+      "colors": { "text": "#7C7C87" },
+      "spacing": { "margin_top": "4px", "text_align": "right" }
+    },
+    "behavior": {
+      "states": ["default", "near_limit", "limit_reached"],
+      "interactions": "Live count of characters typed; shows 'n / max'",
+      "animations": "—"
+    },
+    "usage_rules": {
+      "use_when": ["Text areas with max-length constraints"],
+      "never_use_when": ["Short single-line inputs"],
+      "max_per_screen": 1,
+      "required_companions": ["TextArea"],
+      "excluded_screens": []
+    },
+    "context_mapping": {
+      "flows": ["Feedback form", "Descriptions"],
+      "screen_types": ["Form"],
+      "priority_score": 4,
+      "typical_position": "Below the textarea, right-aligned"
+    },
+    "accessibility": {
+      "min_touch_target": "— (informational)",
+      "screen_reader_label": "Character counter: [n] of [max]",
+      "color_contrast_ratio": "4.5:1"
+    },
+    "localization": {
+      "supports_rtl": false,
+      "swahili_compatibility": true,
+      "text_max_length": null
+    },
+    "compliance": {
+      "regulatory_required": false,
+      "authority": "",
+      "rule_reference": ""
+    }
+  },
+  {
+    "component_id": "input_file_upload",
+    "name": "Upload Dropzone",
+    "category": "Input",
+    "subcategory": "Advanced Forms",
+    "visual_properties": {
+      "height": "~100px",
+      "width": "100%",
+      "background": "transparent",
+      "border_radius": "12px",
+      "typography": "Switzer 13px SemiBold (title); Switzer 11px (subtitle)",
+      "colors": { "border": "2px dashed #E8E8EC", "hover_border": "#FE353D", "hover_bg": "#FFF1F2", "icon": "#7C7C87" },
+      "spacing": { "padding": "24px", "text_align": "center" }
+    },
+    "behavior": {
+      "states": ["default", "hover", "drag-over", "uploaded"],
+      "interactions": "Tap or drag-and-drop to upload KYC documents (PDF/JPG/PNG)",
+      "animations": "transition all 0.2s"
+    },
+    "usage_rules": {
+      "use_when": ["KYC document upload", "File attachments"],
+      "never_use_when": ["Small inline inputs"],
+      "max_per_screen": 1,
+      "required_companions": ["Image Preview Grid", "Submit button"],
+      "excluded_screens": []
+    },
+    "context_mapping": {
+      "flows": ["KYC verification", "Profile documents"],
+      "screen_types": ["Form"],
+      "priority_score": 6,
+      "typical_position": "In KYC/form card"
+    },
+    "accessibility": {
+      "min_touch_target": "100px (zone)",
+      "screen_reader_label": "Upload dropzone for [document type]",
+      "color_contrast_ratio": "4.5:1"
+    },
+    "localization": {
+      "supports_rtl": false,
+      "swahili_compatibility": true,
+      "text_max_length": null
+    },
+    "compliance": {
+      "regulatory_required": true,
+      "authority": "Ethiopian KYC regulation (NBE)",
+      "rule_reference": "Document types: PDF, JPG, PNG"
+    }
+  },
+  {
+    "component_id": "input_image_grid",
+    "name": "Image Previews Grid",
+    "category": "Input",
+    "subcategory": "Advanced Forms",
+    "visual_properties": {
+      "height": "auto",
+      "width": "100%",
+      "background": "transparent",
+      "border_radius": "10px (thumbs)",
+      "typography": "—",
+      "colors": { "thumb_bg": "#F0F0F2", "remove_btn": "#FE353D", "add_icon": "#7C7C87" },
+      "spacing": { "grid": "repeat(3, 1fr)", "gap": "8px", "aspect_ratio": "1:1" }
+    },
+    "behavior": {
+      "states": ["image-thumbs", "add-slot", "removing"],
+      "interactions": "Tap X removes thumbnail; tap + empty slot adds another",
+      "animations": "—"
+    },
+    "usage_rules": {
+      "use_when": ["Previewing uploaded KYC images", "Multi-image pickers"],
+      "never_use_when": ["Single-file upload"],
+      "max_per_screen": 1,
+      "required_companions": ["Upload Dropzone"],
+      "excluded_screens": []
+    },
+    "context_mapping": {
+      "flows": ["KYC verification"],
+      "screen_types": ["Form"],
+      "priority_score": 5,
+      "typical_position": "Below upload dropzone"
+    },
+    "accessibility": {
+      "min_touch_target": "44px (remove button)",
+      "screen_reader_label": "Uploaded image preview [n], remove button",
+      "color_contrast_ratio": "4.5:1"
+    },
+    "localization": {
+      "supports_rtl": false,
+      "swahili_compatibility": true,
+      "text_max_length": null
+    },
+    "compliance": {
+      "regulatory_required": true,
+      "authority": "KYC image retention policy",
+      "rule_reference": ""
+    }
+  },
+  {
+    "component_id": "input_signature",
+    "name": "Signature Pad",
+    "category": "Input",
+    "subcategory": "Advanced Forms",
+    "visual_properties": {
+      "height": "120px",
+      "width": "100%",
+      "background": "#FFFFFF",
+      "border_radius": "12px",
+      "typography": "Switzer 13px",
+      "colors": { "background": "#FFFFFF", "border": "1.5px solid #E8E8EC", "placeholder": "#7C7C87" },
+      "spacing": { "display": "flex center" }
+    },
+    "behavior": {
+      "states": ["empty(placeholder)", "drawing", "signed"],
+      "interactions": "Draw signature on touch/mouse; cursor crosshair",
+      "animations": "—"
+    },
+    "usage_rules": {
+      "use_when": ["Consent/authorization signatures", "Paperless agreements"],
+      "never_use_when": ["Typed text"],
+      "max_per_screen": 1,
+      "required_companions": ["Clear button", "Confirm button"],
+      "excluded_screens": []
+    },
+    "context_mapping": {
+      "flows": ["Agreement acceptance", "Agency banking"],
+      "screen_types": ["Form"],
+      "priority_score": 5,
+      "typical_position": "In a form/agreement card"
+    },
+    "accessibility": {
+      "min_touch_target": "— (canvas)",
+      "screen_reader_label": "Signature pad",
+      "color_contrast_ratio": "4.5:1"
+    },
+    "localization": {
+      "supports_rtl": false,
+      "swahili_compatibility": true,
+      "text_max_length": null
+    },
+    "compliance": {
+      "regulatory_required": true,
+      "authority": "Digital signature regulation",
+      "rule_reference": ""
+    }
+  },
+  {
+    "component_id": "input_stepper",
+    "name": "Quantity Stepper",
+    "category": "Input",
+    "subcategory": "Advanced Forms",
+    "visual_properties": {
+      "height": "36px",
+      "width": "auto",
+      "background": "#FFFFFF",
+      "border_radius": "50% (buttons)",
+      "typography": "Switzer 18px SemiBold",
+      "colors": { "button_border": "1.5px solid #E8E8EC", "text": "#1C1C21" },
+      "spacing": { "gap": "12px", "value_min_width": "40px" }
+    },
+    "behavior": {
+      "states": ["default", "pressed", "at_min", "at_max"],
+      "interactions": "Tap + or − adjusts integer quantity",
+      "animations": "—"
+    },
+    "usage_rules": {
+      "use_when": ["Quantities (e.g., number of documents, items)"],
+      "never_use_when": ["Currency amounts"],
+      "max_per_screen": 2,
+      "required_companions": [],
+      "excluded_screens": []
+    },
+    "context_mapping": {
+      "flows": ["Forms", "Packages"],
+      "screen_types": ["Form"],
+      "priority_score": 4,
+      "typical_position": "Inline in a form row"
+    },
+    "accessibility": {
+      "min_touch_target": "36px",
+      "screen_reader_label": "Quantity stepper, currently [n]",
+      "color_contrast_ratio": "4.5:1"
+    },
+    "localization": {
+      "supports_rtl": false,
+      "swahili_compatibility": true,
+      "text_max_length": null
+    },
+    "compliance": {
+      "regulatory_required": false,
+      "authority": "",
+      "rule_reference": ""
+    }
+  },
+  {
+    "component_id": "input_date_picker",
+    "name": "Date Picker",
+    "category": "Input",
+    "subcategory": "Pickers",
+    "visual_properties": {
+      "height": "~320px",
+      "width": "~340px",
+      "background": "#FFFFFF",
+      "border_radius": "16px",
+      "typography": "Switzer 14-16px",
+      "colors": { "background": "#FFFFFF", "border": "#E8E8EC", "selected_day": "#FE353D", "faded_day": "#E8E8EC", "nav_btn": "transparent" },
+      "spacing": { "grid": "7 columns", "gap": "2px" }
+    },
+    "behavior": {
+      "states": ["default", "selected", "faded(adjacent month)", "disabled"],
+      "interactions": "Tap day selects; nav arrows change month; view selector changes month/year view",
+      "animations": "transition on selection"
+    },
+    "usage_rules": {
+      "use_when": ["Selecting a single date"],
+      "never_use_when": ["Date ranges without range handling"],
+      "max_per_screen": 1,
+      "required_companions": ["Confirm button"],
+      "excluded_screens": []
+    },
+    "context_mapping": {
+      "flows": ["Statement date range", "Scheduling"],
+      "screen_types": ["Picker"],
+      "priority_score": 6,
+      "typical_position": "Popup/dialog"
+    },
+    "accessibility": {
+      "min_touch_target": "44px (day cells)",
+      "screen_reader_label": "Date picker - [selected date]",
+      "color_contrast_ratio": "4.5:1"
+    },
+    "localization": {
+      "supports_rtl": false,
+      "swahili_compatibility": true,
+      "text_max_length": null
+    },
+    "compliance": {
+      "regulatory_required": false,
+      "authority": "",
+      "rule_reference": ""
+    }
+  },
+  {
+    "component_id": "nav_status_bar",
+    "name": "Status Bar",
+    "category": "Navigation",
+    "subcategory": "App Bars",
+    "visual_properties": {
+      "height": "~44px",
+      "width": "100%",
+      "background": "#F5F5F5 (light) / #ED1C24 gradient (auth)",
+      "border_radius": "0",
+      "typography": "Switzer 14px SemiBold (time)",
+      "colors": { "time": "#1C1C21", "icons": "#1C1C21", "auth_time": "#FFFFFF", "auth_icons": "#FFFFFF" },
+      "spacing": { "padding": "14px 24px 8px" }
+    },
+    "behavior": {
+      "states": ["light", "dark(auth)", "locked"],
+      "interactions": "Displays system time, wifi/signal/battery icons (static, no interaction)",
+      "animations": "—"
+    },
+    "usage_rules": {
+      "use_when": ["Every mobile screen top bar"],
+      "never_use_when": ["—"],
+      "max_per_screen": 1,
+      "required_companions": ["App Bar"],
+      "excluded_screens": []
+    },
+    "context_mapping": {
+      "flows": ["All flows"],
+      "screen_types": ["All"],
+      "priority_score": 10,
+      "typical_position": "Top-most element"
+    },
+    "accessibility": {
+      "min_touch_target": "— (informational)",
+      "screen_reader_label": "",
+      "color_contrast_ratio": "4.5:1"
+    },
+    "localization": {
+      "supports_rtl": false,
+      "swahili_compatibility": true,
+      "text_max_length": 8
+    },
+    "compliance": {
+      "regulatory_required": false,
+      "authority": "",
+      "rule_reference": ""
+    }
+  },
+  {
+    "component_id": "nav_app_bar_back",
+    "name": "App Bar — Back",
+    "category": "Navigation",
+    "subcategory": "App Bars",
+    "visual_properties": {
+      "height": "56px",
+      "width": "100%",
+      "background": "#FFFFFF / #ED1C24 (auth)",
+      "border_radius": "0",
+      "typography": "Switzer 16px SemiBold (title)",
+      "colors": { "back_icon": "#1C1C21", "title": "#1C1C21", "auth_icon": "#FFFFFF", "auth_title": "#FFFFFF" },
+      "spacing": { "padding": "0 16px" }
+    },
+    "behavior": {
+      "states": ["default", "pressed"],
+      "interactions": "Tap back arrow navigates to previous screen",
+      "animations": "—"
+    },
+    "usage_rules": {
+      "use_when": ["Sub-pages needing navigation back"],
+      "never_use_when": ["Home screen"],
+      "max_per_screen": 1,
+      "required_companions": ["Status Bar"],
+      "excluded_screens": ["Home"]
+    },
+    "context_mapping": {
+      "flows": ["All sub-flows", "Confirm Profile"],
+      "screen_types": ["Form", "Details", "Confirmation"],
+      "priority_score": 10,
+      "typical_position": "Top, below status bar"
+    },
+    "accessibility": {
+      "min_touch_target": "48px",
+      "screen_reader_label": "Back button",
+      "color_contrast_ratio": "4.5:1"
+    },
+    "localization": {
+      "supports_rtl": true,
+      "swahili_compatibility": true,
+      "text_max_length": 40
+    },
+    "compliance": {
+      "regulatory_required": false,
+      "authority": "",
+      "rule_reference": ""
+    }
+  },
+  {
+    "component_id": "nav_app_bar_actions",
+    "name": "App Bar — With Actions",
+    "category": "Navigation",
+    "subcategory": "App Bars",
+    "visual_properties": {
+      "height": "56px",
+      "width": "100%",
+      "background": "#FFFFFF",
+      "border_radius": "0",
+      "typography": "Switzer 16px SemiBold (title)",
+      "colors": { "close_icon": "#1C1C21", "title": "#1C1C21", "action_icons": "#1C1C21" },
+      "spacing": { "padding": "0 16px", "gap": "8px" }
+    },
+    "behavior": {
+      "states": ["default", "pressed"],
+      "interactions": "Close button dismisses; action buttons (share/download) on right",
+      "animations": "—"
+    },
+    "usage_rules": {
+      "use_when": ["Receipts, modals with dismiss + share actions"],
+      "never_use_when": ["Standard back navigation"],
+      "max_per_screen": 1,
+      "required_companions": ["Icon Buttons"],
+      "excluded_screens": []
+    },
+    "context_mapping": {
+      "flows": ["Receipt", "Confirmation"],
+      "screen_types": ["Receipt"],
+      "priority_score": 7,
+      "typical_position": "Top of receipt/dialog"
+    },
+    "accessibility": {
+      "min_touch_target": "48px",
+      "screen_reader_label": "Close button; Share button; Download button",
+      "color_contrast_ratio": "4.5:1"
+    },
+    "localization": {
+      "supports_rtl": false,
+      "swahili_compatibility": true,
+      "text_max_length": 40
+    },
+    "compliance": {
+      "regulatory_required": false,
+      "authority": "",
+      "rule_reference": ""
+    }
+  },
+  {
+    "component_id": "nav_welcome_bar",
+    "name": "Welcome App Bar",
+    "category": "Navigation",
+    "subcategory": "App Bars",
+    "visual_properties": {
+      "height": "~64px",
+      "width": "100%",
+      "background": "#F5F5F5",
+      "border_radius": "0",
+      "typography": "Switzer 16px SemiBold",
+      "colors": { "avatar": "#FE353D", "greeting": "#1C1C21", "bell": "#1C1C21" },
+      "spacing": { "padding": "8px 16px", "gap": "12px" }
+    },
+    "behavior": {
+      "states": ["default"],
+      "interactions": "Avatar links to profile; bell opens notifications",
+      "animations": "—"
+    },
+    "usage_rules": {
+      "use_when": ["Home screen greeting with avatar + notifications"],
+      "never_use_when": ["Auth/sub-pages"],
+      "max_per_screen": 1,
+      "required_companions": ["Status Bar", "Balance Card"],
+      "excluded_screens": ["Auth"]
+    },
+    "context_mapping": {
+      "flows": ["Home"],
+      "screen_types": ["Home"],
+      "priority_score": 9,
+      "typical_position": "Top of home, below status bar"
+    },
+    "accessibility": {
+      "min_touch_target": "44px",
+      "screen_reader_label": "Welcome bar - [greeting], avatar, notifications",
+      "color_contrast_ratio": "4.5:1"
+    },
+    "localization": {
+      "supports_rtl": false,
+      "swahili_compatibility": true,
+      "text_max_length": 40
+    },
+    "compliance": {
+      "regulatory_required": false,
+      "authority": "",
+      "rule_reference": ""
+    }
+  },
+  {
+    "component_id": "nav_auth_header",
+    "name": "Auth Header",
+    "category": "Navigation",
+    "subcategory": "App Bars",
+    "visual_properties": {
+      "height": "~120px",
+      "width": "100%",
+      "background": "linear-gradient(180deg,#A41016,#ED1C24)",
+      "border_radius": "0 0 20px 20px",
+      "typography": "Switzer 16px SemiBold (title); 14px (subtitle)",
+      "colors": { "background": "linear-gradient(#A41016,#ED1C24)", "text": "#FFFFFF", "pattern_overlay": "rgba(255,255,255,0.06)" },
+      "spacing": { "padding": "0 16px", "subtitle_margin": "8px 0 20px" }
+    },
+    "behavior": {
+      "states": ["default"],
+      "interactions": "Back button navigates back; title/subtitle describe step",
+      "animations": "—"
+    },
+    "usage_rules": {
+      "use_when": ["Auth/login/signup screens"],
+      "never_use_when": ["In-app screens"],
+      "max_per_screen": 1,
+      "required_companions": ["Status Bar", "PIN/OTP Input"],
+      "excluded_screens": ["Home", "Receipt"]
+    },
+    "context_mapping": {
+      "flows": ["Login", "Signup", "PIN entry", "OTP"],
+      "screen_types": ["Auth"],
+      "priority_score": 9,
+      "typical_position": "Top of auth screen"
+    },
+    "accessibility": {
+      "min_touch_target": "48px",
+      "screen_reader_label": "Auth header - [title], [subtitle]",
+      "color_contrast_ratio": "4.5:1 (white on red)"
+    },
+    "localization": {
+      "supports_rtl": false,
+      "swahili_compatibility": true,
+      "text_max_length": 50
+    },
+    "compliance": {
+      "regulatory_required": false,
+      "authority": "",
+      "rule_reference": ""
+    }
+  },
+  {
+    "component_id": "nav_bottom",
+    "name": "Bottom Navigation",
+    "category": "Navigation",
+    "subcategory": "Navigation Bars",
+    "visual_properties": {
+      "height": "~64px",
+      "width": "100%",
+      "background": "#FFFFFF",
+      "border_radius": "0",
+      "typography": "Switzer 10px Medium (labels)",
+      "colors": { "background": "#FFFFFF", "border_top": "#E8E8EC", "active_icon": "#FE353D", "inactive_icon": "#7C7C87", "active_label": "#FE353D" },
+      "spacing": { "padding": "8px 0 12px", "gap": "4px" }
+    },
+    "behavior": {
+      "states": ["active", "inactive", "pressed"],
+      "interactions": "Tap item switches tab (Home, Activity, Pay, Profile); active icon red",
+      "animations": "transition on active state"
+    },
+    "usage_rules": {
+      "use_when": ["Main app navigation"],
+      "never_use_when": ["Auth screens", "Within flows"],
+      "max_per_screen": 1,
+      "required_companions": ["Screen content"],
+      "excluded_screens": ["Auth", "Dialog"]
+    },
+    "context_mapping": {
+      "flows": ["Main app shell"],
+      "screen_types": ["Home", "Activity", "Pay", "Profile"],
+      "priority_score": 10,
+      "typical_position": "Bottom of screen, sticky"
+    },
+    "accessibility": {
+      "min_touch_target": "48px",
+      "screen_reader_label": "Bottom navigation - [active tab]",
+      "color_contrast_ratio": "4.5:1"
+    },
+    "localization": {
+      "supports_rtl": false,
+      "swahili_compatibility": true,
+      "text_max_length": 12
+    },
+    "compliance": {
+      "regulatory_required": false,
+      "authority": "",
+      "rule_reference": ""
+    }
+  },
+  {
+    "component_id": "nav_tabs",
+    "name": "Tabs / Segmented Control",
+    "category": "Navigation",
+    "subcategory": "Tabs",
+    "visual_properties": {
+      "height": "40px",
+      "width": "100%",
+      "background": "#F0F0F2",
+      "border_radius": "12px",
+      "typography": "Switzer 12px Medium",
+      "colors": { "background": "#F0F0F2", "active_bg": "#FFFFFF", "active_text": "#1C1C21", "inactive_text": "#7C7C87", "active_shadow": "0 2px 6px rgba(0,0,0,0.08)" },
+      "spacing": { "padding": "4px", "gap": "8px" }
+    },
+    "behavior": {
+      "states": ["active", "inactive", "pressed"],
+      "interactions": "Tap tab switches content (Transactions, Alerts, Rewards)",
+      "animations": "transition all 0.2s"
+    },
+    "usage_rules": {
+      "use_when": ["Segmented content switching", "Filters"],
+      "never_use_when": ["Bottom navigation"],
+      "max_per_screen": 1,
+      "required_companions": ["Content panels"],
+      "excluded_screens": []
+    },
+    "context_mapping": {
+      "flows": ["Transaction history", "Filters"],
+      "screen_types": ["List", "Settings"],
+      "priority_score": 7,
+      "typical_position": "Below app bar or content header"
+    },
+    "accessibility": {
+      "min_touch_target": "40px",
+      "screen_reader_label": "Tabs - [labels]",
+      "color_contrast_ratio": "4.5:1"
+    },
+    "localization": {
+      "supports_rtl": false,
+      "swahili_compatibility": true,
+      "text_max_length": 15
+    },
+    "compliance": {
+      "regulatory_required": false,
+      "authority": "",
+      "rule_reference": ""
+    }
+  },
+  {
+    "component_id": "nav_breadcrumb",
+    "name": "Breadcrumb Track",
+    "category": "Navigation",
+    "subcategory": "Breadcrumbs",
+    "visual_properties": {
+      "height": "auto",
+      "width": "auto",
+      "background": "transparent",
+      "border_radius": "—",
+      "typography": "Switzer 12px",
+      "colors": { "crumb": "#7C7C87", "active_crumb": "#1C1C21", "separator": "#7C7C87" },
+      "spacing": { "gap": "6px" }
+    },
+    "behavior": {
+      "states": ["default", "active"],
+      "interactions": "Tap active crumb marks current location (non-navigable in this layout)",
+      "animations": "—"
+    },
+    "usage_rules": {
+      "use_when": ["Showing flow position (Home › Transfer › Confirm)"],
+      "never_use_when": ["Short flows ≤2 steps"],
+      "max_per_screen": 1,
+      "required_companions": [],
+      "excluded_screens": []
+    },
+    "context_mapping": {
+      "flows": ["Multi-step flows"],
+      "screen_types": ["Form", "Confirmation"],
+      "priority_score": 4,
+      "typical_position": "Below app bar"
+    },
+    "accessibility": {
+      "min_touch_target": "— (informational)",
+      "screen_reader_label": "Breadcrumb - [trail]",
+      "color_contrast_ratio": "4.5:1"
+    },
+    "localization": {
+      "supports_rtl": true,
+      "swahili_compatibility": true,
+      "text_max_length": 25
+    },
+    "compliance": {
+      "regulatory_required": false,
+      "authority": "",
+      "rule_reference": ""
+    }
+  },
+  {
+    "component_id": "nav_pagination",
+    "name": "Pagination Controls",
+    "category": "Navigation",
+    "subcategory": "Pagination",
+    "visual_properties": {
+      "height": "32px",
+      "width": "auto",
+      "background": "#FFFFFF",
+      "border_radius": "8px",
+      "typography": "Switzer 12px Medium",
+      "colors": { "button_bg": "#FFFFFF", "border": "#E8E8EC", "active_bg": "#FE353D", "active_text": "#FFFFFF" },
+      "spacing": { "gap": "6px" }
+    },
+    "behavior": {
+      "states": ["default", "active", "hover"],
+      "interactions": "Tap page number or arrows to change page",
+      "animations": "—"
+    },
+    "usage_rules": {
+      "use_when": ["Long lists/statements with pagination"],
+      "never_use_when": ["Infinite scroll lists"],
+      "max_per_screen": 1,
+      "required_companions": ["Statement List"],
+      "excluded_screens": []
+    },
+    "context_mapping": {
+      "flows": ["Statements", "Historical lists"],
+      "screen_types": ["List"],
+      "priority_score": 4,
+      "typical_position": "Bottom of list"
+    },
+    "accessibility": {
+      "min_touch_target": "32px",
+      "screen_reader_label": "Pagination - page [n] of [m]",
+      "color_contrast_ratio": "4.5:1"
+    },
+    "localization": {
+      "supports_rtl": true,
+      "swahili_compatibility": true,
+      "text_max_length": null
+    },
+    "compliance": {
+      "regulatory_required": false,
+      "authority": "",
+      "rule_reference": ""
+    }
+  },
+  {
+    "component_id": "nav_loading",
+    "name": "Loading Indicators",
+    "category": "Feedback",
+    "subcategory": "Loaders",
+    "visual_properties": {
+      "height": "16px (spinner)",
+      "width": "auto",
+      "background": "transparent",
+      "border_radius": "50%",
+      "typography": "Switzer 12px",
+      "colors": { "spinner": "#E8E8EC with #FE353D top", "text": "#7C7C87" },
+      "spacing": { "padding": "16px", "gap": "8px" }
+    },
+    "behavior": {
+      "states": ["loading", "refreshing"],
+      "interactions": "Displays spinner while loading more; pull-to-refresh indicator",
+      "animations": "spin 0.8s linear infinite"
+    },
+    "usage_rules": {
+      "use_when": ["Infinite scroll lists", "Pull-to-refresh feedback"],
+      "never_use_when": ["Initial page load (use skeleton)"],
+      "max_per_screen": 1,
+      "required_companions": ["Transaction/List"],
+      "excluded_screens": []
+    },
+    "context_mapping": {
+      "flows": ["Transaction history", "Notifications"],
+      "screen_types": ["List"],
+      "priority_score": 5,
+      "typical_position": "Bottom of list (loader) or top (pull-refresh)"
+    },
+    "accessibility": {
+      "min_touch_target": "— (informational)",
+      "screen_reader_label": "Loading more content",
+      "color_contrast_ratio": "4.5:1"
+    },
+    "localization": {
+      "supports_rtl": false,
+      "swahili_compatibility": true,
+      "text_max_length": null
+    },
+    "compliance": {
+      "regulatory_required": false,
+      "authority": "",
+      "rule_reference": ""
+    }
+  },
+  {
+    "component_id": "nav_bottom_sheet",
+    "name": "Bottom Sheet",
+    "category": "Feedback",
+    "subcategory": "Dialogs",
+    "visual_properties": {
+      "height": "auto",
+      "width": "100%",
+      "background": "#FFFFFF",
+      "border_radius": "20px 20px 0 0",
+      "typography": "Switzer 18px Bold (title); 13px (desc)",
+      "colors": { "background": "#FFFFFF", "handle": "#D0D0D5", "title": "#1C1C21", "desc": "#7C7C87" },
+      "spacing": { "padding": "12px 20px 24px", "gap": "10px" }
+    },
+    "behavior": {
+      "states": ["open", "dragging", "closed"],
+      "interactions": "Swipe down or tap button to dismiss; action buttons inside; drag handle indicator",
+      "animations": "slide-up entrance; shadow"
+    },
+    "usage_rules": {
+      "use_when": ["Contextual actions (remove favorite, confirm delete)"],
+      "never_use_when": ["Critical alerts (use Alert Dialog)"],
+      "max_per_screen": 1,
+      "required_companions": ["Danger/Secondary buttons"],
+      "excluded_screens": []
+    },
+    "context_mapping": {
+      "flows": ["Remove favorite", "Context menus"],
+      "screen_types": ["Dialog"],
+      "priority_score": 7,
+      "typical_position": "Slides from bottom"
+    },
+    "accessibility": {
+      "min_touch_target": "48px (buttons)",
+      "screen_reader_label": "Bottom sheet - [title]",
+      "color_contrast_ratio": "4.5:1"
+    },
+    "localization": {
+      "supports_rtl": false,
+      "swahili_compatibility": true,
+      "text_max_length": 60
+    },
+    "compliance": {
+      "regulatory_required": false,
+      "authority": "",
+      "rule_reference": ""
+    }
+  },
+  {
+    "component_id": "dialog_alert",
+    "name": "Alert Dialog",
+    "category": "Feedback",
+    "subcategory": "Dialogs",
+    "visual_properties": {
+      "height": "auto",
+      "width": "~320px",
+      "background": "#FFFFFF",
+      "border_radius": "16px",
+      "typography": "Switzer 16-18px",
+      "colors": { "background": "#FFFFFF", "icon_bg": "#FFF8E1", "icon": "#FF9800", "shadow": "0 8px 32px rgba(0,0,0,0.15)" },
+      "spacing": { "padding": "24px 20px", "text_align": "center" }
+    },
+    "behavior": {
+      "states": ["open"],
+      "interactions": "Tappable actions (Cancel/Delete); dismiss on outside tap",
+      "animations": "—"
+    },
+    "usage_rules": {
+      "use_when": ["Critical confirmations requiring attention", "Irreversible actions"],
+      "never_use_when": ["Low-priority info"],
+      "max_per_screen": 1,
+      "required_companions": ["Warning icon", "Danger/Cancel buttons"],
+      "excluded_screens": []
+    },
+    "context_mapping": {
+      "flows": ["Delete", "Reverse", "High-risk confirmations"],
+      "screen_types": ["Dialog"],
+      "priority_score": 8,
+      "typical_position": "Centered modal"
+    },
+    "accessibility": {
+      "min_touch_target": "48px (buttons)",
+      "screen_reader_label": "Alert dialog - [title] - [message]",
+      "color_contrast_ratio": "4.5:1"
+    },
+    "localization": {
+      "supports_rtl": false,
+      "swahili_compatibility": true,
+      "text_max_length": 80
+    },
+    "compliance": {
+      "regulatory_required": false,
+      "authority": "",
+      "rule_reference": ""
+    }
+  },
+  {
+    "component_id": "dialog_fayda",
+    "name": "Fayda Link Popup",
+    "category": "Feedback",
+    "subcategory": "Dialogs",
+    "visual_properties": {
+      "height": "auto",
+      "width": "~340px",
+      "background": "#FFFFFF",
+      "border_radius": "20px",
+      "typography": "Switzer 18px Bold (title); 13px (desc)",
+      "colors": { "background": "#FFFFFF", "logo": "—", "title": "#1C1C21", "desc": "#7C7C87" },
+      "spacing": { "padding": "24px 20px", "gap": "12px" }
+    },
+    "behavior": {
+      "states": ["open"],
+      "interactions": "\"Link Now\" (primary) or \"Remind me later\" (secondary)", 
+      "animations": "modal fade-in over overlay"
+    },
+    "usage_rules": {
+      "use_when": ["Prompting Fayda ID linkage", "Voluntary/forced onboarding"],
+      "never_use_when": ["Non-Fayda promotions"],
+      "max_per_screen": 1,
+      "required_companions": ["Modal Overlay", "Primary/Secondary buttons"],
+      "excluded_screens": []
+    },
+    "context_mapping": {
+      "flows": ["Fayda Activation", "Onboarding"],
+      "screen_types": ["Dialog"],
+      "priority_score": 7,
+      "typical_position": "Centered modal over dimmed overlay"
+    },
+    "accessibility": {
+      "min_touch_target": "48px (buttons)",
+      "screen_reader_label": "Fayda link popup - Link your Fayda ID",
+      "color_contrast_ratio": "4.5:1"
+    },
+    "localization": {
+      "supports_rtl": false,
+      "swahili_compatibility": true,
+      "text_max_length": 80
+    },
+    "compliance": {
+      "regulatory_required": true,
+      "authority": "Fayda national ID program",
+      "rule_reference": "ID linkage onboarding"
+    }
+  },
+  {
+    "component_id": "card_balance",
+    "name": "Balance Card",
+    "category": "Display",
+    "subcategory": "Cards",
+    "visual_properties": {
+      "height": "~160px",
+      "width": "100%",
+      "background": "linear-gradient(180deg,#A41016,#ED1C24)",
+      "border_radius": "20px",
+      "typography": "Switzer 14px (label); 24px Bold (amount)",
+      "colors": { "background": "linear-gradient(#A41016,#ED1C24)", "label": "rgba(255,255,255,0.85)", "amount": "#FFFFFF", "add_money_text": "#FFFFFF" },
+      "spacing": { "padding": "20px", "gap": "12px" }
+    },
+    "behavior": {
+      "states": ["hidden (****)", "visible", "toggle"],
+      "interactions": "Eye button toggles balance visibility (masked ****); Add Money navigates",
+      "animations": "—"
+    },
+    "usage_rules": {
+      "use_when": ["Home screen balance display"],
+      "never_use_when": ["Transaction screens"],
+      "max_per_screen": 1,
+      "required_companions": ["Welcome App Bar", "Quick Actions"],
+      "excluded_screens": ["Auth", "Receipt"]
+    },
+    "context_mapping": {
+      "flows": ["Home"],
+      "screen_types": ["Home"],
+      "priority_score": 10,
+      "typical_position": "Below welcome app bar, above quick actions"
+    },
+    "accessibility": {
+      "min_touch_target": "44px (eye button)",
+      "screen_reader_label": "Main balance card, [balance] - hidden or visible",
+      "color_contrast_ratio": "4.5:1 (white on red)"
+    },
+    "localization": {
+      "supports_rtl": false,
+      "swahili_compatibility": true,
+      "text_max_length": 20
+    },
+    "compliance": {
+      "regulatory_required": false,
+      "authority": "",
+      "rule_reference": ""
+    }
+  },
+  {
+    "component_id": "card_quick_actions",
+    "name": "Quick Actions",
+    "category": "Actions",
+    "subcategory": "Action Grid",
+    "visual_properties": {
+      "height": "auto",
+      "width": "100%",
+      "background": "transparent",
+      "border_radius": "—",
+      "typography": "Switzer 12px Medium",
+      "colors": { "icon_bg": "#FFF1F2", "icon": "#FE353D", "label": "#1C1C21" },
+      "spacing": { "grid": "3 columns", "gap": "12px" }
+    },
+    "behavior": {
+      "states": ["default", "pressed"],
+      "interactions": "Tap action navigates (Merchant Payment, Bill Payment, Credit & Saving, Transfer Money, Airtime/Package, More Services)",
+      "animations": "—"
+    },
+    "usage_rules": {
+      "use_when": ["Home screen primary service shortcuts"],
+      "never_use_when": ["Sub-pages"],
+      "max_per_screen": 1,
+      "required_companions": ["Balance Card"],
+      "excluded_screens": ["Auth"]
+    },
+    "context_mapping": {
+      "flows": ["Home core services"],
+      "screen_types": ["Home"],
+      "priority_score": 9,
+      "typical_position": "Below balance card"
+    },
+    "accessibility": {
+      "min_touch_target": "56px",
+      "screen_reader_label": "Quick action - [label]",
+      "color_contrast_ratio": "4.5:1"
+    },
+    "localization": {
+      "supports_rtl": false,
+      "swahili_compatibility": true,
+      "text_max_length": 20
+    },
+    "compliance": {
+      "regulatory_required": false,
+      "authority": "",
+      "rule_reference": ""
+    }
+  },
+  {
+    "component_id": "card_banner_slider",
+    "name": "Banner Slider",
+    "category": "Display",
+    "subcategory": "Cards",
+    "visual_properties": {
+      "height": "~150px",
+      "width": "100%",
+      "background": "image + overlay",
+      "border_radius": "16px",
+      "typography": "Switzer 18px Bold (title); 13px (subtitle)",
+      "colors": { "overlay": "rgba(28,28,33,0.3)", "title": "#FFFFFF", "subtitle": "#FFFFFF" },
+      "spacing": { "padding": "20px", "gap": "8px" }
+    },
+    "behavior": {
+      "states": ["active", "inactive"],
+      "interactions": "Swipe/auto-advance between promotional banners; dots indicate position",
+      "animations": "slide transition; dot pulse"
+    },
+    "usage_rules": {
+      "use_when": ["Promotional content on home"],
+      "never_use_when": ["Transactional information"],
+      "max_per_screen": 1,
+      "required_companions": ["Carousel Dots"],
+      "excluded_screens": ["Auth"]
+    },
+    "context_mapping": {
+      "flows": ["Home promotions"],
+      "screen_types": ["Home"],
+      "priority_score": 7,
+      "typical_position": "Below quick actions"
+    },
+    "accessibility": {
+      "min_touch_target": "— (swipe)",
+      "screen_reader_label": "Banner slider - [title], slide [n] of [m]",
+      "color_contrast_ratio": "4.5:1 (text on overlay)"
+    },
+    "localization": {
+      "supports_rtl": true,
+      "swahili_compatibility": true,
+      "text_max_length": 60
+    },
+    "compliance": {
+      "regulatory_required": false,
+      "authority": "",
+      "rule_reference": ""
+    }
+  },
+  {
+    "component_id": "nav_carousel_dots",
+    "name": "Carousel Dots",
+    "category": "Navigation",
+    "subcategory": "Indicators",
+    "visual_properties": {
+      "height": "6px",
+      "width": "6px (inactive) / 20px (active)",
+      "background": "#D0D0D5 / #FE353D",
+      "border_radius": "50% / 3px",
+      "typography": "—",
+      "colors": { "active": "#FE353D", "inactive": "#D0D0D5" },
+      "spacing": { "gap": "5px" }
+    },
+    "behavior": {
+      "states": ["active", "inactive"],
+      "interactions": "Indicates slide position in carousels; active dot is elongated pill",
+      "animations": "transition 0.3s"
+    },
+    "usage_rules": {
+      "use_when": ["Carousel/banner position indicators"],
+      "never_use_when": ["Step progress (use stepper)"],
+      "max_per_screen": 1,
+      "required_companions": ["Banner Slider"],
+      "excluded_screens": []
+    },
+    "context_mapping": {
+      "flows": ["Home banners", "Onboarding carousel"],
+      "screen_types": ["Home", "Onboarding"],
+      "priority_score": 5,
+      "typical_position": "Below carousel"
+    },
+    "accessibility": {
+      "min_touch_target": "— (informational)",
+      "screen_reader_label": "Slide [n] of [m]",
+      "color_contrast_ratio": "3:1"
+    },
+    "localization": {
+      "supports_rtl": true,
+      "swahili_compatibility": true,
+      "text_max_length": null
+    },
+    "compliance": {
+      "regulatory_required": false,
+      "authority": "",
+      "rule_reference": ""
+    }
+  },
+  {
+    "component_id": "list_transaction",
+    "name": "Transaction Row / History Row",
+    "category": "Display",
+    "subcategory": "List Items",
+    "visual_properties": {
+      "height": "~64px",
+      "width": "100%",
+      "background": "#FFFFFF",
+      "border_radius": "10px",
+      "typography": "Switzer 14px SemiBold (name); 12px (type/date); 14px SemiBold (amount)",
+      "colors": { "icon_bg_success": "#E8F9EC", "icon_icon": "#1FC83B", "icon_bg_danger": "#FFF1F2", "icon_icon_danger": "#FE353D", "positive": "#1FC83B", "negative": "#1C1C21", "name": "#1C1C21", "type": "#7C7C87" },
+      "spacing": { "padding": "12px", "gap": "12px" }
+    },
+    "behavior": {
+      "states": ["default", "pressed"],
+      "interactions": "Tap opens transaction details/receipt",
+      "animations": "—"
+    },
+    "usage_rules": {
+      "use_when": ["Transaction history lists"],
+      "never_use_when": ["Non-transactional items"],
+      "max_per_screen": 20,
+      "required_companions": ["Transaction History Header", "Loading indicator"],
+      "excluded_screens": []
+    },
+    "context_mapping": {
+      "flows": ["Transaction History", "Home recent"],
+      "screen_types": ["List"],
+      "priority_score": 9,
+      "typical_position": "Stacked in a list"
+    },
+    "accessibility": {
+      "min_touch_target": "48px",
+      "screen_reader_label": "Transaction - [name], [type], [amount]",
+      "color_contrast_ratio": "4.5:1"
+    },
+    "localization": {
+      "supports_rtl": false,
+      "swahili_compatibility": true,
+      "text_max_length": 40
+    },
+    "compliance": {
+      "regulatory_required": false,
+      "authority": "",
+      "rule_reference": ""
+    }
+  },
+  {
+    "component_id": "card_notification",
+    "name": "Notification Card",
+    "category": "Display",
+    "subcategory": "List Items",
+    "visual_properties": {
+      "height": "~72px",
+      "width": "100%",
+      "background": "#FFFFFF",
+      "border_radius": "14px",
+      "typography": "Switzer 14px SemiBold (title); Inter 12px (desc); 14px (amount)",
+      "colors": { "icon_bg": "#FFF8E1 / #E8F9EC", "title": "#1C1C21", "desc": "#7C7C87", "amount_positive": "#1FC83B", "date": "#7C7C87" },
+      "spacing": { "padding": "14px", "gap": "12px" }
+    },
+    "behavior": {
+      "states": ["default", "unread", "pressed"],
+      "interactions": "Tap opens notification detail",
+      "animations": "—"
+    },
+    "usage_rules": {
+      "use_when": ["Notification center, alerts"],
+      "never_use_when": ["Transactional history"],
+      "max_per_screen": 15,
+      "required_companions": ["Notification Header", "Empty State"],
+      "excluded_screens": []
+    },
+    "context_mapping": {
+      "flows": ["Notification Center"],
+      "screen_types": ["List"],
+      "priority_score": 8,
+      "typical_position": "Stacked in notification list"
+    },
+    "accessibility": {
+      "min_touch_target": "48px",
+      "screen_reader_label": "Notification - [title], [description]",
+      "color_contrast_ratio": "4.5:1"
+    },
+    "localization": {
+      "supports_rtl": false,
+      "swahili_compatibility": true,
+      "text_max_length": 80
+    },
+    "compliance": {
+      "regulatory_required": false,
+      "authority": "",
+      "rule_reference": ""
+    }
+  },
+  {
+    "component_id": "list_bank",
+    "name": "Bank List Item",
+    "category": "Display",
+    "subcategory": "List Items",
+    "visual_properties": {
+      "height": "~64px",
+      "width": "100%",
+      "background": "#FFFFFF",
+      "border_radius": "12px",
+      "typography": "Switzer 14px SemiBold (name); 12px (account)",
+      "colors": { "logo_bg": "#F5F5F7", "name": "#1C1C21", "account": "#7C7C87", "hover": "#FAFAFA" },
+      "spacing": { "padding": "12px", "gap": "12px" }
+    },
+    "behavior": {
+      "states": ["default", "hover", "selected"],
+      "interactions": "Tap selects bank; hover lightens",
+      "animations": "transition all 0.2s"
+    },
+    "usage_rules": {
+      "use_when": ["Bank selection lists"],
+      "never_use_when": ["Standalone display"],
+      "max_per_screen": 15,
+      "required_companions": ["Search Box", "Bank Selector"],
+      "excluded_screens": []
+    },
+    "context_mapping": {
+      "flows": ["Transfer to Bank", "Bank selection"],
+      "screen_types": ["Selection", "List"],
+      "priority_score": 7,
+      "typical_position": "In bank list"
+    },
+    "accessibility": {
+      "min_touch_target": "48px",
+      "screen_reader_label": "Bank - [name], account [last digits]",
+      "color_contrast_ratio": "4.5:1"
+    },
+    "localization": {
+      "supports_rtl": false,
+      "swahili_compatibility": true,
+      "text_max_length": 30
+    },
+    "compliance": {
+      "regulatory_required": false,
+      "authority": "",
+      "rule_reference": ""
+    }
+  },
+  {
+    "component_id": "list_favourite",
+    "name": "Favourite Contact / Quick-Send",
+    "category": "Display",
+    "subcategory": "List Items",
+    "visual_properties": {
+      "height": "~68px",
+      "width": "auto",
+      "background": "#FFFFFF",
+      "border_radius": "12px",
+      "typography": "Switzer 14px SemiBold (name); 12px (detail); 15px (avatar initials)",
+      "colors": { "avatar_bg": "#E8E8EC / gradient #FE353D→#A41016", "avatar_text": "#1C1C21 / #FFFFFF", "name": "#1C1C21", "detail": "#7C7C87" },
+      "spacing": { "padding": "12px", "gap": "12px" }
+    },
+    "behavior": {
+      "states": ["default", "pressed"],
+      "interactions": "Tap opens quick-send; horizontally scrollable row",
+      "animations": "—"
+    },
+    "usage_rules": {
+      "use_when": ["Favourite quick-send contacts", "Frequent contacts"],
+      "never_use_when": ["Full contact list"],
+      "max_per_screen": 12,
+      "required_companions": ["Scroll Row"],
+      "excluded_screens": []
+    },
+    "context_mapping": {
+      "flows": ["Send Money quick actions", "Favourites"],
+      "screen_types": ["Home", "Send Money Menu"],
+      "priority_score": 7,
+      "typical_position": "Horizontal scroll near top of send money menu"
+    },
+    "accessibility": {
+      "min_touch_target": "48px",
+      "screen_reader_label": "Favourite contact - [name]",
+      "color_contrast_ratio": "4.5:1"
+    },
+    "localization": {
+      "supports_rtl": false,
+      "swahili_compatibility": true,
+      "text_max_length": 20
+    },
+    "compliance": {
+      "regulatory_required": false,
+      "authority": "",
+      "rule_reference": ""
+    }
+  },
+  {
+    "component_id": "list_frequent",
+    "name": "Frequent Contact Chips",
+    "category": "Display",
+    "subcategory": "List Items",
+    "visual_properties": {
+      "height": "64px",
+      "width": "auto",
+      "background": "#FFFFFF",
+      "border_radius": "50% (avatar)",
+      "typography": "Switzer 16px SemiBold (avatar); 11px Medium (name)",
+      "colors": { "avatar_bg": "#FFFFFF", "avatar_border": "2px solid #E8E8EC", "avatar_text": "#1C1C21", "name": "#1C1C21", "shadow": "0 2px 6px rgba(0,0,0,0.05)" },
+      "spacing": { "gap": "16px", "horizontal_scroll": true }
+    },
+    "behavior": {
+      "states": ["default", "pressed"],
+      "interactions": "Tap chip to quick-send; horizontal scroll",
+      "animations": "—"
+    },
+    "usage_rules": {
+      "use_when": ["Frequent contact shortcuts", "Quick-send"],
+      "never_use_when": ["Search/detail lists"],
+      "max_per_screen": 8,
+      "required_companions": ["Horizontal scroll container"],
+      "excluded_screens": []
+    },
+    "context_mapping": {
+      "flows": ["Send Money", "Home"],
+      "screen_types": ["Home", "Send Money Menu"],
+      "priority_score": 6,
+      "typical_position": "Horizontal scroll row"
+    },
+    "accessibility": {
+      "min_touch_target": "52px",
+      "screen_reader_label": "Frequent contact - [name]",
+      "color_contrast_ratio": "4.5:1"
+    },
+    "localization": {
+      "supports_rtl": false,
+      "swahili_compatibility": true,
+      "text_max_length": 12
+    },
+    "compliance": {
+      "regulatory_required": false,
+      "authority": "",
+      "rule_reference": ""
+    }
+  },
+  {
+    "component_id": "list_account_menu",
+    "name": "Account Menu Item",
+    "category": "Navigation",
+    "subcategory": "Menu",
+    "visual_properties": {
+      "height": "~64px",
+      "width": "100%",
+      "background": "#FFFFFF",
+      "border_radius": "10px (icon)",
+      "typography": "Switzer 14px SemiBold (title); 12px (subtitle)",
+      "colors": { "icon_bg": "#FFF1F2", "icon": "#FE353D", "title": "#1C1C21", "subtitle": "#7C7C87", "arrow": "#7C7C87" },
+      "spacing": { "padding": "14px 0", "gap": "12px", "border_bottom": "1px solid #F0F0F0" }
+    },
+    "behavior": {
+      "states": ["default", "pressed"],
+      "interactions": "Tap navigates to settings sub-page; chevron indicates navigable",
+      "animations": "—"
+    },
+    "usage_rules": {
+      "use_when": ["Settings/menu lists"],
+      "never_use_when": ["Single standalone item"],
+      "max_per_screen": 10,
+      "required_companions": ["Group of menu items"],
+      "excluded_screens": []
+    },
+    "context_mapping": {
+      "flows": ["Account settings", "Profile"],
+      "screen_types": ["Menu", "Settings"],
+      "priority_score": 7,
+      "typical_position": "Stacked in settings list"
+    },
+    "accessibility": {
+      "min_touch_target": "48px",
+      "screen_reader_label": "Menu item - [title]",
+      "color_contrast_ratio": "4.5:1"
+    },
+    "localization": {
+      "supports_rtl": true,
+      "swahili_compatibility": true,
+      "text_max_length": 30
+    },
+    "compliance": {
+      "regulatory_required": false,
+      "authority": "",
+      "rule_reference": ""
+    }
+  },
+  {
+    "component_id": "card_tier",
+    "name": "Tier Selection Card",
+    "category": "Display",
+    "subcategory": "Cards",
+    "visual_properties": {
+      "height": "~90px",
+      "width": "100%",
+      "background": "linear-gradient(135deg,#C41520,#FE353D)",
+      "border_radius": "14px",
+      "typography": "Switzer 11px (label); 20px Bold (value); 12px SemiBold (upgrade)",
+      "colors": { "background": "linear-gradient(#C41520,#FE353D)", "text": "#FFFFFF", "upgrade_bg": "#FFFFFF", "upgrade_text": "#FE353D" },
+      "spacing": { "padding": "16px", "justify": "space-between" }
+    },
+    "behavior": {
+      "states": ["default"],
+      "interactions": "Upgrade button navigates to tier upgrade flow",
+      "animations": "—"
+    },
+    "usage_rules": {
+      "use_when": ["Displaying account tier with upgrade CTA"],
+      "never_use_when": ["Tier badge only"],
+      "max_per_screen": 1,
+      "required_companions": ["Upgrade Button"],
+      "excluded_screens": []
+    },
+    "context_mapping": {
+      "flows": ["Account tier", "Upgrade"],
+      "screen_types": ["Profile", "Account Status"],
+      "priority_score": 7,
+      "typical_position": "Top of account/profile screen"
+    },
+    "accessibility": {
+      "min_touch_target": "44px (upgrade)",
+      "screen_reader_label": "Account tier card - [tier], upgrade button",
+      "color_contrast_ratio": "4.5:1 (white on red gradient)"
+    },
+    "localization": {
+      "supports_rtl": false,
+      "swahili_compatibility": true,
+      "text_max_length": 20
+    },
+    "compliance": {
+      "regulatory_required": false,
+      "authority": "",
+      "rule_reference": ""
+    }
+  },
+  {
+    "component_id": "selector_wallet_bank",
+    "name": "Wallet/Bank Select",
+    "category": "Navigation",
+    "subcategory": "Selection",
+    "visual_properties": {
+      "height": "72px",
+      "width": "100%",
+      "background": "#FFFFFF",
+      "border_radius": "14px",
+      "typography": "Switzer 12px SemiBold",
+      "colors": { "border": "2px solid #E8E8EC", "selected_border": "#FE353D", "selected_shadow": "0 4px 12px rgba(254,53,61,0.15)", "icon_bg": "#FFF1F2", "icon": "#FE353D" },
+      "spacing": { "padding": "12px", "gap": "12px" }
+    },
+    "behavior": {
+      "states": ["unselected", "selected"],
+      "interactions": "Tap toggles selection between M-PESA Wallet and Bank Account; selected shows red border + shadow",
+      "animations": "transition all 0.2s"
+    },
+    "usage_rules": {
+      "use_when": ["Choosing transaction source (wallet vs bank)"],
+      "never_use_when": ["Single-source flows"],
+      "max_per_screen": 2,
+      "required_companions": ["Send Money flow"],
+      "excluded_screens": []
+    },
+    "context_mapping": {
+      "flows": ["Send Money", "Wallet transfer"],
+      "screen_types": ["Selection"],
+      "priority_score": 7,
+      "typical_position": "Top of send money amount screen"
+    },
+    "accessibility": {
+      "min_touch_target": "72px",
+      "screen_reader_label": "Transaction source select - [M-PESA Wallet / Bank Account]",
+      "color_contrast_ratio": "4.5:1"
+    },
+    "localization": {
+      "supports_rtl": false,
+      "swahili_compatibility": true,
+      "text_max_length": 20
+    },
+    "compliance": {
+      "regulatory_required": false,
+      "authority": "",
+      "rule_reference": ""
+    }
+  },
+  {
+    "component_id": "card_feature",
+    "name": "Feature Card",
+    "category": "Display",
+    "subcategory": "Cards",
+    "visual_properties": {
+      "height": "auto",
+      "width": "100%",
+      "background": "#FFFFFF",
+      "border_radius": "14px",
+      "typography": "Switzer 14px SemiBold (title); Inter 12px (desc)",
+      "colors": { "background": "#FFFFFF", "icon_bg": "#FFF1F2", "icon": "#FE353D", "title": "#1C1C21", "desc": "#7C7C87", "shadow": "0 2px 8px rgba(0,0,0,0.04)" },
+      "spacing": { "padding": "16px", "gap": "12px" }
+    },
+    "behavior": {
+      "states": ["default", "pressed"],
+      "interactions": "Tap navigates to feature details",
+      "animations": "—"
+    },
+    "usage_rules": {
+      "use_when": ["Feature explanations/announcements"],
+      "never_use_when": ["Transactional info"],
+      "max_per_screen": 3,
+      "required_companions": [],
+      "excluded_screens": []
+    },
+    "context_mapping": {
+      "flows": ["Feature education"],
+      "screen_types": ["Education", "Home"],
+      "priority_score": 5,
+      "typical_position": "Grid of feature cards"
+    },
+    "accessibility": {
+      "min_touch_target": "48px",
+      "screen_reader_label": "Feature card - [title]",
+      "color_contrast_ratio": "4.5:1"
+    },
+    "localization": {
+      "supports_rtl": true,
+      "swahili_compatibility": true,
+      "text_max_length": 60
+    },
+    "compliance": {
+      "regulatory_required": false,
+      "authority": "",
+      "rule_reference": ""
+    }
+  },
+  {
+    "component_id": "card_promo",
+    "name": "Promo Gradient Card",
+    "category": "Display",
+    "subcategory": "Cards",
+    "visual_properties": {
+      "height": "auto",
+      "width": "100%",
+      "background": "linear-gradient(135deg,#C41520,#FE353D)",
+      "border_radius": "14px",
+      "typography": "Switzer 16px Bold (title); 12px (desc); 12px SemiBold (btn)",
+      "colors": { "background": "linear-gradient(#C41520,#FE353D)", "text": "#FFFFFF", "btn_bg": "#FFFFFF", "btn_text": "#FE353D", "decor": "rgba(255,255,255,0.1)" },
+      "spacing": { "padding": "16px", "gap": "8px" }
+    },
+    "behavior": {
+      "states": ["default"],
+      "interactions": "\"Learn More\" button navigates to promo details",
+      "animations": "—"
+    },
+    "usage_rules": {
+      "use_when": ["Promotions/cashback offers"],
+      "never_use_when": ["Essential account info"],
+      "max_per_screen": 2,
+      "required_companions": ["CTA Button"],
+      "excluded_screens": []
+    },
+    "context_mapping": {
+      "flows": ["Promotions", "Home"],
+      "screen_types": ["Home", "Offers"],
+      "priority_score": 6,
+      "typical_position": "In promo/offer section"
+    },
+    "accessibility": {
+      "min_touch_target": "44px (button)",
+      "screen_reader_label": "Promo card - [title]",
+      "color_contrast_ratio": "4.5:1 (white on red)"
+    },
+    "localization": {
+      "supports_rtl": true,
+      "swahili_compatibility": true,
+      "text_max_length": 60
+    },
+    "compliance": {
+      "regulatory_required": false,
+      "authority": "",
+      "rule_reference": ""
+    }
+  },
+  {
+    "component_id": "card_achievement",
+    "name": "Achievement Badge",
+    "category": "Display",
+    "subcategory": "Cards",
+    "visual_properties": {
+      "height": "~72px",
+      "width": "auto",
+      "background": "#FFFFFF",
+      "border_radius": "12px",
+      "typography": "Switzer 14px SemiBold (title); 12px (detail)",
+      "colors": { "background": "#FFFFFF", "badge": "linear-gradient(#FFD700,#FFA500)", "badge_icon": "#FFFFFF", "shadow": "0 2px 8px rgba(0,0,0,0.04)" },
+      "spacing": { "padding": "12px", "gap": "12px" }
+    },
+    "behavior": {
+      "states": ["locked", "unlocked"],
+      "interactions": "Display-only achievement status",
+      "animations": "—"
+    },
+    "usage_rules": {
+      "use_when": ["Rewards/achievements display"],
+      "never_use_when": ["Transactional info"],
+      "max_per_screen": 6,
+      "required_companions": [],
+      "excluded_screens": []
+    },
+    "context_mapping": {
+      "flows": ["Rewards", "Gamification"],
+      "screen_types": ["Rewards", "Education"],
+      "priority_score": 4,
+      "typical_position": "Grid/list of achievements"
+    },
+    "accessibility": {
+      "min_touch_target": "— (informational)",
+      "screen_reader_label": "Achievement - [title], [status]",
+      "color_contrast_ratio": "4.5:1"
+    },
+    "localization": {
+      "supports_rtl": false,
+      "swahili_compatibility": true,
+      "text_max_length": 40
+    },
+    "compliance": {
+      "regulatory_required": false,
+      "authority": "",
+      "rule_reference": ""
+    }
+  },
+  {
+    "component_id": "card_referral",
+    "name": "Referral Sharing Card",
+    "category": "Display",
+    "subcategory": "Cards",
+    "visual_properties": {
+      "height": "auto",
+      "width": "100%",
+      "background": "linear-gradient(135deg,#1FC83B,#4ADE80)",
+      "border_radius": "14px",
+      "typography": "Switzer 14px Bold; 16px Bold letter-spacing 2px (code)",
+      "colors": { "background": "linear-gradient(#1FC83B,#4ADE80)", "text": "#FFFFFF", "code_bg": "rgba(255,255,255,0.2)", "btn_bg": "#FFFFFF", "btn_text": "#FE353D" },
+      "spacing": { "padding": "16px", "code_margin": "12px 0", "code_padding": "8px 12px" }
+    },
+    "behavior": {
+      "states": ["default"],
+      "interactions": "\"Share Code\" copies/shares referral code",
+      "animations": "—"
+    },
+    "usage_rules": {
+      "use_when": ["Referral program promotion"],
+      "never_use_when": ["Non-incentive contexts"],
+      "max_per_screen": 1,
+      "required_companions": ["Copy Button", "Share"],
+      "excluded_screens": []
+    },
+    "context_mapping": {
+      "flows": ["Referral", "Rewards"],
+      "screen_types": ["Offers"],
+      "priority_score": 6,
+      "typical_position": "In rewards section"
+    },
+    "accessibility": {
+      "min_touch_target": "44px (button)",
+      "screen_reader_label": "Referral card - [code]",
+      "color_contrast_ratio": "4.5:1 (white on green)"
+    },
+    "localization": {
+      "supports_rtl": false,
+      "swahili_compatibility": true,
+      "text_max_length": 20
+    },
+    "compliance": {
+      "regulatory_required": false,
+      "authority": "",
+      "rule_reference": ""
+    }
+  },
+  {
+    "component_id": "card_bill_reminder",
+    "name": "Bill Due Reminder",
+    "category": "Display",
+    "subcategory": "Banners",
+    "visual_properties": {
+      "height": "~64px",
+      "width": "100%",
+      "background": "#FFF8E1",
+      "border_radius": "12px",
+      "typography": "Switzer 13px SemiBold (name); 11px (due); 14px Bold (amount)",
+      "colors": { "background": "#FFF8E1", "border_left": "3px solid #FF9800", "name": "#1C1C21", "due": "#FF9800", "amount": "#1C1C21" },
+      "spacing": { "padding": "12px", "gap": "12px" }
+    },
+    "behavior": {
+      "states": ["default", "overdue", "pressed"],
+      "interactions": "Tap navigates to bill payment flow",
+      "animations": "—"
+    },
+    "usage_rules": {
+      "use_when": ["Bill due reminders on home"],
+      "never_use_when": ["Critical alerts"],
+      "max_per_screen": 3,
+      "required_companions": [],
+      "excluded_screens": []
+    },
+    "context_mapping": {
+      "flows": ["Bill Payment", "Home reminders"],
+      "screen_types": ["Home"],
+      "priority_score": 6,
+      "typical_position": "In reminders section"
+    },
+    "accessibility": {
+      "min_touch_target": "48px",
+      "screen_reader_label": "Bill reminder - [name], due [date], amount",
+      "color_contrast_ratio": "4.5:1"
+    },
+    "localization": {
+      "supports_rtl": false,
+      "swahili_compatibility": true,
+      "text_max_length": 40
+    },
+    "compliance": {
+      "regulatory_required": false,
+      "authority": "",
+      "rule_reference": ""
+    }
+  },
+  {
+    "component_id": "card_credit_score",
+    "name": "Credit Score Card",
+    "category": "Display",
+    "subcategory": "Cards",
+    "visual_properties": {
+      "height": "auto",
+      "width": "100%",
+      "background": "#FFFFFF",
+      "border_radius": "14px",
+      "typography": "Switzer 36px ExtraBold (score); 12px (label)",
+      "colors": { "background": "#FFFFFF", "score": "#1FC83B", "label": "#7C7C87", "shadow": "0 2px 8px rgba(0,0,0,0.04)" },
+      "spacing": { "padding": "16px", "text_align": "center" }
+    },
+    "behavior": {
+      "states": ["good", "fair", "poor"],
+      "interactions": "Display-only credit score with progress bar",
+      "animations": "—"
+    },
+    "usage_rules": {
+      "use_when": ["Credit & Saving screen"],
+      "never_use_when": ["Transactional flows"],
+      "max_per_screen": 1,
+      "required_companions": ["Linear Progress Bar"],
+      "excluded_screens": []
+    },
+    "context_mapping": {
+      "flows": ["Credit & Saving"],
+      "screen_types": ["Dashboard"],
+      "priority_score": 6,
+      "typical_position": "Top of credit dashboard"
+    },
+    "accessibility": {
+      "min_touch_target": "— (informational)",
+      "screen_reader_label": "Credit score [value], [rating]",
+      "color_contrast_ratio": "4.5:1"
+    },
+    "localization": {
+      "supports_rtl": false,
+      "swahili_compatibility": true,
+      "text_max_length": 30
+    },
+    "compliance": {
+      "regulatory_required": true,
+      "authority": "Credit reporting regulation",
+      "rule_reference": ""
+    }
+  },
+  {
+    "component_id": "badge_tier",
+    "name": "Account Tier Badge",
+    "category": "Display",
+    "subcategory": "Badges",
+    "visual_properties": {
+      "height": "32px",
+      "width": "auto",
+      "background": "#FE353D",
+      "border_radius": "20px",
+      "typography": "Switzer 12px SemiBold",
+      "colors": { "background": "#FE353D", "text": "#FFFFFF", "icon": "#FFFFFF" },
+      "spacing": { "padding": "6px 12px", "gap": "6px" }
+    },
+    "behavior": {
+      "states": ["default"],
+      "interactions": "Display-only account tier indicator",
+      "animations": "—"
+    },
+    "usage_rules": {
+      "use_when": ["Indicating account tier"],
+      "never_use_when": ["Tier upgrade CTA (use Tier Card)"],
+      "max_per_screen": 1,
+      "required_companions": [],
+      "excluded_screens": []
+    },
+    "context_mapping": {
+      "flows": ["Account status"],
+      "screen_types": ["Profile"],
+      "priority_score": 6,
+      "typical_position": "Near profile header"
+    },
+    "accessibility": {
+      "min_touch_target": "— (informational)",
+      "screen_reader_label": "Account tier - [tier]",
+      "color_contrast_ratio": "4.5:1 (white on red)"
+    },
+    "localization": {
+      "supports_rtl": false,
+      "swahili_compatibility": true,
+      "text_max_length": 15
+    },
+    "compliance": {
+      "regulatory_required": false,
+      "authority": "",
+      "rule_reference": ""
+    }
+  },
+  {
+    "component_id": "badge_status_pill",
+    "name": "Status Pill",
+    "category": "Display",
+    "subcategory": "Badges",
+    "visual_properties": {
+      "height": "24px",
+      "width": "auto",
+      "background": "light variant",
+      "border_radius": "20px",
+      "typography": "Switzer 11px SemiBold",
+      "colors": { "success_bg": "#E8F9EC", "success_text": "#1FC83B", "pending_bg": "#FFF8E1", "pending_text": "#FF9800", "failed_bg": "#FFF1F2", "failed_text": "#FE353D", "dot": "currentColor" },
+      "spacing": { "padding": "4px 10px", "gap": "6px" }
+    },
+    "behavior": {
+      "states": ["success", "pending", "failed", "danger"],
+      "interactions": "Display-only status indicator",
+      "animations": "—"
+    },
+    "usage_rules": {
+      "use_when": ["Transaction/statement status labels"],
+      "never_use_when": ["Interactive buttons"],
+      "max_per_screen": 8,
+      "required_companions": [],
+      "excluded_screens": []
+    },
+    "context_mapping": {
+      "flows": ["Transaction History"],
+      "screen_types": ["List"],
+      "priority_score": 7,
+      "typical_position": "Inline with transaction/status info"
+    },
+    "accessibility": {
+      "min_touch_target": "— (informational)",
+      "screen_reader_label": "Status: [success/pending/failed]",
+      "color_contrast_ratio": "4.5:1"
+    },
+    "localization": {
+      "supports_rtl": false,
+      "swahili_compatibility": true,
+      "text_max_length": 15
+    },
+    "compliance": {
+      "regulatory_required": false,
+      "authority": "",
+      "rule_reference": ""
+    }
+  },
+  {
+    "component_id": "display_chip",
+    "name": "Filter Chip",
+    "category": "Input",
+    "subcategory": "Selection",
+    "visual_properties": {
+      "height": "32px",
+      "width": "auto",
+      "background": "#F0F0F2 (inactive) / #FFF1F2 (active)",
+      "border_radius": "20px",
+      "typography": "Switzer 12px Medium",
+      "colors": { "inactive_bg": "#F0F0F2", "active_bg": "#FFF1F2", "active_text": "#FE353D", "text": "#1C1C21", "hover_bg": "#E5E5E8" },
+      "spacing": { "padding": "6px 12px", "gap": "6px" }
+    },
+    "behavior": {
+      "states": ["inactive", "active", "hover"],
+      "interactions": "Tap toggles filter; single-select within group",
+      "animations": "transition all 0.2s"
+    },
+    "usage_rules": {
+      "use_when": ["Filtering lists (transactions, categories)"],
+      "never_use_when": ["Multi-select tags"],
+      "max_per_screen": 6,
+      "required_companions": ["Filterable List"],
+      "excluded_screens": []
+    },
+    "context_mapping": {
+      "flows": ["Transaction filters"],
+      "screen_types": ["List"],
+      "priority_score": 6,
+      "typical_position": "Horizontal row below search/tabs"
+    },
+    "accessibility": {
+      "min_touch_target": "32px",
+      "screen_reader_label": "Filter chip - [label], selected or not",
+      "color_contrast_ratio": "4.5:1"
+    },
+    "localization": {
+      "supports_rtl": false,
+      "swahili_compatibility": true,
+      "text_max_length": 20
+    },
+    "compliance": {
+      "regulatory_required": false,
+      "authority": "",
+      "rule_reference": ""
+    }
+  },
+  {
+    "component_id": "display_amount",
+    "name": "Formatted Amount",
+    "category": "Display",
+    "subcategory": "Typography",
+    "visual_properties": {
+      "height": "auto",
+      "width": "auto",
+      "background": "transparent",
+      "border_radius": "—",
+      "typography": "Switzer 28px Bold letter-spacing -0.5px",
+      "colors": { "positive": "#1FC83B", "negative": "#FE353D", "currency": "#7C7C87" },
+      "spacing": { "gap": "4px" }
+    },
+    "behavior": {
+      "states": ["positive", "negative", "neutral"],
+      "interactions": "Display-only monetary value",
+      "animations": "—"
+    },
+    "usage_rules": {
+      "use_when": ["Showing balances/amounts with sign color"],
+      "never_use_when": ["Editable amounts (use Amount Input)"],
+      "max_per_screen": 4,
+      "required_companions": [],
+      "excluded_screens": []
+    },
+    "context_mapping": {
+      "flows": ["Transaction History", "Balance display"],
+      "screen_types": ["List", "Dashboard"],
+      "priority_score": 7,
+      "typical_position": "Inline with transaction/balance"
+    },
+    "accessibility": {
+      "min_touch_target": "— (informational)",
+      "screen_reader_label": "Amount [value]",
+      "color_contrast_ratio": "4.5:1"
+    },
+    "localization": {
+      "supports_rtl": false,
+      "swahili_compatibility": true,
+      "text_max_length": 15
+    },
+    "compliance": {
+      "regulatory_required": false,
+      "authority": "",
+      "rule_reference": ""
+    }
+  },
+  {
+    "component_id": "display_amount_section",
+    "name": "Money Amount Section",
+    "category": "Display",
+    "subcategory": "Typography",
+    "visual_properties": {
+      "height": "auto",
+      "width": "100%",
+      "background": "transparent",
+      "border_radius": "—",
+      "typography": "Switzer 56px Bold letter-spacing -2px (value); 20px Medium (currency)",
+      "colors": { "value": "#1C1C21", "insufficient_value": "#FE353D", "currency": "#7C7C87", "main_balance": "#1C1C21", "available": "#1C1C21", "warning": "#FE353D", "fee": "#1C1C21" },
+      "spacing": { "gap": "8px", "balance_gap": "20px", "text_align": "center" }
+    },
+    "behavior": {
+      "states": ["sufficient", "insufficient", "fee_shown", "fee_hidden"],
+      "interactions": "Shows amount; main/available balance; insufficient warning; fee display",
+      "animations": "transition color 0.2s"
+    },
+    "usage_rules": {
+      "use_when": ["Amount confirmation/entry screens"],
+      "never_use_when": ["Standalone balance"],
+      "max_per_screen": 1,
+      "required_companions": ["Amount Input", "Fee display", "Insufficient warning"],
+      "excluded_screens": []
+    },
+    "context_mapping": {
+      "flows": ["Transfer amount", "Bill amount", "Merchant amount"],
+      "screen_types": ["Amount Entry"],
+      "priority_score": 9,
+      "typical_position": "Centered in amount screen"
+    },
+    "accessibility": {
+      "min_touch_target": "— (informational)",
+      "screen_reader_label": "Amount [value], main balance [x], available [y]",
+      "color_contrast_ratio": "4.5:1"
+    },
+    "localization": {
+      "supports_rtl": false,
+      "swahili_compatibility": true,
+      "text_max_length": 15
+    },
+    "compliance": {
+      "regulatory_required": false,
+      "authority": "",
+      "rule_reference": ""
+    }
+  },
+  {
+    "component_id": "display_divider",
+    "name": "Divider",
+    "category": "Display",
+    "subcategory": "Layout",
+    "visual_properties": {
+      "height": "1px",
+      "width": "100%",
+      "background": "#E8E8EC",
+      "border_radius": "—",
+      "typography": "—",
+      "colors": { "solid": "#E8E8EC", "dashed": "#E8E8EC" },
+      "spacing": { "dashed": "1px dashed" }
+    },
+    "behavior": {
+      "states": ["solid", "dashed"],
+      "interactions": "Display-only separator",
+      "animations": "—"
+    },
+    "usage_rules": {
+      "use_when": ["Separating list items or sections"],
+      "never_use_when": ["Card borders"],
+      "max_per_screen": 20,
+      "required_companions": [],
+      "excluded_screens": []
+    },
+    "context_mapping": {
+      "flows": ["All lists"],
+      "screen_types": ["List"],
+      "priority_score": 3,
+      "typical_position": "Between rows/items"
+    },
+    "accessibility": {
+      "min_touch_target": "—",
+      "screen_reader_label": "",
+      "color_contrast_ratio": "3:1"
+    },
+    "localization": {
+      "supports_rtl": false,
+      "swahili_compatibility": true,
+      "text_max_length": null
+    },
+    "compliance": {
+      "regulatory_required": false,
+      "authority": "",
+      "rule_reference": ""
+    }
+  },
+  {
+    "component_id": "display_qr",
+    "name": "QR Display",
+    "category": "Display",
+    "subcategory": "Media",
+    "visual_properties": {
+      "height": "120px",
+      "width": "120px",
+      "background": "#FFFFFF",
+      "border_radius": "12px",
+      "typography": "—",
+      "colors": { "background": "#FFFFFF", "border": "3px solid #FE353D", "qr": "#1C1C21" },
+      "spacing": { "padding": "8px" }
+    },
+    "behavior": {
+      "states": ["static"],
+      "interactions": "Display-only QR code (receipt/payment)",
+      "animations": "—"
+    },
+    "usage_rules": {
+      "use_when": ["Receipt QR, payment QR"],
+      "never_use_when": ["Interactive scanning (use QR FAB)"],
+      "max_per_screen": 1,
+      "required_companions": [],
+      "excluded_screens": []
+    },
+    "context_mapping": {
+      "flows": ["Receipt", "My QR Code"],
+      "screen_types": ["Receipt"],
+      "priority_score": 6,
+      "typical_position": "On receipt/QR screen"
+    },
+    "accessibility": {
+      "min_touch_target": "—",
+      "screen_reader_label": "QR code",
+      "color_contrast_ratio": "3:1"
+    },
+    "localization": {
+      "supports_rtl": false,
+      "swahili_compatibility": true,
+      "text_max_length": null
+    },
+    "compliance": {
+      "regulatory_required": false,
+      "authority": "",
+      "rule_reference": ""
+    }
+  },
+  {
+    "component_id": "display_stepper",
+    "name": "Stepper (Progress Steps)",
+    "category": "Navigation",
+    "subcategory": "Indicators",
+    "visual_properties": {
+      "height": "32px",
+      "width": "auto",
+      "background": "#F0F0F2 (inactive) / #FE353D (active) / #1FC83B (done)",
+      "border_radius": "50%",
+      "typography": "Switzer 13px SemiBold",
+      "colors": { "inactive": "#F0F0F2", "inactive_text": "#7C7C87", "active": "#FE353D", "active_text": "#FFFFFF", "done": "#1FC83B", "done_text": "#FFFFFF", "line": "#F0F0F2 / #FE353D" },
+      "spacing": { "gap": "8px", "line_height": "2px" }
+    },
+    "behavior": {
+      "states": ["inactive", "active", "done"],
+      "interactions": "Shows multi-step progress (e.g., 3 steps in PIN setup)",
+      "animations": "—"
+    },
+    "usage_rules": {
+      "use_when": ["Multi-step flows (PIN setup, signup)"],
+      "never_use_when": ["Carousel position (use dots)"],
+      "max_per_screen": 1,
+      "required_companions": [],
+      "excluded_screens": []
+    },
+    "context_mapping": {
+      "flows": ["Signup", "PIN setup", "Onboarding"],
+      "screen_types": ["Auth", "Form"],
+      "priority_score": 6,
+      "typical_position": "Below header"
+    },
+    "accessibility": {
+      "min_touch_target": "— (informational)",
+      "screen_reader_label": "Step [n] of [m]",
+      "color_contrast_ratio": "4.5:1"
+    },
+    "localization": {
+      "supports_rtl": true,
+      "swahili_compatibility": true,
+      "text_max_length": null
+    },
+    "compliance": {
+      "regulatory_required": false,
+      "authority": "",
+      "rule_reference": ""
+    }
+  },
+  {
+    "component_id": "list_statement_pdf",
+    "name": "Statement / PDF Row",
+    "category": "Display",
+    "subcategory": "List Items",
+    "visual_properties": {
+      "height": "~68px",
+      "width": "100%",
+      "background": "#FFFFFF",
+      "border_radius": "12px (icon)",
+      "typography": "Switzer 14px SemiBold (title); Inter 12px (meta)",
+      "colors": { "statement_icon_bg": "#FFF1F2", "statement_icon": "#FE353D", "receipt_icon_bg": "#E8F9EC", "receipt_icon": "#1FC83B", "title": "#1C1C21", "meta": "#7C7C87", "download_btn_border": "#E8E8EC" },
+      "spacing": { "padding": "14px 16px", "gap": "12px" }
+    },
+    "behavior": {
+      "states": ["statement", "receipt", "loading(skeleton)"],
+      "interactions": "Download button downloads the PDF/statement",
+      "animations": "—"
+    },
+    "usage_rules": {
+      "use_when": ["Statement/PDF download lists"],
+      "never_use_when": ["Transactional history"],
+      "max_per_screen": 10,
+      "required_companions": ["Download Button"],
+      "excluded_screens": []
+    },
+    "context_mapping": {
+      "flows": ["Manage Statement", "Receipts"],
+      "screen_types": ["List"],
+      "priority_score": 6,
+      "typical_position": "Stacked in statement list"
+    },
+    "accessibility": {
+      "min_touch_target": "44px (download)",
+      "screen_reader_label": "Statement/PDF row - [title], download button",
+      "color_contrast_ratio": "4.5:1"
+    },
+    "localization": {
+      "supports_rtl": false,
+      "swahili_compatibility": true,
+      "text_max_length": 40
+    },
+    "compliance": {
+      "regulatory_required": false,
+      "authority": "",
+      "rule_reference": ""
+    }
+  },
+  {
+    "component_id": "state_empty",
+    "name": "Empty State",
+    "category": "Feedback",
+    "subcategory": "States",
+    "visual_properties": {
+      "height": "~320px",
+      "width": "100%",
+      "background": "transparent",
+      "border_radius": "—",
+      "typography": "Switzer 18px Bold (title); Inter 13px (desc)",
+      "colors": { "illustration_gradient": "linear-gradient(#FFF1F2,#FFE5E6)", "illustration_stroke": "#FE353D", "title": "#1C1C21", "desc": "#7C7C87", "badge": "#FE353D" },
+      "spacing": { "padding": "24px 16px", "gap": "22px", "text_align": "center" }
+    },
+    "behavior": {
+      "states": ["empty"],
+      "interactions": "Display-only empty state with illustration + CTA context",
+      "animations": "—"
+    },
+    "usage_rules": {
+      "use_when": ["Empty lists (no favourites, no notifications, no statements)"],
+      "never_use_when": ["Content present"],
+      "max_per_screen": 1,
+      "required_companions": ["Empty-state illustration", "Optional CTA"],
+      "excluded_screens": []
+    },
+    "context_mapping": {
+      "flows": ["Empty favourites", "Empty notifications", "Empty statements"],
+      "screen_types": ["Empty State"],
+      "priority_score": 7,
+      "typical_position": "Center of empty list screen"
+    },
+    "accessibility": {
+      "min_touch_target": "—",
+      "screen_reader_label": "No [items] yet - [description]",
+      "color_contrast_ratio": "4.5:1"
+    },
+    "localization": {
+      "supports_rtl": true,
+      "swahili_compatibility": true,
+      "text_max_length": 60
+    },
+    "compliance": {
+      "regulatory_required": false,
+      "authority": "",
+      "rule_reference": ""
+    }
+  },
+  {
+    "component_id": "feedback_toast_success",
+    "name": "Toast — Success",
+    "category": "Feedback",
+    "subcategory": "Toasts",
+    "visual_properties": {
+      "height": "auto",
+      "width": "auto",
+      "background": "#FFFFFF",
+      "border_radius": "12px",
+      "typography": "Switzer 14px SemiBold (title); 12px (subtitle)",
+      "colors": { "background": "#FFFFFF", "icon_bg": "#1FC83B", "icon": "#FFFFFF", "title": "#1C1C21", "subtitle": "#7C7C87", "shadow": "0 4px 16px rgba(0,0,0,0.12)" },
+      "spacing": { "padding": "12px", "gap": "10px" }
+    },
+    "behavior": {
+      "states": ["visible", "hiding"],
+      "interactions": "Auto-dismisses after short duration; status-icon indicates success",
+      "animations": "slide/fade in-out"
+    },
+    "usage_rules": {
+      "use_when": ["Success confirmations (added to favorites)"],
+      "never_use_when": ["Errors (use Error Toast)"],
+      "max_per_screen": 1,
+      "required_companions": [],
+      "excluded_screens": []
+    },
+    "context_mapping": {
+      "flows": ["Favourites", "General success feedback"],
+      "screen_types": ["Any"],
+      "priority_score": 7,
+      "typical_position": "Top or bottom overlay"
+    },
+    "accessibility": {
+      "min_touch_target": "—",
+      "screen_reader_label": "Success - [title], [subtitle]",
+      "color_contrast_ratio": "4.5:1"
+    },
+    "localization": {
+      "supports_rtl": true,
+      "swahili_compatibility": true,
+      "text_max_length": 60
+    },
+    "compliance": {
+      "regulatory_required": false,
+      "authority": "",
+      "rule_reference": ""
+    }
+  },
+  {
+    "component_id": "feedback_toast_error",
+    "name": "Toast — Error",
+    "category": "Feedback",
+    "subcategory": "Toasts",
+    "visual_properties": {
+      "height": "auto",
+      "width": "auto",
+      "background": "#FFFFFF",
+      "border_radius": "12px",
+      "typography": "Switzer 14px SemiBold (title); 12px (subtitle)",
+      "colors": { "background": "#FFFFFF", "icon_bg": "#FE353D", "icon": "#FFFFFF", "title": "#1C1C21", "subtitle": "#7C7C87", "shadow": "0 4px 16px rgba(0,0,0,0.12)" },
+      "spacing": { "padding": "12px", "gap": "10px" }
+    },
+    "behavior": {
+      "states": ["visible", "hiding"],
+      "interactions": "Auto-dismisses; error icon communicates failure",
+      "animations": "slide/fade in-out"
+    },
+    "usage_rules": {
+      "use_when": ["Error feedback (removed from favorites, failure)"],
+      "never_use_when": ["Success"],
+      "max_per_screen": 1,
+      "required_companions": [],
+      "excluded_screens": []
+    },
+    "context_mapping": {
+      "flows": ["General error feedback"],
+      "screen_types": ["Any"],
+      "priority_score": 7,
+      "typical_position": "Top or bottom overlay"
+    },
+    "accessibility": {
+      "min_touch_target": "—",
+      "screen_reader_label": "Error - [title], [subtitle]",
+      "color_contrast_ratio": "4.5:1"
+    },
+    "localization": {
+      "supports_rtl": true,
+      "swahili_compatibility": true,
+      "text_max_length": 60
+    },
+    "compliance": {
+      "regulatory_required": false,
+      "authority": "",
+      "rule_reference": ""
+    }
+  },
+  {
+    "component_id": "feedback_toast_dark",
+    "name": "Dark Toast",
+    "category": "Feedback",
+    "subcategory": "Toasts",
+    "visual_properties": {
+      "height": "auto",
+      "width": "auto",
+      "background": "#1C1C21",
+      "border_radius": "12px",
+      "typography": "Switzer 13px",
+      "colors": { "background": "#1C1C21", "text": "#FFFFFF", "shadow": "0 4px 16px rgba(0,0,0,0.2)" },
+      "spacing": { "padding": "12px 16px" }
+    },
+    "behavior": {
+      "states": ["visible", "hiding"],
+      "interactions": "Auto-dismisses; used for clipboard confirmations and neutral info",
+      "animations": "slide/fade in-out"
+    },
+    "usage_rules": {
+      "use_when": ["Clipboard copied confirmations", "Neutral system info"],
+      "never_use_when": ["Success/error emphasis"],
+      "max_per_screen": 1,
+      "required_companions": ["Copy Button"],
+      "excluded_screens": []
+    },
+    "context_mapping": {
+      "flows": ["Copy ID", "Neutral feedback"],
+      "screen_types": ["Any"],
+      "priority_score": 6,
+      "typical_position": "Bottom overlay"
+    },
+    "accessibility": {
+      "min_touch_target": "—",
+      "screen_reader_label": "[message text]",
+      "color_contrast_ratio": "4.5:1 (white on #1C1C21)"
+    },
+    "localization": {
+      "supports_rtl": true,
+      "swahili_compatibility": true,
+      "text_max_length": 60
+    },
+    "compliance": {
+      "regulatory_required": false,
+      "authority": "",
+      "rule_reference": ""
+    }
+  },
+  {
+    "component_id": "feedback_tooltip",
+    "name": "Tooltip",
+    "category": "Feedback",
+    "subcategory": "Tooltips",
+    "visual_properties": {
+      "height": "auto",
+      "width": "auto",
+      "background": "#FFFFFF",
+      "border_radius": "12px",
+      "typography": "Switzer 13px (title); 12px (subtitle)",
+      "colors": { "background": "#FFFFFF", "title": "#1C1C21", "subtitle": "#7C7C87", "info_icon": "#7C7C87", "arrow": "—", "shadow": "0 4px 16px rgba(0,0,0,0.1)" },
+      "spacing": { "padding": "12px 14px", "gap": "8px" }
+    },
+    "behavior": {
+      "states": ["visible", "dismissed"],
+      "interactions": "Tappable; presents update/education info with arrow",
+      "animations": "fade/slide entrance"
+    },
+    "usage_rules": {
+      "use_when": ["Update available prompts", "Contextual help"],
+      "never_use_when": ["Critical alerts"],
+      "max_per_screen": 1,
+      "required_companions": ["Arrow anchor"],
+      "excluded_screens": []
+    },
+    "context_mapping": {
+      "flows": ["Update notice", "Education"],
+      "screen_types": ["Overlay"],
+      "priority_score": 5,
+      "typical_position": "Anchored near relevant element"
+    },
+    "accessibility": {
+      "min_touch_target": "—",
+      "screen_reader_label": "Tooltip - [title], [subtitle]",
+      "color_contrast_ratio": "4.5:1"
+    },
+    "localization": {
+      "supports_rtl": true,
+      "swahili_compatibility": true,
+      "text_max_length": 60
+    },
+    "compliance": {
+      "regulatory_required": false,
+      "authority": "",
+      "rule_reference": ""
+    }
+  },
+  {
+    "component_id": "state_skeleton",
+    "name": "Skeleton Loading",
+    "category": "Feedback",
+    "subcategory": "States",
+    "visual_properties": {
+      "height": "varies",
+      "width": "100%",
+      "background": "linear-gradient(90deg,#F0F0F2 25%,#E5E5E8 50%,#F0F0F2 75%)",
+      "border_radius": "8px",
+      "typography": "—",
+      "colors": { "shimmer": "linear-gradient(90deg,#F0F0F2 25%,#E5E5E8 50%,#F0F0F2 75%)" },
+      "spacing": { "circle": "44px", "line": "14px height" }
+    },
+    "behavior": {
+      "states": ["loading"],
+      "interactions": "Shimmer placeholder while content loads",
+      "animations": "shimmer 1.5s infinite (background-position sweep)"
+    },
+    "usage_rules": {
+      "use_when": ["Initial list/content load"],
+      "never_use_when": ["Incremental load (use loader)"],
+      "max_per_screen": 8,
+      "required_companions": [],
+      "excluded_screens": []
+    },
+    "context_mapping": {
+      "flows": ["Transaction history", "Profile", "Lists"],
+      "screen_types": ["Loading"],
+      "priority_score": 6,
+      "typical_position": "Replaces list content while loading"
+    },
+    "accessibility": {
+      "min_touch_target": "—",
+      "screen_reader_label": "Loading content",
+      "color_contrast_ratio": "—"
+    },
+    "localization": {
+      "supports_rtl": false,
+      "swahili_compatibility": true,
+      "text_max_length": null
+    },
+    "compliance": {
+      "regulatory_required": false,
+      "authority": "",
+      "rule_reference": ""
+    }
+  },
+  {
+    "component_id": "state_error",
+    "name": "Error State View",
+    "category": "Feedback",
+    "subcategory": "States",
+    "visual_properties": {
+      "height": "auto",
+      "width": "100%",
+      "background": "transparent",
+      "border_radius": "—",
+      "typography": "Switzer 18px Bold (title); Inter 13px (desc)",
+      "colors": { "icon_bg": "#FFF1F2", "icon": "#FE353D", "title": "#1C1C21", "desc": "#7C7C87" },
+      "spacing": { "padding": "32px 20px", "gap": "16px", "text_align": "center" }
+    },
+    "behavior": {
+      "states": ["error"],
+      "interactions": "\"Retry\" button re-attempts the failed action",
+      "animations": "—"
+    },
+    "usage_rules": {
+      "use_when": ["Network/job failures (no internet, failed load)"],
+      "never_use_when": ["Empty states (no error)"],
+      "max_per_screen": 1,
+      "required_companions": ["Retry Button"],
+      "excluded_screens": []
+    },
+    "context_mapping": {
+      "flows": ["No internet", "Service unavailable"],
+      "screen_types": ["Error State"],
+      "priority_score": 8,
+      "typical_position": "Center of failed screen"
+    },
+    "accessibility": {
+      "min_touch_target": "48px (retry)",
+      "screen_reader_label": "Error - [title], [description], retry button",
+      "color_contrast_ratio": "4.5:1"
+    },
+    "localization": {
+      "supports_rtl": true,
+      "swahili_compatibility": true,
+      "text_max_length": 60
+    },
+    "compliance": {
+      "regulatory_required": false,
+      "authority": "",
+      "rule_reference": ""
+    }
+  },
+  {
+    "component_id": "state_offline",
+    "name": "Offline Notice Banner",
+    "category": "Feedback",
+    "subcategory": "Banners",
+    "visual_properties": {
+      "height": "auto",
+      "width": "100%",
+      "background": "#FFF8E1",
+      "border_radius": "12px",
+      "typography": "Switzer 13px Medium",
+      "colors": { "background": "#FFF8E1", "icon": "#FF9800", "text": "#1C1C21" },
+      "spacing": { "padding": "12px 14px", "gap": "10px" }
+    },
+    "behavior": {
+      "states": ["offline"],
+      "interactions": "Shows cached-data notice while offline",
+      "animations": "—"
+    },
+    "usage_rules": {
+      "use_when": ["Offline state with cached data"],
+      "never_use_when": ["Online"],
+      "max_per_screen": 1,
+      "required_companions": [],
+      "excluded_screens": []
+    },
+    "context_mapping": {
+      "flows": ["Offline handling"],
+      "screen_types": ["Any"],
+      "priority_score": 6,
+      "typical_position": "Sticky top banner"
+    },
+    "accessibility": {
+      "min_touch_target": "—",
+      "screen_reader_label": "Offline - showing cached data",
+      "color_contrast_ratio": "4.5:1"
+    },
+    "localization": {
+      "supports_rtl": true,
+      "swahili_compatibility": true,
+      "text_max_length": 40
+    },
+    "compliance": {
+      "regulatory_required": false,
+      "authority": "",
+      "rule_reference": ""
+    }
+  },
+  {
+    "component_id": "progress_circular",
+    "name": "Circular Progress / Loader",
+    "category": "Feedback",
+    "subcategory": "Loaders",
+    "visual_properties": {
+      "height": "80px",
+      "width": "80px",
+      "background": "transparent",
+      "border_radius": "50%",
+      "typography": "Switzer 16px Bold (value)",
+      "colors": { "track": "#F0F0F2", "fill": "#FE353D", "value": "#1C1C21" },
+      "spacing": { "stroke": "6px" }
+    },
+    "behavior": {
+      "states": ["loading", "complete"],
+      "interactions": "Indicates percentage complete (e.g., 70%)",
+      "animations": "rotate -90deg on svg"
+    },
+    "usage_rules": {
+      "use_when": ["Percent completion display"],
+      "never_use_when": ["Indeterminate loading"],
+      "max_per_screen": 2,
+      "required_companions": [],
+      "excluded_screens": []
+    },
+    "context_mapping": {
+      "flows": ["Saving goals", "Uploads"],
+      "screen_types": ["Dashboard"],
+      "priority_score": 5,
+      "typical_position": "Centered in a stat card"
+    },
+    "accessibility": {
+      "min_touch_target": "—",
+      "screen_reader_label": "Progress [n] percent",
+      "color_contrast_ratio": "3:1"
+    },
+    "localization": {
+      "supports_rtl": false,
+      "swahili_compatibility": true,
+      "text_max_length": null
+    },
+    "compliance": {
+      "regulatory_required": false,
+      "authority": "",
+      "rule_reference": ""
+    }
+  },
+  {
+    "component_id": "progress_linear",
+    "name": "Linear Progress Bar",
+    "category": "Feedback",
+    "subcategory": "Loaders",
+    "visual_properties": {
+      "height": "6px",
+      "width": "100%",
+      "background": "#F0F0F2",
+      "border_radius": "3px",
+      "typography": "—",
+      "colors": { "track": "#F0F0F2", "fill": "#FE353D / #1FC83B / #FF9800" },
+      "spacing": { "fill_transition": "width 0.3s" }
+    },
+    "behavior": {
+      "states": ["default", "warning", "success"],
+      "interactions": "Displays progress fill; color varies by context",
+      "animations": "transition width 0.3s"
+    },
+    "usage_rules": {
+      "use_when": ["Limit usage, credit score, goal completeness"],
+      "never_use_when": ["Indeterminate loading"],
+      "max_per_screen": 4,
+      "required_companions": ["Label"],
+      "excluded_screens": []
+    },
+    "context_mapping": {
+      "flows": ["Limit indicator", "Credit score", "Goals"],
+      "screen_types": ["Dashboard"],
+      "priority_score": 5,
+      "typical_position": "Inside stat/limit cards"
+    },
+    "accessibility": {
+      "min_touch_target": "—",
+      "screen_reader_label": "Progress [n] percent",
+      "color_contrast_ratio": "3:1"
+    },
+    "localization": {
+      "supports_rtl": true,
+      "swahili_compatibility": true,
+      "text_max_length": null
+    },
+    "compliance": {
+      "regulatory_required": false,
+      "authority": "",
+      "rule_reference": ""
+    }
+  },
+  {
+    "component_id": "display_timeline",
+    "name": "Timeline Track",
+    "category": "Display",
+    "subcategory": "Data Viz",
+    "visual_properties": {
+      "height": "auto",
+      "width": "100%",
+      "background": "transparent",
+      "border_radius": "—",
+      "typography": "Switzer 11px (time); 13px SemiBold (event)",
+      "colors": { "line": "#E8E8EC", "dot": "#FE353D", "time": "#7C7C87", "event": "#1C1C21" },
+      "spacing": { "padding_left": "24px", "item_gap": "20px", "line": "2px" }
+    },
+    "behavior": {
+      "states": ["completed", "active", "pending"],
+      "interactions": "Display-only vertical event timeline",
+      "animations": "—"
+    },
+    "usage_rules": {
+      "use_when": ["Transaction status progression (initiated → processing → completed)"],
+      "never_use_when": ["Step form progress (use stepper)"],
+      "max_per_screen": 1,
+      "required_companions": [],
+      "excluded_screens": []
+    },
+    "context_mapping": {
+      "flows": ["Transaction tracking"],
+      "screen_types": ["Details"],
+      "priority_score": 5,
+      "typical_position": "In transaction detail screen"
+    },
+    "accessibility": {
+      "min_touch_target": "—",
+      "screen_reader_label": "Timeline - [events]",
+      "color_contrast_ratio": "4.5:1"
+    },
+    "localization": {
+      "supports_rtl": true,
+      "swahili_compatibility": true,
+      "text_max_length": 60
+    },
+    "compliance": {
+      "regulatory_required": false,
+      "authority": "",
+      "rule_reference": ""
+    }
+  },
+  {
+    "component_id": "display_countdown",
+    "name": "Countdown Timer",
+    "category": "Display",
+    "subcategory": "Data Viz",
+    "visual_properties": {
+      "height": "auto",
+      "width": "auto",
+      "background": "#FFFFFF",
+      "border_radius": "10px",
+      "typography": "Switzer 22px Bold (num); 9px (label)",
+      "colors": { "background": "#FFFFFF", "border": "1.5px solid #E8E8EC", "num": "#1C1C21", "label": "#7C7C87" },
+      "spacing": { "padding": "10px 12px", "min_width": "56px", "gap": "8px" }
+    },
+    "behavior": {
+      "states": ["running", "expired"],
+      "interactions": "Displays countdown blocks (min/sec)",
+      "animations": "ticking update"
+    },
+    "usage_rules": {
+      "use_when": ["Time-limited actions (OTP, transfers)"],
+      "never_use_when": ["Static timestamps"],
+      "max_per_screen": 1,
+      "required_companions": [],
+      "excluded_screens": []
+    },
+    "context_mapping": {
+      "flows": ["OTP resend", "Time-limited offers"],
+      "screen_types": ["Auth", "Offers"],
+      "priority_score": 5,
+      "typical_position": "Below OTP input or in offer card"
+    },
+    "accessibility": {
+      "min_touch_target": "—",
+      "screen_reader_label": "Time remaining [n] minutes [n] seconds",
+      "color_contrast_ratio": "4.5:1"
+    },
+    "localization": {
+      "supports_rtl": false,
+      "swahili_compatibility": true,
+      "text_max_length": null
+    },
+    "compliance": {
+      "regulatory_required": false,
+      "authority": "",
+      "rule_reference": ""
+    }
+  },
+  {
+    "component_id": "progress_goal",
+    "name": "Goal Progress",
+    "category": "Display",
+    "subcategory": "Data Viz",
+    "visual_properties": {
+      "height": "auto",
+      "width": "100%",
+      "background": "transparent",
+      "border_radius": "—",
+      "typography": "Switzer 12px SemiBold",
+      "colors": { "bar": "linear-gradient(90deg,#FE353D,#FF6B7A)", "label": "#1C1C21" },
+      "spacing": { "bar_height": "8px", "gap": "10px" }
+    },
+    "behavior": {
+      "states": ["default"],
+      "interactions": "Display-only savings goal progress",
+      "animations": "—"
+    },
+    "usage_rules": {
+      "use_when": ["Saving goals, targets"],
+      "never_use_when": ["Limits (use limit indicator)"],
+      "max_per_screen": 3,
+      "required_companions": ["Linear Progress", "Label"],
+      "excluded_screens": []
+    },
+    "context_mapping": {
+      "flows": ["Credit & Saving", "Goals"],
+      "screen_types": ["Dashboard"],
+      "priority_score": 5,
+      "typical_position": "In goal card"
+    },
+    "accessibility": {
+      "min_touch_target": "—",
+      "screen_reader_label": "Goal progress [n] percent",
+      "color_contrast_ratio": "4.5:1"
+    },
+    "localization": {
+      "supports_rtl": false,
+      "swahili_compatibility": true,
+      "text_max_length": 30
+    },
+    "compliance": {
+      "regulatory_required": false,
+      "authority": "",
+      "rule_reference": ""
+    }
+  },
+  {
+    "component_id": "feedback_confirmation",
+    "name": "Transaction Confirmation Card",
+    "category": "Feedback",
+    "subcategory": "Receipts",
+    "visual_properties": {
+      "height": "auto",
+      "width": "100%",
+      "background": "#FFFFFF",
+      "border_radius": "16px",
+      "typography": "Switzer 20px Bold (header); 13px (detail); 30px Bold (amount)",
+      "colors": { "background": "#FFFFFF", "success_icon": "#1FC83B", "header": "#1C1C21", "label": "#7C7C87", "value": "#1C1C21", "dashed_divider": "#E8E8EC", "amount": "#1C1C21" },
+      "spacing": { "padding": "20px", "detail_row_gap": "14px", "text_align": "center" }
+    },
+    "behavior": {
+      "states": ["success"],
+      "interactions": "Copy ID button; share/download via app bar; display-only details",
+      "animations": "success checkmark entrance"
+    },
+    "usage_rules": {
+      "use_when": ["Post-transaction success confirmation"],
+      "never_use_when": ["Pre-transaction review"],
+      "max_per_screen": 1,
+      "required_companions": ["App Bar — Actions", "Copy Button", "QR"],
+      "excluded_screens": []
+    },
+    "context_mapping": {
+      "flows": ["All money movement confirmations"],
+      "screen_types": ["Confirmation"],
+      "priority_score": 10,
+      "typical_position": "Center of confirmation screen"
+    },
+    "accessibility": {
+      "min_touch_target": "44px (copy)",
+      "screen_reader_label": "Transaction confirmation - [type], [amount]",
+      "color_contrast_ratio": "4.5:1"
+    },
+    "localization": {
+      "supports_rtl": false,
+      "swahili_compatibility": true,
+      "text_max_length": 80
+    },
+    "compliance": {
+      "regulatory_required": true,
+      "authority": "Transaction receipt record",
+      "rule_reference": "M-PESA receipts"
+    }
+  },
+  {
+    "component_id": "chat_bubble",
+    "name": "Chat Bubble",
+    "category": "Display",
+    "subcategory": "Communication",
+    "visual_properties": {
+      "height": "auto",
+      "width": "80% (max)",
+      "background": "#FFFFFF (received) / #FE353D (sent)",
+      "border_radius": "14px (4px corner on origin)",
+      "typography": "Inter 13px line-height 1.5",
+      "colors": { "received_bg": "#FFFFFF", "received_text": "#1C1C21", "sent_bg": "#FE353D", "sent_text": "#FFFFFF" },
+      "spacing": { "padding": "10px 14px", "gap": "8px" }
+    },
+    "behavior": {
+      "states": ["received", "sent"],
+      "interactions": "Display-only chat messages",
+      "animations": "—"
+    },
+    "usage_rules": {
+      "use_when": ["Support chat, conversation threads"],
+      "never_use_when": ["Notifications"],
+      "max_per_screen": 20,
+      "required_companions": ["Message Input Row"],
+      "excluded_screens": []
+    },
+    "context_mapping": {
+      "flows": ["Support chat"],
+      "screen_types": ["Chat"],
+      "priority_score": 4,
+      "typical_position": "Stacked in chat thread"
+    },
+    "accessibility": {
+      "min_touch_target": "—",
+      "screen_reader_label": "Chat message [sent/received] - [text]",
+      "color_contrast_ratio": "4.5:1"
+    },
+    "localization": {
+      "supports_rtl": true,
+      "swahili_compatibility": true,
+      "text_max_length": 200
+    },
+    "compliance": {
+      "regulatory_required": false,
+      "authority": "",
+      "rule_reference": ""
+    }
+  },
+  {
+    "component_id": "chat_input",
+    "name": "Message Input Row",
+    "category": "Input",
+    "subcategory": "Communication",
+    "visual_properties": {
+      "height": "56px",
+      "width": "100%",
+      "background": "#FFFFFF",
+      "border_radius": "24px",
+      "typography": "Inter 13px",
+      "colors": { "background": "#FFFFFF", "border": "1.5px solid #E8E8EC", "text": "#1C1C21", "send_btn": "#FE353D", "send_icon": "#FFFFFF" },
+      "spacing": { "padding": "8px 14px", "gap": "8px" }
+    },
+    "behavior": {
+      "states": ["default", "focus"],
+      "interactions": "Type message; tap send button",
+      "animations": "—"
+    },
+    "usage_rules": {
+      "use_when": ["Chat input"],
+      "never_use_when": ["Standard forms"],
+      "max_per_screen": 1,
+      "required_companions": ["Chat Bubbles"],
+      "excluded_screens": []
+    },
+    "context_mapping": {
+      "flows": ["Support chat"],
+      "screen_types": ["Chat"],
+      "priority_score": 4,
+      "typical_position": "Bottom of chat"
+    },
+    "accessibility": {
+      "min_touch_target": "44px (send)",
+      "screen_reader_label": "Message input, send button",
+      "color_contrast_ratio": "4.5:1"
+    },
+    "localization": {
+      "supports_rtl": true,
+      "swahili_compatibility": true,
+      "text_max_length": 200
+    },
+    "compliance": {
+      "regulatory_required": false,
+      "authority": "",
+      "rule_reference": ""
+    }
+  },
+  {
+    "component_id": "icon_notif_bell",
+    "name": "Notification Bell with Badge",
+    "category": "Actions",
+    "subcategory": "Icon Buttons",
+    "visual_properties": {
+      "height": "40px",
+      "width": "40px",
+      "background": "#FCFCFC",
+      "border_radius": "50%",
+      "typography": "Switzer 10px Bold (badge)",
+      "colors": { "background": "#FCFCFC", "icon": "#1C1C21", "badge_bg": "#FE353D", "badge_text": "#FFFFFF", "badge_border": "2px solid #F5F5F5" },
+      "spacing": { "badge_size": "18px", "badge_position": "top -2px right -2px" }
+    },
+    "behavior": {
+      "states": ["default", "has-notifications", "pressed"],
+      "interactions": "Tap opens notification center; badge shows unread count",
+      "animations": "—"
+    },
+    "usage_rules": {
+      "use_when": ["Notification access point"],
+      "never_use_when": ["Non-notification contexts"],
+      "max_per_screen": 1,
+      "required_companions": ["Notification Center"],
+      "excluded_screens": []
+    },
+    "context_mapping": {
+      "flows": ["Notifications"],
+      "screen_types": ["Home", "App Bar"],
+      "priority_score": 8,
+      "typical_position": "Trailing position in app bar"
+    },
+    "accessibility": {
+      "min_touch_target": "40px",
+      "screen_reader_label": "Notifications, [n] unread",
+      "color_contrast_ratio": "4.5:1"
+    },
+    "localization": {
+      "supports_rtl": true,
+      "swahili_compatibility": true,
+      "text_max_length": 3
+    },
+    "compliance": {
+      "regulatory_required": false,
+      "authority": "",
+      "rule_reference": ""
+    }
+  },
+  {
+    "component_id": "security_device_badge",
+    "name": "Security Device Badge",
+    "category": "Feedback",
+    "subcategory": "Security",
+    "visual_properties": {
+      "height": "auto",
+      "width": "auto",
+      "background": "#E8F9EC",
+      "border_radius": "10px",
+      "typography": "Switzer 12px SemiBold",
+      "colors": { "background": "#E8F9EC", "icon": "#1FC83B", "text": "#1FC83B" },
+      "spacing": { "padding": "10px 14px", "gap": "8px" }
+    },
+    "behavior": {
+      "states": ["recognized", "new-device"],
+      "interactions": "Display-only trust indicator",
+      "animations": "—"
+    },
+    "usage_rules": {
+      "use_when": ["Device recognition trust signal"],
+      "never_use_when": ["Error/risk contexts"],
+      "max_per_screen": 1,
+      "required_companions": [],
+      "excluded_screens": []
+    },
+    "context_mapping": {
+      "flows": ["Login", "Security"],
+      "screen_types": ["Auth"],
+      "priority_score": 6,
+      "typical_position": "Below PIN/OTP"
+    },
+    "accessibility": {
+      "min_touch_target": "—",
+      "screen_reader_label": "Recognized device",
+      "color_contrast_ratio": "4.5:1"
+    },
+    "localization": {
+      "supports_rtl": true,
+      "swahili_compatibility": true,
+      "text_max_length": 30
+    },
+    "compliance": {
+      "regulatory_required": false,
+      "authority": "",
+      "rule_reference": ""
+    }
+  },
+  {
+    "component_id": "security_limit",
+    "name": "Usage Limit Indicator",
+    "category": "Feedback",
+    "subcategory": "Security",
+    "visual_properties": {
+      "height": "auto",
+      "width": "100%",
+      "background": "#FFFFFF",
+      "border_radius": "12px",
+      "typography": "Switzer 12px SemiBold (label); 12px (value)",
+      "colors": { "background": "#FFFFFF", "label": "#1C1C21", "value": "#7C7C87", "bar": "#FF9800", "shadow": "0 2px 8px rgba(0,0,0,0.04)" },
+      "spacing": { "padding": "12px", "gap": "8px" }
+    },
+    "behavior": {
+      "states": ["safe", "near-limit", "at-limit"],
+      "interactions": "Displays usage vs daily limit with progress bar",
+      "animations": "—"
+    },
+    "usage_rules": {
+      "use_when": ["KYC tier limits display"],
+      "never_use_when": ["Goal progress"],
+      "max_per_screen": 2,
+      "required_companions": ["Linear Progress"],
+      "excluded_screens": []
+    },
+    "context_mapping": {
+      "flows": ["Account status", "Tariffs & Fees"],
+      "screen_types": ["Dashboard", "Profile"],
+      "priority_score": 6,
+      "typical_position": "In account/limit section"
+    },
+    "accessibility": {
+      "min_touch_target": "—",
+      "screen_reader_label": "Daily transfer limit [used] of [max]",
+      "color_contrast_ratio": "4.5:1"
+    },
+    "localization": {
+      "supports_rtl": false,
+      "swahili_compatibility": true,
+      "text_max_length": 30
+    },
+    "compliance": {
+      "regulatory_required": true,
+      "authority": "KYC tiering policy",
+      "rule_reference": "Daily transaction limits by tier"
+    }
+  },
+  {
+    "component_id": "security_risk_banner",
+    "name": "Security Alert Banner",
+    "category": "Feedback",
+    "subcategory": "Banners",
+    "visual_properties": {
+      "height": "auto",
+      "width": "100%",
+      "background": "#FFF1F2",
+      "border_radius": "10px",
+      "typography": "Switzer 12px Medium",
+      "colors": { "background": "#FFF1F2", "border_left": "3px solid #FE353D", "icon": "#FE353D", "text": "#1C1C21" },
+      "spacing": { "padding": "12px 14px", "gap": "10px" }
+    },
+    "behavior": {
+      "states": ["alert"],
+      "interactions": "Display-only risk warning",
+      "animations": "—"
+    },
+    "usage_rules": {
+      "use_when": ["Suspicious activity, identity verification alerts"],
+      "never_use_when": ["Neutral info"],
+      "max_per_screen": 1,
+      "required_companions": [],
+      "excluded_screens": []
+    },
+    "context_mapping": {
+      "flows": ["Security verification"],
+      "screen_types": ["Alert"],
+      "priority_score": 8,
+      "typical_position": "Top of affected screen"
+    },
+    "accessibility": {
+      "min_touch_target": "—",
+      "screen_reader_label": "Security alert - [message]",
+      "color_contrast_ratio": "4.5:1"
+    },
+    "localization": {
+      "supports_rtl": true,
+      "swahili_compatibility": true,
+      "text_max_length": 80
+    },
+    "compliance": {
+      "regulatory_required": true,
+      "authority": "AML/KYC policy",
+      "rule_reference": "Suspicious activity flagging"
+    }
+  },
+  {
+    "component_id": "state_locked",
+    "name": "Locked Screen Warning",
+    "category": "Feedback",
+    "subcategory": "States",
+    "visual_properties": {
+      "height": "auto",
+      "width": "100%",
+      "background": "#FFF1F2",
+      "border_radius": "12px",
+      "typography": "Switzer 15px Bold (title); 12px (desc)",
+      "colors": { "background": "#FFF1F2", "icon_bg": "#FE353D", "icon": "#FFFFFF", "title": "#1C1C21", "desc": "#7C7C87" },
+      "spacing": { "padding": "16px", "text_align": "center" }
+    },
+    "behavior": {
+      "states": ["locked"],
+      "interactions": "Display-only lockout state (too many attempts)",
+      "animations": "—"
+    },
+    "usage_rules": {
+      "use_when": ["Account lockout after failed attempts"],
+      "never_use_when": ["Normal login"],
+      "max_per_screen": 1,
+      "required_companions": ["Lock icon"],
+      "excluded_screens": []
+    },
+    "context_mapping": {
+      "flows": ["PIN lockout"],
+      "screen_types": ["Error State"],
+      "priority_score": 8,
+      "typical_position": "Center of lockout screen"
+    },
+    "accessibility": {
+      "min_touch_target": "—",
+      "screen_reader_label": "Account locked - [message]",
+      "color_contrast_ratio": "4.5:1"
+    },
+    "localization": {
+      "supports_rtl": true,
+      "swahili_compatibility": true,
+      "text_max_length": 60
+    },
+    "compliance": {
+      "regulatory_required": true,
+      "authority": "M-PESA security policy",
+      "rule_reference": "Account lockout after failed PIN attempts"
+    }
+  },
+  {
+    "component_id": "state_maintenance",
+    "name": "Scheduled Maintenance Banner",
+    "category": "Feedback",
+    "subcategory": "Banners",
+    "visual_properties": {
+      "height": "auto",
+      "width": "100%",
+      "background": "#FFF8E1",
+      "border_radius": "12px",
+      "typography": "Switzer 14px SemiBold (title); 12px (detail)",
+      "colors": { "background": "#FFF8E1", "icon_bg": "#FF9800", "icon": "#FFFFFF", "title": "#1C1C21", "detail": "#7C7C87" },
+      "spacing": { "padding": "14px", "gap": "12px" }
+    },
+    "behavior": {
+      "states": ["upcoming"],
+      "interactions": "Display-only maintenance notice",
+      "animations": "—"
+    },
+    "usage_rules": {
+      "use_when": ["Scheduled maintenance notices"],
+      "never_use_when": ["Active outages (use offline/error)"],
+      "max_per_screen": 1,
+      "required_companions": [],
+      "excluded_screens": []
+    },
+    "context_mapping": {
+      "flows": ["Maintenance"],
+      "screen_types": ["Banner"],
+      "priority_score": 6,
+      "typical_position": "Top banner"
+    },
+    "accessibility": {
+      "min_touch_target": "—",
+      "screen_reader_label": "Scheduled maintenance - [time window]",
+      "color_contrast_ratio": "4.5:1"
+    },
+    "localization": {
+      "supports_rtl": true,
+      "swahili_compatibility": true,
+      "text_max_length": 60
+    },
+    "compliance": {
+      "regulatory_required": false,
+      "authority": "",
+      "rule_reference": ""
+    }
+  },
+  {
+    "component_id": "state_kyc",
+    "name": "KYC Missing Prompt",
+    "category": "Feedback",
+    "subcategory": "States",
+    "visual_properties": {
+      "height": "auto",
+      "width": "100%",
+      "background": "#FFFFFF",
+      "border_radius": "14px",
+      "typography": "Switzer 16px Bold (title); Inter 13px (desc)",
+      "colors": { "background": "#FFFFFF", "icon_bg": "#FFF8E1", "icon": "#FF9800", "title": "#1C1C21", "desc": "#7C7C87", "shadow": "0 2px 8px rgba(0,0,0,0.04)" },
+      "spacing": { "padding": "20px", "text_align": "center" }
+    },
+    "behavior": {
+      "states": ["kyc-required"],
+      "interactions": "\"Start Verification\" navigates to KYC flow",
+      "animations": "—"
+    },
+    "usage_rules": {
+      "use_when": ["KYC incomplete blocks (higher limits)"],
+      "never_use_when": ["KYC complete"],
+      "max_per_screen": 1,
+      "required_companions": ["Start Verification Button"],
+      "excluded_screens": []
+    },
+    "context_mapping": {
+      "flows": ["KYC verification", "Tier upgrade"],
+      "screen_types": ["Prompt"],
+      "priority_score": 8,
+      "typical_position": "In account/limit section"
+    },
+    "accessibility": {
+      "min_touch_target": "48px (button)",
+      "screen_reader_label": "Verification required - complete KYC",
+      "color_contrast_ratio": "4.5:1"
+    },
+    "localization": {
+      "supports_rtl": true,
+      "swahili_compatibility": true,
+      "text_max_length": 60
+    },
+    "compliance": {
+      "regulatory_required": true,
+      "authority": "NBE KYC regulation",
+      "rule_reference": "Mandatory KYC for tiered limits"
+    }
+  },
+  {
+    "component_id": "state_duplicate",
+    "name": "Duplicate Alert Card",
+    "category": "Feedback",
+    "subcategory": "States",
+    "visual_properties": {
+      "height": "auto",
+      "width": "100%",
+      "background": "#FFF8E1",
+      "border_radius": "12px",
+      "typography": "Switzer 12px Medium",
+      "colors": { "background": "#FFF8E1", "border": "1px solid #FF9800", "icon": "#FF9800", "text": "#1C1C21" },
+      "spacing": { "padding": "12px 14px", "gap": "10px" }
+    },
+    "behavior": {
+      "states": ["warning"],
+      "interactions": "Display-only warning about duplicate request",
+      "animations": "—"
+    },
+    "usage_rules": {
+      "use_when": ["Duplicate transaction warnings"],
+      "never_use_when": ["Non-duplicate contexts"],
+      "max_per_screen": 1,
+      "required_companions": [],
+      "excluded_screens": []
+    },
+    "context_mapping": {
+      "flows": ["Duplicate send detection"],
+      "screen_types": ["Warning"],
+      "priority_score": 7,
+      "typical_position": "Above amount/confirmation"
+    },
+    "accessibility": {
+      "min_touch_target": "—",
+      "screen_reader_label": "Warning - [duplicate message]",
+      "color_contrast_ratio": "4.5:1"
+    },
+    "localization": {
+      "supports_rtl": true,
+      "swahili_compatibility": true,
+      "text_max_length": 60
+    },
+    "compliance": {
+      "regulatory_required": false,
+      "authority": "",
+      "rule_reference": ""
+    }
+  },
+  {
+    "component_id": "state_rate_limit",
+    "name": "Rate Limit Notification",
+    "category": "Feedback",
+    "subcategory": "States",
+    "visual_properties": {
+      "height": "auto",
+      "width": "100%",
+      "background": "#FFF1F2",
+      "border_radius": "12px",
+      "typography": "Switzer 14px Bold (title); 12px (desc)",
+      "colors": { "background": "#FFF1F2", "icon_bg": "#FE353D", "icon": "#FFFFFF", "title": "#1C1C21", "desc": "#7C7C87" },
+      "spacing": { "padding": "14px", "text_align": "center" }
+    },
+    "behavior": {
+      "states": ["rate-limited"],
+      "interactions": "Display-only; describes wait time",
+      "animations": "—"
+    },
+    "usage_rules": {
+      "use_when": ["Too many requests (rate limit)"],
+      "never_use_when": ["Normal operation"],
+      "max_per_screen": 1,
+      "required_companions": [],
+      "excluded_screens": []
+    },
+    "context_mapping": {
+      "flows": ["OTP resend limit", "API limits"],
+      "screen_types": ["Error State"],
+      "priority_score": 7,
+      "typical_position": "Center of limited screen"
+    },
+    "accessibility": {
+      "min_touch_target": "—",
+      "screen_reader_label": "Too many requests - wait [n] seconds",
+      "color_contrast_ratio": "4.5:1"
+    },
+    "localization": {
+      "supports_rtl": true,
+      "swahili_compatibility": true,
+      "text_max_length": 60
+    },
+    "compliance": {
+      "regulatory_required": false,
+      "authority": "",
+      "rule_reference": ""
+    }
+  },
+  {
+    "component_id": "onboard_carousel",
+    "name": "Feature Carousel Box",
+    "category": "Display",
+    "subcategory": "Onboarding",
+    "visual_properties": {
+      "height": "auto",
+      "width": "100%",
+      "background": "linear-gradient(135deg,#C41520,#FE353D)",
+      "border_radius": "14px",
+      "typography": "Switzer 20px Bold (title); 13px (desc)",
+      "colors": { "background": "linear-gradient(#C41520,#FE353D)", "text": "#FFFFFF", "icon_bg": "rgba(255,255,255,0.2)", "decor": "rgba(255,255,255,0.1)" },
+      "spacing": { "padding": "24px 20px", "text_align": "center" }
+    },
+    "behavior": {
+      "states": ["active", "inactive"],
+      "interactions": "Swipe through feature onboarding slides; dots indicate position",
+      "animations": "slide transition"
+    },
+    "usage_rules": {
+      "use_when": ["Onboarding feature intro"],
+      "never_use_when": ["In-app content"],
+      "max_per_screen": 1,
+      "required_companions": ["Carousel Dots"],
+      "excluded_screens": ["In-app screens"]
+    },
+    "context_mapping": {
+      "flows": ["App Walkthrough", "Onboarding"],
+      "screen_types": ["Onboarding"],
+      "priority_score": 7,
+      "typical_position": "Center of onboarding slide"
+    },
+    "accessibility": {
+      "min_touch_target": "— (swipe)",
+      "screen_reader_label": "Onboarding - [title], slide [n] of [m]",
+      "color_contrast_ratio": "4.5:1 (white on red)"
+    },
+    "localization": {
+      "supports_rtl": true,
+      "swahili_compatibility": true,
+      "text_max_length": 60
+    },
+    "compliance": {
+      "regulatory_required": false,
+      "authority": "",
+      "rule_reference": ""
+    }
+  },
+  {
+    "component_id": "onboard_faq",
+    "name": "FAQ Accordion",
+    "category": "Display",
+    "subcategory": "Onboarding",
+    "visual_properties": {
+      "height": "auto",
+      "width": "100%",
+      "background": "#FFFFFF",
+      "border_radius": "12px",
+      "typography": "Switzer 13px SemiBold (question); Inter 12px (answer)",
+      "colors": { "background": "#FFFFFF", "question": "#1C1C21", "answer": "#7C7C87", "divider": "#F0F0F0", "shadow": "0 2px 8px rgba(0,0,0,0.04)" },
+      "spacing": { "question_padding": "14px", "answer_padding": "0 14px 14px" }
+    },
+    "behavior": {
+      "states": ["closed", "open"],
+      "interactions": "Tap question toggles answer; chevron rotates 180°",
+      "animations": "transform 0.2s on chevron"
+    },
+    "usage_rules": {
+      "use_when": ["FAQ, help sections"],
+      "never_use_when": ["Dense content"],
+      "max_per_screen": 10,
+      "required_companions": [],
+      "excluded_screens": []
+    },
+    "context_mapping": {
+      "flows": ["Help", "Terms & Conditions"],
+      "screen_types": ["Education"],
+      "priority_score": 5,
+      "typical_position": "Stacked in FAQ list"
+    },
+    "accessibility": {
+      "min_touch_target": "48px (question)",
+      "screen_reader_label": "FAQ - [question], expanded or collapsed",
+      "color_contrast_ratio": "4.5:1"
+    },
+    "localization": {
+      "supports_rtl": true,
+      "swahili_compatibility": true,
+      "text_max_length": 120
+    },
+    "compliance": {
+      "regulatory_required": false,
+      "authority": "",
+      "rule_reference": ""
+    }
+  },
+  {
+    "component_id": "onboard_tip",
+    "name": "Helper Tip Card",
+    "category": "Feedback",
+    "subcategory": "Education",
+    "visual_properties": {
+      "height": "auto",
+      "width": "100%",
+      "background": "#E3F2FD",
+      "border_radius": "12px",
+      "typography": "Switzer 12px",
+      "colors": { "background": "#E3F2FD", "icon": "#1976D2", "text": "#1C1C21" },
+      "spacing": { "padding": "12px 14px", "gap": "10px" }
+    },
+    "behavior": {
+      "states": ["default"],
+      "interactions": "Display-only educational tip",
+      "animations": "—"
+    },
+    "usage_rules": {
+      "use_when": ["Pro tips, contextual help"],
+      "never_use_when": ["Critical alerts"],
+      "max_per_screen": 1,
+      "required_companions": [],
+      "excluded_screens": []
+    },
+    "context_mapping": {
+      "flows": ["Favourites onboarding", "Education"],
+      "screen_types": ["Education"],
+      "priority_score": 4,
+      "typical_position": "Below relevant content"
+    },
+    "accessibility": {
+      "min_touch_target": "—",
+      "screen_reader_label": "Tip - [text]",
+      "color_contrast_ratio": "4.5:1"
+    },
+    "localization": {
+      "supports_rtl": true,
+      "swahili_compatibility": true,
+      "text_max_length": 100
+    },
+    "compliance": {
+      "regulatory_required": false,
+      "authority": "",
+      "rule_reference": ""
+    }
+  },
+  {
+    "component_id": "onboard_milestone",
+    "name": "Milestone Achievement Popup",
+    "category": "Feedback",
+    "subcategory": "Education",
+    "visual_properties": {
+      "height": "auto",
+      "width": "100%",
+      "background": "linear-gradient(135deg,#FFD700,#FFA500)",
+      "border_radius": "14px",
+      "typography": "Switzer 16px Bold (title); 12px (desc)",
+      "colors": { "background": "linear-gradient(#FFD700,#FFA500)", "text": "#FFFFFF", "icon_bg": "rgba(255,255,255,0.25)" },
+      "spacing": { "padding": "16px", "text_align": "center" }
+    },
+    "behavior": {
+      "states": ["celebration"],
+      "interactions": "Display-only milestone celebration (100th transaction)",
+      "animations": "—"
+    },
+    "usage_rules": {
+      "use_when": ["Reward/achievement celebrations"],
+      "never_use_when": ["Regular info"],
+      "max_per_screen": 1,
+      "required_companions": [],
+      "excluded_screens": []
+    },
+    "context_mapping": {
+      "flows": ["Rewards", "Gamification"],
+      "screen_types": ["Popup"],
+      "priority_score": 5,
+      "typical_position": "Popup overlay"
+    },
+    "accessibility": {
+      "min_touch_target": "—",
+      "screen_reader_label": "Milestone - [title], [description]",
+      "color_contrast_ratio": "4.5:1 (white on gold)"
+    },
+    "localization": {
+      "supports_rtl": true,
+      "swahili_compatibility": true,
+      "text_max_length": 60
+    },
+    "compliance": {
+      "regulatory_required": false,
+      "authority": "",
+      "rule_reference": ""
+    }
+  },
+  {
+    "component_id": "display_avatar",
+    "name": "Avatar",
+    "category": "Display",
+    "subcategory": "Avatars",
+    "visual_properties": {
+      "height": "72px",
+      "width": "72px",
+      "background": "#FFDFE0 (image) / gradient #FE353D→#A41016 (initials)",
+      "border_radius": "50%",
+      "typography": "Poppins 22px Bold (initials)",
+      "colors": { "image_bg": "#FFDFE0", "initials_bg": "linear-gradient(135deg,#FE353D,#A41016)", "initials_text": "#FFFFFF", "shadow": "0 4px 14px rgba(254,53,61,0.35)" },
+      "spacing": { "image_cover": "object-fit cover" }
+    },
+    "behavior": {
+      "states": ["image", "initials"],
+      "interactions": "Display-only; links to profile in some contexts",
+      "animations": "—"
+    },
+    "usage_rules": {
+      "use_when": ["Profile, contact, chat avatars"],
+      "never_use_when": ["—"],
+      "max_per_screen": 20,
+      "required_companions": [],
+      "excluded_screens": []
+    },
+    "context_mapping": {
+      "flows": ["Profile", "Contacts", "Chat"],
+      "screen_types": ["Profile", "List", "Chat"],
+      "priority_score": 8,
+      "typical_position": "Leading position in rows/cards"
+    },
+    "accessibility": {
+      "min_touch_target": "— (display)",
+      "screen_reader_label": "Avatar - [person name]",
+      "color_contrast_ratio": "4.5:1"
+    },
+    "localization": {
+      "supports_rtl": false,
+      "swahili_compatibility": true,
+      "text_max_length": 3
+    },
+    "compliance": {
+      "regulatory_required": false,
+      "authority": "",
+      "rule_reference": ""
+    }
+  },
+  {
+    "component_id": "display_profile_header",
+    "name": "Profile Header",
+    "category": "Display",
+    "subcategory": "Avatars",
+    "visual_properties": {
+      "height": "auto",
+      "width": "100%",
+      "background": "transparent",
+      "border_radius": "—",
+      "typography": "Switzer 20px Bold (name); 14px (phone)",
+      "colors": { "avatar_bg": "#FFDFE0", "name": "#1C1C21", "phone": "#7C7C87" },
+      "spacing": { "padding": "20px", "text_align": "center", "gap": "8px" }
+    },
+    "behavior": {
+      "states": ["default"],
+      "interactions": "Display-only profile identity block",
+      "animations": "—"
+    },
+    "usage_rules": {
+      "use_when": ["Profile screen, account info"],
+      "never_use_when": ["Auth screens"],
+      "max_per_screen": 1,
+      "required_companions": ["Avatar", "Profile Info Card"],
+      "excluded_screens": ["Auth"]
+    },
+    "context_mapping": {
+      "flows": ["Profile"],
+      "screen_types": ["Profile"],
+      "priority_score": 7,
+      "typical_position": "Top of profile screen, below app bar"
+    },
+    "accessibility": {
+      "min_touch_target": "—",
+      "screen_reader_label": "Profile - [name], phone [number]",
+      "color_contrast_ratio": "4.5:1"
+    },
+    "localization": {
+      "supports_rtl": false,
+      "swahili_compatibility": true,
+      "text_max_length": 40
+    },
+    "compliance": {
+      "regulatory_required": false,
+      "authority": "",
+      "rule_reference": ""
+    }
+  },
+  {
+    "component_id": "display_profile_info",
+    "name": "Profile Info Card",
+    "category": "Display",
+    "subcategory": "Cards",
+    "visual_properties": {
+      "height": "auto",
+      "width": "100%",
+      "background": "#FFFFFF",
+      "border_radius": "14px",
+      "typography": "Switzer 14px (label); 14px SemiBold (value)",
+      "colors": { "background": "#FFFFFF", "label": "#7C7C87", "value": "#1C1C21", "shadow": "0 2px 8px rgba(0,0,0,0.04)" },
+      "spacing": { "padding": "16px", "row_gap": "14px" }
+    },
+    "behavior": {
+      "states": ["default"],
+      "interactions": "Display-only profile details (Name, Phone, Nationality)",
+      "animations": "—"
+    },
+    "usage_rules": {
+      "use_when": ["Showing read-only profile fields"],
+      "never_use_when": ["Editable forms (use Text Field)"],
+      "max_per_screen": 1,
+      "required_companions": ["Profile Header"],
+      "excluded_screens": []
+    },
+    "context_mapping": {
+      "flows": ["Profile", "Confirm Profile"],
+      "screen_types": ["Profile"],
+      "priority_score": 7,
+      "typical_position": "Below profile header"
+    },
+    "accessibility": {
+      "min_touch_target": "—",
+      "screen_reader_label": "Profile info - [fields]",
+      "color_contrast_ratio": "4.5:1"
+    },
+    "localization": {
+      "supports_rtl": false,
+      "swahili_compatibility": true,
+      "text_max_length": 40
+    },
+    "compliance": {
+      "regulatory_required": false,
+      "authority": "",
+      "rule_reference": ""
+    }
+  },
+  {
+    "component_id": "auth_footer_links",
+    "name": "Footer Links",
+    "category": "Navigation",
+    "subcategory": "Footer",
+    "visual_properties": {
+      "height": "auto",
+      "width": "100%",
+      "background": "transparent",
+      "border_radius": "—",
+      "typography": "Switzer 13px Medium",
+      "colors": { "link": "#1C1C21", "icon": "#1C1C21", "divider": "#E8E8EC" },
+      "spacing": { "gap": "16px", "divider": "1px vertical" }
+    },
+    "behavior": {
+      "states": ["default", "pressed"],
+      "interactions": "Tap navigates to contact/terms pages",
+      "animations": "—"
+    },
+    "usage_rules": {
+      "use_when": ["Auth/footer legal & support links"],
+      "never_use_when": ["Primary navigation"],
+      "max_per_screen": 4,
+      "required_companions": [],
+      "excluded_screens": []
+    },
+    "context_mapping": {
+      "flows": ["Auth bottom", "Legal links"],
+      "screen_types": ["Auth"],
+      "priority_score": 4,
+      "typical_position": "Bottom of auth screen"
+    },
+    "accessibility": {
+      "min_touch_target": "44px",
+      "screen_reader_label": "Footer link - [text]",
+      "color_contrast_ratio": "4.5:1"
+    },
+    "localization": {
+      "supports_rtl": true,
+      "swahili_compatibility": true,
+      "text_max_length": 30
+    },
+    "compliance": {
+      "regulatory_required": true,
+      "authority": "Terms of Service",
+      "rule_reference": "Must be accessible on auth screens"
+    }
+  },
+  {
+    "component_id": "display_keypad",
+    "name": "Numeric Keypad",
+    "category": "Input",
+    "subcategory": "Keypads",
+    "visual_properties": {
+      "height": "auto",
+      "width": "100% (3-col grid)",
+      "background": "transparent",
+      "border_radius": "—",
+      "typography": "Inter 24px (keys)",
+      "colors": { "key_bg": "transparent", "key_text": "#1C1C21", "delete_icon": "#1C1C21" },
+      "spacing": { "grid": "3 columns × 4 rows", "key_padding": "16px" }
+    },
+    "behavior": {
+      "states": ["key", "empty", "delete"],
+      "interactions": "Tap keys to enter digits; delete key backspaces; used with PIN/amount input",
+      "animations": "press feedback"
+    },
+    "usage_rules": {
+      "use_when": ["PIN entry, amount entry"],
+      "never_use_when": ["Full QWERTY input"],
+      "max_per_screen": 1,
+      "required_companions": ["PIN Input", "Amount Input"],
+      "excluded_screens": []
+    },
+    "context_mapping": {
+      "flows": ["All PIN entry", "Amount entry"],
+      "screen_types": ["Auth", "Amount Entry"],
+      "priority_score": 9,
+      "typical_position": "Bottom half of entry screen"
+    },
+    "accessibility": {
+      "min_touch_target": "48px",
+      "screen_reader_label": "Keypad - digit [n], delete key",
+      "color_contrast_ratio": "4.5:1"
+    },
+    "localization": {
+      "supports_rtl": false,
+      "swahili_compatibility": true,
+      "text_max_length": null
+    },
+    "compliance": {
+      "regulatory_required": true,
+      "authority": "M-PESA security",
+      "rule_reference": "Digits must not echo in PIN entry"
+    }
+  },
+  {
+    "component_id": "recipient_pill",
+    "name": "Recipient Pill (Straddling Boundary)",
+    "category": "Display",
+    "subcategory": "Cards",
+    "visual_properties": {
+      "height": "~56px",
+      "width": "88% (max)",
+      "background": "#FFFFFF",
+      "border_radius": "16px",
+      "typography": "Switzer 13px SemiBold (name); 11.5px (sub)",
+      "colors": { "background": "#FFFFFF", "avatar_bg": "#E8E8EC", "avatar_text": "#1C1C21", "logo_bg": "#F5F5F5", "name": "#1C1C21", "sub": "#7C7C87", "shadow": "0 6px 18px rgba(0,0,0,0.10)" },
+      "spacing": { "padding": "8px 16px", "gap": "10px" }
+    },
+    "behavior": {
+      "states": ["default"],
+      "interactions": "Display-only recipient summary; straddles header/content boundary with translate(-50%, 50%)",
+      "animations": "—"
+    },
+    "usage_rules": {
+      "use_when": ["Amount entry screens showing recipient context"],
+      "never_use_when": ["PIN entry (use Review Card)"],
+      "max_per_screen": 1,
+      "required_companions": ["Amount Display", "Keypad"],
+      "excluded_screens": []
+    },
+    "context_mapping": {
+      "flows": ["Transfer to Wallet", "Transfer to Bank", "Airtime"],
+      "screen_types": ["Amount Entry"],
+      "priority_score": 8,
+      "typical_position": "Straddling the red header / content boundary"
+    },
+    "accessibility": {
+      "min_touch_target": "— (display)",
+      "screen_reader_label": "Recipient - [name], [wallet/bank], [phone]",
+      "color_contrast_ratio": "4.5:1"
+    },
+    "localization": {
+      "supports_rtl": false,
+      "swahili_compatibility": true,
+      "text_max_length": 40
+    },
+    "compliance": {
+      "regulatory_required": false,
+      "authority": "",
+      "rule_reference": ""
+    }
+  },
+  {
+    "component_id": "amount_display_caret",
+    "name": "Large Amount Display with Blinking Caret",
+    "category": "Display",
+    "subcategory": "Typography",
+    "visual_properties": {
+      "height": "auto",
+      "width": "auto",
+      "background": "transparent",
+      "border_radius": "—",
+      "typography": "Switzer 52px Bold letter-spacing -2px (value); 20px Medium (currency)",
+      "colors": { "value": "#FFFFFF", "caret": "#FFFFFF", "currency": "rgba(255,255,255,0.85)" },
+      "spacing": { "gap": "8px", "caret": "3px × 42px" }
+    },
+    "behavior": {
+      "states": ["editing", "idle"],
+      "interactions": "Shows large amount being entered with blinking caret; updates live as digits pressed",
+      "animations": "caret-blink 1s step-end infinite"
+    },
+    "usage_rules": {
+      "use_when": ["Amount entry screens with red gradient header"],
+      "never_use_when": ["Display-only amounts"],
+      "max_per_screen": 1,
+      "required_companions": ["Keypad", "Recipient Pill"],
+      "excluded_screens": []
+    },
+    "context_mapping": {
+      "flows": ["Transfer amount", "Airtime amount"],
+      "screen_types": ["Amount Entry"],
+      "priority_score": 9,
+      "typical_position": "Centered in red gradient header"
+    },
+    "accessibility": {
+      "min_touch_target": "— (display)",
+      "screen_reader_label": "Amount being entered: [value]",
+      "color_contrast_ratio": "4.5:1 (white on red)"
+    },
+    "localization": {
+      "supports_rtl": false,
+      "swahili_compatibility": true,
+      "text_max_length": 15
+    },
+    "compliance": {
+      "regulatory_required": false,
+      "authority": "",
+      "rule_reference": ""
+    }
+  },
+  {
+    "component_id": "funding_account_selector",
+    "name": "Funding Account Selector",
+    "category": "Input",
+    "subcategory": "Selection",
+    "visual_properties": {
+      "height": "~64px (per option)",
+      "width": "100%",
+      "background": "#FFFFFF",
+      "border_radius": "14px",
+      "typography": "Switzer 13px SemiBold (name); 12px Medium (balance); 10px SemiBold (tag)",
+      "colors": { "background": "#FFFFFF", "border": "1.5px solid #E8E8EC", "selected_border": "#FE353D", "selected_bg": "#FFF7F7 / #FFF1F2", "disabled": "opacity 0.55", "radio": "#FE353D", "tag": "#FF9800" },
+      "spacing": { "padding": "9px 12px", "gap": "10px" }
+    },
+    "behavior": {
+      "states": ["unselected", "selected", "disabled(low balance)"],
+      "interactions": "Tap selects funding account (Main/Reward); disabled option shows 'Low balance' tag; auto-switches if selected account becomes insufficient",
+      "animations": "transition all 0.18s"
+    },
+    "usage_rules": {
+      "use_when": ["Choosing funding source for payment"],
+      "never_use_when": ["Single-account flows"],
+      "max_per_screen": 2,
+      "required_companions": ["Amount Display", "Fee Line"],
+      "excluded_screens": []
+    },
+    "context_mapping": {
+      "flows": ["Transfer", "Airtime", "Bill Payment", "Merchant Payment"],
+      "screen_types": ["Amount Entry"],
+      "priority_score": 8,
+      "typical_position": "Below amount display, above keypad"
+    },
+    "accessibility": {
+      "min_touch_target": "48px",
+      "screen_reader_label": "Funding account - [name], balance [amount], selected or disabled",
+      "color_contrast_ratio": "4.5:1"
+    },
+    "localization": {
+      "supports_rtl": false,
+      "swahili_compatibility": true,
+      "text_max_length": 20
+    },
+    "compliance": {
+      "regulatory_required": false,
+      "authority": "",
+      "rule_reference": ""
+    }
+  },
+  {
+    "component_id": "inline_validation_message",
+    "name": "Inline Validation Message",
+    "category": "Feedback",
+    "subcategory": "Messages",
+    "visual_properties": {
+      "height": "18px",
+      "width": "auto",
+      "background": "transparent",
+      "border_radius": "—",
+      "typography": "Switzer 12.5px Medium",
+      "colors": { "warn_icon": "#FE353D", "warn_text": "#FE353D", "info_icon": "#FF9800", "info_text": "#9a6a00" },
+      "spacing": { "gap": "6px", "min_height": "18px" }
+    },
+    "behavior": {
+      "states": ["hidden", "warn", "info"],
+      "interactions": "Shows contextual validation (min amount, limit exceeded, insufficient balance, using other account)",
+      "animations": "—"
+    },
+    "usage_rules": {
+      "use_when": ["Inline amount validation feedback"],
+      "never_use_when": ["Field-level errors (use Field Error)"],
+      "max_per_screen": 1,
+      "required_companions": ["Amount Display"],
+      "excluded_screens": []
+    },
+    "context_mapping": {
+      "flows": ["Transfer amount", "Airtime amount"],
+      "screen_types": ["Amount Entry"],
+      "priority_score": 7,
+      "typical_position": "Below amount display, above fee line"
+    },
+    "accessibility": {
+      "min_touch_target": "— (informational)",
+      "screen_reader_label": "[warning/info] - [message]",
+      "color_contrast_ratio": "4.5:1"
+    },
+    "localization": {
+      "supports_rtl": true,
+      "swahili_compatibility": true,
+      "text_max_length": 60
+    },
+    "compliance": {
+      "regulatory_required": false,
+      "authority": "",
+      "rule_reference": ""
+    }
+  },
+  {
+    "component_id": "fee_line",
+    "name": "Fee Line",
+    "category": "Display",
+    "subcategory": "Typography",
+    "visual_properties": {
+      "height": "auto",
+      "width": "auto",
+      "background": "transparent",
+      "border_radius": "—",
+      "typography": "Switzer 12.5px",
+      "colors": { "label": "#1C1C21", "info_icon": "#7C7C87" },
+      "spacing": { "gap": "6px" }
+    },
+    "behavior": {
+      "states": ["hidden", "shown"],
+      "interactions": "Shows transaction fee with info icon; appears when amount valid",
+      "animations": "—"
+    },
+    "usage_rules": {
+      "use_when": ["Showing transaction fees on amount screens"],
+      "never_use_when": ["Fee display on receipts (use detail rows)"],
+      "max_per_screen": 1,
+      "required_companions": ["Amount Display"],
+      "excluded_screens": []
+    },
+    "context_mapping": {
+      "flows": ["Transfer", "Airtime", "Bill Payment"],
+      "screen_types": ["Amount Entry"],
+      "priority_score": 6,
+      "typical_position": "Below amount display / validation message"
+    },
+    "accessibility": {
+      "min_touch_target": "— (informational)",
+      "screen_reader_label": "Fee [amount]",
+      "color_contrast_ratio": "4.5:1"
+    },
+    "localization": {
+      "supports_rtl": false,
+      "swahili_compatibility": true,
+      "text_max_length": 20
+    },
+    "compliance": {
+      "regulatory_required": true,
+      "authority": "Fee disclosure policy",
+      "rule_reference": "Transaction fees must be shown before confirmation"
+    }
+  },
+  {
+    "component_id": "btn_disabled_active",
+    "name": "Disabled/Active Continue Button",
+    "category": "Actions",
+    "subcategory": "Buttons",
+    "visual_properties": {
+      "height": "48-52px",
+      "width": "100%",
+      "background": "#E0E0E0 (disabled) / #FE353D (active)",
+      "border_radius": "14px",
+      "typography": "Poppins 15px Medium",
+      "colors": { "disabled_bg": "#E0E0E0", "disabled_text": "#7C7C87", "active_bg": "#FE353D", "active_text": "#FFFFFF", "active_shadow": "0 4px 16px rgba(254,53,61,0.25)" },
+      "spacing": { "padding": "0", "margin_top": "8px" }
+    },
+    "behavior": {
+      "states": ["disabled", "active", "hover", "pressed"],
+      "interactions": "Disabled until valid input; becomes red active when criteria met; tap proceeds",
+      "animations": "transition all 0.2s; hover translateY(-1px); active scale(0.98)"
+    },
+    "usage_rules": {
+      "use_when": ["Continue/confirm buttons gated on validation"],
+      "never_use_when": ["Always-enabled actions"],
+      "max_per_screen": 1,
+      "required_companions": ["Validation logic"],
+      "excluded_screens": []
+    },
+    "context_mapping": {
+      "flows": ["All payment flows"],
+      "screen_types": ["Amount Entry", "Form"],
+      "priority_score": 9,
+      "typical_position": "Bottom bar / below keypad"
+    },
+    "accessibility": {
+      "min_touch_target": "48px",
+      "screen_reader_label": "Continue button, disabled or enabled",
+      "color_contrast_ratio": "4.5:1 (white on red when active)"
+    },
+    "localization": {
+      "supports_rtl": false,
+      "swahili_compatibility": true,
+      "text_max_length": 20
+    },
+    "compliance": {
+      "regulatory_required": false,
+      "authority": "",
+      "rule_reference": ""
+    }
+  },
+  {
+    "component_id": "provider_selection_card",
+    "name": "Provider Selection Card",
+    "category": "Input",
+    "subcategory": "Selection",
+    "visual_properties": {
+      "height": "~52px",
+      "width": "flex (1 per row)",
+      "background": "#FFFFFF",
+      "border_radius": "14px",
+      "typography": "Switzer 13px SemiBold",
+      "colors": { "background": "#FFFFFF", "border": "1.5px solid #E8E8EC", "active_border": "#FE353D", "active_bg": "#FFF1F2", "logo_bg": "#FFFFFF", "radio": "#FE353D", "shadow": "0 2px 8px rgba(0,0,0,0.04)" },
+      "spacing": { "padding": "10px 12px", "gap": "10px" }
+    },
+    "behavior": {
+      "states": ["inactive", "active", "hover"],
+      "interactions": "Tap selects telecom provider (Safaricom/Ethiotele); active shows red border + radio dot",
+      "animations": "transition all 0.18s"
+    },
+    "usage_rules": {
+      "use_when": ["Choosing telecom provider for airtime/package"],
+      "never_use_when": ["Bank selection (use Bank Selector)"],
+      "max_per_screen": 2,
+      "required_companions": ["Phone Input", "Amount Grid"],
+      "excluded_screens": []
+    },
+    "context_mapping": {
+      "flows": ["Airtime", "Package"],
+      "screen_types": ["Selection"],
+      "priority_score": 7,
+      "typical_position": "Top of airtime/package buy screen"
+    },
+    "accessibility": {
+      "min_touch_target": "48px",
+      "screen_reader_label": "Provider - [name], selected or not",
+      "color_contrast_ratio": "4.5:1"
+    },
+    "localization": {
+      "supports_rtl": false,
+      "swahili_compatibility": true,
+      "text_max_length": 20
+    },
+    "compliance": {
+      "regulatory_required": false,
+      "authority": "",
+      "rule_reference": ""
+    }
+  },
+  {
+    "component_id": "recipient_self_other_toggle",
+    "name": "Recipient Self/Other Toggle",
+    "category": "Input",
+    "subcategory": "Selection",
+    "visual_properties": {
+      "height": "40px",
+      "width": "auto",
+      "background": "transparent",
+      "border_radius": "7px",
+      "typography": "Switzer 12px SemiBold",
+      "colors": { "inactive_text": "#7C7C87", "active_bg": "#FFFFFF", "active_text": "#1C1C21", "active_shadow": "0 1px 4px rgba(0,0,0,0.08)" },
+      "spacing": { "padding": "0 14px", "gap": "6px" }
+    },
+    "behavior": {
+      "states": ["self", "other"],
+      "interactions": "Tap toggles between sending to self vs other number; embedded in phone input container",
+      "animations": "transition all 0.2s"
+    },
+    "usage_rules": {
+      "use_when": ["Airtime/package recipient selection"],
+      "never_use_when": ["Transfer flows (recipient chosen separately)"],
+      "max_per_screen": 1,
+      "required_companions": ["Phone Input", "Contacts Button"],
+      "excluded_screens": []
+    },
+    "context_mapping": {
+      "flows": ["Airtime", "Package"],
+      "screen_types": ["Selection"],
+      "priority_score": 6,
+      "typical_position": "Inside phone input container"
+    },
+    "accessibility": {
+      "min_touch_target": "40px",
+      "screen_reader_label": "Recipient toggle - [Self/Other]",
+      "color_contrast_ratio": "4.5:1"
+    },
+    "localization": {
+      "supports_rtl": false,
+      "swahili_compatibility": true,
+      "text_max_length": 10
+    },
+    "compliance": {
+      "regulatory_required": false,
+      "authority": "",
+      "rule_reference": ""
+    }
+  },
+  {
+    "component_id": "contacts_button",
+    "name": "Contacts Button (Input Accessory)",
+    "category": "Actions",
+    "subcategory": "Icon Buttons",
+    "visual_properties": {
+      "height": "40px",
+      "width": "40px",
+      "background": "#FFFFFF",
+      "border_radius": "10px",
+      "typography": "—",
+      "colors": { "background": "#FFFFFF", "border": "1.5px solid #E8E8EC", "icon": "#7C7C87", "hover_border": "#FE353D", "hover_bg": "#FFF1F2" },
+      "spacing": { "padding": "0" }
+    },
+    "behavior": {
+      "states": ["default", "hover"],
+      "interactions": "Tap opens contacts bottom sheet to pick a number",
+      "animations": "transition all 0.2s"
+    },
+    "usage_rules": {
+      "use_when": ["Phone input with contact picker"],
+      "never_use_when": ["No contact selection needed"],
+      "max_per_screen": 1,
+      "required_companions": ["Phone Input", "Contacts Bottom Sheet"],
+      "excluded_screens": []
+    },
+    "context_mapping": {
+      "flows": ["Airtime", "Package", "Transfer recipient"],
+      "screen_types": ["Form"],
+      "priority_score": 6,
+      "typical_position": "Right side of phone input container"
+    },
+    "accessibility": {
+      "min_touch_target": "40px",
+      "screen_reader_label": "Select from contacts",
+      "color_contrast_ratio": "4.5:1"
+    },
+    "localization": {
+      "supports_rtl": false,
+      "swahili_compatibility": true,
+      "text_max_length": null
+    },
+    "compliance": {
+      "regulatory_required": false,
+      "authority": "",
+      "rule_reference": ""
+    }
+  },
+  {
+    "component_id": "service_tabs",
+    "name": "Service Tabs (Airtime/Packages)",
+    "category": "Navigation",
+    "subcategory": "Tabs",
+    "visual_properties": {
+      "height": "46px",
+      "width": "100%",
+      "background": "#FE353D",
+      "border_radius": "14px",
+      "typography": "Switzer 13px SemiBold",
+      "colors": { "background": "#FE353D", "border": "1.5px solid #FE353D", "active_bg": "#FFFFFF", "active_text": "#FE353D", "inactive_text": "rgba(255,255,255,0.7)", "active_shadow": "0 2px 8px rgba(0,0,0,0.08)" },
+      "spacing": { "padding": "3px", "gap": "0" }
+    },
+    "behavior": {
+      "states": ["active", "inactive", "favorite"],
+      "interactions": "Tap switches between Airtime and Packages; favorite icon tab opens favorites sheet",
+      "animations": "transition all 0.18s"
+    },
+    "usage_rules": {
+      "use_when": ["Airtime vs Package mode switching"],
+      "never_use_when": ["General content tabs"],
+      "max_per_screen": 1,
+      "required_companions": ["Provider Cards", "Amount Grid / Package Grid"],
+      "excluded_screens": []
+    },
+    "context_mapping": {
+      "flows": ["Airtime", "Package"],
+      "screen_types": ["Selection"],
+      "priority_score": 7,
+      "typical_position": "Below phone input"
+    },
+    "accessibility": {
+      "min_touch_target": "40px",
+      "screen_reader_label": "Service tabs - [Airtime/Packages]",
+      "color_contrast_ratio": "4.5:1"
+    },
+    "localization": {
+      "supports_rtl": false,
+      "swahili_compatibility": true,
+      "text_max_length": 12
+    },
+    "compliance": {
+      "regulatory_required": false,
+      "authority": "",
+      "rule_reference": ""
+    }
+  },
+  {
+    "component_id": "amount_grid_card",
+    "name": "Airtime Amount Grid Card",
+    "category": "Input",
+    "subcategory": "Selection",
+    "visual_properties": {
+      "height": "~64px",
+      "width": "1/3 of grid",
+      "background": "#FFFFFF",
+      "border_radius": "14px",
+      "typography": "Switzer 20px Bold (value); Inter 13px Medium (currency)",
+      "colors": { "background": "#FFFFFF", "border": "1.5px solid #E8E8EC", "active_bg": "#FE353D", "active_text": "#FFFFFF", "active_currency": "rgba(255,255,255,0.8)", "shadow": "0 2px 8px rgba(0,0,0,0.04)" },
+      "spacing": { "padding": "14px 12px", "gap": "6px", "grid": "3 columns" }
+    },
+    "behavior": {
+      "states": ["inactive", "active", "hover"],
+      "interactions": "Tap selects preset airtime amount; active shows red fill with white text",
+      "animations": "transition all 0.18s; hover translateY(-1px)"
+    },
+    "usage_rules": {
+      "use_when": ["Preset airtime amount selection"],
+      "never_use_when": ["Custom amounts only"],
+      "max_per_screen": 9,
+      "required_companions": ["Custom Amount Input", "Funding Selector"],
+      "excluded_screens": []
+    },
+    "context_mapping": {
+      "flows": ["Airtime"],
+      "screen_types": ["Selection"],
+      "priority_score": 7,
+      "typical_position": "Grid below service tabs"
+    },
+    "accessibility": {
+      "min_touch_target": "48px",
+      "screen_reader_label": "Airtime amount [value] Birr, selected or not",
+      "color_contrast_ratio": "4.5:1"
+    },
+    "localization": {
+      "supports_rtl": false,
+      "swahili_compatibility": true,
+      "text_max_length": 10
+    },
+    "compliance": {
+      "regulatory_required": false,
+      "authority": "",
+      "rule_reference": ""
+    }
+  },
+  {
+    "component_id": "package_category_tabs",
+    "name": "Package Category Tabs",
+    "category": "Navigation",
+    "subcategory": "Tabs",
+    "visual_properties": {
+      "height": "36px",
+      "width": "auto",
+      "background": "#FFFFFF",
+      "border_radius": "20px (pill ends)",
+      "typography": "Switzer 12px SemiBold",
+      "colors": { "background": "#FFFFFF", "border": "1.5px solid #E8E8EC", "active_bg": "#FE353D", "active_text": "#FFFFFF", "inactive_text": "#7C7C87", "active_shadow": "0 2px 8px rgba(254,53,61,0.2)" },
+      "spacing": { "padding": "7px 14px", "gap": "0", "border_radius": "20px 0 0 20px (first) / 0 20px 20px 0 (last)" }
+    },
+    "behavior": {
+      "states": ["inactive", "active", "hover"],
+      "interactions": "Tap switches package category (Data, Voice, SMS, Combo, Unlimited); horizontally scrollable",
+      "animations": "transition all 0.18s"
+    },
+    "usage_rules": {
+      "use_when": ["Package category filtering"],
+      "never_use_when": ["Airtime amounts"],
+      "max_per_screen": 1,
+      "required_companions": ["Package Cards"],
+      "excluded_screens": []
+    },
+    "context_mapping": {
+      "flows": ["Package"],
+      "screen_types": ["Selection"],
+      "priority_score": 6,
+      "typical_position": "Above package grid, horizontally scrollable"
+    },
+    "accessibility": {
+      "min_touch_target": "36px",
+      "screen_reader_label": "Package category - [name], selected or not",
+      "color_contrast_ratio": "4.5:1"
+    },
+    "localization": {
+      "supports_rtl": false,
+      "swahili_compatibility": true,
+      "text_max_length": 15
+    },
+    "compliance": {
+      "regulatory_required": false,
+      "authority": "",
+      "rule_reference": ""
+    }
+  },
+  {
+    "component_id": "package_card",
+    "name": "Package Card",
+    "category": "Display",
+    "subcategory": "Cards",
+    "visual_properties": {
+      "height": "~80px",
+      "width": "1/2 of grid",
+      "background": "#FFFFFF",
+      "border_radius": "14px",
+      "typography": "Switzer 14px Bold (title); 11px (desc); 12px Bold (price)",
+      "colors": { "background": "#FFFFFF", "border": "1.5px solid #E8E8EC", "active_bg": "#FE353D", "active_title": "#FFFFFF", "active_desc": "rgba(255,255,255,0.7)", "active_price": "#FFFFFF", "badge_bg": "#FF9800", "badge_text": "#FFFFFF", "fav_star": "#B0B0B8 / #FFB800" },
+      "spacing": { "padding": "10px", "gap": "5px", "grid": "2 columns" }
+    },
+    "behavior": {
+      "states": ["inactive", "active", "favorite", "hover"],
+      "interactions": "Tap selects package; star toggles favorite; badge shows promo (HOT, % OFF)",
+      "animations": "transition all 0.18s; hover translateY(-1px)"
+    },
+    "usage_rules": {
+      "use_when": ["Package selection (data, voice, SMS, combo, unlimited)"],
+      "never_use_when": ["Airtime amounts"],
+      "max_per_screen": 12,
+      "required_companions": ["Package Category Tabs", "Favorite Star"],
+      "excluded_screens": []
+    },
+    "context_mapping": {
+      "flows": ["Package"],
+      "screen_types": ["Selection"],
+      "priority_score": 7,
+      "typical_position": "2-column grid below category tabs"
+    },
+    "accessibility": {
+      "min_touch_target": "48px",
+      "screen_reader_label": "Package - [title], [description], [price], selected or not",
+      "color_contrast_ratio": "4.5:1"
+    },
+    "localization": {
+      "supports_rtl": false,
+      "swahili_compatibility": true,
+      "text_max_length": 30
+    },
+    "compliance": {
+      "regulatory_required": false,
+      "authority": "",
+      "rule_reference": ""
+    }
+  },
+  {
+    "component_id": "custom_amount_input",
+    "name": "Custom Amount Input",
+    "category": "Input",
+    "subcategory": "Text Fields",
+    "visual_properties": {
+      "height": "55px",
+      "width": "100%",
+      "background": "#FFFFFF",
+      "border_radius": "12px",
+      "typography": "Switzer 16px SemiBold",
+      "colors": { "background": "#FFFFFF", "border": "1.5px solid #E8E8EC", "focus_border": "#FE353D", "placeholder": "#7C7C87", "text": "#1C1C21" },
+      "spacing": { "padding": "0 16px", "margin_top": "10px" }
+    },
+    "behavior": {
+      "states": ["default", "focus", "filled"],
+      "interactions": "Type custom amount; clears preset selection when used",
+      "animations": "transition border-color 0.2s"
+    },
+    "usage_rules": {
+      "use_when": ["Custom airtime amount entry"],
+      "never_use_when": ["Preset-only selection"],
+      "max_per_screen": 1,
+      "required_companions": ["Amount Grid Cards"],
+      "excluded_screens": []
+    },
+    "context_mapping": {
+      "flows": ["Airtime"],
+      "screen_types": ["Selection"],
+      "priority_score": 6,
+      "typical_position": "Below amount grid, full width"
+    },
+    "accessibility": {
+      "min_touch_target": "55px",
+      "screen_reader_label": "Custom amount input",
+      "color_contrast_ratio": "4.5:1"
+    },
+    "localization": {
+      "supports_rtl": false,
+      "swahili_compatibility": true,
+      "text_max_length": 10
+    },
+    "compliance": {
+      "regulatory_required": false,
+      "authority": "",
+      "rule_reference": ""
+    }
+  },
+  {
+    "component_id": "field_error",
+    "name": "Field Error Message",
+    "category": "Feedback",
+    "subcategory": "Messages",
+    "visual_properties": {
+      "height": "auto",
+      "width": "auto",
+      "background": "transparent",
+      "border_radius": "—",
+      "typography": "Switzer 12px Medium",
+      "colors": { "icon": "#FE353D", "text": "#FE353D" },
+      "spacing": { "gap": "6px", "padding_left": "4px" }
+    },
+    "behavior": {
+      "states": ["hidden", "shown"],
+      "interactions": "Shows field-level validation error (invalid phone number format)",
+      "animations": "—"
+    },
+    "usage_rules": {
+      "use_when": ["Field-level validation errors"],
+      "never_use_when": ["Amount-level validation (use Inline Validation Message)"],
+      "max_per_screen": 1,
+      "required_companions": ["Phone Input"],
+      "excluded_screens": []
+    },
+    "context_mapping": {
+      "flows": ["Airtime", "Package", "Transfer recipient"],
+      "screen_types": ["Form"],
+      "priority_score": 7,
+      "typical_position": "Below the input field"
+    },
+    "accessibility": {
+      "min_touch_target": "— (informational)",
+      "screen_reader_label": "Error - [message]",
+      "color_contrast_ratio": "4.5:1"
+    },
+    "localization": {
+      "supports_rtl": true,
+      "swahili_compatibility": true,
+      "text_max_length": 60
+    },
+    "compliance": {
+      "regulatory_required": false,
+      "authority": "",
+      "rule_reference": ""
+    }
+  },
+  {
+    "component_id": "contacts_bottom_sheet",
+    "name": "Contacts Bottom Sheet",
+    "category": "Feedback",
+    "subcategory": "Dialogs",
+    "visual_properties": {
+      "height": "70% (max)",
+      "width": "100%",
+      "background": "#FFFFFF",
+      "border_radius": "24px 24px 0 0",
+      "typography": "Switzer 17px Bold (title); 14px SemiBold (name); 12px (sub)",
+      "colors": { "background": "#FFFFFF", "grip": "#D8D8DD", "title": "#1C1C21", "avatar_bg": "#E8E8EC", "avatar_text": "#1C1C21", "name": "#1C1C21", "sub": "#7C7C87", "hover_bg": "#FFF1F2", "fav_star": "#FFB800" },
+      "spacing": { "padding": "20px 20px 28px", "gap": "4px" }
+    },
+    "behavior": {
+      "states": ["open", "closed"],
+      "interactions": "Slide-up sheet with contact list; tap contact to select; overlay dismisses on outside tap",
+      "animations": "slideUpSheet 0.35s cubic-bezier(0.34,1.56,0.64,1)"
+    },
+    "usage_rules": {
+      "use_when": ["Contact picker for phone input"],
+      "never_use_when": ["Favorites (use Favorites Sheet)"],
+      "max_per_screen": 1,
+      "required_companions": ["Contacts Button", "Phone Input"],
+      "excluded_screens": []
+    },
+    "context_mapping": {
+      "flows": ["Airtime", "Package", "Transfer recipient"],
+      "screen_types": ["Dialog"],
+      "priority_score": 6,
+      "typical_position": "Slides from bottom"
+    },
+    "accessibility": {
+      "min_touch_target": "48px (items)",
+      "screen_reader_label": "Choose a contact - [list]",
+      "color_contrast_ratio": "4.5:1"
+    },
+    "localization": {
+      "supports_rtl": false,
+      "swahili_compatibility": true,
+      "text_max_length": 40
+    },
+    "compliance": {
+      "regulatory_required": false,
+      "authority": "",
+      "rule_reference": ""
+    }
+  },
+  {
+    "component_id": "overdraft_offer_card",
+    "name": "Overdraft Offer Card",
+    "category": "Display",
+    "subcategory": "Cards",
+    "visual_properties": {
+      "height": "auto",
+      "width": "100%",
+      "background": "#FFFFFF",
+      "border_radius": "16px",
+      "typography": "Switzer 22px Bold (title); 14px (desc); 13px (label); 14px SemiBold (value)",
+      "colors": { "background": "#FFFFFF", "border": "1px solid #E8E8EC", "icon_bg": "#FFF1F2", "icon": "#FE353D", "title": "#1C1C21", "desc": "#7C7C87", "label": "#7C7C87", "value": "#1C1C21", "highlight_value": "#FE353D", "shadow": "0 2px 8px rgba(0,0,0,0.04)" },
+      "spacing": { "padding": "16px", "gap": "12px", "icon": "88px × 88px, radius 24px" }
+    },
+    "behavior": {
+      "states": ["eligible", "active_ok"],
+      "interactions": "Shows Errif overdraft eligibility with limit, transfer amount, service charge; CTA activates or confirms",
+      "animations": "—"
+    },
+    "usage_rules": {
+      "use_when": ["Overdraft eligibility/offer presentation"],
+      "never_use_when": ["Standard balance display"],
+      "max_per_screen": 1,
+      "required_companions": ["Primary Button", "Link Button"],
+      "excluded_screens": []
+    },
+    "context_mapping": {
+      "flows": ["Transfer overdraft", "Airtime overdraft", "Bill Payment overdraft"],
+      "screen_types": ["Offer"],
+      "priority_score": 8,
+      "typical_position": "Center of overdraft offer screen"
+    },
+    "accessibility": {
+      "min_touch_target": "48px (buttons)",
+      "screen_reader_label": "Errif overdraft offer - limit [amount], transfer [amount]",
+      "color_contrast_ratio": "4.5:1"
+    },
+    "localization": {
+      "supports_rtl": false,
+      "swahili_compatibility": true,
+      "text_max_length": 60
+    },
+    "compliance": {
+      "regulatory_required": true,
+      "authority": "Errif overdraft product policy",
+      "rule_reference": "Overdraft terms must be disclosed"
+    }
+  },
+  {
+    "component_id": "btn_link",
+    "name": "Link Button",
+    "category": "Actions",
+    "subcategory": "Buttons",
+    "visual_properties": {
+      "height": "auto",
+      "width": "auto",
+      "background": "transparent",
+      "border_radius": "—",
+      "typography": "Switzer 13px Medium",
+      "colors": { "text": "#7C7C87", "hover_text": "#1C1C21" },
+      "spacing": { "padding": "4px 0" }
+    },
+    "behavior": {
+      "states": ["default", "hover"],
+      "interactions": "Tap triggers low-emphasis action (Cancel transfer)",
+      "animations": "transition color 0.2s"
+    },
+    "usage_rules": {
+      "use_when": ["Cancel/decline actions below primary CTA"],
+      "never_use_when": ["Primary actions"],
+      "max_per_screen": 1,
+      "required_companions": ["Primary Button"],
+      "excluded_screens": []
+    },
+    "context_mapping": {
+      "flows": ["Overdraft offer", "Dialogs"],
+      "screen_types": ["Offer", "Dialog"],
+      "priority_score": 4,
+      "typical_position": "Below primary button"
+    },
+    "accessibility": {
+      "min_touch_target": "44px",
+      "screen_reader_label": "Link - [text]",
+      "color_contrast_ratio": "4.5:1"
+    },
+    "localization": {
+      "supports_rtl": false,
+      "swahili_compatibility": true,
+      "text_max_length": 30
+    },
+    "compliance": {
+      "regulatory_required": false,
+      "authority": "",
+      "rule_reference": ""
+    }
+  },
+  {
+    "component_id": "review_card",
+    "name": "Review Card (Recipient Summary)",
+    "category": "Display",
+    "subcategory": "Cards",
+    "visual_properties": {
+      "height": "~68px",
+      "width": "100%",
+      "background": "#FFFFFF",
+      "border_radius": "16px",
+      "typography": "Switzer 15px SemiBold (name); 12px (bank/account); 16px Bold (amount)",
+      "colors": { "background": "#FFFFFF", "logo_bg": "#F5F5F5", "name": "#1C1C21", "bank": "#7C7C87", "account": "#7C7C87", "amount": "#1C1C21", "shadow": "0 2px 8px rgba(0,0,0,0.04)" },
+      "spacing": { "padding": "14px 16px", "gap": "12px" }
+    },
+    "behavior": {
+      "states": ["default"],
+      "interactions": "Display-only pre-PIN summary of recipient, bank/wallet, account, amount",
+      "animations": "—"
+    },
+    "usage_rules": {
+      "use_when": ["PIN entry screens showing transaction summary"],
+      "never_use_when": ["Amount entry (use Recipient Pill)"],
+      "max_per_screen": 1,
+      "required_companions": ["PIN Input", "Keypad"],
+      "excluded_screens": []
+    },
+    "context_mapping": {
+      "flows": ["Transfer PIN", "Airtime PIN", "Bill Payment PIN"],
+      "screen_types": ["PIN Entry"],
+      "priority_score": 8,
+      "typical_position": "Top of PIN entry content, below header"
+    },
+    "accessibility": {
+      "min_touch_target": "— (display)",
+      "screen_reader_label": "Review - [name], [bank], [account], [amount]",
+      "color_contrast_ratio": "4.5:1"
+    },
+    "localization": {
+      "supports_rtl": false,
+      "swahili_compatibility": true,
+      "text_max_length": 40
+    },
+    "compliance": {
+      "regulatory_required": false,
+      "authority": "",
+      "rule_reference": ""
+    }
+  },
+  {
+    "component_id": "pin_error_state",
+    "name": "PIN Error State",
+    "category": "Feedback",
+    "subcategory": "States",
+    "visual_properties": {
+      "height": "auto",
+      "width": "auto",
+      "background": "transparent",
+      "border_radius": "—",
+      "typography": "Switzer 12.5px Medium",
+      "colors": { "box_border": "#FE353D", "box_bg": "#FFF5F5", "dot": "#FE353D", "icon": "#FE353D", "text": "#FE353D" },
+      "spacing": { "gap": "6px" }
+    },
+    "behavior": {
+      "states": ["error", "shake"],
+      "interactions": "Shows incorrect PIN message with remaining attempts; PIN boxes shake and turn red",
+      "animations": "shake 0.4s ease-in-out"
+    },
+    "usage_rules": {
+      "use_when": ["Incorrect PIN feedback"],
+      "never_use_when": ["Successful PIN entry"],
+      "max_per_screen": 1,
+      "required_companions": ["PIN Input", "Keypad"],
+      "excluded_screens": []
+    },
+    "context_mapping": {
+      "flows": ["All PIN entry"],
+      "screen_types": ["PIN Entry"],
+      "priority_score": 8,
+      "typical_position": "Below PIN boxes"
+    },
+    "accessibility": {
+      "min_touch_target": "— (informational)",
+      "screen_reader_label": "Incorrect PIN, [n] attempts left",
+      "color_contrast_ratio": "4.5:1"
+    },
+    "localization": {
+      "supports_rtl": true,
+      "swahili_compatibility": true,
+      "text_max_length": 40
+    },
+    "compliance": {
+      "regulatory_required": true,
+      "authority": "M-PESA security policy",
+      "rule_reference": "PIN attempt limits and lockout"
+    }
+  },
+  {
+    "component_id": "success_overlay_modal",
+    "name": "Success Overlay Modal",
+    "category": "Feedback",
+    "subcategory": "Dialogs",
+    "visual_properties": {
+      "height": "auto",
+      "width": "280px",
+      "background": "#FFFFFF",
+      "border_radius": "20px",
+      "typography": "Switzer 18px Bold (title); 13px (subtitle)",
+      "colors": { "overlay": "rgba(0,0,0,0.5)", "background": "#FFFFFF", "icon_bg": "#FFF1F2", "icon": "#FE353D", "title": "#1C1C21", "subtitle": "#7C7C87", "btn_bg": "#FE353D", "btn_text": "#FFFFFF" },
+      "spacing": { "padding": "32px 24px", "icon": "72px × 72px" }
+    },
+    "behavior": {
+      "states": ["hidden", "shown"],
+      "interactions": "Shows success confirmation with pop-in animation; button navigates to receipt",
+      "animations": "popIn 0.4s cubic-bezier(0.34,1.56,0.64,1)"
+    },
+    "usage_rules": {
+      "use_when": ["Post-PIN success confirmation"],
+      "never_use_when": ["Error states"],
+      "max_per_screen": 1,
+      "required_companions": ["View Receipt Button"],
+      "excluded_screens": []
+    },
+    "context_mapping": {
+      "flows": ["Transfer success", "Airtime success"],
+      "screen_types": ["Confirmation"],
+      "priority_score": 8,
+      "typical_position": "Centered overlay"
+    },
+    "accessibility": {
+      "min_touch_target": "44px (button)",
+      "screen_reader_label": "Success - [title], [subtitle], view receipt button",
+      "color_contrast_ratio": "4.5:1"
+    },
+    "localization": {
+      "supports_rtl": false,
+      "swahili_compatibility": true,
+      "text_max_length": 60
+    },
+    "compliance": {
+      "regulatory_required": false,
+      "authority": "",
+      "rule_reference": ""
+    }
+  }
+]

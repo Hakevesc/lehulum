@@ -74,11 +74,7 @@
   .pay-btn.active:hover { background: #E5303A; transform: translateY(-1px); }
   .pay-btn.active:active { transform: scale(0.98); }
 
-  /* Demo outcome switcher (prototype only) */
-  .demo-switch { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; justify-content: center; padding: 8px 0 0; }
-  .demo-switch span { font-family: 'Switzer', sans-serif; font-size: 10.5px; color: var(--On-Surface-Low); }
-  .demo-switch button { font-family: 'Switzer', sans-serif; font-size: 10.5px; font-weight: 600; color: var(--On-Surface-Low); background: #FFF; border: 1px solid var(--Border); border-radius: 8px; padding: 4px 8px; cursor: pointer; }
-  .demo-switch button.on { color: var(--Primary); border-color: var(--Primary); background: #FFF7F7; }
+
 </style>
 </head>
 <body>
@@ -107,31 +103,15 @@
 
       <!-- Summary Card -->
       <div class="summary-card">
-        <div class="summary-header">
-          <div class="summary-icon" id="summaryIcon" style="background:#43B02A;">SC</div>
-          <div>
-            <div class="summary-recipient" id="summaryRecipient">0712 131 415</div>
-            <div class="summary-sub" id="summarySub">Safaricom airtime</div>
-          </div>
-        </div>
-        <div class="summary-amount">
-          <div class="label">Airtime amount</div>
-          <div><span class="value" id="summaryAmount">50.00</span><span class="currency">ETB</span></div>
-        </div>
-        <div class="summary-row">
-          <span class="lbl">Pay from</span>
-          <span class="val" id="summaryAccount">Main Account</span>
-        </div>
-        <div class="summary-row">
-          <span class="lbl">Service Fee</span>
-          <span class="val" style="color:#1FC83B;">Free</span>
+        <div class="summary-amount" id="summaryCard">
+          <div class="label" id="summaryLabel">Airtime amount</div>
+          <div><span class="value" id="summaryAmount">50.00</span></div>
         </div>
       </div>
 
       <!-- PIN Section -->
       <div class="pin-section">
         <span class="pin-label">Enter Your M-PESA PIN</span>
-        <span class="pin-hint">Demo PIN: 1234</span>
         <div class="pin-container" id="pinContainer">
           <div class="pin-box" data-index="0"><div class="dot"></div></div>
           <div class="pin-box" data-index="1"><div class="dot"></div></div>
@@ -168,13 +148,7 @@
 
       <button class="pay-btn" id="payBtn" onclick="confirmPayment()" disabled>Pay Now</button>
 
-      <div class="demo-switch">
-        <span>Demo outcome:</span>
-        <button data-s="success" onclick="setOutcome('success')">Success</button>
-        <button data-s="failed" onclick="setOutcome('failed')">Failed</button>
-        <button data-s="timeout" onclick="setOutcome('timeout')">Timeout</button>
-        <button data-s="service" onclick="setOutcome('service')">Service Down</button>
-      </div>
+
 
     </div>
 
@@ -187,19 +161,16 @@
   let pin = '';
   let processingOutcome = sessionStorage.getItem('airtimeProcessingOutcome') || 'success';
 
-  const air = JSON.parse(sessionStorage.getItem('airtimeData') || '{}');
+  const data = JSON.parse(sessionStorage.getItem('airtimeData') || '{}');
   const fmt = n => parseFloat(n || 0).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
-  function formatPhone(d) { d = String(d || ''); return [d.slice(0,4), d.slice(4,7), d.slice(7,10)].filter(Boolean).join(' '); }
 
-  document.getElementById('summaryIcon').textContent = air.providerAbbr || 'SC';
-  document.getElementById('summaryIcon').style.background = air.providerColor || '#43B02A';
-  document.getElementById('summaryRecipient').textContent = formatPhone(air.recipient || '0712131415');
-  document.getElementById('summarySub').textContent = (air.provider || 'Safaricom') + ' airtime';
-  document.getElementById('summaryAmount').textContent = fmt(air.payAmount || '50.00');
-  document.getElementById('summaryAccount').textContent =
-    air.payAccount === 'overdraft' ? 'Errif Overdraft'
-    : air.payAccount === 'reward' ? 'Reward Account'
-    : 'Main Account';
+  if (data.purchaseType === 'package') {
+    document.getElementById('summaryLabel').textContent = 'Package';
+    document.getElementById('summaryAmount').textContent = (data.packageName || 'Daily Unlimited') + ' - ' + fmt(data.amount || data.payAmount || '100.00') + ' ETB';
+  } else {
+    document.getElementById('summaryLabel').textContent = 'Airtime amount';
+    document.getElementById('summaryAmount').textContent = fmt(data.amount || data.payAmount || '50.00') + ' ETB';
+  }
 
   const pinBoxes = document.querySelectorAll('.pin-box');
   const payBtn = document.getElementById('payBtn');
@@ -223,10 +194,7 @@
 
     if (pin === CORRECT_PIN) {
       sessionStorage.removeItem('pinAttempts');
-      if (processingOutcome === 'success') window.location.href = 'Airtime Confirmation.html';
-      else if (processingOutcome === 'failed') window.location.href = 'Airtime_Failed.html';
-      else if (processingOutcome === 'timeout') window.location.href = 'Airtime_Timeout.html';
-      else if (processingOutcome === 'service') window.location.href = 'Airtime_Service Unavailable.html';
+      window.location.href = 'Airtime_Review.html';
       return;
     }
 
@@ -243,13 +211,9 @@
     setTimeout(() => { pin = ''; document.getElementById('pinInput').value = ''; updatePinDisplay(); }, 500);
   }
 
-  function setOutcome(s) {
-    processingOutcome = s;
-    sessionStorage.setItem('airtimeProcessingOutcome', s);
-    document.querySelectorAll('.demo-switch button').forEach(b => b.classList.toggle('on', b.dataset.s === s));
-  }
 
-  function goBack() { window.location.href = 'Airtime_Review.html'; }
+
+  function goBack() { window.location.href = 'Airtime_Buy.html'; }
 
   document.addEventListener('keydown', e => {
     if (e.key >= '0' && e.key <= '9') pressKey(e.key);
