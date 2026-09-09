@@ -15,7 +15,6 @@
     --Border: #E8E8EC;
     --Background: #F5F5F5;
     --Field: #F7F7F8;
-    --Success: #1FC83B;
   }
   * { margin: 0; padding: 0; box-sizing: border-box; }
   body { font-family: 'Inter', sans-serif; background: transparent; display: flex; justify-content: center; align-items: center; min-height: 100vh; padding: 20px; }
@@ -68,11 +67,9 @@
   .bank-opt .bo-nm { font-family: 'Switzer', sans-serif; font-size: 13.5px; font-weight: 600; color: var(--On-Surface); }
   .bank-opt .bo-sub { font-family: 'Switzer', sans-serif; font-size: 11px; color: var(--On-Surface-Low); }
 
-  /* ── Resolved ATM row ── */
-  .agent-chip { display: none; align-items: center; gap: 12px; background: #F2FAF4; border-radius: 12px; padding: 12px 14px; margin-top: 4px; }
+  /* ── Selected ATM row (no check mark — any listed bank is valid by default) ── */
+  .agent-chip { display: none; align-items: center; background: #F2FAF4; border-radius: 12px; padding: 12px 14px; margin-top: 4px; }
   .agent-chip.show { display: flex; }
-  .agent-chip .tick { width: 24px; height: 24px; border-radius: 50%; border: 1.8px solid var(--Success); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
-  .agent-chip .tick svg { width: 13px; height: 13px; stroke: var(--Success); stroke-width: 3; fill: none; }
   .agent-chip .info { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px; }
   .agent-chip .nm { font-family: 'Switzer', sans-serif; font-size: 14px; font-weight: 500; color: var(--On-Surface); }
   .agent-chip .sub { font-family: 'Switzer', sans-serif; font-size: 11.5px; color: var(--On-Surface-Low); }
@@ -164,10 +161,6 @@
           <svg class="select-chev" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
         </div>
         <div class="bank-list" id="bankList"></div>
-        <div class="agent-chip" id="atmChip">
-          <span class="tick"><svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></span>
-          <div class="info"><span class="nm"></span><span class="sub"></span></div>
-        </div>
 
         <span class="field-label">Amount</span>
         <div class="field">
@@ -301,10 +294,6 @@
     $('bankValue').classList.remove('placeholder');
     $('bankList').classList.remove('show');
     $('selectField').classList.remove('open');
-    const chip = $('atmChip');
-    chip.querySelector('.nm').textContent = a.name;
-    chip.querySelector('.sub').textContent = a.bank + ' • ' + a.loc;
-    chip.classList.add('show');
     updateBtn();
   }
 

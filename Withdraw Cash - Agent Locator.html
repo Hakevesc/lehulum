@@ -67,6 +67,13 @@
   .msg.warn svg { stroke: var(--Primary); }
 
   /* Resolved agent row */
+  /* ── Loading state ── */
+  .loading-chip { display: none; align-items: center; gap: 12px; background: #F5F5F5; border-radius: 12px; padding: 14px; margin-top: 4px; }
+  .loading-chip.show { display: flex; }
+  .loading-spinner { width: 24px; height: 24px; border: 2.5px solid #E0E0E0; border-top-color: var(--Primary); border-radius: 50%; animation: spin 0.8s linear infinite; flex-shrink: 0; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .loading-text { font-family: 'Switzer', sans-serif; font-size: 13px; font-weight: 500; color: var(--On-Surface-Low); }
+
   .agent-chip { display: none; align-items: center; gap: 12px; background: #F2FAF4; border-radius: 12px; padding: 12px 14px; margin-top: 4px; }
   .agent-chip.show { display: flex; }
   .agent-chip .tick { width: 24px; height: 24px; border-radius: 50%; border: 1.8px solid var(--Success); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
@@ -189,6 +196,10 @@
             <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 8v5M12 16h.01"/></svg>
             <span id="codeMsgTxt"></span>
           </div>
+          <div class="loading-chip" id="codeLoading">
+            <div class="loading-spinner"></div>
+            <span class="loading-text">Looking Up Agent</span>
+          </div>
           <div class="agent-chip" id="codeChip">
             <span class="tick"><svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></span>
             <div class="info"><span class="nm"></span><span class="sub"></span></div>
@@ -232,6 +243,10 @@
               <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="2.5"/><path d="M3 16l5-4 4 3 3-2 6 4"/><circle cx="8.5" cy="9" r="1.5"/></svg>
               From gallery
             </button>
+          </div>
+          <div class="loading-chip" id="qrLoading">
+            <div class="loading-spinner"></div>
+            <span class="loading-text">Looking Up Agent</span>
           </div>
           <div class="agent-chip" id="qrChip">
             <span class="tick"><svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></span>
@@ -370,33 +385,52 @@
   }
 
   function resolveCode(code) {
-    const chip = $('codeChip'), msg = $('codeMsg');
+    const chip = $('codeChip'), msg = $('codeMsg'), loading = $('codeLoading');
     agent = null;
-    if (code.length < 6) { chip.classList.remove('show'); msg.classList.remove('show'); return; }
-    const a = AGENTS[code];
-    if (a) {
-      agent = a;
-      chip.querySelector('.nm').textContent = a.name;
-      chip.querySelector('.sub').textContent = 'Agent No. ' + a.code + ' • ' + a.dist;
-      chip.classList.add('show');
-      msg.classList.remove('show');
-    } else {
-      chip.classList.remove('show');
-      $('codeMsgTxt').textContent = 'Agent not found. Check the short code and try again.';
-      msg.classList.add('show');
-    }
+    if (code.length < 6) { chip.classList.remove('show'); msg.classList.remove('show'); loading.classList.remove('show'); return; }
+
+    // Show loading state
+    loading.classList.add('show');
+    chip.classList.remove('show');
+    msg.classList.remove('show');
+
+    // Simulate lookup delay
+    setTimeout(() => {
+      const a = AGENTS[code];
+      if (a) {
+        agent = a;
+        chip.querySelector('.nm').textContent = a.name;
+        chip.querySelector('.sub').textContent = 'Agent No. ' + a.code + ' • ' + a.dist;
+        loading.classList.remove('show');
+        chip.classList.add('show');
+        msg.classList.remove('show');
+      } else {
+        loading.classList.remove('show');
+        chip.classList.remove('show');
+        $('codeMsgTxt').textContent = 'Agent not found. Check the short code and try again.';
+        msg.classList.add('show');
+      }
+      updateBtn();
+    }, 800);
   }
 
   /* ── QR ── */
   function simulateScan() {
-    // Prototype stand-in for the camera: resolves a known agent.
-    const a = AGENTS['562394'];
-    agent = a;
-    const chip = $('qrChip');
-    chip.querySelector('.nm').textContent = a.name;
-    chip.querySelector('.sub').textContent = 'Agent No. ' + a.code + ' • ' + a.dist;
-    chip.classList.add('show');
-    updateBtn();
+    // Show loading state
+    const loading = $('qrLoading'), chip = $('qrChip');
+    loading.classList.add('show');
+    chip.classList.remove('show');
+
+    // Simulate scan/lookup delay
+    setTimeout(() => {
+      const a = AGENTS['562394'];
+      agent = a;
+      chip.querySelector('.nm').textContent = a.name;
+      chip.querySelector('.sub').textContent = 'Agent No. ' + a.code + ' • ' + a.dist;
+      loading.classList.remove('show');
+      chip.classList.add('show');
+      updateBtn();
+    }, 800);
   }
 
   /* ── Amount ── */
@@ -490,6 +524,13 @@
     }));
     window.location.href = 'Withdraw Cash - Enter PIN.html';
   }
+
+  /* ── Saved favourite / frequent agent: prefill the short code and resolve it ── */
+  try {
+    const data = JSON.parse(sessionStorage.getItem('withdrawData') || '{}');
+    const code = String(data.agentCode || (data.agent && data.agent.code) || '');
+    if (/^\d{6}$/.test(code)) useRecent(code);
+  } catch (e) { /* ignore corrupt state and render the screen as-is */ }
 </script>
 </body>
 </html>

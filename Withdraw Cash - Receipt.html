@@ -359,7 +359,7 @@
             <span class="label">Fee</span>
             <span class="value" id="detailFee">&mdash;</span>
           </div>
-          <div class="detail-row">
+          <div class="detail-row" id="detailExpiryRow">
             <span class="label">Voucher Expires</span>
             <span class="value" id="detailExpiry">&mdash;</span>
           </div>
@@ -430,9 +430,15 @@
   const $ = id => document.getElementById(id);
   const fmt = n => parseFloat(n || 0).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
 
-  // The voucher code is the withdrawal's equivalent of a utility token.
-  $('tokenLabel').textContent = isAtm ? 'ATM Voucher Code' : 'Agent Voucher Code';
-  $('tokenValue').textContent = data.voucherCode || '\u2014';
+  // Voucher codes exist only for ATM cardless withdrawals. Agent withdrawals are
+  // settled in person with the agent, so their bills carry no code to redeem.
+  if (isAtm) {
+    $('tokenLabel').textContent = 'ATM Voucher Code';
+    $('tokenValue').textContent = data.voucherCode || '\u2014';
+  } else {
+    $('tokenBox').style.display = 'none';
+    $('detailExpiryRow').style.display = 'none';
+  }
 
   $('detailPoint').textContent = isAtm
     ? (data.atmName || 'Participating M-PESA ATM')

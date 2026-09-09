@@ -218,14 +218,14 @@
       : 'Withdraw Cash - ATM Locator.html';
   }
 
-  // A saved agent skips code entry: open its details, where the amount is entered.
+  // A saved favourite/frequent agent opens the Short Code screen with its code already filled in.
   function pickAgent(code) {
     const a = AGENTS[code];
     if (!a) return selectMethod('agent');
     sessionStorage.setItem('withdrawData', JSON.stringify({
-      method: 'nearby', methodLabel: 'Nearby Agent', agent: a, time: stamp()
+      method: 'agent', methodLabel: 'Agent Short Code', agentCode: a.code, time: stamp()
     }));
-    window.location.href = 'Withdraw Cash - Agent Details.html';
+    window.location.href = 'Withdraw Cash - Agent Locator.html';
   }
 </script>
 </body>

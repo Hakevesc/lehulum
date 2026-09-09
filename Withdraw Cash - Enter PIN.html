@@ -190,7 +190,7 @@
   function genVoucher() {
     const chars = 'ABCDEFGHJKMNPQRSTUVWXYZ23456789';
     const grp = n => { let s = ''; for (let i = 0; i < n; i++) s += chars[Math.floor(Math.random() * chars.length)]; return s; };
-    return (method === 'atm' ? 'ATM' : 'AVN') + '-' + grp(4) + '-' + grp(4) + '-' + grp(4);
+    return 'ATM-' + grp(4) + '-' + grp(4) + '-' + grp(4);
   }
 
   function submitPin() {
@@ -201,8 +201,15 @@
       window.location.href = 'Withdraw Cash - Insufficient Balance.html';
       return;
     }
-    data.voucherCode = genVoucher();
-    data.expiry = new Date(Date.now() + 24 * 3600 * 1000).toISOString();
+    // Only ATM cardless withdrawals carry a one-time voucher code; the agent
+    // settles the withdrawal in person, so agent bills never show one.
+    if (method === 'atm') {
+      data.voucherCode = genVoucher();
+      data.expiry = new Date(Date.now() + 24 * 3600 * 1000).toISOString();
+    } else {
+      delete data.voucherCode;
+      delete data.expiry;
+    }
     data.ref = 'WDC-' + Date.now().toString().slice(-8);
     sessionStorage.setItem('withdrawData', JSON.stringify(data));
     window.location.href = 'Withdraw Cash - Receipt.html';

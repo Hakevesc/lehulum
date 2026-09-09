@@ -59,19 +59,19 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 10px 16px 6px 14px;
+    padding: 14px 16px 12px 14px;
     cursor: pointer;
     user-select: none;
     -webkit-user-select: none;
     transition: background 0.15s;
     border-radius: 0;
-    margin: 0;
+    margin: 8px 0 0 0;
   }
   .category-header:hover { background: #F5F5F5; }
 
   .category-label {
     color: #7C7C87;
-    font-size: 10px;
+    font-size: 12px;
     font-weight: 600;
     text-transform: uppercase;
     letter-spacing: 1px;
@@ -478,7 +478,7 @@
 
   groups.forEach(group => {
     const items = pages.filter(p => p.group === group);
-    const isCollapsed = collapsedGroups.includes(group);
+    const isCollapsed = true; // Start all groups collapsed
 
     // Category header
     const header = document.createElement('div');
