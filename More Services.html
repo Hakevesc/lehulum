@@ -60,9 +60,9 @@
   .feature-btn:active { transform: translateY(0); }
   .feature-chip { width: 38px; height: 38px; border-radius: 12px; display: flex; align-items: center; justify-content: center; background: var(--Primary-Container); }
   .feature-chip svg { width: 20px; height: 20px; stroke: var(--Primary); stroke-width: 2.2; fill: none; stroke-linecap: round; stroke-linejoin: round; }
-  .feature-foot { display: flex; align-items: center; justify-content: space-between; gap: 4px; }
+  .feature-top { display: flex; align-items: flex-start; justify-content: space-between; gap: 4px; }
+  .feature-top > svg { width: 15px; height: 15px; stroke: var(--Primary); stroke-width: 2.2; fill: none; flex-shrink: 0; margin-top: 2px; }
   .feature-btn .label { font-family: 'Switzer', sans-serif; font-size: 10.5px; font-weight: 700; color: var(--On-Surface); line-height: 1.2; white-space: nowrap; }
-  .feature-foot svg { width: 15px; height: 15px; stroke: var(--Primary); stroke-width: 2.2; fill: none; flex-shrink: 0; }
 
   /* ── Category chips ── */
   .chips { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 2px; }
@@ -127,25 +127,25 @@
       <!-- Three primary money actions -->
       <div class="feature-row">
         <div class="feature-btn" onclick="window.location.href='Withdraw Cash.html'">
-          <div class="feature-chip"><i data-lucide="wallet"></i></div>
-          <div class="feature-foot">
-            <span class="label">Withdraw</span>
+          <div class="feature-top">
+            <div class="feature-chip"><i data-lucide="wallet"></i></div>
             <i data-lucide="arrow-right"></i>
           </div>
+          <span class="label">Withdraw</span>
         </div>
         <div class="feature-btn" onclick="window.location.href='Agency Banking Cashout.html'">
-          <div class="feature-chip"><i data-lucide="arrow-up-down"></i></div>
-          <div class="feature-foot">
-            <span class="label">Cash In / Out</span>
+          <div class="feature-top">
+            <div class="feature-chip"><i data-lucide="arrow-up-down"></i></div>
             <i data-lucide="arrow-right"></i>
           </div>
+          <span class="label">Cash In / Out</span>
         </div>
-        <div class="feature-btn" onclick="window.location.href='M-PESA Customer Cash In.html'">
-          <div class="feature-chip"><i data-lucide="download"></i></div>
-          <div class="feature-foot">
-            <span class="label">Deposit</span>
+        <div class="feature-btn" onclick="window.location.href='Cash In.html'">
+          <div class="feature-top">
+            <div class="feature-chip"><i data-lucide="download"></i></div>
             <i data-lucide="arrow-right"></i>
           </div>
+          <span class="label">Deposit</span>
         </div>
       </div>
 

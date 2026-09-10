@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cash In - Voucher</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@400;500;600&display=swap');
+  @import url('https://api.fontshare.com/v2/css?f[]=switzer@400,500,600,700&display=swap');
+
+  :root {
+    --Primary: #FE353D;
+    --On-Surface: #1C1C21;
+    --On-Surface-Low: #7C7C87;
+    --Border: #E8E8EC;
+    --Background: #F5F5F5;
+    --Success: #1FC83B;
+    --Success-Light: #E8F9EC;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'Inter', sans-serif; background: transparent; display: flex; justify-content: center; align-items: center; min-height: 100vh; padding: 20px; }
+  .phone-frame { width: 360px; height: 780px; background: var(--Background); border-radius: 30px; overflow: hidden; position: relative; box-shadow: 0 20px 60px rgba(0,0,0,0.15); display: flex; flex-direction: column; }
+  .app-content { height: 100%; display: flex; flex-direction: column; }
+
+  .status-bar { display: flex; justify-content: space-between; align-items: center; padding: 14px 24px 8px; background: var(--Background); flex-shrink: 0; }
+  .status-bar .time { font-size: 14px; font-weight: 600; color: var(--On-Surface); }
+  .status-icons { display: flex; align-items: center; gap: 6px; }
+  .status-icons svg { width: 18px; height: 18px; }
+
+  .header-nav { display: flex; align-items: center; justify-content: space-between; padding: 8px 16px 12px; background: var(--Background); flex-shrink: 0; }
+  .back-btn { width: 36px; height: 36px; border-radius: 50%; background: transparent; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: background 0.2s; }
+  .back-btn:hover { background: rgba(0,0,0,0.05); }
+  .back-btn svg { width: 22px; height: 22px; stroke: var(--On-Surface); stroke-width: 1.8px; fill: none; }
+  .header-title { color: var(--On-Surface); font-family: 'Switzer', sans-serif; font-size: 17px; font-weight: 500; letter-spacing: 0.3px; flex: 1; text-align: center; }
+
+  .scroll { flex: 1; overflow-y: auto; padding: 4px 16px 20px; display: flex; flex-direction: column; gap: 14px; }
+  .scroll::-webkit-scrollbar { width: 0; }
+/* ── Status ribbon: AWAITING AGENT (voucher ≠ credit) ── */
+  .status-ribbon { display: flex; align-items: center; gap: 10px; background: #FFF4E5; border: 1px solid #F5DCA8; border-radius: 14px; padding: 12px 14px; }
+  .status-ribbon .ico { width: 34px; height: 34px; border-radius: 10px; background: #FFE3A8; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+  .status-ribbon .ico svg { width: 19px; height: 19px; stroke: #8A5A00; stroke-width: 2; fill: none; }
+  .status-ribbon .txt { flex: 1; min-width: 0; }
+  .status-ribbon .t1 { font-family: 'Switzer', sans-serif; font-size: 13.5px; font-weight: 700; color: #6B4A00; }
+  .status-ribbon .t2 { font-family: 'Switzer', sans-serif; font-size: 11.5px; color: #8A6A08; line-height: 1.4; margin-top: 1px; }
+
+  /* ── Voucher card ── */
+  .voucher-card { position: relative; background: #FFF; border-radius: 18px; padding: 22px 18px 18px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); display: flex; flex-direction: column; align-items: center; gap: 12px; overflow: hidden; }
+  .voucher-card::before, .voucher-card::after { content: ''; position: absolute; top: 50%; width: 22px; height: 22px; border-radius: 50%; background: var(--Background); }
+  .voucher-card::before { left: -11px; }
+  .voucher-card::after { right: -11px; }
+  .voucher-type { font-family: 'Switzer', sans-serif; font-size: 11px; font-weight: 700; letter-spacing: 1.2px; text-transform: uppercase; color: var(--On-Surface-Low); }
+  .voucher-code { display: flex; align-items: center; gap: 8px; font-family: 'Poppins', sans-serif; font-size: 20px; font-weight: 600; letter-spacing: 2px; color: var(--On-Surface); padding: 8px 14px; background: #F8F8FA; border: 1.5px dashed var(--Border); border-radius: 12px; }
+  .voucher-code .copy { width: 30px; height: 30px; border: none; border-radius: 9px; background: #FFF1F2; cursor: pointer; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+  .voucher-code .copy:hover { background: #FFE0E2; }
+  .voucher-code .copy svg { width: 15px; height: 15px; stroke: var(--Primary); stroke-width: 2; fill: none; }
+
+  .voucher-meta { display: flex; width: 100%; justify-content: space-around; gap: 8px; margin-top: 4px; }
+  .v-meta-item { display: flex; flex-direction: column; align-items: center; gap: 3px; flex: 1; text-align: center; padding: 0 4px; }
+  .v-meta-item + .v-meta-item { border-left: 1px solid var(--Border); }
+  .v-meta-item .lb { font-family: 'Switzer', sans-serif; font-size: 10.5px; color: var(--On-Surface-Low); letter-spacing: 0.3px; }
+  .v-meta-item .vl { font-family: 'Switzer', sans-serif; font-size: 13px; font-weight: 700; color: var(--On-Surface); }
+  .v-meta-item .vl.green { color: var(--Success); }
+  .v-meta-item .vl.red { color: var(--Primary); }
+
+  /* ── Timer ── */
+  .countdown-wrap { display: flex; align-items: center; justify-content: center; gap: 8px; }
+  .countdown { display: flex; align-items: center; gap: 4px; font-family: 'Switzer', sans-serif; font-size: 12px; color: var(--On-Surface-Low); background: #FFF; border-radius: 20px; padding: 7px 14px; box-shadow: 0 2px 8px rgba(0,0,0,0.04); }
+  .countdown svg { width: 14px; height: 14px; stroke: var(--Primary); stroke-width: 2; fill: none; }
+  .countdown b { color: var(--Primary); font-size: 13px; }
+
+  /* ── Agent card ── */
+  .agent-card { background: #FFF; border-radius: 16px; padding: 14px; display: flex; align-items: center; gap: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.04); }
+  .agent-avatar { width: 44px; height: 44px; border-radius: 50%; background: #FFE9EA; color: var(--Primary); display: flex; align-items: center; justify-content: center; font-family: 'Switzer', sans-serif; font-size: 14px; font-weight: 700; flex-shrink: 0; }
+  .agent-info { flex: 1; min-width: 0; }
+  .agent-name { font-family: 'Switzer', sans-serif; font-size: 14.5px; font-weight: 700; color: var(--On-Surface); }
+  .agent-sub { font-family: 'Switzer', sans-serif; font-size: 12px; color: var(--On-Surface-Low); margin-top: 2px; }
+
+  /* ── Amount summary ── */
+  .amount-card { background: #FFF; border-radius: 16px; padding: 14px 16px; box-shadow: 0 2px 8px rgba(0,0,0,0.04); display: flex; flex-direction: column; gap: 10px; }
+  .amount-row { display: flex; justify-content: space-between; align-items: center; }
+  .amount-row .l { font-family: 'Switzer', sans-serif; font-size: 13px; color: var(--On-Surface-Low); }
+  .amount-row .v { font-family: 'Switzer', sans-serif; font-size: 13.5px; font-weight: 600; color: var(--On-Surface); }
+  .amount-row.total { border-top: 1px dashed var(--Border); padding-top: 10px; }
+  .amount-row.total .l { font-weight: 600; color: var(--On-Surface); }
+  .amount-row.total .v { color: var(--Primary); font-weight: 700; font-size: 15px; }
+
+  /* ── Steps card ── */
+  .steps-card { background: #FFF; border-radius: 16px; padding: 16px; box-shadow: 0 2px 8px rgba(0,0,0,0.04); display: flex; flex-direction: column; gap: 12px; }
+  .steps-title { font-family: 'Switzer', sans-serif; font-size: 14px; font-weight: 700; color: var(--On-Surface); }
+  .step { display: flex; gap: 11px; }
+  .step-num { width: 24px; height: 24px; border-radius: 50%; background: #FFF1F2; color: var(--Primary); font-family: 'Switzer', sans-serif; font-size: 12px; font-weight: 700; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+  .step-txt { font-family: 'Switzer', sans-serif; font-size: 12.5px; line-height: 1.5; color: var(--On-Surface-Low); }
+  .step-txt b { color: var(--On-Surface); }
+
+  /* ── Warning box (key UX rule) ── */
+  .warn-box { display: flex; gap: 10px; align-items: flex-start; background: #FFF1F2; border: 1px solid #FFD6D9; border-radius: 14px; padding: 13px 14px; }
+  .warn-box .ico { width: 32px; height: 32px; border-radius: 10px; background: #FFE0E2; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+  .warn-box .ico svg { width: 18px; height: 18px; stroke: var(--Primary); stroke-width: 2; fill: none; }
+  .warn-box .txt { font-family: 'Switzer', sans-serif; font-size: 12px; line-height: 1.55; color: #8E232C; }
+  .warn-box .txt b { color: var(--Primary); }
+
+  /* ── Bottom buttons ── */
+  .bottom-actions { display: flex; flex-direction: column; gap: 10px; padding-top: 2px; }
+  .btn { height: 52px; border-radius: 14px; border: none; font-family: 'Switzer', sans-serif; font-size: 15px; font-weight: 600; cursor: pointer; transition: opacity 0.2s; }
+  .btn:active { opacity: 0.85; }
+  .btn-primary { background: var(--Primary); color: #FFF; }
+  .btn-secondary { background: #FFF; color: var(--Primary); border: 1.5px solid var(--Primary); }
+
+  /* ── Toast ── */
+  .toast { position: absolute; left: 50%; bottom: 26px; transform: translateX(-50%) translateY(20px); background: #1C1C21; color: #FFF; font-family: 'Switzer', sans-serif; font-size: 12.5px; font-weight: 500; padding: 11px 18px; border-radius: 30px; opacity: 0; transition: all 0.3s ease; pointer-events: none; z-index: 60; white-space: nowrap; }
+  .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+</style>
+</head>
+<body>
+<div class="phone-frame">
+  <div class="app-content">
+
+    <div class="status-bar">
+      <span class="time">10:00</span>
+      <div class="status-icons">
+        <svg viewBox="0 0 24 24" fill="none"><path d="M1 9l2 2c4.97-4.97 13.03-4.97 18 0l2-2C16.93 2.93 7.08 2.93 1 9z" fill="#1C1C21"/><path d="M5 13l2 2c2.76-2.76 7.24-2.76 10 0l2-2C15.14 9.14 8.87 9.14 5 13z" fill="#1C1C21"/><path d="M9 17l2 2c1.1-1.1 2.9-1.1 4 0l2-2c-2.21-2.21-5.79-2.21-8 0z" fill="#1C1C21"/></svg>
+        <svg viewBox="0 0 24 24" fill="none"><rect x="2" y="6" width="4" height="12" rx="1" fill="#1C1C21"/><rect x="8" y="4" width="4" height="14" rx="1" fill="#1C1C21"/><rect x="14" y="2" width="4" height="16" rx="1" fill="#1C1C21"/><rect x="20" y="0" width="4" height="18" rx="1" fill="#1C1C21" opacity="0.3"/></svg>
+        <svg viewBox="0 0 28 14" fill="none"><rect x="0" y="1" width="22" height="12" rx="2.5" stroke="#1C1C21" stroke-width="1.5"/><rect x="2" y="3" width="16" height="8" rx="1" fill="#1C1C21"/><rect x="24" y="4" width="2" height="6" rx="1" fill="#1C1C21"/></svg>
+      </div>
+    </div>
+
+    <div class="header-nav">
+      <button class="back-btn" onclick="goHome()">
+        <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+      </button>
+      <span class="header-title">Cash-In Voucher</span>
+      <div style="width:36px;"></div>
+    </div>
+
+    <div class="scroll">
+
+      <!-- Status ribbon: voucher generated, awaiting agent -->
+      <div class="status-ribbon">
+        <div class="ico"><svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg></div>
+        <div class="txt">
+          <div class="t1">Voucher Generated</div>
+          <div class="t2">Status: Awaiting Agent Validation</div>
+        </div>
+      </div>
+
+      <!-- Voucher kicker card -->
+      <div class="voucher-card">
+        <span class="voucher-type">Cash-In Voucher</span>
+        <div class="voucher-code">
+          <span id="voucherCode">CI-XXXX-XXXX-XXXX</span>
+          <button class="copy" onclick="copyVoucher()" title="Copy code">
+            <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="12" height="12" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h10"/></svg>
+          </button>
+        </div>
+        <div class="voucher-meta">
+          <div class="v-meta-item"><span class="lb">Valid For</span><span class="vl">24 Hours</span></div>
+          <div class="v-meta-item"><span class="lb">Redemption</span><span class="vl green">Single Use</span></div>
+          <div class="v-meta-item"><span class="lb">Expires</span><span class="vl red" id="expiryTxt">--:--</span></div>
+        </div>
+      </div>
+
+      <div class="countdown-wrap">
+        <div class="countdown">
+          <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+          <span>Voucher expires in</span> <b id="countdown">23:59:59</b>
+        </div>
+      </div>
+
+      <!-- Agent -->
+      <div class="agent-card">
+        <div class="agent-avatar" id="agAvatar">AG</div>
+        <div class="agent-info">
+          <div class="agent-name" id="agName">Agent</div>
+          <div class="agent-sub" id="agSub">Agent No. &mdash;</div>
+        </div>
+      </div>
+
+      <!-- Amount -->
+      <div class="amount-card">
+        <div class="amount-row"><span class="l">Deposit Amount</span><span class="v" id="amt">0.00 Br</span></div>
+        <div class="amount-row"><span class="l">Cash-In Fee</span><span class="v">Free</span></div>
+        <div class="amount-row total"><span class="l">Total</span><span class="v" id="total">0.00 Br</span></div>
+      </div>
+
+      <!-- Redemption steps -->
+      <div class="steps-card">
+        <div class="steps-title">How to Complete Your Deposit</div>
+        <div class="step"><div class="step-num">1</div><div class="step-txt">Visit the agent with the <b>cash amount</b> and this <b>Cash-In voucher</b>.</div></div>
+        <div class="step"><div class="step-num">2</div><div class="step-txt">The agent enters or scans your voucher code.</div></div>
+        <div class="step"><div class="step-num">3</div><div class="step-txt">The system validates the voucher and confirms it is <b>valid &amp; unused</b>.</div></div>
+        <div class="step"><div class="step-num">4</div><div class="step-txt">Only then is your wallet credited and the deposit marked <b>Successful</b>.</div></div>
+      </div>
+
+      <!-- Key UX rule: voucher != money deposited -->
+      <div class="warn-box">
+        <div class="ico"><svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg></div>
+        <div class="txt"><b>Voucher Generated &ne; Money Deposited.</b> Your wallet is <b>not yet credited</b>. The voucher only pre-authorizes the Cash-In. Credit happens only after the agent validates the voucher and processes your cash.</div>
+      </div>
+
+      <div class="bottom-actions">
+        <button class="btn btn-primary" onclick="goReceipt()">I've Completed the Deposit</button>
+        <button class="btn btn-secondary" onclick="shareVoucher()">Share Voucher</button>
+      </div>
+
+    </div>
+  </div>
+
+  <div class="toast" id="toast"></div>
+</div>
+
+<script>
+  const data = JSON.parse(sessionStorage.getItem('cashInData') || '{}');
+  const fmt = n => parseFloat(n || 0).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+  const agent = data.agent || {};
+
+  const $ = id => document.getElementById(id);
+
+  // ── Populate ──
+  $('voucherCode').textContent = data.voucherCode || 'CI-XXXX-XXXX-XXXX';
+  $('agAvatar').textContent = agent.abbr || 'AG';
+  $('agName').textContent = data.agentName || agent.name || 'Agent';
+  $('agSub').textContent = 'Agent No. ' + (data.agentCode || agent.code || '—');
+  $('amt').textContent = fmt(data.amount || 0) + ' Br';
+  $('total').textContent = fmt(data.total || data.amount || 0) + ' Br';
+
+  // ── Countdown: voucher valid 24h from generation ──
+  const expiry = data.expiry ? new Date(data.expiry).getTime() : (Date.now() + 24 * 3600 * 1000);
+  const pad = n => String(n).padStart(2, '0');
+
+  function refreshCountdown() {
+    const diff = expiry - Date.now();
+    if (diff <= 0) {
+      $('countdown').textContent = 'EXPIRED';
+      $('countdown').style.color = 'var(--Primary)';
+      return;
+    }
+    const h = Math.floor(diff / 3600000);
+    const m = Math.floor((diff % 3600000) / 60000);
+    const s = Math.floor((diff % 60000) / 1000);
+    $('countdown').textContent = pad(h) + ':' + pad(m) + ':' + pad(s);
+  }
+
+  const expD = new Date(expiry);
+  $('expiryTxt').textContent = pad(expD.getHours()) + ':' + pad(expD.getMinutes());
+  refreshCountdown();
+  setInterval(refreshCountdown, 1000);
+
+  // ── Actions ──
+  function showToast(msg) {
+    const t = $('toast');
+    t.textContent = msg;
+    t.classList.add('show');
+    setTimeout(() => t.classList.remove('show'), 2500);
+  }
+
+  function copyText(text) {
+    return navigator.clipboard.writeText(text).catch(() => {
+      const ta = document.createElement('textarea');
+      ta.value = text; document.body.appendChild(ta); ta.select();
+      document.execCommand('copy'); document.body.removeChild(ta);
+    });
+  }
+
+  function copyVoucher() {
+    copyText(data.voucherCode || '');
+    showToast('Voucher code copied to clipboard');
+  }
+
+  function shareVoucher() { showToast('Voucher code shared!'); }
+
+  function goHome() { window.location.href = 'Lehulum Home.html'; }
+
+  // Simulates the agent validating the voucher & processing the cash deposit.
+  function goReceipt() {
+    data.status = 'SUCCESS';
+    data.creditedAt = new Date().toISOString();
+    sessionStorage.setItem('cashInData', JSON.stringify(data));
+    window.location.href = 'Cash In - Receipt.html';
+  }
+</script>
+</body>
+</html>
