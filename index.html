@@ -138,6 +138,7 @@
 
   /* ===== MAIN ===== */
   .main-area { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
+  .content-frame { position: relative; }
   .main-toolbar {
     display: flex; align-items: center; justify-content: space-between;
     padding: 10px 20px;
@@ -160,27 +161,77 @@
   .mobile-toggle svg { width: 20px; height: 20px; stroke: #fff; stroke-width: 2; }
   .sidebar-overlay { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); z-index: 99; }
 
-  /* ===== TEST FAB ON INDEX.HTML ===== */
-  .test-fab-global {
+  /* ===== TEST FABS ON INDEX.HTML =====
+     One fixed stack. Flexbox owns the spacing, so the buttons always list
+     vertically no matter how tall the window or how the frame is inset. */
+  .fab-stack {
     position: fixed;
-    bottom: 24px;
     right: 24px;
+    bottom: 24px;
+    z-index: 2000;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }
+  .fab-stack > * {
+    position: relative;
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    border: 3px solid #FFF;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 22px;
+    cursor: pointer;
+    transition: transform 0.2s, box-shadow 0.2s;
+  }
+  .fab-stack > *:active { transform: scale(0.92); }
+
+  /* Page test data — pinned to the top-left of the preview canvas so the
+     bottom-right stack stays free for the test-scenario FABs */
+  .info-fab-global {
+    position: absolute;
+    top: 16px;
+    left: 16px;
     z-index: 2000;
     width: 50px;
     height: 50px;
     border-radius: 50%;
-    background: #6C5CE7;
     border: 3px solid #FFF;
-    box-shadow: 0 4px 20px rgba(108, 92, 231, 0.45);
     display: flex;
     align-items: center;
     justify-content: center;
-    cursor: pointer;
     font-size: 22px;
-    transition: all 0.3s;
+    cursor: pointer;
+    transition: transform 0.2s, box-shadow 0.2s;
+    background: #0984E3;
+    box-shadow: 0 4px 20px rgba(9, 132, 227, 0.45);
   }
-  .test-fab-global:hover { transform: scale(1.1); box-shadow: 0 6px 28px rgba(108, 92, 231, 0.6); }
-  .test-fab-global:active { transform: scale(0.92); }
+  .info-fab-global:hover { transform: scale(1.1); box-shadow: 0 6px 28px rgba(9, 132, 227, 0.6); }
+  .info-fab-global:active { transform: scale(0.92); }
+
+  /* Middle: proxies the loaded screen's own panel; hidden when it ships none */
+  .screen-fab-global { background: #2563EB; box-shadow: 0 4px 20px rgba(37, 99, 235, 0.45); }
+  .screen-fab-global:hover { transform: scale(1.1); box-shadow: 0 6px 28px rgba(37, 99, 235, 0.6); }
+  .screen-fab-global[hidden] { display: none; }
+  .fab-dot {
+    position: absolute; top: -2px; right: -2px;
+    width: 13px; height: 13px; border-radius: 50%;
+    background: #FF9800; border: 2.5px solid #FFF;
+    display: none;
+  }
+  .screen-fab-global.active .fab-dot { display: block; }
+
+  /* Bottom: the hub's own scenario list */
+  .test-fab-global { background: #1C1C21; box-shadow: 0 4px 20px rgba(0, 0, 0, 0.45); }
+  .test-fab-global:hover { transform: scale(1.1); box-shadow: 0 6px 28px rgba(0, 0, 0, 0.6); }
+
+  .test-info-group { padding: 12px 14px 4px; font-family: 'Switzer', sans-serif; font-size: 11px; font-weight: 700; letter-spacing: 0.6px; text-transform: uppercase; color: #7C7C87; }
+  .test-info-row { display: flex; align-items: flex-start; gap: 12px; padding: 9px 14px; border-top: 1px solid #F2F2F5; }
+  .test-info-row .code { font-family: 'Courier New', monospace; font-size: 12.5px; font-weight: 700; color: #1C1C21; flex-shrink: 0; min-width: 116px; word-break: break-all; }
+  .test-info-row .result { font-family: 'Switzer', sans-serif; font-size: 12px; color: #7C7C87; line-height: 1.45; }
+  .test-info-note { padding: 12px 14px; font-family: 'Switzer', sans-serif; font-size: 11.5px; color: #7C7C87; line-height: 1.5; border-top: 1px solid #F2F2F5; }
 
   .test-panel-overlay {
     position: fixed; inset: 0; z-index: 3000;
@@ -229,9 +280,12 @@
 
   .test-scenario-icon {
     width: 36px; height: 36px; border-radius: 10px;
-    background: #F0EEFF; display: flex; align-items: center; justify-content: center;
+    background: #1C1C21; display: flex; align-items: center; justify-content: center;
     flex-shrink: 0; font-size: 16px;
   }
+  /* Yellow chip differentiates the page-scoped (feature) test scenario */
+  .test-scenario-icon.yellow { background: #FFD700; }
+  .test-scenario-empty { padding: 14px; font-family:'Switzer',sans-serif; font-size:12.5px; color:#7C7C87; text-align:center; }
   .test-scenario-info { flex: 1; }
   .test-scenario-info .name { font-family:'Switzer',sans-serif; font-size:13px; font-weight:600; color:#1C1C21; }
   .test-scenario-info .desc { font-family:'Switzer',sans-serif; font-size:11px; color:#7C7C87; margin-top:1px; }
@@ -267,8 +321,11 @@
   <div class="sidebar-scroll" id="sidebarNav"></div>
 </div>
 
-<!-- Test FAB -->
-<div class="test-fab-global" onclick="toggleTestPanel()" title="Test Scenarios">🧪</div>
+<!-- Test FABs: one stack so they always list vertically, top to bottom -->
+<div class="fab-stack">
+  <div class="screen-fab-global" id="screenFab" onclick="openScreenTestPanel()" title="Test Scenario 2" hidden>🧪<span class="fab-dot"></span></div>
+  <div class="test-fab-global" onclick="toggleTestPanel()" title="Test Scenario 1">🧪</div>
+</div>
 
 <div class="main-area">
   <div class="main-toolbar">
@@ -276,6 +333,7 @@
     <span class="page-path" id="pagePath">Lehulum Home.html</span>
   </div>
   <div class="content-frame">
+    <div class="info-fab-global" onclick="toggleInfoPanel()" title="Test Data For This Page">ℹ️</div>
     <iframe id="pageIframe" src="Lehulum Home.html"></iframe>
   </div>
 </div>
@@ -291,56 +349,33 @@
     { group: 'Home', label: 'My QR Code',            file: 'My QR Code.html',                  icon: 'qr' },
     { group: 'Home', label: 'Scan QR',               file: 'Scan QR.html',                     icon: 'scan' },
     { group: 'Home', label: 'Verify Receipt',        file: 'Verify Receipt.html',              icon: 'shield' },
+    // ── More Services hub ──
+    { group: 'More Services', label: 'Withdraw Cash',      file: 'Withdraw Cash.html',    icon: 'withdraw' },
+    { group: 'More Services', label: 'Deposit (Cash In)',  file: 'Cash In.html',          icon: 'download' },
+    { group: 'More Services', label: 'Buy Ticket',         file: 'Buy Ticket.html',       icon: 'ticket' },
+    { group: 'More Services', label: 'All Services',       file: 'All Services.html',     icon: 'grid' },
 
-    { group: 'Announcements', label: 'Announcements',        file: 'Announcement.html',        icon: 'megaphone' },
-    { group: 'Announcements', label: 'Announcement Detail',  file: 'Announcement Detail.html', icon: 'info' },
-    { group: 'Announcements', label: 'Announcements (Empty)',file: 'Announcement Empty.html',  icon: 'megaphone' },
 
     { group: 'Bill Payment',     label: 'Pay Bill (Menu)',      file: 'Pay Bill.html',                      icon: 'receipt' },
-    { group: 'Bill Payment',     label: 'Select Biller',      file: 'Bill Payment_Select Biller.html',    icon: 'statement' },
-    { group: 'Bill Payment',     label: 'Enter Account',      file: 'Bill Payment_Enter Account.html',    icon: 'statement' },
+    { group: 'Bill Payment',     label: 'All Billers',      file: 'Bill Payment_Select Biller.html',    icon: 'statement' },
     { group: 'Bill Payment',     label: 'Enter Amount',       file: 'Bill Payment_Enter Amount.html',     icon: 'money' },
     { group: 'Bill Payment',     label: 'Confirm Payment',    file: 'Bill Payment_Review.html',           icon: 'check' },
     { group: 'Bill Payment',     label: 'Enter PIN',          file: 'Bill Payment_Enter PIN.html',        icon: 'lock' },
     { group: 'Bill Payment',     label: 'Receipt',            file: 'Bill Payment Confirmation.html',     icon: 'receipt' },
-    { group: 'Bill Payment',     label: 'Overdraft · Offer',     file: 'Bill Payment_Overdraft Offer.html',      icon: 'info' },
-    { group: 'Bill Payment',     label: 'Overdraft · Activate',  file: 'Bill Payment_Overdraft Activate.html',   icon: 'money' },
-    { group: 'Bill Payment',     label: 'Overdraft · Terms',     file: 'Bill Payment_Overdraft Terms.html',      icon: 'shield' },
-    { group: 'Bill Payment',     label: 'Overdraft · Activated', file: 'Bill Payment_Overdraft Activated.html',  icon: 'check' },
-    { group: 'Bill Payment',     label: 'Error · Invalid Reference',    file: 'Bill Payment_Invalid Reference.html',    icon: 'info' },
-    { group: 'Bill Payment',     label: 'Error · Insufficient Balance', file: 'Bill Payment_Insufficient Balance.html', icon: 'info' },
-    { group: 'Bill Payment',     label: 'Error · Limit Exceeded',       file: 'Bill Payment_Limit Exceeded.html',       icon: 'info' },
     { group: 'Bill Payment',     label: 'Error · Payment Failed',       file: 'Bill Payment_Failed.html',               icon: 'info' },
     { group: 'Bill Payment',     label: 'Error · Timeout',              file: 'Bill Payment_Timeout.html',              icon: 'info' },
     { group: 'Bill Payment',     label: 'Error · Service Unavailable',  file: 'Bill Payment_Service Unavailable.html',  icon: 'info' },
 
     { group: 'Merchant Payment', label: 'Pay Merchant (Menu)',   file: 'Pay Merchant.html',                          icon: 'scan' },
-    { group: 'Merchant Payment', label: 'Enter Amount',          file: 'Merchant Payment_Enter Amount.html',         icon: 'money' },
-    { group: 'Merchant Payment', label: 'Confirm Payment',       file: 'Merchant Payment_Review.html',               icon: 'check' },
     { group: 'Merchant Payment', label: 'Enter PIN',             file: 'Merchant Payment_Enter PIN.html',            icon: 'lock' },
     { group: 'Merchant Payment', label: 'Receipt',              file: 'Merchant Payment Confirmation.html',         icon: 'receipt' },
-    { group: 'Merchant Payment', label: 'Overdraft · Offer',     file: 'Merchant Payment_Overdraft Offer.html',      icon: 'info' },
-    { group: 'Merchant Payment', label: 'Overdraft · Activate',  file: 'Merchant Payment_Overdraft Activate.html',   icon: 'money' },
-    { group: 'Merchant Payment', label: 'Overdraft · Terms',     file: 'Merchant Payment_Overdraft Terms.html',      icon: 'shield' },
-    { group: 'Merchant Payment', label: 'Overdraft · Activated', file: 'Merchant Payment_Overdraft Activated.html',  icon: 'check' },
-    { group: 'Merchant Payment', label: 'Error · Merchant Unavailable', file: 'Merchant Payment_Merchant Unavailable.html', icon: 'info' },
-    { group: 'Merchant Payment', label: 'Error · Insufficient Balance', file: 'Merchant Payment_Insufficient Balance.html', icon: 'info' },
-    { group: 'Merchant Payment', label: 'Error · Limit Exceeded',       file: 'Merchant Payment_Limit Exceeded.html',       icon: 'info' },
     { group: 'Merchant Payment', label: 'Error · Payment Failed',       file: 'Merchant Payment_Failed.html',               icon: 'info' },
     { group: 'Merchant Payment', label: 'Error · Timeout',              file: 'Merchant Payment_Timeout.html',              icon: 'info' },
     { group: 'Merchant Payment', label: 'Error · Service Unavailable',  file: 'Merchant Payment_Service Unavailable.html',  icon: 'info' },
 
     { group: 'Airtime / Package', label: 'Buy Airtime / Package (Entry)',  file: 'Airtime_Buy.html',                   icon: 'smartphone' },
-    { group: 'Airtime / Package', label: 'Confirm Purchase',     file: 'Airtime_Review.html',                icon: 'check' },
     { group: 'Airtime / Package', label: 'Enter PIN',            file: 'Airtime_Enter PIN.html',             icon: 'lock' },
     { group: 'Airtime / Package', label: 'Receipt',              file: 'Airtime Confirmation.html',          icon: 'receipt' },
-    { group: 'Airtime / Package', label: 'Overdraft · Offer',     file: 'Airtime_Overdraft Offer.html',      icon: 'info' },
-    { group: 'Airtime / Package', label: 'Overdraft · Activate',  file: 'Airtime_Overdraft Activate.html',   icon: 'money' },
-    { group: 'Airtime / Package', label: 'Overdraft · Terms',     file: 'Airtime_Overdraft Terms.html',      icon: 'shield' },
-    { group: 'Airtime / Package', label: 'Overdraft · Activated', file: 'Airtime_Overdraft Activated.html',  icon: 'check' },
-    { group: 'Airtime / Package', label: 'Error · Invalid Number',       file: 'Airtime_Invalid Number.html',         icon: 'info' },
-    { group: 'Airtime / Package', label: 'Error · Insufficient Balance', file: 'Airtime_Insufficient Balance.html',   icon: 'info' },
-    { group: 'Airtime / Package', label: 'Error · Limit Exceeded',       file: 'Airtime_Limit Exceeded.html',         icon: 'info' },
     { group: 'Airtime / Package', label: 'Error · Purchase Failed',      file: 'Airtime_Failed.html',                 icon: 'info' },
     { group: 'Airtime / Package', label: 'Error · Timeout',              file: 'Airtime_Timeout.html',                icon: 'info' },
     { group: 'Airtime / Package', label: 'Error · Service Unavailable',  file: 'Airtime_Service Unavailable.html',    icon: 'info' },
@@ -349,29 +384,40 @@
     { group: 'Transfer', label: 'Send Money Menu',             file: 'Send Money Menu.html',                    icon: 'send' },
     { group: 'Transfer', label: 'Wallet · Enter Recipient',    file: 'Transfer to Wallet_Enter Recipient.html', icon: 'user' },
     { group: 'Transfer', label: 'Bank · Select Bank',          file: 'Transfer_Select Bank.html',               icon: 'bank' },
-    { group: 'Transfer', label: 'Wallet · Enter Amount',       file: 'Transfer to Wallet_Enter Amount.html',    icon: 'money' },
-    { group: 'Transfer', label: 'Confirmation',                file: 'Transfer_Confirmation.html',              icon: 'check' },
     { group: 'Transfer', label: 'Wallet · Enter PIN',          file: 'Transfer to Wallet_Enter PIN.html',       icon: 'lock' },
     { group: 'Transfer', label: 'Bank · Enter PIN',            file: 'Transfer_Enter PIN.html',                 icon: 'lock' },
     { group: 'Transfer', label: 'Wallet · Receipt',            file: 'Transfer to Wallet_Confirmation.html',    icon: 'receipt' },
     { group: 'Transfer', label: 'Bank · Receipt',              file: 'Transaction Confirmation.html',           icon: 'receipt' },
-    { group: 'Transfer', label: 'Error · Recipient Not Found', file: 'Transfer_Recipient Not Found.html',       icon: 'info' },
-    { group: 'Transfer', label: 'Error · Insufficient Balance',file: 'Transfer_Insufficient Balance.html',      icon: 'info' },
-    { group: 'Transfer', label: 'Error · Limit Exceeded',      file: 'Transfer_Limit Exceeded.html',            icon: 'info' },
     { group: 'Transfer', label: 'Error · Transfer Failed',     file: 'Transfer_Failed.html',                    icon: 'info' },
     { group: 'Transfer', label: 'Error · Timeout',             file: 'Transfer_Timeout.html',                   icon: 'info' },
     { group: 'Transfer', label: 'Error · Service Unavailable', file: 'Transfer_Service Unavailable.html',       icon: 'info' },
 
-    // ── Withdraw Cash journey (P1) ──
-    { group: 'Withdraw', label: 'More Services (Hub)',        file: 'More Services.html',                           icon: 'grid' },
-    { group: 'Withdraw', label: 'Withdraw Cash (Menu)',       file: 'Withdraw Cash.html',                           icon: 'withdraw' },
-    { group: 'Withdraw', label: 'Agent · Short Code / QR',    file: 'Withdraw Cash - Agent Locator.html',           icon: 'money' },
-    { group: 'Withdraw', label: 'Agent · Nearby Locator',     file: 'Withdraw Cash - Agent Nearby.html',            icon: 'map' },
-    { group: 'Withdraw', label: 'Agent · Details',            file: 'Withdraw Cash - Agent Details.html',           icon: 'bank' },
-    { group: 'Withdraw', label: 'ATM · Select Bank',          file: 'Withdraw Cash - ATM Locator.html',             icon: 'atm' },
-    { group: 'Withdraw', label: 'Enter PIN',                  file: 'Withdraw Cash - Enter PIN.html',              icon: 'lock' },
-    { group: 'Withdraw', label: 'Confirmation Receipt',       file: 'Withdraw Cash - Receipt.html',                icon: 'voucher' },
-    { group: 'Withdraw', label: 'ATM Instructions',           file: 'Withdraw Cash - ATM Instructions.html',       icon: 'atm' },
+    // ── Cash In / Cash Out journey (P1) ──
+    { group: 'Cash In', label: 'Cash In (Menu)',                  file: 'Cash In.html',                           icon: 'download' },
+    { group: 'Cash In', label: 'Cash In · Agent Short Code',      file: 'Cash In - Agent Short Code.html',         icon: 'money' },
+    { group: 'Cash In', label: 'Cash In · Agent Nearby Locator',  file: 'Cash In - Agent Nearby.html',             icon: 'map' },
+    { group: 'Cash In', label: 'Cash In · Agent Details',         file: 'Cash In - Agent Details.html',            icon: 'bank' },
+    { group: 'Cash In', label: 'Cash In · Enter PIN',             file: 'Cash In - Enter PIN.html',                icon: 'lock' },
+    { group: 'Cash In', label: 'Cash In · Receipt',               file: 'Cash In - Receipt.html',                  icon: 'receipt' },
+    { group: 'Cash In', label: 'Cash In · Voucher',               file: 'Cash In - Voucher.html',                  icon: 'voucher' },
+    { group: 'Cash In', label: 'Error · Invalid Agent',           file: 'Cash In - Invalid Agent.html',            icon: 'info' },
+    { group: 'Cash In', label: 'Error · Agent Unavailable',       file: 'Cash In - Agent Unavailable.html',        icon: 'info' },
+    { group: 'Cash In', label: 'Error · Invalid Voucher',         file: 'Cash In - Invalid Voucher.html',          icon: 'info' },
+    { group: 'Cash In', label: 'Error · Voucher Already Used',    file: 'Cash In - Voucher Already Used.html',     icon: 'info' },
+    { group: 'Cash In', label: 'Error · Voucher Expired',         file: 'Cash In - Voucher Expired.html',          icon: 'info' },
+    { group: 'Cash In', label: 'Error · Location Denied',         file: 'Cash In - Location Denied.html',          icon: 'info' },
+    { group: 'Cash In', label: 'Error · No Agents Found',         file: 'Cash In - No Agents Found.html',          icon: 'info' },
+    { group: 'Cash In', label: 'Error · Service Unavailable',     file: 'Cash In - Service Unavailable.html',      icon: 'info' },
+
+    // Cash Out (Withdraw)
+    { group: 'Withdraw', label: 'Withdraw Cash (Menu)',             file: 'Withdraw Cash.html',                     icon: 'withdraw' },
+    { group: 'Withdraw', label: 'Withdraw · Agent Short Code / QR', file: 'Withdraw Cash - Agent Locator.html',     icon: 'money' },
+    { group: 'Withdraw', label: 'Withdraw · Agent Nearby Locator',  file: 'Withdraw Cash - Agent Nearby.html',      icon: 'map' },
+    { group: 'Withdraw', label: 'Withdraw · Agent Details',         file: 'Withdraw Cash - Agent Details.html',     icon: 'bank' },
+    { group: 'Withdraw', label: 'Withdraw · ATM Select Bank',       file: 'Withdraw Cash - ATM Locator.html',        icon: 'atm' },
+    { group: 'Withdraw', label: 'Withdraw · Enter PIN',             file: 'Withdraw Cash - Enter PIN.html',          icon: 'lock' },
+    { group: 'Withdraw', label: 'Withdraw · Confirmation Receipt',  file: 'Withdraw Cash - Receipt.html',           icon: 'voucher' },
+    { group: 'Withdraw', label: 'Withdraw · ATM Instructions',      file: 'Withdraw Cash - ATM Instructions.html',   icon: 'atm' },
                 { group: 'Transactions', label: 'Transaction Receipt', file: 'Send Money Recipet PDF.html', icon: 'receipt' },
         { group: 'Transactions', label: 'Transaction Statment', file: 'Transaction Statment PDF.html', icon: 'receipt' },
     { group: 'Transactions', label: 'Merchant Draw Statement', file: 'Merchant Draw Statement PDF.html', icon: 'pdf' },
@@ -379,6 +425,9 @@
     { group: 'Transactions', label: 'Manage Statement',      file: 'Manage Statement.html',         icon: 'statement' },
     { group: 'Transactions', label: 'Manage Statement (Empty)', file: 'Manage Statement Empty.html', icon: 'statement' },
     { group: 'Transactions', label: 'Statement PDF',         file: 'Statement PDF.html',            icon: 'pdf' },
+    { group: 'Announcements', label: 'Announcements',        file: 'Announcement.html',        icon: 'megaphone' },
+    { group: 'Announcements', label: 'Announcement Detail',  file: 'Announcement Detail.html', icon: 'info' },
+    { group: 'Announcements', label: 'Announcements (Empty)',file: 'Announcement Empty.html',  icon: 'megaphone' },
 
     { group: 'Auth', label: 'Signup',              file: 'Signup.html',                    icon: 'userPlus' },
     { group: 'Auth', label: 'Signup Home',         file: 'Signup-Home.html',               icon: 'home' },
@@ -414,6 +463,7 @@
     { group: 'Account', label: 'Fayda Steps',          file: 'Fayda Steps.html',            icon: 'gift' },
     { group: 'Account', label: 'Tariffs & Fees',       file: 'Tariffs & Fees.html',         icon: 'money' },
     { group: 'Account', label: 'Feedback Tool',        file: 'Feedback Tool.html',          icon: 'message' },
+
 
     { group: 'Popup & Other', label: 'Fayda Activation',       file: 'Fayda-Activation-PopUp.html',             icon: 'gift' },
     { group: 'Popup & Other', label: 'Fayda Activation (Forced)',file: 'Fayda-Activation-PopUp_forced.html',     icon: 'gift' },
@@ -464,6 +514,7 @@
     map: '<svg viewBox="0 0 24 24"><path d="M3 5h18M3 5v14M21 5v14M8 8h6M15 12h5"/><circle cx="18" cy="16" r="1.6"/></svg>',
     voucher: '<svg viewBox="0 0 24 24"><rect x="4" y="3" width="16" height="18" rx="2"/><line x1="7" y1="9" x2="7" y2="15"/><line x1="10" y1="9" x2="10" y2="15"/><line x1="13" y1="9" x2="13" y2="15"/><line x1="16" y1="9" x2="16" y2="15"/><line x1="19" y1="9" x2="19" y2="15"/></svg>',
     atm: '<svg viewBox="0 0 24 24"><rect x="4" y="2" width="16" height="20" rx="2"/><rect x="7" y="6" width="10" height="6" rx="1"/><path d="M7 15h10"/></svg>',
+    ticket: '<svg viewBox="0 0 24 24"><path d="M2 9a3 3 0 0 1 0 6v2a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-2a3 3 0 0 1 0-6V7a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2Z"/><path d="M13 5v2M13 11v2M13 17v2"/></svg>',
   };
 
   // ============================================================
@@ -474,10 +525,14 @@
 
   // Track collapse state
   let collapsedGroups = JSON.parse(localStorage.getItem('sidebarCollapsed') || '[]');
+  // First run: open the Home tab by default and collapse every other group.
+  if (!localStorage.getItem('sidebarCollapsed')) {
+    collapsedGroups = groups.filter(g => g !== groups[0]);
+  }
 
   groups.forEach(group => {
     const items = pages.filter(p => p.group === group);
-    const isCollapsed = true; // Start all groups collapsed
+    const isCollapsed = collapsedGroups.includes(group);
 
     // Category header
     const header = document.createElement('div');
@@ -509,19 +564,23 @@
   // Functions
   // ============================================================
   function toggleGroup(name) {
-    const idx = collapsedGroups.indexOf(name);
-    if (idx > -1) collapsedGroups.splice(idx, 1);
-    else collapsedGroups.push(name);
+    // Accordion: opening one group closes all the others.
+    const isOpening = collapsedGroups.includes(name); // currently closed → clicking opens it
+
+    if (isOpening) {
+      collapsedGroups = groups.filter(g => g !== name); // only this group stays open
+    } else {
+      collapsedGroups.push(name); // closing the clicked group; others stay as they are
+    }
     localStorage.setItem('sidebarCollapsed', JSON.stringify(collapsedGroups));
 
-    // Update DOM
+    // Update DOM for every group
     const headers = document.querySelectorAll('.category-header');
     headers.forEach(h => {
-      if (h.querySelector('.category-label').textContent === name) {
-        const chevron = h.querySelector('.category-chevron');
-        chevron.classList.toggle('collapsed');
-        h.nextElementSibling.classList.toggle('closed');
-      }
+      const label = h.querySelector('.category-label').textContent;
+      const closed = collapsedGroups.includes(label);
+      h.querySelector('.category-chevron').classList.toggle('collapsed', closed);
+      h.nextElementSibling.classList.toggle('closed', closed);
     });
   }
 
@@ -565,11 +624,31 @@
   // ============================================================
   const testScenarios = [
     // Announcement entry points — handled natively by Lehulum Home
-    { id: 'annPopup',   name: 'Announcement · Popup',   desc: 'Campaign modal on app open',       icon: '📣', html: '', css: '' },
-    { id: 'annTooltip', name: 'Announcement · Tooltip', desc: 'Tooltip anchored to the bell',     icon: '💬', html: '', css: '' },
-    { id: 'annStrip',   name: 'Announcement · Info Bar',desc: 'Inline strip under the app bar',   icon: 'ℹ️', html: '', css: '' },
+    // Errif overdraft state — toggled straight from the hub.
+    { id: 'airOdOn',        name: 'Errif · OD Activated',     desc: 'Errif covers the airtime purchase',    icon: '🔵', page: 'Airtime_Buy.html', call: { fn: 'toggleOverdraft', args: [true] } },
+    { id: 'airOdOff',       name: 'Errif · OD Off',            desc: 'Back to the normal wallet balances',  icon: '🔌', page: 'Airtime_Buy.html', call: { fn: 'toggleOverdraft', args: [false] } },
+
+    { id: 'airInsufficient',name: 'Airtime · Insufficient',    desc: 'Neither account covers the purchase',      icon: '⚠️', page: 'Airtime_Buy.html', goto: 'Airtime_Insufficient Balance.html' },
+    { id: 'airLimit',       name: 'Airtime · Limit Exceeded',  desc: 'Above the per-purchase limit',             icon: '🚫', page: 'Airtime_Buy.html', goto: 'Airtime_Limit Exceeded.html' },
+
+    // PIN-outcome validations — the Airtime and Package PIN screens carry no
+    // black test panel of their own, so these live in the hub's scenario list.
+    { id: 'airPinSuccess', name: 'Airtime PIN · Success',      desc: 'PIN is accepted, purchase goes through',    icon: '✅', page: 'Airtime_Enter PIN.html', call: { fn: 'setOutcome', args: ['success'] } },
+    { id: 'airPinFailed',  name: 'Airtime PIN · Failed',       desc: 'Purchase is declined after the PIN',        icon: '❌', page: 'Airtime_Enter PIN.html', call: { fn: 'setOutcome', args: ['failed'] } },
+    { id: 'airPinTimeout', name: 'Airtime PIN · Timeout',      desc: 'The network never responds',                icon: '⏱️', page: 'Airtime_Enter PIN.html', call: { fn: 'setOutcome', args: ['timeout'] } },
+    { id: 'airPinService', name: 'Airtime PIN · Service Down', desc: 'The service is unavailable',                icon: '🛑', page: 'Airtime_Enter PIN.html', call: { fn: 'setOutcome', args: ['service'] } },
+
+    { id: 'pkgPinSuccess', name: 'Package PIN · Success',      desc: 'PIN is accepted, purchase goes through',    icon: '✅', page: 'Package_Enter PIN.html', call: { fn: 'setOutcome', args: ['success'] } },
+    { id: 'pkgPinFailed',  name: 'Package PIN · Failed',       desc: 'Purchase is declined after the PIN',        icon: '❌', page: 'Package_Enter PIN.html', call: { fn: 'setOutcome', args: ['failed'] } },
+    { id: 'pkgPinTimeout', name: 'Package PIN · Timeout',      desc: 'The network never responds',                icon: '⏱️', page: 'Package_Enter PIN.html', call: { fn: 'setOutcome', args: ['timeout'] } },
+    { id: 'pkgPinService', name: 'Package PIN · Service Down', desc: 'The service is unavailable',                icon: '🛑', page: 'Package_Enter PIN.html', call: { fn: 'setOutcome', args: ['service'] } },
+
+    { id: 'annPopup',   name: 'Announcement · Popup',   desc: 'Campaign modal on app open',       icon: '📣', page: 'Lehulum Home.html', html: '', css: '' },
+    { id: 'annTooltip', name: 'Announcement · Tooltip', desc: 'Tooltip anchored to the bell',     icon: '💬', page: 'Lehulum Home.html', html: '', css: '' },
+    { id: 'annStrip',   name: 'Announcement · Info Bar',desc: 'Inline strip under the app bar',   icon: 'ℹ️', page: 'Lehulum Home.html', html: '', css: '' },
     {
       id: 'updateNotice', name: 'Update Notice PopUp', desc: 'Automatic update notification modal', icon: '🚀',
+      page: 'Update Notice PopUp.html',
       html: `
         <div class="test-popup-overlay" onclick="if(event.target===this)this.remove()">
           <div class="test-popup-card" style="padding:40px 30px 30px;width:340px;">
@@ -609,6 +688,7 @@
     },
     {
       id: 'updateTooltip', name: 'Update Notice ToolTip', desc: 'Dark tooltip with update info', icon: '💡',
+      page: 'Update Notice ToolTip.html',
       html: `
         <div class="test-popup-overlay" onclick="if(event.target===this)this.remove()">
           <div class="tooltip-card">
@@ -636,6 +716,7 @@
     },
     {
       id: 'faydaActivation', name: 'Fayda Activation', desc: 'Link your Fayda ID modal', icon: '🆔',
+      page: 'Fayda-Activation-PopUp.html',
       html: `
         <div class="test-popup-overlay" onclick="if(event.target===this)this.remove()">
           <div class="test-popup-card" style="text-align:center">
@@ -654,6 +735,7 @@
     },
     {
       id: 'faydaForced', name: 'Fayda Activation (Forced)', desc: 'Forced Fayda ID activation', icon: '⚠️',
+      page: 'Fayda-Activation-PopUp_forced.html',
       html: `
         <div class="test-popup-overlay" onclick="if(event.target===this)this.remove()">
           <div class="test-popup-card" style="text-align:center">
@@ -672,6 +754,7 @@
     },
     {
       id: 'signupPin', name: 'SignUp PIN Popup', desc: 'PIN creation popup', icon: '🔐',
+      page: 'SignUp SetUp PIN popup.html',
       html: `
         <div class="test-popup-overlay" onclick="if(event.target===this)this.remove()">
           <div class="test-popup-card" style="text-align:center">
@@ -688,6 +771,8 @@
     },
     {
       id: 'enableFingerprint', name: 'Enable Fingerprint', desc: 'Fingerprint enable popup', icon: '🖐️',
+      page: 'Enable Finger Print PopUp.html',
+      highlight: true,
       html: `
         <div class="test-popup-overlay" onclick="if(event.target===this)this.remove()">
           <div class="test-popup-card" style="text-align:center">
@@ -706,6 +791,7 @@
     },
     {
       id: 'fingerprintLogin', name: 'FingerPrint Login Setup', desc: 'Fingerprint login setup', icon: '👆',
+      page: 'FingerPrint Login Setup.html',
       html: `
         <div class="test-popup-overlay" onclick="if(event.target===this)this.remove()">
           <div class="test-popup-card" style="text-align:center">
@@ -721,6 +807,7 @@
     },
     {
       id: 'transactionConfirm', name: 'Transaction Confirmation', desc: 'Transaction success result', icon: '✅',
+      page: 'Transaction Confirmation.html',
       html: `
         <div class="test-popup-overlay" onclick="if(event.target===this)this.remove()">
           <div class="test-popup-card" style="text-align:center">
@@ -729,7 +816,7 @@
             <h2 class="test-popup-title" style="font-size:20px">Transaction Successful</h2>
             <p class="test-popup-sub">You've sent <strong style="color:#1C1C21">1,000.00 Birr</strong> to Mom M-PESA</p>
             <div style="background:#FAFAFA;border-radius:10px;padding:12px;width:100%;margin:10px 0 18px;text-align:left">
-              <div style="display:flex;justify-content:space-between;margin-bottom:4px"><span style="color:#7C7C87;font-size:11px">Reference</span><span style="color:#1C1C21;font-size:11px;font-weight:600">MP220813ABC</span></div>
+              <div style="display:flex;justify-content:space-between;margin-bottom:4px"><span style="color:#7C7C87;font-size:11px">Reference</span><span style="color:#1C1C21;font-size:11px;font-weight:600">UH52FKISV0</span></div>
               <div style="display:flex;justify-content:space-between"><span style="color:#7C7C87;font-size:11px">Date</span><span style="color:#1C1C21;font-size:11px;font-weight:600">13 Aug 2026</span></div>
             </div>
             <div style="display:flex;flex-direction:column;gap:8px;width:100%">
@@ -743,6 +830,7 @@
     },
     {
       id: 'toast', name: 'Toast Message', desc: 'Success & error toasts', icon: '💬',
+      page: 'Toast Message.html',
       html: `
         <div class="test-popup-overlay" onclick="if(event.target===this)this.remove()">
           <div style="display:flex;flex-direction:column;gap:10px;animation:slideUpPopup 0.3s">
@@ -771,6 +859,7 @@
     },
     {
       id: 'updateRequest', name: 'Update Request (Optional)', desc: 'Optional update prompt', icon: '📲',
+      page: 'Update Request_Optional.html',
       html: `
         <div class="test-popup-overlay" onclick="if(event.target===this)this.remove()">
           <div class="test-popup-card" style="text-align:center">
@@ -789,32 +878,306 @@
     }
   ];
 
+  // What to type on each screen to reach every state it can show. Keyed by the
+  // page file, so the panel only ever lists the screen you are looking at.
+  const TEST_INFO = {
+    'Bill Payment_EEU.html': {
+      title: 'EEU',
+      groups: [
+        { label: 'Post Paid — contract number', rows: [
+          ['45292921', 'Resolves. Bill 400.00 Br — pays through'],
+          ['45292922', 'There is no open invoice'],
+          ['45292923', 'Resolves. Bill 21,000.00 Br → Insufficient Balance on the confirmation'],
+          ['4529292178', 'Invalid Contract Number (too long)']
+        ]},
+        { label: 'Prepaid — serial number', rows: [
+          ['45292921', 'Resolves, then asks for an Amount in Br'],
+          ['45292922', 'Resolves, then asks for Kilo Watt (billed at 3.00 Br/kWh)'],
+          ['55211400', 'Resolves for a second customer'],
+          ['4529292178', 'Invalid Serial Number (too long)']
+        ]}
+      ],
+      note: 'Amount limits: 5.00 – 75,000.00 Br. Anything above the paying account shows Insufficient Balance.'
+    },
+
+    'Bill Payment_School.html': {
+      title: 'School',
+      groups: [
+        { label: 'School code', rows: [
+          ['452929', "St. Mary's University"],
+          ['318204', 'Addis Ababa University'],
+          ['4529292', 'Invalid School Code']
+        ]},
+        { label: 'Student ID (with code 452929)', rows: [
+          ['SMU01214', 'Two fees listed — School Fee 30,000 and Supplementary 3,000'],
+          ['SMU01215', 'There is no open invoice'],
+          ['SMU01216', 'One fee of 30,000 Br → Insufficient Balance on the confirmation'],
+          ['SMU01245', 'Liya Kebede Deresa'],
+          ['FG01214', 'Invalid school code or student ID']
+        ]},
+        { label: 'Phone number', rows: [
+          ['715965321', 'One student on the number'],
+          ['715965322', 'Two students — one card each, first open'],
+          ['922334455', 'Addis Ababa University student']
+        ]}
+      ],
+      note: 'The dash is optional: SMU01214, SMU-01214 and smu 01214 all resolve.'
+    },
+
+    'Bill Payment_Water.html': {
+      title: 'Water',
+      groups: [
+        { label: 'Customer key', rows: [
+          ['ECB/12343/2021', 'Resolves. Bill 100.00 Br + 1.00 fee'],
+          ['ECB/12343/2022', 'There is no open invoice'],
+          ['ECB/12343/2023', 'Bill 4,500.00 Br → Insufficient Balance on the confirmation'],
+          ['ECB/88120/2019', 'Second customer, with a 25.00 Br penalty'],
+          ['ECB/99999/9999', 'Invalid customer key']
+        ]}
+      ],
+      note: 'Consumption is derived from the readings, so the confirmation totals follow the key.'
+    },
+
+    'Bill Payment_Airlines.html': {
+      title: 'Ethiopian Airlines',
+      groups: [
+        { label: 'PRN code', rows: [
+          ['23455', 'Resolves. 400.00 Br — pays through'],
+          ['23456', 'Expired PNR'],
+          ['23454', 'This PNR was already paid'],
+          ['23457', '12,000.00 Br → Insufficient Balance on the confirmation'],
+          ['88120', 'Second booking — Sheba Economy'],
+          ['234557', 'Invalid PNR (too long)']
+        ]}
+      ]
+    },
+
+    'Bill Payment_Insurance.html': {
+      title: 'Insurance',
+      groups: [
+        { label: 'Policy number', rows: [
+          ['EJw246', 'Resolves — Derartu Tulu Andegna'],
+          ['AZK881', 'Resolves — Alemu Girma Bekele'],
+          ['EJw247', 'Invalid Policy Number']
+        ]}
+      ],
+      note: 'The amount is typed by hand, so the limit and balance states come from the Amount field.'
+    },
+
+    'Bill Payment_DSTV Card.html': {
+      title: 'DSTV',
+      groups: [
+        { label: 'Smart card number', rows: [
+          ['7043928115', 'Alemayehu Tadesse — Meda Plus, 300.00 Br due'],
+          ['7043928116', 'Hanna Bekele Tadesse — Compact'],
+          ['7043928117', 'Alemu Girma Bekele — Premium'],
+          ['4529292178', 'Invalid smart card number (too long)']
+        ]}
+      ],
+      note: 'After Continue: Change Package (Gojo 290 / Beteseb 550 / Meda 750), Add-ons (French and Turkish Touch, 50 each), a custom amount, or the current package.'
+    },
+
+    'Transfer_Select Bank.html': {
+      title: 'Bank Transfer',
+      groups: [
+        { label: 'Account number', rows: [
+          ['0589632147896320145', 'Abebe Bikila Maraton'],
+          ['0589632321405147896', 'Abebech Gobena'],
+          ['0589632141432057896', 'Aster Mequanent'],
+          ['1000688789045', 'Solomon Zewde'],
+          ['anything else', 'Invalid account number']
+        ]},
+        { label: 'Amount', rows: [
+          ['21000', 'Insufficient Balance (amber) — balance is 20,000.00 Br'],
+          ['80000', 'Maximum Amount: 75,000.00 Br'],
+          ['1', 'Minimum Amount: 5.00 Br']
+        ]}
+      ],
+      note: 'Typing a name instead of a number searches the same list — try "Ab".'
+    },
+
+    'Transfer to Wallet_Enter Recipient.html': {
+      title: 'Wallet Transfer',
+      groups: [
+        { label: 'Phone number', rows: [
+          ['915965211', 'Abebe Bikila Maraton'],
+          ['911223344', 'Aster Mequanent'],
+          ['922334455', 'Solomon Zewde'],
+          ['anything else', 'Invalid phone number']
+        ]},
+        { label: 'Amount', rows: [
+          ['21000', 'Insufficient Balance — balance is 20,000.00 Br'],
+          ['80000', 'Maximum Amount: 75,000.00 Br'],
+          ['1', 'Minimum Amount: 5.00 Br']
+        ]}
+      ],
+      note: 'A name also searches the list, and the red button opens the contact sheet.'
+    },
+
+    'Pay Merchant.html': {
+      title: 'Merchant Payment',
+      groups: [
+        { label: 'Merchant short code', rows: [
+          ['452929', 'TiTi Cafe'],
+          ['4529292178', 'London Cafe'],
+          ['247810', 'Shoa Supermarket'],
+          ['183920', "Kaldi's Coffee"],
+          ['anything else', 'Invalid merchant code']
+        ]}
+      ],
+      note: 'On the Scan QR tab the camera finds London Cafe on its own after 10 seconds, or tap the frame to skip the wait.'
+    }
+  };
+
+  // Remembered on every frame load, so a panel opened later still knows which
+  // screen is showing even if the location is unreadable at that moment.
+  let lastFramePage = '';
+
+  function fileOf(path) {
+    return decodeURIComponent((path || '').split('?')[0].split('#')[0].split('/').pop());
+  }
+
+  function readFramePage() {
+    const frame = document.getElementById('pageIframe');
+    if (!frame) return '';
+    try {
+      // Same origin, so the live location is readable and stays correct as the
+      // prototype navigates from screen to screen.
+      const path = frame.contentWindow.location.pathname;
+      if (path && path !== '/' && path !== 'about:blank') return fileOf(path);
+    } catch (e) { /* opaque origin — fall back to what we last recorded */ }
+    return '';
+  }
+
+  function screenOwnFab() {
+    const frame = document.getElementById('pageIframe');
+    try {
+      return frame && frame.contentWindow.document.querySelector('.test-fab');
+    } catch (e) { return null; }   // opaque origin
+  }
+
+  function openScreenTestPanel() {
+    const frame = document.getElementById('pageIframe');
+    try { frame.contentWindow.toggleTestPopup(); } catch (e) { /* opaque origin */ }
+  }
+
+  // A screen's own test button is fixed inside the frame, so it can land anywhere
+  // relative to the hub's. Hide it and proxy it from the stack instead, so all
+  // three buttons share one layout.
+  function syncFabs() {
+    const screenFab = document.getElementById('screenFab');
+    if (!screenFab) return;
+
+    const ownFab = screenOwnFab();
+    if (ownFab) ownFab.style.display = 'none';
+
+    screenFab.hidden = !ownFab;
+    screenFab.classList.toggle('active', !!ownFab && ownFab.classList.contains('active'));
+  }
+
+  (function trackFramePage() {
+    const frame = document.getElementById('pageIframe');
+    if (!frame) return;
+    const remember = () => {
+      const p = readFramePage();
+      if (p) lastFramePage = p;
+      syncFabs();
+    };
+    frame.addEventListener('load', remember);
+    remember();
+  })();
+
+  function currentPageFile() {
+    const frame = document.getElementById('pageIframe');
+    return readFramePage() || lastFramePage || fileOf(frame ? frame.getAttribute('src') : '');
+  }
+
+  function toggleInfoPanel() {
+    const existing = document.getElementById('infoPanelContainer');
+    if (existing) { existing.remove(); return; }
+    renderInfoPanel();
+  }
+
+  function renderInfoPanel() {
+    const info = TEST_INFO[currentPageFile()];
+
+    const body = info ? `
+      ${info.groups.map(g => `
+        <div class="test-info-group">${g.label}</div>
+        ${g.rows.map(([code, result]) => `
+          <div class="test-info-row">
+            <span class="code">${code}</span>
+            <span class="result">${result}</span>
+          </div>
+        `).join('')}
+      `).join('')}
+      ${info.note ? `<div class="test-info-note">${info.note}</div>` : ''}
+    ` : `<div class="test-scenario-empty">No test data for this page.</div>`;
+
+    const container = document.createElement('div');
+    container.id = 'infoPanelContainer';
+    container.innerHTML = `
+      <div class="test-panel-overlay open" onclick="if(event.target===this)closeInfoPanel()">
+        <div class="test-panel">
+          <div class="test-panel-header">
+            <h3>ℹ️ Test Data${info ? ' — ' + info.title : ''}</h3>
+            <button class="test-panel-close" onclick="closeInfoPanel()">&times;</button>
+          </div>
+          ${body}
+        </div>
+      </div>
+    `;
+    document.body.appendChild(container);
+  }
+
+  function closeInfoPanel() {
+    const container = document.getElementById('infoPanelContainer');
+    if (container) container.remove();
+  }
+
   function toggleTestPanel() {
     const existing = document.getElementById('testPanelContainer');
     if (existing) { existing.remove(); return; }
     renderTestPanel();
   }
 
+  // Popup demo scenarios are only offered on the Home, Announcements, Account
+  // and Popup & Other flows — not on transactional flows (Airtime, Transfer,
+  // Bill, Merchant, Withdraw, etc.) where they'd show without value.
+  const POPUP_FLOWS = ['Home', 'Announcements', 'Account', 'Popup & Other'];
+  const pageGroupMap = Object.fromEntries(pages.map(p => [p.file, p.group]));
+
+  function scenarioVisible(s, currentPage) {
+    if (s.page && s.page === currentPage) return true;   // on its own feature page
+    if (!s.page) return true;                            // genuinely global scenario
+    const group = pageGroupMap[currentPage] || '';
+    return POPUP_FLOWS.includes(group);                  // only the allowed tabs
+  }
+
   function renderTestPanel() {
     const container = document.createElement('div');
     container.id = 'testPanelContainer';
+    const currentPage = currentPageFile();
+    const visible = testScenarios.filter(s => scenarioVisible(s, currentPage));
     container.innerHTML = `
       <div class="test-panel-overlay open" id="testPanelOverlay" onclick="if(event.target===this)closeTestPanel()">
         <div class="test-panel">
           <div class="test-panel-header">
-            <h3>🧪 Test Scenarios</h3>
+            <h3>🧪 Test Scenario 1</h3>
             <button class="test-panel-close" onclick="closeTestPanel()">&times;</button>
           </div>
-          ${testScenarios.map(s => `
+          ${visible.length ? visible.map(s => `
             <div class="test-scenario" onclick="runTestScenario('${s.id}')">
-              <div class="test-scenario-icon">${s.icon}</div>
+              <div class="test-scenario-icon ${s.highlight ? 'yellow' : ''}">${s.icon}</div>
               <div class="test-scenario-info">
                 <div class="name">${s.name}</div>
                 <div class="desc">${s.desc}</div>
               </div>
               <div class="test-scenario-arrow">›</div>
             </div>
-          `).join('')}
+          `).join('') : `
+            <div class="test-scenario-empty">No page-specific scenarios for this page.</div>
+          `}
         </div>
       </div>
     `;
@@ -828,6 +1191,40 @@
 
   function runTestScenario(scenarioId) {
     closeTestPanel();
+
+    const jump = testScenarios.find(s => s.id === scenarioId);
+
+    // Some states are a mode of the screen already open rather than a separate
+    // page, so the scenario calls into it.
+    if (jump && jump.call) {
+      const frame = document.getElementById('pageIframe');
+      const invoke = () => {
+        const fn = frame.contentWindow[jump.call.fn];
+        if (typeof fn === 'function') fn.apply(frame.contentWindow, jump.call.args || []);
+      };
+      if (currentPageFile() === jump.page) {
+        invoke();
+      } else {
+        frame.addEventListener('load', function onLoad() {
+          frame.removeEventListener('load', onLoad);
+          setTimeout(invoke, 250);
+        });
+        frame.src = jump.page;
+      }
+      document.getElementById('pageTitle').textContent = '🧪 ' + jump.name;
+      document.getElementById('pagePath').textContent = jump.page + ' · ' + jump.name;
+      return;
+    }
+
+    // Some states live on a screen of their own rather than in a popup, so the
+    // scenario just opens it.
+    if (jump && jump.goto) {
+      const frame = document.getElementById('pageIframe');
+      frame.src = jump.goto;
+      document.getElementById('pageTitle').textContent = '🧪 ' + jump.name;
+      document.getElementById('pagePath').textContent = jump.goto;
+      return;
+    }
 
     // Announcement surfaces are built into Lehulum Home — just ask it to show one.
     const annVariant = { annPopup: 'popup', annTooltip: 'tooltip', annStrip: 'strip' }[scenarioId];

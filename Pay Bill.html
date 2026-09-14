@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Pay Bill</title>
+<title>Bill Payment</title>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@400;500;600&display=swap');
   @import url('https://api.fontshare.com/v2/css?f[]=switzer@400,500,600,700&display=swap');
@@ -12,306 +12,103 @@
     --Primary: #FE353D;
     --On-Surface: #1C1C21;
     --On-Surface-Low: #7C7C87;
-    --Gray-0: #FFF;
     --Border: #E8E8EC;
     --Background: #F5F5F5;
+    --Field: #F8F8F9;
+    --Field-Border: #EFEFF1;
   }
-
   * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'Inter', sans-serif; background: transparent; display: flex; justify-content: center; align-items: center; min-height: 100vh; padding: 20px; }
+  .phone-frame { width: 360px; height: 780px; background: var(--Background); border-radius: 30px; overflow: hidden; position: relative; box-shadow: 0 20px 60px rgba(0,0,0,0.15); display: flex; flex-direction: column; }
+  .app-content { height: 100%; display: flex; flex-direction: column; }
 
-  body {
-    font-family: 'Inter', sans-serif;
-    background: transparent;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    min-height: 100vh;
-    padding: 20px;
-  }
-
-  .phone-frame {
-    width: 360px;
-    height: 780px;
-    background: var(--Background);
-    border-radius: 30px;
-    overflow: hidden;
-    position: relative;
-    box-shadow: 0 20px 60px rgba(0,0,0,0.15);
-  }
-
-  .app-content {
-    height: 100%;
-    overflow-y: auto;
-    display: flex;
-    flex-direction: column;
-    padding: 0 16px;
-  }
-  .app-content::-webkit-scrollbar { width: 0; }
-
-  .status-bar {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 14px 8px 8px;
-    background: var(--Background);
-    flex-shrink: 0;
-  }
+  .status-bar { display: flex; justify-content: space-between; align-items: center; padding: 14px 24px 8px; background: var(--Background); flex-shrink: 0; }
   .status-bar .time { font-size: 14px; font-weight: 600; color: var(--On-Surface); }
   .status-icons { display: flex; align-items: center; gap: 6px; }
   .status-icons svg { width: 18px; height: 18px; }
 
-  .header-nav {
-    width: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 8px 0 12px;
-    background: var(--Background);
-    flex-shrink: 0;
-  }
-
-  .back-btn {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 36px;
-    height: 36px;
-    border-radius: 50%;
-    background: transparent;
-    border: none;
-    cursor: pointer;
-    transition: all 0.2s;
-  }
+  .header-nav { display: flex; align-items: center; justify-content: space-between; padding: 8px 16px 12px; background: var(--Background); flex-shrink: 0; }
+  .back-btn { width: 36px; height: 36px; border-radius: 50%; background: transparent; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: background 0.2s; }
   .back-btn:hover { background: rgba(0,0,0,0.05); }
   .back-btn svg { width: 22px; height: 22px; stroke: var(--On-Surface); stroke-width: 1.8px; fill: none; }
+  .header-title { color: var(--On-Surface); font-family: 'Switzer', sans-serif; font-size: 17px; font-weight: 500; letter-spacing: 0.3px; flex: 1; text-align: center; }
 
-  .header-title {
-    color: var(--On-Surface);
-    font-family: 'Switzer', sans-serif;
-    font-size: 17px;
-    font-weight: 500;
-    letter-spacing: 0.3px;
-    flex: 1;
-    text-align: center;
-  }
+  .scroll { flex: 1; overflow-y: auto; padding: 4px 16px 18px; display: flex; flex-direction: column; gap: 16px; }
+  .scroll::-webkit-scrollbar { width: 0; }
 
-  /* Search Bar */
-  .search-bar {
-    background: #FFF;
-    border-radius: 14px;
-    padding: 0 14px;
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    height: 46px;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.04);
-    margin-bottom: 20px;
-    flex-shrink: 0;
-  }
-  .search-bar svg { width: 18px; height: 18px; stroke: var(--On-Surface-Low); flex-shrink: 0; }
-  .search-bar input {
-    flex: 1;
-    border: none;
-    outline: none;
-    font-family: 'Switzer', sans-serif;
-    font-size: 14px;
-    color: var(--On-Surface);
-    background: transparent;
-  }
-  .search-bar input::placeholder { color: var(--On-Surface-Low); }
+  /* ── Search ── */
+  .search-field { height: 54px; background: var(--Field); border: 1px solid var(--Field-Border); border-radius: 12px; padding: 0 16px; display: flex; align-items: center; gap: 12px; flex-shrink: 0; transition: border-color 0.2s, background 0.2s; }
+  .search-field:focus-within { border-color: var(--Primary); background: #FFF; }
+  .search-field svg { width: 20px; height: 20px; stroke: var(--On-Surface); stroke-width: 2; fill: none; flex-shrink: 0; }
+  .search-field input { flex: 1; min-width: 0; border: none; background: transparent; outline: none; font-family: 'Switzer', sans-serif; font-size: 15px; font-weight: 500; color: var(--On-Surface); }
+  .search-field input::placeholder { color: var(--On-Surface-Low); font-weight: 400; }
 
-  /* Section */
-  .section-label {
-    color: var(--On-Surface);
-    font-family: 'Switzer', sans-serif;
-    font-size: 14px;
-    font-weight: 600;
-    margin-bottom: 12px;
-    letter-spacing: 0.2px;
-  }
+  /* ── Section headers ── */
+  .section-header { display: flex; justify-content: space-between; align-items: center; }
+  .section-title { font-family: 'Switzer', sans-serif; font-size: 14px; font-weight: 600; color: var(--On-Surface); letter-spacing: 0.2px; }
+  .see-all { font-family: 'Switzer', sans-serif; font-size: 12px; font-weight: 500; color: var(--Primary); cursor: pointer; transition: opacity 0.2s; }
+  .see-all:hover { opacity: 0.7; }
 
-  /* Category Grid */
-  .category-grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 10px;
-    margin-bottom: 22px;
-  }
+  .section { display: flex; flex-direction: column; gap: 12px; }
 
-  .category-card {
-    background: #FFF;
-    border-radius: 14px;
-    padding: 14px 8px 12px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 8px;
-    cursor: pointer;
-    transition: all 0.2s;
-    box-shadow: 0 1px 4px rgba(0,0,0,0.04);
-    border: 1.5px solid transparent;
-  }
-  .category-card:hover { background: #FFF5F5; border-color: rgba(254,53,61,0.15); transform: translateY(-1px); }
-  .category-card:active { transform: scale(0.96); }
+  /* ── Biller grid ── */
+  .biller-card { background: #FFF; border-radius: 16px; padding: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.04); }
+  .biller-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+  .biller-tile { background: #FFF; border-radius: 14px; padding: 16px 8px 14px; display: flex; flex-direction: column; align-items: center; gap: 12px; cursor: pointer; box-shadow: 0 2px 10px rgba(0,0,0,0.07); transition: transform 0.15s, box-shadow 0.2s; }
+  .biller-tile:hover { box-shadow: 0 8px 20px rgba(0,0,0,0.11); transform: translateY(-1px); }
+  .biller-tile:active { transform: scale(0.98); }
+  .biller-tile .logo { width: 40px; height: 40px; }
+  .biller-tile .nm { font-family: 'Switzer', sans-serif; font-size: 12px; font-weight: 600; color: var(--On-Surface); text-align: center; line-height: 1.3; }
+  .grid-empty { grid-column: 1 / -1; padding: 22px; text-align: center; font-family: 'Switzer', sans-serif; font-size: 13px; color: var(--On-Surface-Low); }
 
-  .category-icon {
-    width: 44px;
-    height: 44px;
-    border-radius: 12px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
-  .category-icon svg { width: 22px; height: 22px; fill: none; stroke-width: 1.8px; }
+  /* Logo badge — an image for real billers, a tinted glyph for a whole category */
+  .logo { width: 34px; height: 34px; border-radius: 50%; display: flex; align-items: center; justify-content: center; overflow: hidden; flex-shrink: 0; background: #FFF; box-shadow: 0 2px 6px rgba(0,0,0,0.14); }
+  .logo img { width: 100%; height: 100%; object-fit: contain; }
+  .logo.glyph svg { width: 20px; height: 20px; stroke: #FFF; stroke-width: 1.9; fill: none; }
+  .logo.initials { font-family: 'Switzer', sans-serif; font-size: 11px; font-weight: 700; color: #FFF; }
 
-  .category-name {
-    color: var(--On-Surface);
-    font-family: 'Switzer', sans-serif;
-    font-size: 11px;
-    font-weight: 500;
-    text-align: center;
-    line-height: 1.3;
-  }
-
-  /* Recent Billers */
-  .recent-card {
-    background: #FFF;
-    border-radius: 16px;
-    padding: 16px;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.04);
-    margin-bottom: 20px;
-  }
-
-  .card-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 14px;
-  }
-  .card-header .title { font-family: 'Switzer', sans-serif; font-size: 14px; font-weight: 600; color: var(--On-Surface); }
-  .card-header .see-all { font-family: 'Switzer', sans-serif; font-size: 12px; font-weight: 500; color: var(--Primary); cursor: pointer; }
-
-  .biller-item {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    padding: 10px 0;
-    cursor: pointer;
-    border-radius: 10px;
-    transition: background 0.15s;
-  }
-  .biller-item:hover { background: #FAFAFA; padding-left: 6px; padding-right: 6px; margin: 0 -6px; }
-  .biller-item + .biller-item { border-top: 1px solid #F5F5F5; }
-
-  .biller-logo {
-    width: 44px;
-    height: 44px;
-    border-radius: 12px;
-    background: #F5F5F5;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-shrink: 0;
-    overflow: hidden;
-  }
-  .biller-logo img { width: 100%; height: 100%; object-fit: contain; padding: 6px; }
-  .biller-logo .fallback {
-    font-family: 'Switzer', sans-serif;
-    font-size: 14px;
-    font-weight: 700;
-    color: var(--On-Surface);
-  }
-
-  .biller-info { flex: 1; }
-  .biller-name { font-family: 'Switzer', sans-serif; font-size: 14px; font-weight: 600; color: var(--On-Surface); }
-  .biller-sub { font-family: 'Switzer', sans-serif; font-size: 12px; color: var(--On-Surface-Low); margin-top: 2px; }
-
-  .biller-arrow { width: 18px; height: 18px; stroke: #C5C5CB; flex-shrink: 0; }
-
-  /* Favorites */
-  .favorites-section {
-    width: 100%;
-    margin-bottom: 20px;
-    flex-shrink: 0;
-  }
-
-  .fav-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 14px;
-  }
-  .fav-header .title {
-    color: var(--On-Surface);
-    font-family: 'Switzer', sans-serif;
-    font-size: 14px;
-    font-weight: 600;
-    letter-spacing: 0.2px;
-  }
-  .fav-header .see-all {
-    color: var(--Primary);
-    font-family: 'Switzer', sans-serif;
-    font-size: 12px;
-    font-weight: 500;
-    cursor: pointer;
-  }
-  .fav-header .see-all:hover { opacity: 0.7; }
-
-  .favorites-scroll {
-    display: flex;
-    gap: 16px;
-    overflow-x: auto;
-    padding-bottom: 4px;
-    scrollbar-width: none;
-    -ms-overflow-style: none;
-  }
+  /* ── Favorites ── */
+  .favorites-scroll { display: flex; gap: 16px; overflow-x: auto; padding-bottom: 4px; scrollbar-width: none; }
   .favorites-scroll::-webkit-scrollbar { display: none; }
+  .favorite-item { flex-shrink: 0; display: flex; flex-direction: column; align-items: center; gap: 6px; cursor: pointer; transition: transform 0.2s; }
+  .favorite-item:hover { transform: scale(1.05); }
+  .favorite-item:active { transform: scale(0.95); }
+  .favorite-item .logo { width: 56px; height: 56px; box-shadow: 0 2px 8px rgba(0,0,0,0.12); }
+  .favorite-item .logo.initials { font-size: 15px; }
+  .favorite-item .logo.glyph svg { width: 26px; height: 26px; }
+  .favorite-name { font-family: 'Switzer', sans-serif; font-size: 11px; font-weight: 500; color: var(--On-Surface); text-align: center; max-width: 70px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 
-  .fav-item {
-    flex-shrink: 0;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 6px;
-    cursor: pointer;
-    transition: transform 0.2s;
-  }
-  .fav-item:hover { transform: scale(1.05); }
-  .fav-item:active { transform: scale(0.95); }
+  /* ── Frequent transactions ── */
+  .frequent-card { background: #FFF; border-radius: 16px; padding: 16px; box-shadow: 0 2px 8px rgba(0,0,0,0.04); display: flex; flex-direction: column; gap: 10px; }
+  .frequent-card .section-title { font-size: 15px; font-weight: 700; }
+  .frequent-list { display: flex; flex-direction: column; gap: 4px; }
+  .frequent-item { display: flex; align-items: center; gap: 12px; padding: 8px 0; cursor: pointer; border-radius: 10px; transition: background 0.15s; }
+  .frequent-item:hover { background: #FAFAFA; }
+  .frequent-item .logo { width: 44px; height: 44px; }
+  .frequent-item .logo.initials { font-size: 13px; }
+  .frequent-item .logo.glyph svg { width: 22px; height: 22px; }
+  .frequent-info { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px; }
+  .frequent-name { font-family: 'Switzer', sans-serif; font-size: 14px; font-weight: 600; color: var(--On-Surface); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .frequent-sub { font-family: 'Switzer', sans-serif; font-size: 12px; color: var(--On-Surface-Low); }
+  .chev { width: 18px; height: 18px; stroke: var(--Primary); stroke-width: 2.4; fill: none; flex-shrink: 0; }
 
-  .fav-avatar {
-    width: 56px;
-    height: 56px;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-family: 'Switzer', sans-serif;
-    font-size: 14px;
-    font-weight: 700;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
-    border: 2.5px solid #FFF;
-  }
-
-  .fav-name {
-    color: var(--On-Surface);
-    font-family: 'Switzer', sans-serif;
-    font-size: 11px;
-    font-weight: 500;
-    text-align: center;
-    max-width: 64px;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-  }
+  /* ── Provider sheet ── */
+  .sheet-overlay { position: absolute; inset: 0; background: rgba(0,0,0,0.45); display: flex; align-items: flex-end; opacity: 0; pointer-events: none; transition: opacity 0.25s; z-index: 50; }
+  .sheet-overlay.show { opacity: 1; pointer-events: auto; }
+  .sheet { width: 100%; background: #FFF; border-radius: 24px 24px 0 0; padding: 12px 20px 28px; display: flex; flex-direction: column; transform: translateY(100%); transition: transform 0.3s cubic-bezier(0.2, 0.8, 0.3, 1); }
+  .sheet-overlay.show .sheet { transform: translateY(0); }
+  .sheet-grip { width: 44px; height: 4px; border-radius: 2px; background: #D8D8DE; margin: 0 auto 16px; }
+  .provider-item { display: flex; align-items: center; gap: 16px; padding: 14px 4px; cursor: pointer; border-radius: 12px; transition: background 0.15s; }
+  .provider-item:hover { background: #FAFAFA; }
+  .provider-item:active { background: #F5F5F5; }
+  .provider-item .logo { width: 36px; height: 36px; box-shadow: none; }
+  .provider-item .nm { font-family: 'Switzer', sans-serif; font-size: 15px; font-weight: 600; color: var(--On-Surface); }
 </style>
 </head>
 <body>
-
 <div class="phone-frame">
   <div class="app-content">
 
-    <!-- Status Bar -->
     <div class="status-bar">
       <span class="time">10:00</span>
       <div class="status-icons">
@@ -321,172 +118,219 @@
       </div>
     </div>
 
-    <!-- Header -->
     <div class="header-nav">
       <button class="back-btn" onclick="goBack()">
         <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
       </button>
-      <span class="header-title">Pay Bill</span>
+      <span class="header-title">Bill Payment</span>
       <div style="width:36px;"></div>
     </div>
 
-    <!-- Search -->
-    <div class="search-bar">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-        <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
-      </svg>
-      <input type="text" placeholder="Search billers..." oninput="filterBillers(this.value)">
-    </div>
+    <div class="scroll">
 
-    <!-- Favorites -->
-    <div class="favorites-section">
-      <div class="fav-header">
-        <span class="title">Favorites</span>
-        <span class="see-all">See All</span>
-      </div>
-      <div class="favorites-scroll">
-
-        <div class="fav-item" onclick="selectBiller('EEPCO','Meter No. 4523061','Utility')">
-          <div class="fav-avatar" style="background:#FFF3E0;color:#F57C00;">EP</div>
-          <span class="fav-name">EEPCO</span>
-        </div>
-
-        <div class="fav-item" onclick="selectBiller('Ethio Telecom','Postpaid • 0911234567','Telecom')">
-          <div class="fav-avatar" style="background:#E8F5E9;color:#388E3C;">ET</div>
-          <span class="fav-name">Ethio Telecom</span>
-        </div>
-
-        <div class="fav-item" onclick="selectBiller('AAWSA','Account No. 78341','Water')">
-          <div class="fav-avatar" style="background:#E3F2FD;color:#1976D2;">AW</div>
-          <span class="fav-name">AAWSA</span>
-        </div>
-
-        <div class="fav-item" onclick="selectBiller('Awash Insurance','Policy No. 10042','Insurance')">
-          <div class="fav-avatar" style="background:#FCE4EC;color:#C2185B;">AI</div>
-          <span class="fav-name">Awash Ins.</span>
-        </div>
-
-        <div class="fav-item" onclick="selectBiller('NBE Fine','Ref No. 88712','Government')">
-          <div class="fav-avatar" style="background:#F3E5F5;color:#7B1FA2;">NB</div>
-          <span class="fav-name">NBE Fine</span>
-        </div>
-
-      </div>
-    </div>
-
-    <!-- Categories -->
-    <div class="section-label">Categories</div>
-    <div class="category-grid">
-
-      <div class="category-card" onclick="goToBiller('Utility')">
-        <div class="category-icon" style="background:#FFF3E0;">
-          <svg viewBox="0 0 24 24" stroke="#F57C00" fill="none" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/>
-          </svg>
-        </div>
-        <span class="category-name">Utility</span>
+      <div class="search-field">
+        <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+        <input id="search" type="text" placeholder="Search by biller, city, vendor" autocomplete="off" oninput="renderBillers()">
       </div>
 
-      <div class="category-card" onclick="goToBiller('School')">
-        <div class="category-icon" style="background:#E0F7FA;">
-          <svg viewBox="0 0 24 24" stroke="#0097A7" fill="none" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/>
-          </svg>
+      <div class="section">
+        <div class="section-header">
+          <span class="section-title">Select Biller</span>
+          <span class="see-all" onclick="seeMore()">See More</span>
         </div>
-        <span class="category-name">School</span>
+        <div class="biller-card">
+          <div class="biller-grid" id="billerGrid"></div>
+        </div>
       </div>
 
-      <div class="category-card" onclick="goToBiller('Government')">
-        <div class="category-icon" style="background:#F3E5F5;">
-          <svg viewBox="0 0 24 24" stroke="#7B1FA2" fill="none" stroke-linecap="round" stroke-linejoin="round">
-            <polyline points="3 21 21 21 21 10"/><polyline points="3 10 3 10"/><polygon points="3 6 21 6 12 1 3 6"/>
-          </svg>
+      <div class="section">
+        <div class="section-header">
+          <span class="section-title">Favorites</span>
+          <span class="see-all" onclick="window.location.href='Manage Favourites.html'">See All</span>
         </div>
-        <span class="category-name">Government</span>
+        <div class="favorites-scroll" id="favoritesScroll"></div>
       </div>
 
-      <div class="category-card" onclick="goToBiller('Water')">
-        <div class="category-icon" style="background:#E3F2FD;">
-          <svg viewBox="0 0 24 24" stroke="#1976D2" fill="none" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M12 2C6 10 4 14 4 16a8 8 0 0 0 16 0c0-2-2-6-8-14z"/>
-          </svg>
+      <div class="frequent-card">
+        <div class="section-header">
+          <span class="section-title">Frequent Transactions</span>
+          <span class="see-all" onclick="window.location.href='Transaction History.html'">See All</span>
         </div>
-        <span class="category-name">Water</span>
+        <div class="frequent-list" id="frequentList"></div>
       </div>
 
     </div>
+  </div>
 
-    <!-- Recent Billers -->
-    <div class="recent-card">
-      <div class="card-header">
-        <span class="title">Recent Billers</span>
-        <span class="see-all" onclick="goToBiller('All')">See all</span>
+  <!-- School fees run through more than one provider -->
+  <div class="sheet-overlay" id="providerOverlay" onclick="if(event.target===this)closeProviders()">
+    <div class="sheet">
+      <div class="sheet-grip"></div>
+      <div class="provider-item" onclick="pickProvider('awash')">
+        <span class="logo"><img src="assets/bill pay logos/Awash_International_Bank.png" alt=""></span>
+        <span class="nm">School Payment Via Awash Bank</span>
       </div>
-
-      <div class="biller-item" onclick="selectBiller('EEPCO','Meter No. 4523061','Utility')">
-        <div class="biller-logo">
-          <div class="fallback" style="background:#FFF3E0;width:100%;height:100%;border-radius:12px;display:flex;align-items:center;justify-content:center;color:#F57C00;font-size:13px;">EP</div>
-        </div>
-        <div class="biller-info">
-          <div class="biller-name">EEPCO</div>
-          <div class="biller-sub">Meter No. 4523061</div>
-        </div>
-        <svg class="biller-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <polyline points="9 18 15 12 9 6"/>
-        </svg>
+      <div class="provider-item" onclick="pickProvider('webirr')">
+        <span class="logo"><img src="assets/bill pay logos/webirr.png" alt=""></span>
+        <span class="nm">School Payment Via WeBirr</span>
       </div>
-
-      <div class="biller-item" onclick="selectBiller('Ethio Telecom','Postpaid • 0911234567','Telecom')">
-        <div class="biller-logo">
-          <div class="fallback" style="background:#E8F5E9;width:100%;height:100%;border-radius:12px;display:flex;align-items:center;justify-content:center;color:#388E3C;font-size:13px;">ET</div>
-        </div>
-        <div class="biller-info">
-          <div class="biller-name">Ethio Telecom</div>
-          <div class="biller-sub">Postpaid • 0911234567</div>
-        </div>
-        <svg class="biller-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <polyline points="9 18 15 12 9 6"/>
-        </svg>
-      </div>
-
-      <div class="biller-item" onclick="selectBiller('AAWSA','Account No. 78341','Water')">
-        <div class="biller-logo">
-          <div class="fallback" style="background:#E3F2FD;width:100%;height:100%;border-radius:12px;display:flex;align-items:center;justify-content:center;color:#1976D2;font-size:11px;">AW</div>
-        </div>
-        <div class="biller-info">
-          <div class="biller-name">AAWSA</div>
-          <div class="biller-sub">Account No. 78341</div>
-        </div>
-        <svg class="biller-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <polyline points="9 18 15 12 9 6"/>
-        </svg>
-      </div>
-
     </div>
-
   </div>
 </div>
 
 <script>
-  function goBack() {
-    window.location.href = 'Lehulum Home.html';
+  // A biller carries either a logo image or a tinted glyph badge — the glyph
+  // covers the entries that stand for a whole category rather than one company.
+  const GLYPHS = {
+    school: '<svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M2.5 8.5 12 4l9.5 4.5L12 13 2.5 8.5z"/><path d="M6.5 10.6V16c0 1.4 2.5 2.6 5.5 2.6s5.5-1.2 5.5-2.6v-5.4"/><path d="M21.5 8.5v5"/></svg>',
+    umbrella: '<svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3.2c4.8 0 8.8 3.7 8.8 8.3H3.2c0-4.6 4-8.3 8.8-8.3z"/><path d="M12 11.5v7a2.2 2.2 0 0 1-4.4 0"/></svg>'
+  };
+
+  const BILLERS = [
+    { id: 'eeu',      name: 'Ethiopian Electric Utility', tile: 'Electric Utility Payment', full: 'Ethiopian Electric Utility', category: 'Utility',   abbr: 'EE', logo: 'assets/bill pay logos/eelectricu_logo.png' },
+    { id: 'water',    name: 'Water',                      tile: 'Water Payment',            full: 'Addis Ababa Water Utility',  category: 'Water',     abbr: 'AW', logo: 'assets/bill pay logos/aawatersa_logo.png' },
+    { id: 'dstv',     name: 'DSTV',                       tile: 'DSTV Payment',             full: 'DSTV Ethiopia',              category: 'TV',        abbr: 'DS', logo: 'assets/bill pay logos/dstv_logo.png' },
+    { id: 'airlines', name: 'Ethiopian Airlines',         tile: 'Ethiopian Airlines',       full: 'Ethiopian Airlines',         category: 'Travel',    abbr: 'EA', logo: 'assets/bill pay logos/ethiopia_airlines_logo.png' },
+    { id: 'school',   name: 'School',                     tile: 'School Payment',           full: 'School Fees',                category: 'Education', abbr: 'SC', glyph: 'school',   bg: '#F5901E' },
+    { id: 'insurance',name: 'Insurance',                  tile: 'Insurance Payment',        full: 'Insurance Premium',          category: 'Insurance', abbr: 'IN', glyph: 'umbrella', bg: '#4A57D6' },
+    { id: 'telecom',  name: 'Ethio Telecom',              full: 'Ethio Telecom Postpaid',     category: 'Telecom',   abbr: 'ET', logo: 'assets/ethio-tele-logo.jpg' },
+    { id: 'customs',  name: 'Ethiopian Customs',          full: 'Ethiopian Customs Commission', category: 'Government', abbr: 'EC', logo: 'assets/bill pay logos/ethiopia_custom_logo.jpg' }
+  ];
+
+  // The design shows six tiles; search widens the list to everything on file.
+  const PRIMARY = ['eeu', 'water', 'dstv', 'airlines', 'school', 'insurance'];
+
+  const FAVORITES = [
+    { label: 'Mom EEU',  biller: 'eeu',      account: '1172711212' },
+    { label: 'Home WB',  biller: 'water',    account: '7112124567' },
+    { label: 'SMU',      biller: 'airlines', account: '5521140098' },
+    { label: 'AAU',      biller: 'school',   account: 'AAU-884210', logo: 'assets/bill pay logos/webirr.png' },
+    { label: 'BDWU',     biller: 'water',    account: '7112998410' }
+  ];
+
+  const FREQUENT = [
+    { biller: 'eeu',   account: '1172711212' },
+    { biller: 'water', account: '7112124567' },
+    { biller: 'water', account: '7112124567' }
+  ];
+
+  const $ = id => document.getElementById(id);
+  const find = id => BILLERS.find(b => b.id === id) || null;
+
+  // One badge builder for the grid, the favourites strip and the frequent list.
+  function badge(b, override) {
+    const o = override || {};
+    // A favourite's own logo wins — it records the rail the payment went through.
+    if (o.logo) return '<span class="logo"><img src="' + o.logo + '" alt=""></span>';
+    if (o.abbr) return '<span class="logo initials" style="background:' + (o.bg || '#1C1C21') + '">' + o.abbr + '</span>';
+    if (b.glyph) return '<span class="logo glyph" style="background:' + b.bg + '">' + GLYPHS[b.glyph] + '</span>';
+    return '<span class="logo"><img src="' + b.logo + '" alt=""></span>';
   }
 
-  function goToBiller(category) {
-    sessionStorage.setItem('billCategory', category);
-    window.location.href = 'Bill Payment_Select Biller.html';
+  function renderBillers() {
+    const q = $('search').value.trim().toLowerCase();
+    const list = q
+      ? BILLERS.filter(b => b.name.toLowerCase().includes(q) || b.full.toLowerCase().includes(q) || b.category.toLowerCase().includes(q))
+      : PRIMARY.map(find).filter(Boolean);
+
+    $('billerGrid').innerHTML = list.length
+      ? list.map(b =>
+          '<div class="biller-tile" onclick="pickBiller(\'' + b.id + '\')">' +
+            badge(b) +
+            '<span class="nm">' + (b.tile || b.name) + '</span>' +
+          '</div>').join('')
+      : '<div class="grid-empty">No biller matches that name</div>';
   }
 
-  function selectBiller(name, sub, category) {
-    sessionStorage.setItem('selectedBiller', JSON.stringify({ name, sub, category }));
+  (function renderRest() {
+    $('favoritesScroll').innerHTML = FAVORITES.map((f, i) => {
+      const b = find(f.biller);
+      if (!b) return '';
+      return '<div class="favorite-item" onclick="pickFavorite(' + i + ')">' +
+        badge(b, f) +
+        '<span class="favorite-name">' + f.label + '</span>' +
+      '</div>';
+    }).join('');
+
+    $('frequentList').innerHTML = FREQUENT.map((f, i) => {
+      const b = find(f.biller);
+      if (!b) return '';
+      return '<div class="frequent-item" onclick="pickFrequent(' + i + ')">' +
+        badge(b) +
+        '<span class="frequent-info">' +
+          '<span class="frequent-name">' + b.full + '</span>' +
+          '<span class="frequent-sub">' + f.account + '</span>' +
+        '</span>' +
+        '<svg class="chev" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>' +
+      '</div>';
+    }).join('');
+  })();
+
+  /* ── Selection ── */
+  const PROVIDERS = {
+    awash:  { name: 'Awash Bank', logo: 'assets/bill pay logos/Awash_International_Bank.png' },
+    webirr: { name: 'WeBirr',     logo: 'assets/bill pay logos/webirr.png' }
+  };
+
+  function openProviders() { $('providerOverlay').classList.add('show'); }
+  function closeProviders() { $('providerOverlay').classList.remove('show'); }
+
+  function pickProvider(key) {
+    const p = PROVIDERS[key], b = find('school');
+    if (!p || !b) return;
+    closeProviders();
+    store(Object.assign({}, b, {
+      full: 'School Payment Via ' + p.name,
+      logo: p.logo,
+      glyph: undefined,
+      provider: p.name
+    }));
+  }
+
+  function store(b, account) {
+    // EEU splits into post-paid and prepaid, so it has a screen of its own.
+    if (b.id === 'eeu') { window.location.href = 'Bill Payment_EEU.html'; return; }
+    // Water is billed per town, so the town picker comes first.
+    if (b.id === 'water') { window.location.href = 'Bill Payment_Water Town.html'; return; }
+    if (b.id === 'airlines') { window.location.href = 'Bill Payment_Airlines.html'; return; }
+    if (b.id === 'dstv') { window.location.href = 'Bill Payment_DSTV Card.html'; return; }
+    // Insurance is collected by several companies; the list picks one first.
+    if (b.id === 'insurance') { window.location.href = 'Bill Payment_Insurance Company.html'; return; }
+    // A provider has been chosen, so the school screen takes it from here.
+    if (b.id === 'school' && b.provider) {
+      sessionStorage.setItem('selectedBiller', JSON.stringify({
+        name: b.name, fullName: b.full, category: b.category,
+        abbr: b.abbr, logo: b.logo || '', provider: b.provider, account: account || ''
+      }));
+      window.location.href = 'Bill Payment_School.html';
+      return;
+    }
+    // School fees are collected by several providers; the sheet picks one first.
+    if (b.id === 'school' && !b.provider) { openProviders(); return; }
+    sessionStorage.setItem('selectedBiller', JSON.stringify({
+      name: b.name,
+      fullName: b.full,
+      category: b.category,
+      abbr: b.abbr,
+      logo: b.logo || '',
+      provider: b.provider || '',
+      account: account || ''
+    }));
     window.location.href = 'Bill Payment_Enter Account.html';
   }
 
-  function filterBillers(query) {
-    console.log('Filter:', query);
-  }
+  function pickBiller(id) { const b = find(id); if (b) store(b); }
+  function pickFavorite(i) { const f = FAVORITES[i], b = find(f.biller); if (b) store(b, f.account); }
+  function pickFrequent(i) { const f = FREQUENT[i], b = find(f.biller); if (b) store(b, f.account); }
+
+  function seeMore() { window.location.href = 'Bill Payment_Select Biller.html'; }
+  function goBack() { window.location.href = 'Lehulum Home.html'; }
+
+  renderBillers();
 </script>
 
 <script src="figma-export.js"></script>
+<script src="test-scenarios-data.js"></script>
+<script src="test-scenarios.js"></script>
 </body>
 </html>

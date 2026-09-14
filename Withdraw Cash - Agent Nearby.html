@@ -81,7 +81,7 @@
   .map-you::after { content: ''; position: absolute; left: -6px; bottom: -10px; width: 4px; height: 4px; border-radius: 50%; background: #2B6BFF; box-shadow: 0 4px 0 2px #2B6BFF; opacity: 0.55; }
 
   /* ── Agent list ── */
-  .agent-item { display: flex; align-items: center; gap: 12px; background: #FFF; border-radius: 16px; padding: 13px 14px; box-shadow: 0 2px 8px rgba(0,0,0,0.04); cursor: pointer; transition: box-shadow 0.2s, transform 0.15s; }
+  .agent-item { display: flex; align-items: center; gap: 12px; background: #FFF; border-radius: 16px; padding: 13px 8px 13px 14px; box-shadow: 0 2px 8px rgba(0,0,0,0.04); cursor: pointer; transition: box-shadow 0.2s, transform 0.15s; }
   .agent-item:hover { box-shadow: 0 4px 14px rgba(0,0,0,0.08); transform: translateY(-1px); }
   .agent-item:active { transform: scale(0.98); }
   .agent-item .avatar { width: 46px; height: 46px; border-radius: 13px; background: #FFF1F2; color: var(--Primary); font-family: 'Switzer', sans-serif; font-size: 14px; font-weight: 700; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
@@ -96,6 +96,20 @@
   .agent-list { display: flex; flex-direction: column; gap: 10px; }
   .list-hint { font-family: 'Switzer', sans-serif; font-size: 12px; color: var(--On-Surface-Low); }
   .list-hint b { color: var(--On-Surface); font-weight: 600; }
+
+  /* ── Location permission modal ── */
+  .perm-overlay { position: absolute; inset: 0; background: rgba(0,0,0,0.45); display: none; align-items: center; justify-content: center; padding: 24px; z-index: 40; }
+  .perm-overlay.show { display: flex; }
+  .perm-modal { width: 100%; background: #FFF; border-radius: 22px; padding: 26px 22px 22px; display: flex; flex-direction: column; align-items: center; gap: 6px; box-shadow: 0 20px 50px rgba(0,0,0,0.25); }
+  .perm-icon { width: 56px; height: 56px; border-radius: 50%; background: #FFF1F2; display: flex; align-items: center; justify-content: center; margin-bottom: 8px; }
+  .perm-icon svg { width: 28px; height: 28px; stroke: var(--Primary); stroke-width: 1.8; fill: none; }
+  .perm-title { font-family: 'Switzer', sans-serif; font-size: 16.5px; font-weight: 700; color: var(--On-Surface); text-align: center; }
+  .perm-body { font-family: 'Switzer', sans-serif; font-size: 12.5px; line-height: 1.5; color: var(--On-Surface-Low); text-align: center; margin-top: 4px; margin-bottom: 14px; }
+  .perm-actions { width: 100%; display: flex; flex-direction: column; gap: 10px; }
+  .perm-btn { width: 100%; height: 48px; border-radius: 13px; font-family: 'Switzer', sans-serif; font-size: 14.5px; font-weight: 600; cursor: pointer; transition: opacity 0.2s; }
+  .perm-btn:active { opacity: 0.85; }
+  .perm-btn.primary { border: none; background: var(--Primary); color: #FFF; box-shadow: 0 4px 12px rgba(254,53,61,0.25); }
+  .perm-btn.ghost { border: none; background: transparent; color: var(--On-Surface-Low); }
 </style>
 </head>
 <body>
@@ -150,6 +164,19 @@
 
     </div>
   </div>
+
+  <!-- Location permission modal: shown first, before the map/list -->
+  <div class="perm-overlay show" id="permOverlay">
+    <div class="perm-modal">
+      <div class="perm-icon"><svg viewBox="0 0 24 24" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s7-5.7 7-11a7 7 0 1 0-14 0c0 5.3 7 11 7 11z"/><circle cx="12" cy="10" r="2.5"/></svg></div>
+      <div class="perm-title">Allow Location Access</div>
+      <div class="perm-body">Lehulum uses your location to find M-PESA agents near you and show accurate distances. Your location is only used while the app is open.</div>
+      <div class="perm-actions">
+        <button class="perm-btn primary" onclick="allowLocation()">Allow While Using App</button>
+        <button class="perm-btn ghost" onclick="denyLocation()">Not Now</button>
+      </div>
+    </div>
+  </div>
 </div>
 
 <script>
@@ -178,7 +205,7 @@
       '<div class="avatar">' + a.abbr + '</div>' +
       '<div class="info">' +
         '<div class="nm">' + a.name + '</div>' +
-        '<div class="sub">Agent No. ' + a.code + ' • ' + (a.open ? 'Open now' : 'Open 8:00–18:00') + '</div>' +
+        '<div class="sub">Short Code: ' + a.code + ' • ' + (a.open ? 'Open' : 'Closed') + '</div>' +
       '</div>' +
       '<div class="right">' +
         '<div class="dist">' + a.dist + '</div>' +
@@ -254,6 +281,21 @@
     sessionStorage.setItem('withdrawData', JSON.stringify(data));
     window.location.href = 'Withdraw Cash - Agent Details.html';
   }
+
+  /* ── Location permission modal ── */
+  function allowLocation() {
+    document.getElementById('permOverlay').classList.remove('show');
+    document.getElementById('locName').textContent = 'Bole, Addis Ababa';
+    document.getElementById('locSub').textContent = 'Using your current location';
+  }
+
+  function denyLocation() {
+    document.getElementById('permOverlay').classList.remove('show');
+    document.getElementById('locName').textContent = 'Addis Ababa';
+    document.getElementById('locSub').textContent = 'Turn on location for more accurate results';
+  }
 </script>
+<script src="test-scenarios-data.js"></script>
+<script src="test-scenarios.js"></script>
 </body>
 </html>

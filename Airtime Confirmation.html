@@ -56,6 +56,9 @@
   .detail-row .label { color: var(--On-Surface-Low); font-family: 'Switzer', sans-serif; font-size: 12px; font-weight: 400; letter-spacing: 0.1px; flex-shrink: 0; max-width: 140px; }
   .detail-row .value { color: var(--On-Surface); font-family: 'Switzer', sans-serif; font-size: 13px; font-weight: 500; text-align: right; word-break: break-all; flex: 1; }
   .detail-row .value.copyable { display: flex; align-items: center; gap: 8px; justify-content: flex-end; }
+  .od-rows { display: none; flex-direction: column; gap: 14px; }
+  .od-rows.show { display: flex; }
+  .detail-row .label.od-accent, .detail-row .value.od-accent { color: var(--Primary); font-weight: 600; }
   .copy-btn { display: flex; align-items: center; gap: 4px; padding: 4px 8px; background: transparent; border: none; cursor: pointer; transition: all 0.2s; border-radius: 6px; }
   .copy-btn:hover { background: var(--Primary-Light); }
   .copy-btn .copy-text { color: var(--Primary); font-family: 'Switzer', sans-serif; font-size: 11px; font-weight: 500; }
@@ -74,18 +77,20 @@
   .qr-wrapper { padding: 8px; border: 3px solid var(--Primary); border-radius: 16px; background: #FFF; display: inline-block; position: relative; z-index: 2; }
   .qr-wrapper img { width: 80px; height: 80px; display: block; }
 
-  .bottom-actions { flex-shrink: 0; display: flex; justify-content: space-around; padding: 8px 16px 10px; width: 100%; background: #F5F5F5; border-top: 1px solid #E8E8E8; }
-  .action-btn { display: flex; flex-direction: column; align-items: center; gap: 4px; background: transparent; border: none; cursor: pointer; transition: all 0.2s; flex: 1; padding: 6px 0; }
+  .bottom-actions { flex-shrink: 0; display: flex; justify-content: space-around; padding: 10px 16px 12px; width: 100%; background: #F5F5F5; }
+  .action-btn { display: flex; flex-direction: column; align-items: center; gap: 6px; background: transparent; border: none; cursor: pointer; transition: all 0.2s; flex: 1; padding: 4px 0; }
   .action-btn:hover { transform: translateY(-2px); }
   .action-btn:active { transform: scale(0.95); }
-  .action-icon { width: 52px; height: 52px; border-radius: 14px; background: var(--Primary-Light); display: flex; align-items: center; justify-content: center; transition: all 0.2s; }
-  .action-btn:hover .action-icon { background: #FFE0E2; }
-  .action-icon svg, .action-icon i { width: 24px !important; height: 24px !important; color: var(--Primary); stroke: var(--Primary); stroke-width: 2px; }
+  .action-icon { width: 46px; height: 46px; border-radius: 13px; border: 1.5px solid var(--Primary); background: transparent; display: flex; align-items: center; justify-content: center; transition: all 0.2s; }
+  .action-btn:hover .action-icon { background: var(--Primary-Light); }
+  .action-icon svg, .action-icon i { width: 22px !important; height: 22px !important; color: var(--Primary); stroke: var(--Primary); stroke-width: 2px; }
   .action-label { color: var(--On-Surface); font-family: 'Switzer', sans-serif; font-size: 11px; font-weight: 500; letter-spacing: 0.1px; }
 
   .toast { position: fixed; bottom: 80px; left: 50%; transform: translateX(-50%) translateY(20px); background: var(--On-Surface); color: #FFF; padding: 12px 24px; border-radius: 12px; font-family: 'Switzer', sans-serif; font-size: 13px; font-weight: 500; opacity: 0; pointer-events: none; transition: all 0.3s ease; z-index: 1000; box-shadow: 0 4px 16px rgba(0,0,0,0.2); }
   .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
 </style>
+<script src="assets/qrcode.min.js"></script>
+<script src="assets/qr.js"></script>
 </head>
 <body>
 
@@ -125,20 +130,28 @@
           <img src="assets/M-PESA-official_stamp.png" alt="M-PESA Stamp">
         </div>
         <div class="receipt-header">
-          <h2>Airtime Sent</h2>
+          <h2 id="receiptTitle">Airtime Sent</h2>
           <p>Thank you for Choosing M-PESA For All</p>
         </div>
         <div class="dashed-divider"></div>
         <div class="transaction-details">
           <div class="detail-row"><span class="label">Transaction Type</span><span class="value">Airtime Purchase</span></div>
-          <div class="detail-row"><span class="label">Recipient Number</span><span class="value" id="detailRecipient">0712 131 415</span></div>
+          <div class="detail-row"><span class="label" id="recipientLabel">Recipient Number</span><span class="value" id="detailRecipient">0712 131 415</span></div>
           <div class="detail-row"><span class="label">Telecom Provider</span><span class="value" id="detailProvider">Safaricom</span></div>
           <div class="detail-row"><span class="label">Sender's M-PESA Number</span><span class="value">+251 77 00 24 23</span></div>
+          <!-- Shown only when the purchase drew on the Errif overdraft -->
+          <div class="od-rows" id="odRows">
+            <div class="detail-row"><span class="label">From M-PESA Balance</span><span class="value" id="odFromMpesa">&mdash;</span></div>
+            <div class="detail-row"><span class="label od-accent">From Errif OD Balance</span><span class="value od-accent" id="odFromOd">&mdash;</span></div>
+            <div class="detail-row"><span class="label">Service Fee (5%)</span><span class="value" id="odServiceFee">&mdash;</span></div>
+            <div class="detail-row"><span class="label">Total Errif Airtime Advance</span><span class="value" id="odTotalAdvance">&mdash;</span></div>
+            <div class="detail-row"><span class="label">Due Date</span><span class="value" id="odDueDate">&mdash;</span></div>
+          </div>
           <div class="detail-row">
             <span class="label">Transaction ID</span>
             <span class="value copyable">
               <button class="copy-btn" id="copyBtn" onclick="copyTransactionId()"><span class="copy-text">Copy ID</span><i data-lucide="copy"></i></button>
-              <span id="transactionId">at2606160001</span>
+              <span id="transactionId">UH38WDJC6M</span>
             </span>
           </div>
           <div class="detail-row"><span class="label">Date and Time</span><span class="value" id="detailDate">Jun 16, 2026 at 10:00 AM</span></div>
@@ -167,15 +180,35 @@
   lucide.createIcons();
 
   const air = JSON.parse(sessionStorage.getItem('airtimeData') || '{}');
+  const isSelf = air.recipientType === 'self';
   const provider = air.provider || 'Safaricom';
   function formatPhone(d) { d = String(d || ''); return [d.slice(0,4), d.slice(4,7), d.slice(7,10)].filter(Boolean).join(' '); }
   const phone = formatPhone(air.recipient || '0712131415');
-  const amt = parseFloat(air.payAmount || '50.00').toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+  const amt = parseFloat(air.amount ?? air.payAmount ?? '50.00').toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
 
+  // Buying airtime for your own number is a purchase, not a transfer to someone else.
+  document.getElementById('receiptTitle').textContent = isSelf ? 'Airtime Purchase' : 'Airtime Sent';
+  document.getElementById('recipientLabel').textContent = isSelf ? 'Your Number' : 'Recipient Number';
   document.getElementById('detailRecipient').textContent = phone;
   document.getElementById('detailProvider').textContent = provider;
   document.getElementById('detailName').textContent = provider + ' airtime';
   document.getElementById('detailAmount').textContent = amt;
+
+  // An Errif-funded purchase reads in Errif blue and itemises what the advance covered.
+  if (air.overdraft) {
+    document.documentElement.style.setProperty('--Primary', '#2563EB');
+    document.documentElement.style.setProperty('--Primary-Light', '#EFF6FF');
+    const od = air.odBreakdown;
+    if (od) {
+      const br = n => parseFloat(n || 0).toFixed(2) + ' Br';
+      document.getElementById('odFromMpesa').textContent = br(od.mpesaBal);
+      document.getElementById('odFromOd').textContent = br(od.odBal);
+      document.getElementById('odServiceFee').textContent = br(od.serviceFee);
+      document.getElementById('odTotalAdvance').textContent = br(od.totalAdvance);
+      document.getElementById('odDueDate').textContent = od.dueFmt;
+      document.getElementById('odRows').classList.add('show');
+    }
+  }
 
   const now = new Date();
   const dateStr = now.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
@@ -186,7 +219,7 @@
   document.getElementById('transactionId').textContent = txId;
 
   const qrData = encodeURIComponent(JSON.stringify({ type: 'Airtime Purchase', provider, recipient: phone, txId, amount: amt + ' ETB' }));
-  document.getElementById('qrCode').src = `https://api.qrserver.com/v1/create-qr-code/?size=240x240&data=${qrData}&margin=10`;
+  renderQR(document.getElementById('qrCode'), decodeURIComponent(qrData), 240);
 
   function copyTransactionId() {
     const id = document.getElementById('transactionId').textContent;
@@ -210,5 +243,7 @@
 </script>
 
 <script src="figma-export.js"></script>
+<script src="test-scenarios-data.js"></script>
+<script src="test-scenarios.js"></script>
 </body>
 </html>

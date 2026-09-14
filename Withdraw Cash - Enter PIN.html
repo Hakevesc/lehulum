@@ -188,9 +188,9 @@
   }
 
   function genVoucher() {
-    const chars = 'ABCDEFGHJKMNPQRSTUVWXYZ23456789';
-    const grp = n => { let s = ''; for (let i = 0; i < n; i++) s += chars[Math.floor(Math.random() * chars.length)]; return s; };
-    return 'ATM-' + grp(4) + '-' + grp(4) + '-' + grp(4);
+    let s = '';
+    for (let i = 0; i < 9; i++) s += Math.floor(Math.random() * 10);
+    return s;
   }
 
   function submitPin() {
@@ -210,10 +210,12 @@
       delete data.voucherCode;
       delete data.expiry;
     }
-    data.ref = 'WDC-' + Date.now().toString().slice(-8);
+    data.ref = 'U' + 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'[Math.floor(Math.random()*26)] + Array.from({length:8},()=>'ABCDEFGHJKLMNPQRSTUVWXYZ23456789'[Math.floor(Math.random()*31)]).join('');
     sessionStorage.setItem('withdrawData', JSON.stringify(data));
     window.location.href = 'Withdraw Cash - Receipt.html';
   }
 </script>
+<script src="test-scenarios-data.js"></script>
+<script src="test-scenarios.js"></script>
 </body>
 </html>

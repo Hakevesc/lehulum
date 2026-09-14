@@ -114,104 +114,44 @@
     gap: 16px;
   }
 
-  /* Transfer Type Selector - Icon Left, Title Right in Two Lines */
+  /* Destination rows — Bank / Wallet */
   .transfer-type {
     display: flex;
-    gap: 12px;
-  }
-
-  .type-option {
-    flex: 1;
-    height: 80px;
-    border-radius: 16px;
-    background: #FFF;
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    gap: 12px;
-    padding: 16px;
-    cursor: pointer;
-    transition: all 0.2s;
-    position: relative;
-  }
-
-  .type-option.mpesa-wallet {
-    border: 2px solid var(--Primary);
-  }
-
-  .type-option.bank-account {
-    border: 2px solid #1c1c21;
-  }
-
-  .type-option.selected {
-    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
-    transform: scale(1.02);
-  }
-
-  .type-option .chevron-down {
-    position: absolute;
-    right: 12px;
-    top: 50%;
-    transform: translateY(-50%);
-    width: 18px;
-    height: 18px;
-    stroke: var(--On-Surface-Low);
-    stroke-width: 2;
-    fill: none;
-  }
-
-  .type-option:not(.selected) {
-    opacity: 1;
-  }
-
-  /* Icon Box - 40x40px, corner radius 10, stroke width 2 */
-  .type-option .icon-box {
-    width: 40px;
-    height: 40px;
-    min-width: 40px;
-    border-radius: 10px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-shrink: 0;
-  }
-
-  .type-option.mpesa-wallet .icon-box,
-  .type-option.bank-account .icon-box {
-    border: 2px solid var(--Primary);
-    background: #FFDFE0;
-  }
-
-  .type-option .icon-box svg {
-    width: 20px;
-    height: 20px;
-    display: block;
-  }
-
-  .type-option.mpesa-wallet .icon-box svg {
-    stroke: var(--Primary);
-    fill: none;
-  }
-
-  .type-option.bank-account .icon-box svg {
-    stroke: var(--Primary);
-    fill: none;
-  }
-
-  /* Label - two lines, black text */
-  .type-option .label-wrap {
-    display: flex;
     flex-direction: column;
-    gap: 1px;
+    gap: 12px;
   }
 
-  .type-option .label-line {
+  .type-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    background: #FFF;
+    border-radius: 16px;
+    padding: 18px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+    cursor: pointer;
+    transition: box-shadow 0.2s, transform 0.15s;
+  }
+
+  .type-row:hover { box-shadow: 0 4px 14px rgba(0, 0, 0, 0.08); transform: translateY(-1px); }
+  .type-row:active { transform: scale(0.99); }
+
+  .type-row .label {
     color: var(--On-Surface);
     font-family: 'Switzer', sans-serif;
-    font-size: 13px;
-    font-weight: 600;
+    font-size: 16px;
+    font-weight: 700;
     letter-spacing: 0.2px;
-    line-height: 1.3;
+  }
+
+  .type-row .caret {
+    width: 18px;
+    height: 18px;
+    stroke: var(--Primary);
+    stroke-width: 2.4;
+    fill: none;
+    flex-shrink: 0;
   }
 
   /* Section Card */
@@ -326,58 +266,6 @@
     white-space: nowrap;
     letter-spacing: 0.1px;
   }
-
-  /* Quick Transfer - Square Icon Only Scroll */
-  .quick-transfer-scroll {
-    display: flex;
-    gap: 12px;
-    overflow-x: auto;
-    padding-bottom: 4px;
-    scrollbar-width: none;
-    -ms-overflow-style: none;
-  }
-
-  .quick-transfer-scroll::-webkit-scrollbar {
-    display: none;
-  }
-
-  .quick-icon {
-    flex-shrink: 0;
-    width: 56px;
-    height: 56px;
-    border-radius: 14px;
-    overflow: hidden;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background: #FFF;
-    cursor: pointer;
-    transition: all 0.2s;
-    border: 1.5px solid #ECECEC;
-    padding: 8px;
-  }
-
-  .quick-icon:hover {
-    transform: scale(1.08);
-    box-shadow: 0 6px 20px rgba(0,0,0,0.06);
-  }
-
-  .quick-icon:active {
-    transform: scale(0.95);
-  }
-
-  .quick-icon img {
-    width: 100%;
-    height: 100%;
-    object-fit: contain;
-  }
-
-  /* Brand accent borders - soft gray with low opacity */
-  .quick-icon.cbe { border-color: rgba(26, 107, 55, 0.25); }
-  .quick-icon.boa { border-color: rgba(0, 61, 122, 0.25); }
-  .quick-icon.mpesa { border-color: rgba(254, 53, 61, 0.25); }
-  .quick-icon.telebirr { border-color: rgba(0, 166, 81, 0.25); }
-  .quick-icon.awash { border-color: rgba(0, 157, 224, 0.25); }
 
   /* Frequent Transactions */
   .frequent-list {
@@ -623,41 +511,15 @@
     <!-- Main Content -->
     <div class="main-content">
 
-      <!-- Transfer Type Selector -->
+      <!-- Destination -->
       <div class="transfer-type">
-        <div class="type-option mpesa-wallet selected" onclick="selectType(this, 'wallet')">
-          <div class="icon-box">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M22 2L11 13"/>
-              <path d="M22 2L15 22l-4-9-9-4 20-7z"/>
-            </svg>
-          </div>
-          <div class="label-wrap">
-            <span class="label-line">Transfer</span>
-            <span class="label-line">to Wallet</span>
-          </div>
-          <svg class="chevron-down" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round">
-            <polyline points="6 9 12 15 18 9"/>
-          </svg>
+        <div class="type-row" onclick="selectType('bank')">
+          <span class="label">Bank</span>
+          <svg class="caret" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
         </div>
-        <div class="type-option bank-account" onclick="selectType(this, 'bank')">
-          <div class="icon-box">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <polyline points="3 21 21 21 21 10"/>
-              <polyline points="3 10 3 21"/>
-              <line x1="9" y1="10" x2="9" y2="16"/>
-              <line x1="13" y1="10" x2="13" y2="16"/>
-              <line x1="17" y1="10" x2="17" y2="16"/>
-              <polygon points="3 6 21 6 12 1 3 6"/>
-            </svg>
-          </div>
-          <div class="label-wrap">
-            <span class="label-line">Transfer</span>
-            <span class="label-line">to Bank</span>
-          </div>
-          <svg class="chevron-down" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round">
-            <polyline points="6 9 12 15 18 9"/>
-          </svg>
+        <div class="type-row" onclick="selectType('wallet')">
+          <span class="label">Wallet</span>
+          <svg class="caret" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
         </div>
       </div>
 
@@ -701,67 +563,43 @@
         </div>
       </div>
 
-      <!-- Quick Transfer - Square Icon Only -->
-      <div class="section-card">
-        <div class="section-header">
-          <span class="section-title">Quick Transfer</span>
-        </div>
-        <div class="quick-transfer-scroll">
-          <div class="quick-icon cbe" onclick="selectTopBank('CBE', 'bank')">
-            <img src="assets/banks logo/cbe-logo.png" alt="CBE">
-          </div>
-          <div class="quick-icon boa" onclick="selectTopBank('BOA', 'bank')">
-            <img src="assets/banks logo/abyssinya-bank.png" alt="BOA">
-          </div>
-          <div class="quick-icon awash" onclick="selectTopBank('Awash Bank', 'bank')">
-            <img src="assets/banks logo/awass-bank.png" alt="Awash Bank">
-          </div>
-          <div class="quick-icon mpesa" onclick="selectTopBank('M-PESA', 'wallet')">
-            <img src="assets/banks logo/M-PESA-logo-icon.png" alt="M-PESA">
-          </div>
-          <div class="quick-icon telebirr" onclick="selectTopBank('Telebirr', 'wallet')">
-            <img src="assets/wallets/telebirr.png" alt="Telebirr">
-          </div>
-        </div>
-      </div>
-
       <!-- Frequent Transactions -->
       <div class="section-card">
         <div class="section-header">
           <span class="section-title">Frequent Transactions</span>
         </div>
         <div class="frequent-list">
-          <div class="frequent-item" onclick="sendTo('Aster Mequanent', 'CBE', 'assets/banks logo/cbe-logo.png', '****6326')">
+          <div class="frequent-item" onclick="sendTo('Aster Mequanent', 'Commercial Bank of Ethiopia', 'assets/banks logo/cbe-logo.png', '1000035632645')">
             <div class="frequent-avatar">
               <img src="assets/banks logo/cbe-logo.png" alt="CBE">
             </div>
             <div class="frequent-info">
               <span class="frequent-name">Aster Mequanent</span>
-              <span class="frequent-bank">CBE • ****6326</span>
+              <span class="frequent-bank">CBE • 1000035632645</span>
             </div>
             <svg class="frequent-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
               <polyline points="9 18 15 12 9 6"></polyline>
             </svg>
           </div>
-          <div class="frequent-item" onclick="sendTo('Kidist Birhanu', 'BOA', 'assets/banks logo/abyssinya-bank.png', '****4341')">
+          <div class="frequent-item" onclick="sendTo('Kidist Birhanu', 'Bank of Abyssinia', 'assets/banks logo/abyssinya-bank.png', '3654341')">
             <div class="frequent-avatar">
               <img src="assets/banks logo/abyssinya-bank.png" alt="BOA">
             </div>
             <div class="frequent-info">
               <span class="frequent-name">Kidist Birhanu</span>
-              <span class="frequent-bank">BOA • ****4341</span>
+              <span class="frequent-bank">BOA • 3654341</span>
             </div>
             <svg class="frequent-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
               <polyline points="9 18 15 12 9 6"></polyline>
             </svg>
           </div>
-          <div class="frequent-item" onclick="sendTo('Aster Mequanent', 'Dashen Bank', 'assets/banks logo/dashen-bank.png', '****5632827')">
+          <div class="frequent-item" onclick="sendTo('Aster Mequanent', 'Dashen Bank', 'assets/banks logo/dashen-bank.png', '15252525525632827')">
             <div class="frequent-avatar">
               <img src="assets/banks logo/dashen-bank.png" alt="Dashen Bank">
             </div>
             <div class="frequent-info">
               <span class="frequent-name">Aster Mequanent</span>
-              <span class="frequent-bank">Dashen Bank • ****5632827</span>
+              <span class="frequent-bank">Dashen Bank • 15252525525632827</span>
             </div>
             <svg class="frequent-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
               <polyline points="9 18 15 12 9 6"></polyline>
@@ -797,24 +635,22 @@
   ];
 
   const bankOptions = [
-    { name: 'CBE', sub: 'Commercial Bank of Ethiopia', logo: 'assets/banks logo/cbe-logo.png', link: 'Transfer_Select Bank.html' },
-    { name: 'Abyssinia Bank', sub: 'BOA • Account', logo: 'assets/banks logo/abyssinya-bank.png', link: 'Transfer_Select Bank.html' },
+    { name: 'Commercial Bank of Ethiopia', sub: 'CBE • Account', logo: 'assets/banks logo/cbe-logo.png', link: 'Transfer_Select Bank.html' },
+    { name: 'Bank of Abyssinia', sub: 'BOA • Account', logo: 'assets/banks logo/abyssinya-bank.png', link: 'Transfer_Select Bank.html' },
     { name: 'Awash Bank', sub: 'Awash • Account', logo: 'assets/banks logo/awass-bank.png', link: 'Transfer_Select Bank.html' },
     { name: 'Zemen Bank', sub: 'Zemen • Account', logo: 'assets/banks logo/zemen-bank.png', link: 'Transfer_Select Bank.html' },
-    { name: 'COOP Bank', sub: 'Cooperative Bank of Oromia', logo: 'assets/banks logo/coop-bank.png', link: 'Transfer_Select Bank.html' },
+    { name: 'Cooperative Bank of Ethiopia', sub: 'COOP • Account', logo: 'assets/banks logo/coop-bank.png', link: 'Transfer_Select Bank.html' },
     { name: 'Dashen Bank', sub: 'Dashen • Account', logo: 'assets/banks logo/dashen-bank.png', link: 'Transfer_Select Bank.html' },
     { name: 'Hibret Bank', sub: 'Hibret • Account', logo: 'assets/banks logo/Hibret-bank.png', link: 'Transfer_Select Bank.html' },
     { name: 'Amhara Bank', sub: 'Amhara • Account', logo: 'assets/banks logo/amhara-bank.png', link: 'Transfer_Select Bank.html' },
-    { name: 'Nib Bank', sub: 'NIB • Account', logo: 'assets/banks logo/nib-bank.png', link: 'Transfer_Select Bank.html' },
+    { name: 'Nib International Bank', sub: 'NIB • Account', logo: 'assets/banks logo/nib-bank.png', link: 'Transfer_Select Bank.html' },
     { name: 'Oromia International Bank', sub: 'Oromia • Account', logo: 'assets/banks logo/oromia-i-bank.png', link: 'Transfer_Select Bank.html' },
     { name: 'Wegagen Bank', sub: 'Wegagen • Account', logo: 'assets/banks logo/wegagen-bank.png', link: 'Transfer_Select Bank.html' }
   ];
 
   let selectedType = 'wallet';
 
-  function selectType(element, type) {
-    document.querySelectorAll('.type-option').forEach(opt => opt.classList.remove('selected'));
-    element.classList.add('selected');
+  function selectType(type) {
     selectedType = type;
     if (type === 'wallet') openWalletModal();
     else openBankModal();
@@ -877,34 +713,12 @@
       holder: name,
       phone: '+251 9** *** ***'
     }));
-    window.location.href = 'Transfer to Wallet_Enter Amount.html';
+    window.location.href = 'Transfer to Wallet_Enter Recipient.html';
   }
 
   // Manage favorites
   function manageFavorites() {
     window.location.href = 'Manage Favourites.html';
-  }
-
-  // Select top bank or wallet → go directly
-  function selectTopBank(name, type) {
-    if (type === 'wallet') {
-      // For wallets like M-PESA, Telebirr → open wallet modal
-      selectedType = 'wallet';
-      document.querySelectorAll('.type-option').forEach(opt => opt.classList.remove('selected'));
-      document.querySelector('.type-option.mpesa-wallet').classList.add('selected');
-      openWalletModal();
-    } else {
-      // For banks like CBE, BOA → go directly to bank selection page with bank preselected
-      const bank = bankOptions.find(b => b.name === name || b.name.includes(name));
-      if (bank) {
-        sessionStorage.setItem('sendTarget', JSON.stringify({
-          name: bank.name, sub: bank.sub, logo: bank.logo, type: 'bank'
-        }));
-        window.location.href = bank.link;
-      } else {
-        openBankModal();
-      }
-    }
   }
 
   // Send to frequent contact → trusted saved bank recipient, go to bank select page (with bank pre-filled)
@@ -933,5 +747,7 @@
 
 <!-- Export to Figma button (shared exporter) -->
 <script src="figma-export.js"></script>
+<script src="test-scenarios-data.js"></script>
+<script src="test-scenarios.js"></script>
 </body>
 </html>

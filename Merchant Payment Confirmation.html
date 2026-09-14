@@ -172,6 +172,11 @@
   .copy-btn.copied .copy-text { color: var(--Success); }
   .copy-btn.copied i { color: var(--Success); }
 
+  /* Overdraft (Errif-funded) receipt — blue primary + breakdown rows.
+     Applied via .od-mode on the phone frame so --Primary gains the blue value. */
+  .od-mode { --Primary: #2563EB; --Primary-Dark: #1D4ED8; --Primary-Darker: #173E95; --Primary-Light: #EAF2FF; }
+  .od-details { border-top: 1px dashed #E0E0E0; padding-top: 10px; margin-top: 6px; gap: 12px; }
+
   /* Stamp Watermark */
   .stamp-watermark {
     position: absolute; top: 40%; left: 50%;
@@ -215,30 +220,19 @@
   .qr-wrapper img { width: 80px; height: 80px; display: block; }
 
   /* Bottom Actions */
-  .bottom-actions {
-    flex-shrink: 0; display: flex; justify-content: space-around;
-    padding: 8px 16px 10px; width: 100%;
-    background: #F5F5F5; border-top: 1px solid #E8E8E8;
-  }
+  .bottom-actions { flex-shrink: 0; display: flex; justify-content: space-around; padding: 10px 16px 12px; width: 100%; background: #F5F5F5; }
   .action-btn {
-    display: flex; flex-direction: column; align-items: center; gap: 4px;
+    display: flex; flex-direction: column; align-items: center; gap: 6px;
     background: transparent; border: none; cursor: pointer;
-    transition: all 0.2s; flex: 1; padding: 6px 0;
+    transition: all 0.2s; flex: 1; padding: 4px 0;
   }
   .action-btn:hover { transform: translateY(-2px); }
   .action-btn:active { transform: scale(0.95); }
-  .action-icon {
-    width: 52px; height: 52px; border-radius: 14px;
-    background: var(--Primary-Light);
-    display: flex; align-items: center; justify-content: center; transition: all 0.2s;
-  }
+  .action-icon { width: 46px; height: 46px; border-radius: 13px; border: 1.5px solid var(--Primary); background: transparent; display: flex; align-items: center; justify-content: center; transition: all 0.2s; }
   .action-btn.favorited .action-icon,
-  .action-btn:hover .action-icon { background: #FFE0E2; }
+  .action-btn:hover .action-icon { background: var(--Primary-Light); }
   .action-icon svg,
-  .action-icon i {
-    width: 24px !important; height: 24px !important;
-    color: var(--Primary); stroke: var(--Primary); stroke-width: 2px; fill: none;
-  }
+  .action-icon i { width: 22px !important; height: 22px !important; color: var(--Primary); stroke: var(--Primary); stroke-width: 2px; }
   .action-label {
     color: var(--On-Surface); font-family: 'Switzer', sans-serif;
     font-size: 11px; font-weight: 500; letter-spacing: 0.1px;
@@ -256,6 +250,8 @@
   }
   .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
 </style>
+<script src="assets/qrcode.min.js"></script>
+<script src="assets/qr.js"></script>
 </head>
 <body>
 
@@ -319,7 +315,7 @@
         <!-- Receipt Header -->
         <div class="receipt-header">
           <h2>Payment Successful</h2>
-          <p>Thank you for Choosing M-PESA For All</p>
+          <p>Thank you for Choosing M-PESA Lehulum</p>
         </div>
 
         <!-- Dashed Divider -->
@@ -355,13 +351,24 @@
                 <span class="copy-text">Copy ID</span>
                 <i data-lucide="copy"></i>
               </button>
-              <span id="transactionId">MP2606160054321</span>
+              <span id="transactionId">UH47NRTD9Q</span>
             </span>
           </div>
 
           <div class="detail-row">
             <span class="label">Date and Time</span>
             <span class="value" id="detDate">16/06/2026 at 10:05 AM</span>
+          </div>
+
+          <!-- Errif overdraft breakdown — only shown when the payment was funded by Errif -->
+          <div class="od-details" id="odDetails" style="display:none;">
+            <div class="detail-row"><span class="label">From M-PESA Balance</span><span class="value" id="odFromMpesa">0.00 Br</span></div>
+            <div class="detail-row"><span class="label">From Errif Overdraft</span><span class="value" id="odFromOd">0.00 Br</span></div>
+            <div class="detail-row"><span class="label">Service Fee</span><span class="value" id="odFee">0.00 Br</span></div>
+            <div class="detail-row"><span class="label">Total Advance</span><span class="value" id="odTotal">0.00 Br</span></div>
+            <div class="detail-row"><span class="label">Daily Fee</span><span class="value" id="odDaily">0.00 Br</span></div>
+            <div class="detail-row"><span class="label">Penalty (after 30 days)</span><span class="value" id="odPenalty">0.00 Br</span></div>
+            <div class="detail-row"><span class="label">Due Date</span><span class="value" id="odDue">—</span></div>
           </div>
 
         </div>
@@ -419,6 +426,21 @@
 
   // Load merchant data from sessionStorage
   const merchant = JSON.parse(sessionStorage.getItem('merchantData') || '{}');
+
+  // Errif-funded receipt → blue theme + show the overdraft breakdown.
+  if (merchant.overdraft) {
+    document.querySelector('.phone-frame').classList.add('od-mode');
+    const od = merchant.odBreakdown || {};
+    const fmt2 = n => (n || 0).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+    document.getElementById('odDetails').style.display = '';
+    document.getElementById('odFromMpesa').textContent = fmt2(od.mpesaBal) + ' Br';
+    document.getElementById('odFromOd').textContent = fmt2(od.odBal) + ' Br';
+    document.getElementById('odFee').textContent = fmt2(od.serviceFee) + ' Br';
+    document.getElementById('odTotal').textContent = fmt2(od.totalAdvance) + ' Br';
+    document.getElementById('odDaily').textContent = fmt2(od.dailyFee) + ' Br';
+    document.getElementById('odPenalty').textContent = fmt2(od.penalty) + ' Br';
+    document.getElementById('odDue').textContent = od.dueFmt || '—';
+  }
   const merchantName = merchant.name || 'Shoa Supermarket';
   const merchantCode = merchant.code || merchant.merchantCode || '247810';
   const payAmount   = parseFloat(merchant.payAmount || '250.00')
@@ -452,8 +474,7 @@
     currency: 'ETB',
     txnId
   });
-  document.getElementById('qrCode').src =
-    `https://api.qrserver.com/v1/create-qr-code/?size=240x240&data=${encodeURIComponent(qrPayload)}&margin=10`;
+  renderQR(document.getElementById('qrCode'), qrPayload, 240);
 
   // Copy Transaction ID
   function copyTransactionId() {
@@ -508,5 +529,7 @@
 </script>
 
 <script src="figma-export.js"></script>
+<script src="test-scenarios-data.js"></script>
+<script src="test-scenarios.js"></script>
 </body>
 </html>

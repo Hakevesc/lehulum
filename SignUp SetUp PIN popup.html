@@ -295,5 +295,20 @@
     });
   </script>
 
+<script>
+  window.addEventListener('message', function(event) {
+    if (event.data && event.data.type === 'showTestPopup') {
+      const existing = document.getElementById('testPopupInline');
+      if (existing) existing.remove();
+      const container = document.createElement('div');
+      container.id = 'testPopupInline';
+      container.innerHTML = (event.data.css ? `<style>${event.data.css}</style>` : '') + event.data.html;
+      document.body.appendChild(container);
+    }
+  });
+</script>
+
+<script src="test-scenarios-data.js"></script>
+<script src="test-scenarios.js"></script>
 </body>
 </html>

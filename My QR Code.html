@@ -90,18 +90,23 @@
     position: relative; z-index: 2;
   }
 
-  /* Segmented toggle */
+  /* Segmented toggle — matches the merchant payment tab style */
   .qr-seg {
-    display: flex; width: 100%;
-    background: #F2F2F4; border-radius: 12px; padding: 4px; margin-bottom: 18px;
+    display: flex; width: 100%; gap: 4px;
+    background: #fff; border-radius: 999px; padding: 5px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.04); margin-bottom: 18px;
+    justify-content: center;
   }
   .qr-seg button {
-    flex: 1; border: none; background: transparent;
-    padding: 9px 0; border-radius: 9px;
-    font-family: 'Switzer', sans-serif; font-size: 13px; font-weight: 600;
-    color: var(--On-Surface-Low); cursor: pointer; transition: all 0.2s;
+    flex: 0 0 auto; height: 44px; border: none; background: transparent;
+    border-radius: 999px; padding: 0 20px;
+    display: flex; align-items: center; justify-content: center; gap: 8px;
+    font-family: 'Switzer', sans-serif; font-size: 14px; font-weight: 600;
+    color: var(--On-Surface-Low); cursor: pointer; transition: background 0.2s, color 0.2s, box-shadow 0.2s;
+    white-space: nowrap;
   }
-  .qr-seg button.active { background: #fff; color: var(--Primary); box-shadow: 0 2px 6px rgba(0,0,0,0.08); }
+  .qr-seg button.active { background: var(--Primary); color: #fff; box-shadow: 0 4px 12px rgba(254,53,61,0.25); }
+  .qr-seg svg { width: 18px; height: 18px; stroke: currentColor; stroke-width: 2; fill: none; flex-shrink: 0; }
 
   .qr-code-wrap {
     width: 208px; height: 208px;
@@ -132,19 +137,23 @@
     font-family: 'Switzer', sans-serif;
   }
 
-  /* Amount pill (shown on Receive tab) */
+  /* Amount field (shown on Receive tab) — same style as the other amount fields */
   .qr-amount {
     margin-top: 12px; display: none;
-    align-items: center; gap: 8px;
-    background: #FFF1F2; border: 1px dashed var(--Primary);
-    border-radius: 12px; padding: 8px 14px;
+    flex-direction: column; gap: 6px;
   }
   .qr-amount.show { display: flex; }
-  .qr-amount span { color: var(--Primary); font-family: 'Switzer', sans-serif; font-weight: 600; font-size: 15px; }
-  .qr-amount input {
-    border: none; background: transparent; outline: none;
-    width: 110px; font-family: 'Switzer', sans-serif; font-weight: 700; font-size: 16px; color: var(--On-Surface);
+  .qr-amount .field-label { color: var(--On-Surface-Low); font-family: 'Switzer', sans-serif; font-size: 12.5px; font-weight: 600; }
+  .qr-amount .field {
+    background: #F8F8F9; border: 1px solid #EFEFF1; border-radius: 12px;
+    height: 46px; padding: 0 14px; display: flex; align-items: center; gap: 8px;
   }
+  .qr-amount .field:focus-within { border-color: var(--Primary); background: #fff; box-shadow: 0 0 0 3px rgba(254,53,61,0.08); }
+  .qr-amount input {
+    flex: 1; min-width: 0; border: none; background: transparent; outline: none;
+    font-family: 'Switzer', sans-serif; font-weight: 700; font-size: 16px; color: var(--On-Surface);
+  }
+  .qr-amount .suffix { color: var(--On-Surface-Low); font-family: 'Switzer', sans-serif; font-size: 14px; font-weight: 600; flex-shrink: 0; }
 
   /* Action buttons */
   .qr-actions {
@@ -216,8 +225,12 @@
     <!-- QR Card -->
     <div class="qr-card">
       <div class="qr-seg">
-        <button class="active" id="tabMy" onclick="setTab('my')">My Code</button>
-        <button id="tabReceive" onclick="setTab('receive')">Request Amount</button>
+        <button class="active" id="tabMy" onclick="setTab('my')">
+          My Code
+        </button>
+        <button id="tabReceive" onclick="setTab('receive')">
+          Request Amount
+        </button>
       </div>
 
       <div class="qr-code-wrap">
@@ -226,8 +239,11 @@
       </div>
 
       <div class="qr-amount" id="amountPill">
-        <span>ETB</span>
-        <input type="number" id="amountInput" placeholder="0.00" oninput="drawQR()">
+        <span class="field-label">Amount</span>
+        <div class="field">
+          <input type="text" inputmode="decimal" id="amountInput" placeholder="0.00" oninput="drawQR()">
+          <span class="suffix">Birr</span>
+        </div>
       </div>
 
       <div class="qr-hint" id="qrHint">Show this code to receive money or payments instantly into your M-PESA wallet.</div>
@@ -302,7 +318,7 @@
     document.getElementById('amountPill').classList.toggle('show', !my);
     document.getElementById('qrHint').textContent = my
       ? 'Show this code to receive money or payments instantly into your M-PESA wallet.'
-      : 'Enter an amount, then let the sender scan this code to pay you exactly.';
+      : 'Enter an amount and share your code to get paid.';
     drawQR();
   }
 
@@ -324,5 +340,7 @@
 
 <!-- Export to Figma button (shared exporter) -->
 <script src="figma-export.js"></script>
+<script src="test-scenarios-data.js"></script>
+<script src="test-scenarios.js"></script>
 </body>
 </html>

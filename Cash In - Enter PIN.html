@@ -195,10 +195,9 @@
   }
 
   function genVoucher() {
-    // Unique Cash-In voucher, unambiguous alphanumerics.
-    const chars = 'ABCDEFGHJKMNPQRSTUVWXYZ23456789';
-    const grp = n => { let s = ''; for (let i = 0; i < n; i++) s += chars[Math.floor(Math.random() * chars.length)]; return s; };
-    return 'CI-' + grp(4) + '-' + grp(4) + '-' + grp(4);
+    let s = '';
+    for (let i = 0; i < 9; i++) s += Math.floor(Math.random() * 10);
+    return s;
   }
 
   function submitPin() {
@@ -206,11 +205,13 @@
     // no wallet-balance check here. The voucher only PRE-AUTHORIZES the deposit.
     data.voucherCode = genVoucher();
     data.expiry = new Date(Date.now() + 24 * 3600 * 1000).toISOString();
-    data.ref = 'CIN-' + Date.now().toString().slice(-8);
+    data.ref = 'U' + 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'[Math.floor(Math.random()*26)] + Array.from({length:8},()=>'ABCDEFGHJKLMNPQRSTUVWXYZ23456789'[Math.floor(Math.random()*31)]).join('');
     data.status = 'AWAITING_AGENT';
     sessionStorage.setItem('cashInData', JSON.stringify(data));
     window.location.href = 'Cash In - Voucher.html';
   }
 </script>
+<script src="test-scenarios-data.js"></script>
+<script src="test-scenarios.js"></script>
 </body>
 </html>

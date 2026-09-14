@@ -3,410 +3,220 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Select Biller</title>
+<title>All Billers</title>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@400;500;600&display=swap');
   @import url('https://api.fontshare.com/v2/css?f[]=switzer@400,500,600,700&display=swap');
 
-  :root {
-    --Primary: #FE353D;
-    --On-Surface: #1C1C21;
-    --On-Surface-Low: #7C7C87;
-    --Border: #E8E8EC;
-    --Background: #F5F5F5;
-  }
-
+  :root { --Primary:#FE353D; --On-Surface:#1C1C21; --On-Surface-Low:#7C7C87; --Border:#E8E8EC; --Background:#F5F5F5; }
   * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'Inter', sans-serif; background: transparent; display: flex; justify-content: center; align-items: center; min-height: 100vh; padding: 20px; }
+  .phone-frame { width: 360px; height: 780px; background: var(--Background); border-radius: 30px; overflow: hidden; position: relative; box-shadow: 0 20px 60px rgba(0,0,0,0.15); display: flex; flex-direction: column; }
+  .app-content { height: 100%; display: flex; flex-direction: column; }
 
-  body {
-    font-family: 'Inter', sans-serif;
-    background: transparent;
-    display: flex; justify-content: center; align-items: center;
-    min-height: 100vh; padding: 20px;
-  }
-
-  .phone-frame {
-    width: 360px; height: 780px;
-    background: var(--Background);
-    border-radius: 30px; overflow: hidden;
-    box-shadow: 0 20px 60px rgba(0,0,0,0.15);
-    display: flex; flex-direction: column;
-  }
-
-  /* Status Bar */
-  .status-bar {
-    display: flex; justify-content: space-between; align-items: center;
-    padding: 14px 24px 8px; background: var(--Background); flex-shrink: 0;
-  }
+  .status-bar { display: flex; justify-content: space-between; align-items: center; padding: 14px 24px 8px; background: var(--Background); flex-shrink: 0; }
   .status-bar .time { font-size: 14px; font-weight: 600; color: var(--On-Surface); }
   .status-icons { display: flex; align-items: center; gap: 6px; }
   .status-icons svg { width: 18px; height: 18px; }
 
-  /* Header */
-  .header-nav {
-    display: flex; align-items: center; justify-content: space-between;
-    padding: 8px 16px 12px; background: var(--Background); flex-shrink: 0;
-  }
-  .back-btn {
-    width: 36px; height: 36px; border-radius: 50%;
-    background: transparent; border: none; cursor: pointer;
-    display: flex; align-items: center; justify-content: center; transition: all 0.2s;
-  }
+  .header-nav { display: flex; align-items: center; justify-content: space-between; padding: 8px 16px 12px; background: var(--Background); flex-shrink: 0; }
+  .back-btn { width: 36px; height: 36px; border-radius: 50%; background: transparent; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: background 0.2s; }
   .back-btn:hover { background: rgba(0,0,0,0.05); }
   .back-btn svg { width: 22px; height: 22px; stroke: var(--On-Surface); stroke-width: 1.8px; fill: none; }
-  .header-title {
-    color: var(--On-Surface); font-family: 'Switzer', sans-serif;
-    font-size: 17px; font-weight: 500; letter-spacing: 0.3px; flex: 1; text-align: center;
-  }
+  .header-title { color: var(--On-Surface); font-family: 'Switzer', sans-serif; font-size: 17px; font-weight: 500; letter-spacing: 0.3px; flex: 1; text-align: center; }
 
-  /* Search */
-  .search-wrap { padding: 0 16px 12px; flex-shrink: 0; }
-  .search-bar {
-    background: #FFF; border-radius: 14px; padding: 0 14px;
-    display: flex; align-items: center; gap: 10px; height: 46px;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.04);
-  }
-  .search-bar svg { width: 18px; height: 18px; stroke: var(--On-Surface-Low); flex-shrink: 0; fill: none; }
-  .search-bar input {
-    flex: 1; border: none; outline: none;
-    font-family: 'Switzer', sans-serif; font-size: 14px; color: var(--On-Surface); background: transparent;
-  }
-  .search-bar input::placeholder { color: var(--On-Surface-Low); }
-  .search-bar .clear-btn {
-    width: 20px; height: 20px; border-radius: 50%; background: #E8E8EC;
-    display: none; align-items: center; justify-content: center;
-    border: none; cursor: pointer; flex-shrink: 0;
-  }
-  .search-bar .clear-btn.show { display: flex; }
-  .search-bar .clear-btn svg { width: 12px; height: 12px; stroke: var(--On-Surface-Low); }
+  .scroll { flex: 1; overflow-y: auto; padding: 4px 16px 18px; display: flex; flex-direction: column; gap: 14px; }
+  .scroll::-webkit-scrollbar { width: 0; }
 
-  /* Filter Chips */
-  .filter-scroll {
-    display: flex; gap: 8px; padding: 0 16px 14px;
-    overflow-x: auto; flex-shrink: 0;
-  }
-  .filter-scroll::-webkit-scrollbar { display: none; }
-  .chip {
-    flex-shrink: 0; padding: 6px 14px; border-radius: 20px;
-    font-family: 'Switzer', sans-serif; font-size: 12px; font-weight: 500;
-    cursor: pointer; transition: all 0.2s; border: 1.5px solid var(--Border);
-    background: #FFF; color: var(--On-Surface-Low); white-space: nowrap;
-  }
-  .chip.active { background: var(--Primary); color: #FFF; border-color: var(--Primary); }
+  /* Search — same field as the Pay Bill menu */
+  .search-field { height: 54px; background: #F8F8F9; border: 1px solid #EFEFF1; border-radius: 12px; padding: 0 16px; display: flex; align-items: center; gap: 12px; flex-shrink: 0; transition: border-color 0.2s, background 0.2s; }
+  .search-field:focus-within { border-color: var(--Primary); background: #FFF; }
+  .search-field svg { width: 20px; height: 20px; stroke: var(--On-Surface); stroke-width: 2; fill: none; flex-shrink: 0; }
+  .search-field input { flex: 1; min-width: 0; border: none; background: transparent; outline: none; font-family: 'Switzer', sans-serif; font-size: 15px; font-weight: 500; color: var(--On-Surface); }
+  .search-field input::placeholder { color: var(--On-Surface-Low); font-weight: 400; }
 
-  /* Biller Grid Container */
-  .biller-list {
-    flex: 1; overflow-y: auto; padding: 0 16px 20px;
-  }
-  .biller-list::-webkit-scrollbar { width: 0; }
+  .group-label { font-family: 'Switzer', sans-serif; font-size: 12px; font-weight: 700; color: var(--On-Surface); text-transform: uppercase; letter-spacing: 0.6px; }
 
-  /* Group label spans both columns */
-  .biller-group-label {
-    color: var(--On-Surface-Low); font-family: 'Switzer', sans-serif;
-    font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.8px;
-    margin: 14px 0 10px; padding: 0 2px;
-  }
+  /* Biller grid — same tiles as the Pay Bill menu */
+  .biller-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+  .biller-tile { background: #FFF; border-radius: 14px; padding: 16px 8px 14px; display: flex; flex-direction: column; align-items: center; gap: 12px; cursor: pointer; box-shadow: 0 2px 10px rgba(0,0,0,0.07); transition: transform 0.15s, box-shadow 0.2s; }
+  .biller-tile:hover { box-shadow: 0 8px 20px rgba(0,0,0,0.11); transform: translateY(-1px); }
+  .biller-tile:active { transform: scale(0.98); }
+  .biller-tile .logo { width: 40px; height: 40px; }
+  .biller-tile .nm { font-family: 'Switzer', sans-serif; font-size: 12px; font-weight: 600; color: var(--On-Surface); text-align: center; line-height: 1.3; }
+  .grid-empty { grid-column: 1 / -1; padding: 22px; text-align: center; font-family: 'Switzer', sans-serif; font-size: 13px; color: var(--On-Surface-Low); }
 
-  /* 3-column grid */
-  .biller-grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 8px;
-    margin-bottom: 4px;
-  }
+  /* Logo badge — image for real billers, tinted glyph / initials for the rest */
+  .logo { width: 34px; height: 34px; border-radius: 50%; display: flex; align-items: center; justify-content: center; overflow: hidden; flex-shrink: 0; background: #FFF; box-shadow: 0 2px 6px rgba(0,0,0,0.14); }
+  .logo img { width: 100%; height: 100%; object-fit: contain; }
+  .logo.glyph svg { width: 20px; height: 20px; stroke: #FFF; stroke-width: 1.9; fill: none; }
+  .logo.initials { font-family: 'Switzer', sans-serif; font-size: 11px; font-weight: 700; color: #FFF; }
 
-  /* Card: vertical layout — icon top, name + desc below */
-  .biller-card {
-    background: #FFF;
-    border-radius: 14px;
-    padding: 12px 10px 10px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 6px;
-    cursor: pointer;
-    transition: all 0.2s;
-    box-shadow: 0 1px 4px rgba(0,0,0,0.05);
-    border: 1.5px solid transparent;
-    text-align: center;
-  }
-  .biller-card:hover {
-    box-shadow: 0 4px 14px rgba(0,0,0,0.09);
-    border-color: rgba(254,53,61,0.15);
-    transform: translateY(-1px);
-  }
-  .biller-card:active { transform: scale(0.96); }
+  /* Provider sheet (school payments) */
+  .sheet-overlay { position: absolute; inset: 0; background: rgba(0,0,0,0.45); display: flex; align-items: flex-end; opacity: 0; pointer-events: none; transition: opacity 0.25s; z-index: 50; }
+  .sheet-overlay.show { opacity: 1; pointer-events: auto; }
+  .sheet { width: 100%; background: #FFF; border-radius: 24px 24px 0 0; padding: 12px 20px 28px; display: flex; flex-direction: column; transform: translateY(100%); transition: transform 0.3s cubic-bezier(0.2, 0.8, 0.3, 1); }
+  .sheet-overlay.show .sheet { transform: translateY(0); }
+  .sheet-grip { width: 44px; height: 4px; border-radius: 2px; background: #D8D8DE; margin: 0 auto 16px; }
+  .provider-item { display: flex; align-items: center; gap: 16px; padding: 14px 4px; cursor: pointer; border-radius: 12px; transition: background 0.15s; }
+  .provider-item:hover { background: #FAFAFA; }
+  .provider-item .logo { width: 36px; height: 36px; box-shadow: none; }
+  .provider-item .nm { font-family: 'Switzer', sans-serif; font-size: 15px; font-weight: 600; color: var(--On-Surface); }
 
-  /* Round icon with initials */
-  .biller-icon {
-    width: 36px; height: 36px; border-radius: 50%;
-    display: flex; align-items: center; justify-content: center;
-    font-family: 'Switzer', sans-serif; font-size: 12px; font-weight: 700;
-    flex-shrink: 0;
-  }
-
-  .biller-name {
-    font-family: 'Switzer', sans-serif;
-    font-size: 12px; font-weight: 600;
-    color: var(--On-Surface);
-    line-height: 1.3;
-  }
-
-  .biller-desc {
-    font-family: 'Switzer', sans-serif;
-    font-size: 10px;
-    color: var(--On-Surface-Low);
-    line-height: 1.3;
-    margin-top: -2px;
-  }
-
-  /* Empty state */
-  .empty-state {
-    display: none; flex-direction: column; align-items: center;
-    justify-content: center; padding: 40px 20px; text-align: center;
-  }
-  .empty-state.show { display: flex; }
-  .empty-state svg { width: 48px; height: 48px; stroke: #D0D0D5; margin-bottom: 12px; }
-  .empty-state p { font-family: 'Switzer', sans-serif; font-size: 14px; color: var(--On-Surface-Low); }
 </style>
 </head>
 <body>
-
 <div class="phone-frame">
+  <div class="app-content">
 
-  <!-- Status Bar -->
-  <div class="status-bar">
-    <span class="time">10:00</span>
-    <div class="status-icons">
-      <svg viewBox="0 0 24 24" fill="none"><path d="M1 9l2 2c4.97-4.97 13.03-4.97 18 0l2-2C16.93 2.93 7.08 2.93 1 9z" fill="#1C1C21"/><path d="M5 13l2 2c2.76-2.76 7.24-2.76 10 0l2-2C15.14 9.14 8.87 9.14 5 13z" fill="#1C1C21"/><path d="M9 17l2 2c1.1-1.1 2.9-1.1 4 0l2-2c-2.21-2.21-5.79-2.21-8 0z" fill="#1C1C21"/></svg>
-      <svg viewBox="0 0 24 24" fill="none"><rect x="2" y="6" width="4" height="12" rx="1" fill="#1C1C21"/><rect x="8" y="4" width="4" height="14" rx="1" fill="#1C1C21"/><rect x="14" y="2" width="4" height="16" rx="1" fill="#1C1C21"/><rect x="20" y="0" width="4" height="18" rx="1" fill="#1C1C21" opacity="0.3"/></svg>
-      <svg viewBox="0 0 28 14" fill="none"><rect x="0" y="1" width="22" height="12" rx="2.5" stroke="#1C1C21" stroke-width="1.5"/><rect x="2" y="3" width="16" height="8" rx="1" fill="#1C1C21"/><rect x="24" y="4" width="2" height="6" rx="1" fill="#1C1C21"/></svg>
+    <div class="status-bar">
+      <span class="time">10:00</span>
+      <div class="status-icons">
+        <svg viewBox="0 0 24 24" fill="none"><path d="M1 9l2 2c4.97-4.97 13.03-4.97 18 0l2-2C16.93 2.93 7.08 2.93 1 9z" fill="#1C1C21"/><path d="M5 13l2 2c2.76-2.76 7.24-2.76 10 0l2-2C15.14 9.14 8.87 9.14 5 13z" fill="#1C1C21"/><path d="M9 17l2 2c1.1-1.1 2.9-1.1 4 0l2-2c-2.21-2.21-5.79-2.21-8 0z" fill="#1C1C21"/></svg>
+        <svg viewBox="0 0 24 24" fill="none"><rect x="2" y="6" width="4" height="12" rx="1" fill="#1C1C21"/><rect x="8" y="4" width="4" height="14" rx="1" fill="#1C1C21"/><rect x="14" y="2" width="4" height="16" rx="1" fill="#1C1C21"/><rect x="20" y="0" width="4" height="18" rx="1" fill="#1C1C21" opacity="0.3"/></svg>
+        <svg viewBox="0 0 28 14" fill="none"><rect x="0" y="1" width="22" height="12" rx="2.5" stroke="#1C1C21" stroke-width="1.5"/><rect x="2" y="3" width="16" height="8" rx="1" fill="#1C1C21"/><rect x="24" y="4" width="2" height="6" rx="1" fill="#1C1C21"/></svg>
+      </div>
     </div>
-  </div>
 
-  <!-- Header -->
-  <div class="header-nav">
-    <button class="back-btn" onclick="goBack()">
-      <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
-    </button>
-    <span class="header-title" id="pageTitle">Select Biller</span>
-    <div style="width:36px;"></div>
-  </div>
-
-  <!-- Search -->
-  <div class="search-wrap">
-    <div class="search-bar">
-      <svg viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-        <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
-      </svg>
-      <input type="text" id="searchInput" placeholder="Search billers..." oninput="filterList(this.value)">
-      <button class="clear-btn" id="clearBtn" onclick="clearSearch()">
-        <svg viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+    <div class="header-nav">
+      <button class="back-btn" onclick="goBack()">
+        <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
       </button>
+      <span class="header-title">All Billers</span>
+      <div style="width:36px;"></div>
+    </div>
+
+    <div class="scroll">
+
+      <div class="search-field">
+        <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+        <input id="search" type="text" placeholder="Search by biller, city, vendor" autocomplete="off" oninput="renderBillers()">
+      </div>
+
+      <div id="billerList"></div>
+
+      <div class="grid-empty" id="emptyState" style="display:none">No biller matches that name</div>
+
     </div>
   </div>
 
-  <!-- Filter Chips -->
-  <div class="filter-scroll" id="filterChips">
-    <div class="chip active" onclick="filterCategory(this, 'All')">All</div>
-    <div class="chip" onclick="filterCategory(this, 'Utility')">Utility</div>
-    <div class="chip" onclick="filterCategory(this, 'Telecom')">Telecom</div>
-    <div class="chip" onclick="filterCategory(this, 'Water')">Water</div>
-    <div class="chip" onclick="filterCategory(this, 'Government')">Government</div>
-    <div class="chip" onclick="filterCategory(this, 'School')">School</div>
-    <div class="chip" onclick="filterCategory(this, 'Insurance')">Insurance</div>
-  </div>
-
-  <!-- Biller Grid -->
-  <div class="biller-list" id="billerList">
-
-    <!-- Utility -->
-    <div class="biller-group-label" data-cat="Utility">Utility</div>
-    <div class="biller-grid" data-cat-grid="Utility">
-      <div class="biller-card" data-cat="Utility" onclick="selectBiller('DSTV Ethiopia','DSTV Ethiopia','BUS-1001','Utility','DS','#FFF3E0','#E65100')">
-        <div class="biller-name">DSTV Ethiopia</div>
-        <div class="biller-desc">BUS-1001</div>
+  <!-- School fees run through more than one provider -->
+  <div class="sheet-overlay" id="providerOverlay" onclick="if(event.target===this)closeProviders()">
+    <div class="sheet">
+      <div class="sheet-grip"></div>
+      <div class="provider-item" onclick="pickProvider('awash')">
+        <span class="logo"><img src="assets/bill pay logos/Awash_International_Bank.png" alt=""></span>
+        <span class="nm">School Payment Via Awash Bank</span>
       </div>
-      <div class="biller-card" data-cat="Utility" onclick="selectBiller('Ethiopian Electric Utility','Ethiopian Electric Utility','BUS-1002','Utility','EU','#FFF3E0','#E65100')">
-        <div class="biller-name">Ethiopian Electric Utility</div>
-        <div class="biller-desc">BUS-1002</div>
-      </div>
-      <div class="biller-card" data-cat="Utility" onclick="selectBiller('Ethiopian Airlines','Ethiopian Airlines','BUS-1003','Utility','EA','#FFF3E0','#BF360C')">
-        <div class="biller-name">Ethiopian Airlines</div>
-        <div class="biller-desc">BUS-1003</div>
-      </div>
-    </div>
-
-    <!-- Telecom -->
-    <div class="biller-group-label" data-cat="Telecom">Telecom</div>
-    <div class="biller-grid" data-cat-grid="Telecom">
-      <div class="biller-card" data-cat="Telecom" onclick="selectBiller('Ethio Telecom','Ethio Telecom Postpaid Bill','BUS-2001','Telecom','ET','#E8F5E9','#388E3C')">
-        <div class="biller-name">Ethio Telecom</div>
-        <div class="biller-desc">BUS-2001</div>
-      </div>
-      <div class="biller-card" data-cat="Telecom" onclick="selectBiller('Safaricom ET','Safaricom Internet & Bundles','BUS-2002','Telecom','SF','#E8F5E9','#4CAF50')">
-        <div class="biller-name">Safaricom ET</div>
-        <div class="biller-desc">BUS-2002</div>
-      </div>
-      <div class="biller-card" data-cat="Telecom" onclick="selectBiller('StarTimes Ethiopia','StarTimes Ethiopia','BUS-2003','Telecom','ST','#E8F5E9','#2E7D32')">
-        <div class="biller-name">StarTimes Ethiopia</div>
-        <div class="biller-desc">BUS-2003</div>
-      </div>
-    </div>
-
-    <!-- Water -->
-    <div class="biller-group-label" data-cat="Water">Water</div>
-    <div class="biller-grid" data-cat-grid="Water">
-      <div class="biller-card" data-cat="Water" onclick="selectBiller('Addis Ababa Water & Sewerage','Addis Ababa Water & Sewerage','BUS-3001','Water','AW','#E3F2FD','#1976D2')">
-        <div class="biller-name">Addis Ababa Water & Sewerage</div>
-        <div class="biller-desc">BUS-3001</div>
-      </div>
-      <div class="biller-card" data-cat="Water" onclick="selectBiller('Oromia Water Authority','Oromia Water Authority','BUS-3002','Water','OW','#E3F2FD','#0D47A1')">
-        <div class="biller-name">Oromia Water Authority</div>
-        <div class="biller-desc">BUS-3002</div>
-      </div>
-      <div class="biller-card" data-cat="Water" onclick="selectBiller('Dire Dawa Water Supply','Dire Dawa Water Supply','BUS-3003','Water','DD','#E3F2FD','#1565C0')">
-        <div class="biller-name">Dire Dawa Water Supply</div>
-        <div class="biller-desc">BUS-3003</div>
-      </div>
-    </div>
-
-    <!-- Government -->
-    <div class="biller-group-label" data-cat="Government">Government</div>
-    <div class="biller-grid" data-cat-grid="Government">
-      <div class="biller-card" data-cat="Government" onclick="selectBiller('Ethiopian Revenue & Customs','Ethiopian Revenue & Customs','BUS-4001','Government','ER','#F3E5F5','#7B1FA2')">
-        <div class="biller-name">Ethiopian Revenue & Customs</div>
-        <div class="biller-desc">BUS-4001</div>
-      </div>
-      <div class="biller-card" data-cat="Government" onclick="selectBiller('Addis Ababa City Admin','Addis Ababa City Admin','BUS-4002','Government','AA','#F3E5F5','#9C27B0')">
-        <div class="biller-name">Addis Ababa City Admin</div>
-        <div class="biller-desc">BUS-4002</div>
-      </div>
-      <div class="biller-card" data-cat="Government" onclick="selectBiller('Dept. of Immigration','Dept. of Immigration','BUS-4003','Government','IM','#F3E5F5','#6A1B9A')">
-        <div class="biller-name">Dept. of Immigration</div>
-        <div class="biller-desc">BUS-4003</div>
-      </div>
-    </div>
-
-    <!-- School -->
-    <div class="biller-group-label" data-cat="School">School</div>
-    <div class="biller-grid" data-cat-grid="School">
-      <div class="biller-card" data-cat="School" onclick="selectBiller('Addis Ababa University','Addis Ababa University','BUS-5001','School','AU','#E0F7FA','#0097A7')">
-        <div class="biller-name">Addis Ababa University</div>
-        <div class="biller-desc">BUS-5001</div>
-      </div>
-      <div class="biller-card" data-cat="School" onclick="selectBiller('Adama Science & Technology','Adama Science & Technology','BUS-5002','School','AS','#E0F7FA','#00796B')">
-        <div class="biller-name">Adama Science & Technology</div>
-        <div class="biller-desc">BUS-5002</div>
-      </div>
-      <div class="biller-card" data-cat="School" onclick="selectBiller('Jimma University','Jimma University','BUS-5003','School','JU','#E0F7FA','#006064')">
-        <div class="biller-name">Jimma University</div>
-        <div class="biller-desc">BUS-5003</div>
-      </div>
-    </div>
-
-    <!-- Insurance -->
-    <div class="biller-group-label" data-cat="Insurance">Insurance</div>
-    <div class="biller-grid" data-cat-grid="Insurance">
-      <div class="biller-card" data-cat="Insurance" onclick="selectBiller('Ethiopian Insurance Corp.','Ethiopian Insurance Corp.','BUS-6001','Insurance','EI','#FCE4EC','#C2185B')">
-        <div class="biller-name">Ethiopian Insurance Corp.</div>
-        <div class="biller-desc">BUS-6001</div>
-      </div>
-      <div class="biller-card" data-cat="Insurance" onclick="selectBiller('Nyala Insurance','Nyala Insurance S.C.','BUS-6002','Insurance','NY','#FCE4EC','#E91E63')">
-        <div class="biller-name">Nyala Insurance</div>
-        <div class="biller-desc">BUS-6002</div>
-      </div>
-      <div class="biller-card" data-cat="Insurance" onclick="selectBiller('Awash Insurance','Awash Insurance S.C.','BUS-6003','Insurance','AI','#FCE4EC','#AD1457')">
-        <div class="biller-name">Awash Insurance</div>
-        <div class="biller-desc">BUS-6003</div>
+      <div class="provider-item" onclick="pickProvider('webirr')">
+        <span class="logo"><img src="assets/bill pay logos/webirr.png" alt=""></span>
+        <span class="nm">School Payment Via WeBirr</span>
       </div>
     </div>
   </div>
-
-  <div class="empty-state" id="emptyState">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-      <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
-    </svg>
-    <p>No billers found</p>
-  </div>
-
 </div>
 
 <script>
-  let activeCategory = 'All';
-  let searchQuery = '';
+  const GLYPHS = {
+    school: '<svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M2.5 8.5 12 4l9.5 4.5L12 13 2.5 8.5z"/><path d="M6.5 10.6V16c0 1.4 2.5 2.6 5.5 2.6s5.5-1.2 5.5-2.6v-5.4"/><path d="M21.5 8.5v5"/></svg>',
+    umbrella: '<svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3.2c4.8 0 8.8 3.7 8.8 8.3H3.2c0-4.6 4-8.3 8.8-8.3z"/><path d="M12 11.5v7a2.2 2.2 0 0 1-4.4 0"/></svg>'
+  };
 
-  function goBack() {
-    window.location.href = 'Pay Bill.html';
+  // Every biller in the menu PLUS the full catalogue — grouped by category.
+  const BILLERS = [
+    { id:'eeu',   category:'Utility',    name:'Ethiopian Electric Utility',  tile:'Electric Utility Payment',  full:'Ethiopian Electric Utility', abbr:'EE', logo:'assets/bill pay logos/eelectricu_logo.png' },
+    { id:'dstv',  category:'Utility',    name:'DSTV Ethiopia',               tile:'DSTV Payment',              full:'DSTV Ethiopia',              abbr:'DS', logo:'assets/bill pay logos/dstv_logo.png' },
+    { id:'airlines', category:'Utility', name:'Ethiopian Airlines',           tile:'Ethiopian Airlines',        full:'Ethiopian Airlines',         abbr:'EA', logo:'assets/bill pay logos/ethiopia_airlines_logo.png' },
+    { id:'water',  category:'Water',     name:'Addis Ababa Water & Sewerage', tile:'Water Payment',             full:'Addis Ababa Water Utility',  abbr:'AW', logo:'assets/bill pay logos/aawatersa_logo.png' },
+    { id:'oromia', category:'Water',     name:'Oromia Water Authority',      tile:'Oromia Water',              full:'Oromia Water Authority',     abbr:'OW', bg:'#1976D2' },
+    { id:'diredawa',category:'Water',    name:'Dire Dawa Water Supply',      tile:'Dire Dawa Water',           full:'Dire Dawa Water Supply',     abbr:'DD', bg:'#1565C0' },
+    { id:'ethiotelecom', category:'Telecom', name:'Ethio Telecom',            tile:'Ethio Telecom',            full:'Ethio Telecom Postpaid',     abbr:'ET', logo:'assets/ethio-tele-logo.jpg' },
+    { id:'safaricom', category:'Telecom',name:'Safaricom ET',                tile:'Safaricom ET',             full:'Safaricom Internet & Bundles',abbr:'SF', bg:'#388E3C' },
+    { id:'startimes',category:'Telecom', name:'StarTimes Ethiopia',          tile:'StarTimes',                full:'StarTimes Ethiopia',         abbr:'ST', bg:'#2E7D32' },
+    { id:'school', category:'Education', name:'School Fees',                 tile:'School Payment',           full:'School Fees',                abbr:'SC', glyph:'school', bg:'#F5901E' },
+    { id:'aau',    category:'Education', name:'Addis Ababa University',      tile:'AA University',            full:'Addis Ababa University',     abbr:'AU', bg:'#0097A7' },
+    { id:'astu',   category:'Education', name:'Adama Science & Technology',  tile:'Adama Sci. & Tech.',       full:'Adama Science & Technology', abbr:'AS', bg:'#00796B' },
+    { id:'ju',     category:'Education', name:'Jimma University',            tile:'Jimma University',         full:'Jimma University',           abbr:'JU', bg:'#006064' },
+    { id:'customs',category:'Government',name:'Ethiopian Customs Commission',tile:'Ethiopian Customs',        full:'Ethiopian Customs Commission',abbr:'EC', logo:'assets/bill pay logos/ethiopia_custom_logo.jpg' },
+    { id:'erc',    category:'Government',name:'Ethiopian Revenue & Customs', tile:'Revenue & Customs',        full:'Ethiopian Revenue & Customs',abbr:'ER', bg:'#7B1FA2' },
+    { id:'aac',    category:'Government',name:'Addis Ababa City Admin',      tile:'City Admin',               full:'Addis Ababa City Admin',     abbr:'AA', bg:'#9C27B0' },
+    { id:'immigration',category:'Government',name:'Dept. of Immigration',    tile:'Immigration',              full:'Dept. of Immigration',       abbr:'IM', bg:'#6A1B9A' },
+    { id:'insurance',category:'Insurance',name:'Insurance Premium',          tile:'Insurance Payment',        full:'Insurance Premium',          abbr:'IN', glyph:'umbrella', bg:'#4A57D6' },
+    { id:'eic',    category:'Insurance', name:'Ethiopian Insurance Corp.',   tile:'Ethio Insurance',          full:'Ethiopian Insurance Corp.',  abbr:'EI', bg:'#C2185B' },
+    { id:'nyala',  category:'Insurance', name:'Nyala Insurance',             tile:'Nyala Insurance',          full:'Nyala Insurance S.C.',       abbr:'NY', bg:'#E91E63' },
+    { id:'awashins',category:'Insurance',name:'Awash Insurance',             tile:'Awash Insurance',          full:'Awash Insurance S.C.',       abbr:'AI', bg:'#AD1457' }
+  ];
+
+  const CATEGORIES = ['Utility', 'Water', 'Telecom', 'Education', 'Government', 'Insurance'];
+  const $ = id => document.getElementById(id);
+
+  const find = id => BILLERS.find(b => b.id === id) || null;
+
+  function badge(b) {
+    if (b.glyph) return '<span class="logo glyph" style="background:' + b.bg + '">' + GLYPHS[b.glyph] + '</span>';
+    if (b.logo)  return '<span class="logo"><img src="' + b.logo + '" alt=""></span>';
+    return '<span class="logo initials" style="background:' + b.bg + '">' + b.abbr + '</span>';
   }
 
-  function selectBiller(name, fullName, desc, category, abbr, bg, color) {
-    sessionStorage.setItem('selectedBiller', JSON.stringify({ name, fullName, desc, category, abbr, bg, color }));
+  function renderBillers() {
+    const q = $('search').value.trim().toLowerCase();
+    const list = q
+      ? BILLERS.filter(b => b.name.toLowerCase().includes(q) || b.full.toLowerCase().includes(q) || b.category.toLowerCase().includes(q))
+      : BILLERS;
+
+    $('billerList').innerHTML = CATEGORIES.map(cat => {
+      const items = list.filter(b => b.category === cat);
+      if (!items.length) return '';
+      return '<div class="group-label">' + cat + '</div>' +
+        '<div class="biller-grid">' + items.map(b =>
+          '<div class="biller-tile" onclick="pickBiller(\'' + b.id + '\')">' + badge(b) +
+          '<span class="nm">' + (b.tile || b.name) + '</span></div>'
+        ).join('') + '</div>';
+    }).join('');
+
+    $('emptyState').style.display = list.length ? 'none' : 'block';
+  }
+
+  /* ── Provider sheet (school payments) ── */
+  const PROVIDERS = {
+    awash:  { name: 'Awash Bank', logo: 'assets/bill pay logos/Awash_International_Bank.png' },
+    webirr: { name: 'WeBirr',     logo: 'assets/bill pay logos/webirr.png' }
+  };
+  function openProviders() { $('providerOverlay').classList.add('show'); }
+  function closeProviders() { $('providerOverlay').classList.remove('show'); }
+
+  function pickProvider(key) {
+    const p = PROVIDERS[key], b = find('school');
+    if (!p || !b) return;
+    closeProviders();
+    store(Object.assign({}, b, { full: 'School Payment Via ' + p.name, logo: p.logo, glyph: undefined, provider: p.name }));
+  }
+
+  function store(b, account) {
+    if (b.id === 'eeu') { window.location.href = 'Bill Payment_EEU.html'; return; }
+    if (b.id === 'water') { window.location.href = 'Bill Payment_Water Town.html'; return; }
+    if (b.id === 'airlines') { window.location.href = 'Bill Payment_Airlines.html'; return; }
+    if (b.id === 'dstv') { window.location.href = 'Bill Payment_DSTV Card.html'; return; }
+    if (b.id === 'insurance') { window.location.href = 'Bill Payment_Insurance Company.html'; return; }
+    if (b.id === 'school') { openProviders(); return; }
+    sessionStorage.setItem('selectedBiller', JSON.stringify({
+      name: b.name, fullName: b.full, category: b.category, abbr: b.abbr,
+      logo: b.logo || '', provider: b.provider || '', account: account || ''
+    }));
     window.location.href = 'Bill Payment_Enter Account.html';
   }
 
-  function filterCategory(chip, cat) {
-    activeCategory = cat;
-    document.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
-    chip.classList.add('active');
-    applyFilter();
-  }
+  function pickBiller(id) { const b = find(id); if (b) store(b); }
+  function goBack() { window.location.href = 'Pay Bill.html'; }
 
-  function filterList(val) {
-    searchQuery = val.toLowerCase();
-    document.getElementById('clearBtn').classList.toggle('show', val.length > 0);
-    applyFilter();
-  }
+  renderBillers();
 
-  function clearSearch() {
-    const input = document.getElementById('searchInput');
-    input.value = '';
-    searchQuery = '';
-    document.getElementById('clearBtn').classList.remove('show');
-    applyFilter();
-    input.focus();
-  }
 
-  function applyFilter() {
-    const cards = document.querySelectorAll('.biller-card');
-    const labels = document.querySelectorAll('.biller-group-label');
-    const grids = document.querySelectorAll('.biller-grid');
-    let anyVisible = false;
-
-    cards.forEach(card => {
-      const cat = card.dataset.cat;
-      const text = card.textContent.toLowerCase();
-      const catMatch = activeCategory === 'All' || cat === activeCategory;
-      const searchMatch = !searchQuery || text.includes(searchQuery);
-      const show = catMatch && searchMatch;
-      card.style.display = show ? '' : 'none';
-      if (show) anyVisible = true;
-    });
-
-    // Hide label + grid if no visible cards in that category
-    labels.forEach(label => {
-      const cat = label.dataset.cat;
-      const catCards = [...cards].filter(c => c.dataset.cat === cat && c.style.display !== 'none');
-      const show = catCards.length > 0;
-      label.style.display = show ? '' : 'none';
-      // Also hide the corresponding grid if empty
-      const grid = document.querySelector(`.biller-grid[data-cat-grid="${cat}"]`);
-      if (grid) grid.style.display = show ? '' : 'none';
-    });
-
-    document.getElementById('emptyState').classList.toggle('show', !anyVisible);
-  }
-
-  // Apply category from previous page if set — hide filter chips when specific category
-  const savedCat = sessionStorage.getItem('billCategory');
-  if (savedCat && savedCat !== 'All') {
-    const chip = [...document.querySelectorAll('.chip')].find(c => c.textContent === savedCat);
-    if (chip) filterCategory(chip, savedCat);
-    // Hide the filter chips row entirely so user only sees the selected category
-    document.getElementById('filterChips').style.display = 'none';
-  }
 </script>
 
 <script src="figma-export.js"></script>
+
+<script src="test-scenarios-data.js"></script>
+<script src="test-scenarios.js"></script>
 </body>
 </html>

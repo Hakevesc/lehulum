@@ -166,17 +166,6 @@
   .copy-btn svg { width: 14px !important; height: 14px !important; stroke: var(--Primary); stroke-width: 2; fill: none; }
   .copy-btn.copied .copy-text, .copy-btn.copied svg { stroke: var(--Success); color: var(--Success); }
 
-  /* "Wallet Credited" highlight */
-  .credit-banner {
-    width: 100%; display: flex; align-items: center; justify-content: center; gap: 8px;
-    background: var(--Success-Light); border: 1px solid rgba(31,200,59,0.4);
-    border-radius: 12px; padding: 11px 14px; margin-bottom: 16px;
-  }
-  .credit-banner svg { width: 17px; height: 17px; stroke: var(--Success); stroke-width: 2.2; fill: none; flex-shrink: 0; }
-  .credit-banner span {
-    color: #167C2A; font-family: 'Switzer', sans-serif; font-size: 13px; font-weight: 600;
-  }
-
   /* Stamp Watermark */
   .stamp-watermark {
     position: absolute; top: 52%; left: 50%;
@@ -254,6 +243,8 @@
   }
   .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
 </style>
+<script src="assets/qrcode.min.js"></script>
+<script src="assets/qr.js"></script>
 </head>
 <body>
 
@@ -333,12 +324,6 @@
           </div>
         </div>
 
-        <!-- Wallet credited banner -->
-        <div class="credit-banner">
-          <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
-          <span id="creditBannerTxt">Wallet Credited: 0.00 ETB added to your M-PESA wallet</span>
-        </div>
-
         <div class="transaction-details">
           <div class="detail-row">
             <span class="label">Deposit Type</span>
@@ -349,7 +334,7 @@
             <span class="value" id="detailAgent">&mdash;</span>
           </div>
           <div class="detail-row">
-            <span class="label">Agent No.</span>
+            <span class="label">Short Code</span>
             <span class="value" id="detailAgentCode">&mdash;</span>
           </div>
           <div class="detail-row">
@@ -420,13 +405,12 @@
 
   const amount = parseFloat(data.amount || 0);
   $('tokenValue').textContent = data.voucherCode || '\u2014';
-  $('creditBannerTxt').textContent = 'Wallet Credited: ' + fmt(amount) + ' ETB added to your M-PESA wallet';
   $('detailType').textContent = 'Cash-In';
   $('detailAgent').textContent = data.agentName || agent.name || '\u2014';
   $('detailAgentCode').textContent = data.agentCode || agent.code || '\u2014';
   $('detailName').textContent = data.customerName || 'Derartu Tulu Andegna';
   $('detailAmount').textContent = '+' + Math.round(amount).toLocaleString('en-US');
-  $('transactionId').textContent = data.ref || ('CIN-' + Date.now().toString().slice(-8));
+  $('transactionId').textContent = data.ref || ('U' + 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'[Math.floor(Math.random()*26)] + Array.from({length:8},()=>'ABCDEFGHJKLMNPQRSTUVWXYZ23456789'[Math.floor(Math.random()*31)]).join(''));
 
   const pad = n => String(n).padStart(2, '0');
   const stamp = d => pad(d.getDate()) + '/' + pad(d.getMonth() + 1) + '/' + d.getFullYear() +
@@ -441,7 +425,7 @@
     txId: $('transactionId').textContent,
     amount: fmt(amount) + ' ETB'
   }));
-  $('qrCode').src = 'https://api.qrserver.com/v1/create-qr-code/?size=240x240&data=' + qrData + '&margin=10';
+  renderQR($('qrCode'), decodeURIComponent(qrData), 240);
 
   function showToast(msg) {
     const t = $('toast');
@@ -480,5 +464,7 @@
   function addToFavorite() { showToast('Added to favorites!'); }
   function cashInAgain() { sessionStorage.removeItem('cashInData'); window.location.href = 'Cash In.html'; }
 </script>
+<script src="test-scenarios-data.js"></script>
+<script src="test-scenarios.js"></script>
 </body>
 </html>

@@ -3,282 +3,172 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Transfer to Bank - Select Bank</title>
+<title>Transfer Money</title>
 <style>
-    @import url("styles/component-keypad.css");
   @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@400;500;600&display=swap');
   @import url('https://api.fontshare.com/v2/css?f[]=switzer@400,500,600,700&display=swap');
 
   :root {
     --Primary: #FE353D;
-    --Primary-Dark: #C41520;
-    --Primary-Darker: #A41016;
-    --Primary-Light: #FFF1F2;
     --On-Surface: #1C1C21;
     --On-Surface-Low: #7C7C87;
-    --Surface-Container: #FCFCFC;
-    --Gray-0: #FFF;
-    --On-Primary: #FFF1F2;
-    --Success: #1FC83B;
-    --Success-Light: #E8F9EC;
     --Border: #E8E8EC;
     --Background: #F5F5F5;
+    --Field: #F8F8F9;
+    --Field-Border: #EFEFF1;
+    --Success: #1FC83B;
+    --Success-Light: #EEF9F0;
+    --Warning: #E09B0B;
+    --Warning-Light: #FDF6E7;
+    --Error-Light: #FDECEC;
   }
-
   * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'Inter', sans-serif; background: transparent; display: flex; justify-content: center; align-items: center; min-height: 100vh; padding: 20px; }
+  .phone-frame { width: 360px; height: 780px; background: var(--Background); border-radius: 30px; overflow: hidden; position: relative; box-shadow: 0 20px 60px rgba(0,0,0,0.15); display: flex; flex-direction: column; }
+  .app-content { height: 100%; display: flex; flex-direction: column; }
 
-  body {
-    font-family: 'Inter', sans-serif;
-    background: transparent;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    min-height: 100vh;
-    padding: 20px;
-  }
-
-  .phone-frame {
-    width: 360px;
-    height: 780px;
-    background: var(--Background);
-    border-radius: 30px;
-    overflow: hidden;
-    position: relative;
-    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
-  }
-
-  .app-content {
-    height: 100%;
-    overflow-y: auto;
-    position: relative;
-    display: flex;
-    flex-direction: column;
-  }
-  .app-content::-webkit-scrollbar { width: 0; }
-
-  .status-bar {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    width: 100%;
-    padding: 14px 24px 8px;
-    background: var(--Background);
-  }
+  .status-bar { display: flex; justify-content: space-between; align-items: center; padding: 14px 24px 8px; background: var(--Background); flex-shrink: 0; }
   .status-bar .time { font-size: 14px; font-weight: 600; color: var(--On-Surface); }
   .status-icons { display: flex; align-items: center; gap: 6px; }
   .status-icons svg { width: 18px; height: 18px; }
 
-  .header-nav {
-    width: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 8px 16px 12px;
-    background: var(--Background);
-  }
-  .back-btn {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 36px;
-    height: 36px;
-    border-radius: 50%;
-    background: transparent;
-    border: none;
-    cursor: pointer;
-    transition: all 0.2s;
-  }
+  .header-nav { display: flex; align-items: center; justify-content: space-between; padding: 8px 16px 12px; background: var(--Background); flex-shrink: 0; }
+  .back-btn { width: 36px; height: 36px; border-radius: 50%; background: transparent; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: background 0.2s; }
   .back-btn:hover { background: rgba(0,0,0,0.05); }
-  .back-btn svg { width: 22px; height: 22px; stroke: var(--On-Surface); stroke-width: 1.8px; }
+  .back-btn svg { width: 22px; height: 22px; stroke: var(--On-Surface); stroke-width: 1.8px; fill: none; }
+  .header-title { color: var(--On-Surface); font-family: 'Switzer', sans-serif; font-size: 17px; font-weight: 500; letter-spacing: 0.3px; flex: 1; text-align: center; }
 
-  .header-title {
-    color: var(--On-Surface);
-    font-family: 'Switzer', sans-serif;
-    font-size: 17px;
-    font-weight: 500;
-    letter-spacing: 0.3px;
-    flex: 1;
-    text-align: center;
-  }
+  .scroll { flex: 1; overflow-y: auto; padding: 4px 16px 16px; display: flex; flex-direction: column; gap: 14px; }
+  .scroll::-webkit-scrollbar { width: 0; }
 
-  .main-content {
-    padding: 16px 20px 20px;
-    display: flex;
-    flex-direction: column;
-    flex: 1;
-    width: 100%;
-    gap: 14px;
-  }
+  /* ── Form card ── */
+  .form-card { background: #FFF; border-radius: 16px; padding: 16px; box-shadow: 0 2px 8px rgba(0,0,0,0.04); display: flex; flex-direction: column; gap: 8px; }
 
-  .step-hint {
-    color: var(--On-Surface-Low);
-    font-family: 'Switzer', sans-serif;
-    font-size: 13px;
-    font-weight: 400;
-    line-height: 1.5;
-  }
+  /* Bank row doubles as the picker trigger */
+  .bank-row { height: 64px; border: 1px solid var(--Field-Border); border-radius: 12px; padding: 0 14px; display: flex; align-items: center; gap: 12px; cursor: pointer; transition: border-color 0.2s, box-shadow 0.2s; }
+  .bank-row:hover { border-color: #DCDCE2; box-shadow: 0 2px 10px rgba(0,0,0,0.04); }
+  .bank-row .logo { width: 42px; height: 42px; border-radius: 50%; background: #FFF; border: 1px solid var(--Field-Border); display: flex; align-items: center; justify-content: center; overflow: hidden; flex-shrink: 0; }
+  .bank-row .logo img { width: 30px; height: 30px; object-fit: contain; }
+  .bank-row .nm { flex: 1; min-width: 0; font-family: 'Switzer', sans-serif; font-size: 16px; font-weight: 700; color: var(--On-Surface); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .bank-row .caret { width: 18px; height: 18px; stroke: var(--Primary); stroke-width: 2.4; fill: none; flex-shrink: 0; }
 
-  /* Bank Selector Dropdown */
-  .bank-selector-wrap { position: relative; }
-  .bank-selector {
-    height: 56px;
-    background: #FFF;
-    border-radius: 14px;
-    padding: 0 16px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    cursor: pointer;
-    transition: all 0.2s;
-    border: 1.5px solid var(--Border);
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
-  }
-  .bank-selector:hover { border-color: var(--Primary); box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08); }
-  .bank-selector-left { display: flex; align-items: center; gap: 12px; flex: 1; }
-  .bank-logo { width: 34px; height: 34px; border-radius: 8px; overflow: hidden; flex-shrink: 0; background: #F5F5F5; display: flex; align-items: center; justify-content: center; }
-  .bank-logo img { width: 100%; height: 100%; object-fit: contain; padding: 4px; }
-  .bank-info { display: flex; flex-direction: column; gap: 2px; flex: 1; min-width: 0; }
-  .bank-name { color: var(--On-Surface); font-family: 'Switzer', sans-serif; font-size: 14px; font-weight: 600; letter-spacing: 0.2px; }
-  .bank-placeholder { color: var(--On-Surface-Low); font-family: 'Switzer', sans-serif; font-size: 14px; font-weight: 400; }
-  .bank-selector-right { display: flex; align-items: center; gap: 8px; }
-  .change-btn { color: var(--On-Surface); font-family: 'Switzer', sans-serif; font-size: 13px; font-weight: 600; cursor: pointer; display: none; }
-  .bank-selector.has-bank .change-btn { display: block; }
-  .bank-selector.has-bank .bank-placeholder { display: none; }
-  .chevron { width: 18px; height: 18px; color: var(--On-Surface); transition: transform 0.25s; }
-  .bank-selector.open .chevron { transform: rotate(180deg); }
+  .field-label { font-family: 'Switzer', sans-serif; font-size: 14px; font-weight: 500; color: var(--On-Surface); margin-top: 10px; }
+  .field { height: 56px; background: var(--Field); border: 1px solid var(--Field-Border); border-radius: 12px; padding: 0 16px; display: flex; align-items: center; gap: 8px; transition: border-color 0.2s, box-shadow 0.2s, background 0.2s; }
+  .field:focus-within { border-color: var(--Primary); background: #FFF; box-shadow: 0 0 0 3px rgba(254,53,61,0.08); }
+  .field input { flex: 1; min-width: 0; border: none; background: transparent; outline: none; font-family: 'Switzer', sans-serif; font-size: 16px; font-weight: 700; color: var(--On-Surface); letter-spacing: 0.2px; }
+  .field input::placeholder { color: #A5A5AE; font-weight: 400; letter-spacing: 0; }
+  /* Out-of-range amounts tint the value itself */
+  .field.warn { border-color: var(--Warning); background: #FFF; }
+  .field.warn input { color: var(--Warning); }
+  .field.err { border-color: var(--Primary); background: #FFF; }
+  .field.err input { color: var(--Primary); }
 
-  /* Account Number Input with dropdown */
-  .account-input-wrap {
-    position: relative;
-  }
-  .account-input-wrapper {
-    height: 52px;
-    background: #FFF;
-    border-radius: 14px;
-    padding: 0 16px;
-    display: flex;
-    align-items: center;
-    border: 1.5px solid var(--Border);
-    transition: all 0.2s;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
-  }
-  .account-input-wrapper:focus-within { border-color: var(--Primary); box-shadow: 0 4px 12px rgba(254, 53, 61, 0.15); }
-  .account-input {
-    flex: 1; border: none; background: transparent;
-    font-family: 'Switzer', sans-serif; font-size: 18px; font-weight: 500;
-    color: var(--On-Surface); outline: none; letter-spacing: 1px;
-  }
-  .account-input::placeholder { color: var(--On-Surface-Low); font-weight: 400; letter-spacing: 0; }
+  .balance-hint { font-family: 'Switzer', sans-serif; font-size: 11.5px; color: var(--On-Surface-Low); margin-top: 4px; }
+  .balance-hint b { color: var(--On-Surface); font-weight: 600; }
 
-  .account-drop-btn {
-    width: 32px; height: 32px; border-radius: 8px; border: none;
-    background: transparent; cursor: pointer; display: flex;
-    align-items: center; justify-content: center; flex-shrink: 0;
-    transition: background 0.15s;
-  }
-  .account-drop-btn:hover { background: #F5F5F5; }
-  .account-drop-btn svg { width: 18px; height: 18px; stroke: var(--On-Surface-Low); stroke-width: 1.8; fill: none; }
+  /* Amber strip for a balance shortfall, plain red for the hard limits */
+  .msg { display: none; font-family: 'Switzer', sans-serif; font-size: 12.5px; font-weight: 600; margin-top: 6px; }
+  .msg.show { display: block; }
+  .msg.warn { color: var(--Warning); background: var(--Warning-Light); border-radius: 8px; padding: 10px 12px; }
+  .msg.err { color: var(--Primary); }
 
-  /* Account dropdown list */
-  .account-dropdown {
-    position: absolute; top: calc(100% + 6px); left: 0; right: 0;
-    background: #FFF; border-radius: 16px; box-shadow: 0 8px 32px rgba(0,0,0,0.15);
-    z-index: 100; display: none; max-height: 220px; overflow-y: auto;
-  }
-  .account-dropdown::-webkit-scrollbar { width: 6px; }
-  .account-dropdown::-webkit-scrollbar-track { background: transparent; }
-  .account-dropdown::-webkit-scrollbar-thumb { background: #D0D0D0; border-radius: 3px; }
-  .account-dropdown::-webkit-scrollbar-thumb:hover { background: #B0B0B0; }
-  .account-dropdown.show { display: block; animation: dropdownSlide 0.2s ease-out; }
-  @keyframes dropdownSlide { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
-  .account-option { padding: 12px 16px; display: flex; align-items: center; gap: 12px; cursor: pointer; transition: background 0.15s; border-bottom: 1px solid #F5F5F5; }
-  .account-option:last-child { border-bottom: none; }
-  .account-option:hover { background: #FAFAFA; }
-  .account-option .ao-icon { width: 36px; height: 36px; border-radius: 10px; background: #FFF1F2; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
-  .account-option .ao-icon svg { width: 18px; height: 18px; stroke: var(--Primary); stroke-width: 2; fill: none; }
-  .account-option .ao-info { flex: 1; display: flex; flex-direction: column; gap: 2px; min-width: 0; }
-  .account-option .ao-name { color: var(--On-Surface); font-family: 'Switzer', sans-serif; font-size: 13px; font-weight: 600; }
-  .account-option .ao-sub { color: var(--On-Surface-Low); font-family: 'Switzer', sans-serif; font-size: 11.5px; }
-  .account-option .ao-bank { color: var(--On-Surface-Low); font-family: 'Switzer', sans-serif; font-size: 10px; font-weight: 500; }
-  .account-option .ao-check { width: 18px; height: 18px; border-radius: 50%; border: 2px solid var(--Border); flex-shrink: 0; display: flex; align-items: center; justify-content: center; }
-  .account-option.selected .ao-check { border-color: var(--Primary); background: var(--Primary); }
-  .account-option.selected .ao-check svg { width: 10px; height: 10px; stroke: #FFF; stroke-width: 3; fill: none; }
-
-  /* Resolved name preview */
-  .name-preview {
-    display: none; align-items: center; gap: 10px; padding: 12px 14px;
-    background: var(--Success-Light); border-radius: 12px;
-  }
-  .name-preview.show { display: flex; }
-  .name-preview svg { width: 18px; height: 18px; stroke: var(--Success); stroke-width: 2.5; fill: none; flex-shrink: 0; }
-  .name-preview .np-text { color: #128a2a; font-family: 'Switzer', sans-serif; font-size: 13px; font-weight: 600; }
-
-  /* Amount Input */
-  .amount-input-wrapper {
-    height: 52px;
-    background: #FFF;
-    border-radius: 14px;
-    padding: 0 16px;
-    display: flex;
-    align-items: center;
-    border: 1.5px solid var(--Border);
-    transition: all 0.2s;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
-  }
-  .amount-input-wrapper:focus-within { border-color: var(--Primary); box-shadow: 0 4px 12px rgba(254, 53, 61, 0.15); }
-  .amount-prefix { color: var(--On-Surface); font-family: 'Switzer', sans-serif; font-size: 18px; font-weight: 600; margin-right: 6px; }
-  .amount-input {
-    flex: 1; border: none; background: transparent;
-    font-family: 'Switzer', sans-serif; font-size: 18px; font-weight: 500;
-    color: var(--On-Surface); outline: none;
-  }
-  .amount-input::placeholder { color: var(--On-Surface-Low); font-weight: 400; }
-  .amount-suffix { color: var(--On-Surface-Low); font-family: 'Switzer', sans-serif; font-size: 13px; font-weight: 500; }
-
-  /* Fetching State */
-  .fetching-state {
-    display: none; align-items: center; gap: 10px; padding: 2px;
-    color: var(--On-Surface-Low); font-family: 'Switzer', sans-serif; font-size: 13px; font-weight: 400;
-  }
-  .fetching-state.show { display: flex; }
-  .spinner { width: 16px; height: 16px; border: 2px solid var(--Border); border-top-color: var(--Primary); border-radius: 50%; animation: spin 0.8s linear infinite; }
+  /* ── Account lookup state ── */
+  .status-chip { display: none; align-items: center; gap: 10px; border-radius: 12px; padding: 13px 14px; margin-top: 4px; font-family: 'Switzer', sans-serif; font-size: 14px; font-weight: 500; }
+  .status-chip.show { display: flex; }
+  .status-chip .ic { width: 24px; height: 24px; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+  .status-chip .ic svg { width: 13px; height: 13px; stroke-width: 3; fill: none; }
+  .status-chip.loading { background: #F1F1F4; color: var(--On-Surface-Low); }
+  .status-chip.loading .ic { border: 2.5px dashed var(--Success); animation: spin 1.6s linear infinite; }
+  .status-chip.ok { background: var(--Success-Light); color: var(--On-Surface); }
+  .status-chip.ok .ic { border: 1.8px solid var(--Success); }
+  .status-chip.ok .ic svg { stroke: var(--Success); }
+  .status-chip.bad { background: var(--Error-Light); color: var(--Primary); }
+  .status-chip.bad .ic { border: 1.8px solid var(--Primary); }
+  .status-chip.bad .ic svg { stroke: var(--Primary); }
   @keyframes spin { to { transform: rotate(360deg); } }
 
-  .bottom-section { margin-top: auto; display: flex; flex-direction: column; }
+  /* ── Type-ahead over the account field ── */
+  .account-wrap { position: relative; }
+  .suggest { position: absolute; top: calc(100% + 6px); left: 0; right: 0; z-index: 30; display: none; flex-direction: column; background: #FFF; border: 1px solid var(--Field-Border); border-radius: 14px; box-shadow: 0 10px 28px rgba(0,0,0,0.12); overflow: hidden; max-height: 208px; overflow-y: auto; }
+  .suggest.show { display: flex; }
+  .suggest::-webkit-scrollbar { width: 0; }
+  .suggest-item { display: flex; align-items: center; gap: 12px; padding: 11px 14px; cursor: pointer; transition: background 0.15s; }
+  .suggest-item:hover { background: #FAFAFA; }
+  .suggest-avatar { width: 38px; height: 38px; border-radius: 50%; background: #FFE9EA; color: var(--Primary); display: flex; align-items: center; justify-content: center; font-family: 'Switzer', sans-serif; font-size: 12px; font-weight: 700; flex-shrink: 0; }
+  .suggest-info { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+  .suggest-name { font-family: 'Switzer', sans-serif; font-size: 14px; font-weight: 700; color: var(--On-Surface); }
+  .suggest-sub { font-family: 'Switzer', sans-serif; font-size: 12px; color: var(--On-Surface-Low); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .suggest-empty { padding: 16px; text-align: center; font-family: 'Switzer', sans-serif; font-size: 13px; color: var(--On-Surface-Low); }
 
-  .continue-btn {
-    height: 52px; border-radius: 14px; border: none; background: #E0E0E0;
-    color: var(--On-Surface-Low); font-family: 'Poppins', sans-serif; font-size: 15px; font-weight: 500;
-    cursor: not-allowed; transition: all 0.2s; margin-top: 14px;
-  }
-  .continue-btn.active { background: var(--Primary); color: #FFF; cursor: pointer; box-shadow: 0 4px 16px rgba(254, 53, 61, 0.25); }
-  .continue-btn.active:hover { background: #E5303A; box-shadow: 0 6px 20px rgba(254, 53, 61, 0.35); transform: translateY(-1px); }
+  /* ── Recent card ── */
+  .recent-card { background: #FFF; border-radius: 16px; padding: 16px; box-shadow: 0 2px 8px rgba(0,0,0,0.04); display: flex; flex-direction: column; gap: 10px; }
+  .recent-title { font-family: 'Switzer', sans-serif; font-size: 14px; font-weight: 600; color: var(--On-Surface); letter-spacing: 0.2px; }
+  .recent-list { display: flex; flex-direction: column; gap: 4px; }
+  .recent-item { display: flex; align-items: center; gap: 12px; padding: 7px 0; cursor: pointer; border-radius: 10px; transition: background 0.15s; }
+  .recent-item:hover { background: #FAFAFA; }
+  .recent-avatar { width: 40px; height: 40px; border-radius: 50%; overflow: hidden; flex-shrink: 0; background: #FFF; border: 1px solid #ECECEC; display: flex; align-items: center; justify-content: center; }
+  .recent-avatar img { width: 28px; height: 28px; object-fit: contain; }
+  .recent-info { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px; }
+  .recent-name { font-family: 'Switzer', sans-serif; font-size: 14px; font-weight: 500; color: var(--On-Surface); }
+  .recent-sub { font-family: 'Switzer', sans-serif; font-size: 12px; color: var(--On-Surface-Low); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .chev { width: 18px; height: 18px; stroke: var(--Primary); stroke-width: 2.4; fill: none; flex-shrink: 0; }
+
+  /* ── Bottom button ── */
+  .bottom-bar { flex-shrink: 0; padding: 10px 16px 18px; background: var(--Background); }
+  .continue-btn { width: 100%; height: 52px; border-radius: 14px; border: none; background: #E0E0E0; color: var(--On-Surface-Low); font-family: 'Poppins', sans-serif; font-size: 15px; font-weight: 500; cursor: not-allowed; transition: all 0.2s; }
+  .continue-btn.active { background: var(--Primary); color: #FFF; cursor: pointer; box-shadow: 0 4px 16px rgba(254,53,61,0.25); }
+  .continue-btn.active:hover { background: #E5303A; box-shadow: 0 6px 20px rgba(254,53,61,0.35); transform: translateY(-1px); }
   .continue-btn.active:active { transform: scale(0.98) translateY(0); }
 
-  /* Bank Dropdown Modal */
-  .bank-dropdown {
-    position: absolute; top: calc(100% + 6px); left: 0; right: 0; background: #FFF;
-    border-radius: 16px; box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15); z-index: 100;
-    display: none; max-height: 260px; overflow-y: auto;
-  }
-  .bank-dropdown::-webkit-scrollbar { width: 6px; }
-  .bank-dropdown::-webkit-scrollbar-track { background: transparent; }
-  .bank-dropdown::-webkit-scrollbar-thumb { background: #D0D0D0; border-radius: 3px; }
-  .bank-dropdown::-webkit-scrollbar-thumb:hover { background: #B0B0B0; }
-  .bank-dropdown.show { display: block; animation: dropdownSlide 0.2s ease-out; }
-  @keyframes dropdownSlide { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
-  .bank-option { padding: 13px 16px; display: flex; align-items: center; gap: 12px; cursor: pointer; transition: background 0.15s; border-bottom: 1px solid #F5F5F5; }
-  .bank-option:last-child { border-bottom: none; }
-  .bank-option:hover { background: #FAFAFA; }
-  .bank-option.selected { background: var(--Primary-Light); }
-  .bank-option-logo { width: 32px; height: 32px; border-radius: 8px; overflow: hidden; background: #F5F5F5; }
-  .bank-option-logo img { width: 100%; height: 100%; object-fit: contain; padding: 4px; }
-  .bank-option-name { flex: 1; color: var(--On-Surface); font-family: 'Switzer', sans-serif; font-size: 14px; font-weight: 500; }
-  .bank-option.selected .bank-option-name { color: var(--Primary); font-weight: 600; }
-</style>
+  /* ── Bank picker sheet ── */
+  .sheet-overlay { position: absolute; inset: 0; background: rgba(0,0,0,0.45); display: flex; align-items: flex-end; opacity: 0; pointer-events: none; transition: opacity 0.25s; z-index: 50; }
+  .sheet-overlay.show { opacity: 1; pointer-events: auto; }
+  .sheet { width: 100%; max-height: 82%; background: #FFF; border-radius: 24px 24px 0 0; padding: 12px 16px 20px; display: flex; flex-direction: column; transform: translateY(100%); transition: transform 0.3s cubic-bezier(0.2, 0.8, 0.3, 1); }
+  .sheet-overlay.show .sheet { transform: translateY(0); }
+  .sheet-grip { width: 44px; height: 4px; border-radius: 2px; background: #D8D8DE; margin: 0 auto 14px; flex-shrink: 0; }
+  .sheet-title { text-align: center; font-family: 'Switzer', sans-serif; font-size: 18px; font-weight: 700; color: var(--On-Surface); margin-bottom: 16px; flex-shrink: 0; }
+  .search-field { height: 52px; background: var(--Field); border: 1px solid var(--Field-Border); border-radius: 12px; padding: 0 14px; display: flex; align-items: center; gap: 10px; flex-shrink: 0; }
+  .search-field:focus-within { border-color: var(--Primary); background: #FFF; }
+  .search-field svg { width: 18px; height: 18px; stroke: var(--On-Surface); stroke-width: 2; fill: none; flex-shrink: 0; }
+  .search-field input { flex: 1; min-width: 0; border: none; background: transparent; outline: none; font-family: 'Switzer', sans-serif; font-size: 14px; font-weight: 500; color: var(--On-Surface); }
+  .search-field input::placeholder { color: var(--On-Surface-Low); font-weight: 400; }
+
+  .bank-grid { margin-top: 14px; display: grid; grid-template-columns: 1fr 1fr; gap: 10px; overflow-y: auto; padding-bottom: 4px; }
+  .bank-grid::-webkit-scrollbar { width: 0; }
+  .bank-tile { background: #FFF; border: 1px solid var(--Field-Border); border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.04); padding: 14px 8px; display: flex; flex-direction: column; align-items: center; gap: 8px; cursor: pointer; transition: border-color 0.2s, transform 0.15s, box-shadow 0.2s; }
+  .bank-tile:hover { border-color: var(--Primary); box-shadow: 0 6px 18px rgba(0,0,0,0.08); transform: translateY(-1px); }
+  .bank-tile:active { transform: scale(0.98); }
+  .bank-tile .logo { width: 40px; height: 40px; border-radius: 50%; background: #FFF; display: flex; align-items: center; justify-content: center; overflow: hidden; }
+  .bank-tile .logo img { width: 32px; height: 32px; object-fit: contain; }
+  .bank-tile .nm { font-family: 'Switzer', sans-serif; font-size: 11px; font-weight: 600; color: var(--On-Surface); text-align: center; line-height: 1.3; }
+  .bank-empty { grid-column: 1 / -1; padding: 24px; text-align: center; font-family: 'Switzer', sans-serif; font-size: 13px; color: var(--On-Surface-Low); }
+
+  /* ── Confirmation sheet ── */
+  .sheet.confirm-sheet { padding: 12px 20px 22px; }
+  .party-card { position: relative; border: 1px solid var(--Field-Border); border-radius: 14px; padding: 14px; display: flex; align-items: center; gap: 12px; margin: 4px 0 12px; }
+  .party-badge { position: absolute; top: -11px; right: 14px; background: #EDEDF0; color: var(--On-Surface-Low); font-family: 'Switzer', sans-serif; font-size: 9.5px; font-weight: 700; letter-spacing: 0.6px; padding: 4px 9px; border-radius: 6px; }
+  .party-avatar { width: 44px; height: 44px; border-radius: 50%; background: #FFE9EA; color: var(--Primary); display: flex; align-items: center; justify-content: center; font-family: 'Switzer', sans-serif; font-size: 14px; font-weight: 700; flex-shrink: 0; }
+  .party-info { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 3px; }
+  .party-name { font-family: 'Switzer', sans-serif; font-size: 15px; font-weight: 700; color: var(--On-Surface); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .party-sub { font-family: 'Switzer', sans-serif; font-size: 12.5px; color: var(--On-Surface-Low); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+  .sum-row { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 14px 2px; border-bottom: 1px solid #F0F0F3; }
+  .sum-row.total { border-bottom: none; }
+  .sum-key { font-family: 'Switzer', sans-serif; font-size: 13px; font-weight: 400; color: var(--On-Surface-Low); flex-shrink: 0; }
+  .sum-val { font-family: 'Switzer', sans-serif; font-size: 13.5px; font-weight: 700; color: var(--On-Surface); text-align: right; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .sum-row.total .sum-val { color: var(--Primary); font-size: 15px; }
+
+  .sheet-actions { display: flex; gap: 12px; margin-top: 18px; }
+  .sheet-btn { flex: 1; height: 50px; border-radius: 12px; background: #FFF; cursor: pointer; font-family: 'Switzer', sans-serif; font-size: 14.5px; font-weight: 500; transition: background 0.15s, transform 0.12s; }
+  .sheet-btn:active { transform: scale(0.98); }
+  .sheet-btn.cancel { border: 1.5px solid var(--Field-Border); color: var(--On-Surface-Low); }
+  .sheet-btn.cancel:hover { background: #FAFAFA; }
+  .sheet-btn.confirm { border: 1.5px solid var(--Primary); color: var(--Primary); font-weight: 600; }
+  .sheet-btn.confirm:hover { background: #FFF5F5; }
+
+  </style>
 </head>
 <body>
-
 <div class="phone-frame">
   <div class="app-content">
 
@@ -293,394 +183,371 @@
 
     <div class="header-nav">
       <button class="back-btn" onclick="goBack()">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M19 12H5M12 19l-7-7 7-7"/>
-        </svg>
+        <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
       </button>
-      <span class="header-title">Transfer to Bank</span>
-      <div style="width: 36px;"></div>
+      <span class="header-title">Transfer Money</span>
+      <div style="width:36px;"></div>
     </div>
 
-    <div class="main-content">
+    <div class="scroll">
 
-      <!-- Bank Selector -->
-      <div class="bank-selector-wrap">
-        <div class="bank-selector" id="bankSelector" onclick="toggleBankDropdown(event)">
-          <div class="bank-selector-left">
-            <div class="bank-logo" id="selectedBankLogo">
-              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#FE353D" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <polyline points="3 21 21 21 21 10"/>
-                <polyline points="3 10 3 21"/>
-                <line x1="9" y1="10" x2="9" y2="16"/>
-                <line x1="13" y1="10" x2="13" y2="16"/>
-                <line x1="17" y1="10" x2="17" y2="16"/>
-                <polygon points="3 6 21 6 12 1 3 6"/>
-              </svg>
-            </div>
-            <div class="bank-info">
-              <span class="bank-name" id="selectedBankName" style="display: none;">Awash Bank</span>
-              <span class="bank-placeholder">Select Bank</span>
-            </div>
-          </div>
-          <div class="bank-selector-right">
-            <span class="change-btn">Change</span>
-            <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-              <polyline points="6 9 12 15 18 9"></polyline>
-            </svg>
-          </div>
+      <div class="form-card">
+        <!-- Selected bank — tapping anywhere on the row reopens the picker -->
+        <div class="bank-row" onclick="openSheet()">
+          <span class="logo"><img id="bankLogo" src="assets/banks logo/zemen-bank.png" alt=""></span>
+          <span class="nm" id="bankName">Zemen Bank</span>
+          <svg class="caret" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
         </div>
 
-        <!-- Bank Dropdown -->
-        <div class="bank-dropdown" id="bankDropdown">
-          <div class="bank-option" onclick="selectBank('Awash Bank', 'assets/banks logo/awass-bank.png')">
-            <div class="bank-option-logo"><img src="assets/banks logo/awass-bank.png" alt="Awash Bank" onerror="this.style.display='none'"></div>
-            <span class="bank-option-name">Awash Bank</span>
+        <span class="field-label">Enter Account Number</span>
+        <div class="account-wrap">
+          <div class="field" id="acctField">
+            <input id="acctInput" type="text" inputmode="numeric" maxlength="19" placeholder="e.g. 01478963.01463014"
+                   autocomplete="off" oninput="onAccountInput()" onfocus="onAccountInput()">
           </div>
-          <div class="bank-option" onclick="selectBank('Dashen Bank', 'assets/banks logo/dashen-bank.png')">
-            <div class="bank-option-logo"><img src="assets/banks logo/dashen-bank.png" alt="Dashen Bank" onerror="this.style.display='none'"></div>
-            <span class="bank-option-name">Dashen Bank</span>
-          </div>
-          <div class="bank-option" onclick="selectBank('CBE', 'assets/banks logo/cbe-logo.png')">
-            <div class="bank-option-logo"><img src="assets/banks logo/cbe-logo.png" alt="CBE" onerror="this.style.display='none'"></div>
-            <span class="bank-option-name">Commercial Bank of Ethiopia</span>
-          </div>
-          <div class="bank-option" onclick="selectBank('Abyssinia Bank', 'assets/banks logo/abyssinya-bank.png')">
-            <div class="bank-option-logo"><img src="assets/banks logo/abyssinya-bank.png" alt="Abyssinia Bank" onerror="this.style.display='none'"></div>
-            <span class="bank-option-name">Abyssinia Bank</span>
-          </div>
-          <div class="bank-option" onclick="selectBank('COOP Bank', 'assets/banks logo/coop-bank.png')">
-            <div class="bank-option-logo"><img src="assets/banks logo/coop-bank.png" alt="COOP Bank" onerror="this.style.display='none'"></div>
-            <span class="bank-option-name">Cooperative Bank of Oromia</span>
-          </div>
-          <div class="bank-option" onclick="selectBank('Zemen Bank', 'assets/banks logo/zemen-bank.png')">
-            <div class="bank-option-logo"><img src="assets/banks logo/zemen-bank.png" alt="Zemen Bank" onerror="this.style.display='none'"></div>
-            <span class="bank-option-name">Zemen Bank</span>
-          </div>
+          <div class="suggest" id="suggest"></div>
+        </div>
+
+        <div class="status-chip loading" id="acctLoading">
+          <span class="ic"></span>
+          <span>Looking Up Account Number</span>
+        </div>
+        <div class="status-chip ok" id="acctOk">
+          <span class="ic"><svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></span>
+          <span id="acctOkName"></span>
+        </div>
+        <div class="status-chip bad" id="acctBad">
+          <span class="ic"><svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M17 7 7 17M7 7l10 10"/></svg></span>
+          <span>Invalid account number</span>
+        </div>
+
+        <span class="field-label">Amount</span>
+        <div class="field" id="amtField">
+          <input id="amtInput" type="text" inputmode="decimal" placeholder="e.g. 120 Br" autocomplete="off"
+                 oninput="onAmountInput()" onfocus="unformatAmount()" onblur="formatAmount()">
+        </div>
+        <div class="balance-hint"><b>Balance:</b> 20,000.00 Br</div>
+        <div class="msg" id="amtMsg"></div>
+
+        <span class="field-label">Payment Reason(Optional)</span>
+        <div class="field">
+          <input id="reasonInput" type="text" maxlength="40" placeholder="e.g. Coffee Payment" autocomplete="off">
         </div>
       </div>
 
-      <!-- Account Number Input with dropdown -->
-      <div class="account-input-wrap">
-        <div class="account-input-wrapper">
-          <input type="tel" class="account-input" id="accountInput" placeholder="Account Number" maxlength="15" oninput="handleAccountInput()" autocomplete="off">
-          <button class="account-drop-btn" id="accountDropBtn" onclick="toggleAccountDropdown(event)" type="button">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-              <circle cx="12" cy="12" r="10"/>
-              <polyline points="12 6 12 12 16 14"/>
-            </svg>
-          </button>
-        </div>
-        <!-- Account dropdown list -->
-        <div class="account-dropdown" id="accountDropdown"></div>
-      </div>
-
-      <!-- Amount Input -->
-      <div class="amount-input-wrapper">
-        <span class="amount-prefix">ETB</span>
-        <input type="tel" class="amount-input" id="amountInput" placeholder="0.00" oninput="handleAmountInput()" autocomplete="off">
-      </div>
-
-      <!-- Fetching State -->
-      <div class="fetching-state" id="fetchingState">
-        <div class="spinner"></div>
-        <span>Fetching account name…</span>
-      </div>
-
-      <!-- Resolved name preview -->
-      <div class="name-preview" id="namePreview">
-        <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
-        <span class="np-text" id="namePreviewText">Account holder found</span>
-      </div>
-
-      <div class="bottom-section">
-        <div class="keypad">
-          <button class="key" onclick="pressKey('1')">1</button>
-          <button class="key" onclick="pressKey('2')">2</button>
-          <button class="key" onclick="pressKey('3')">3</button>
-          <button class="key" onclick="pressKey('4')">4</button>
-          <button class="key" onclick="pressKey('5')">5</button>
-          <button class="key" onclick="pressKey('6')">6</button>
-          <button class="key" onclick="pressKey('7')">7</button>
-          <button class="key" onclick="pressKey('8')">8</button>
-          <button class="key" onclick="pressKey('9')">9</button>
-          <button class="key empty"></button>
-          <button class="key" onclick="pressKey('0')">0</button>
-          <button class="key delete" onclick="deleteKey()">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M21 4H8l-7 8 7 8h13a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2z"></path>
-              <line x1="18" y1="9" x2="12" y2="15"></line>
-              <line x1="12" y1="9" x2="18" y2="15"></line>
-            </svg>
-          </button>
-        </div>
-
-        <button class="continue-btn" id="continueBtn" onclick="continueTransfer()" disabled>Continue</button>
+      <div class="recent-card">
+        <span class="recent-title">Recent</span>
+        <div class="recent-list" id="recentList"></div>
       </div>
 
     </div>
 
+    <div class="bottom-bar">
+      <button class="continue-btn" id="continueBtn" onclick="continueTransfer()" disabled>Continue</button>
+    </div>
+
+  </div>
+
+  <!-- Bank picker -->
+  <div class="sheet-overlay" id="sheetOverlay" onclick="if(event.target===this)closeSheet()">
+    <div class="sheet">
+      <div class="sheet-grip"></div>
+      <div class="sheet-title">Select Bank</div>
+      <div class="search-field">
+        <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+        <input id="bankSearch" type="text" placeholder="Search by bank name" autocomplete="off" oninput="renderBanks()">
+      </div>
+      <div class="bank-grid" id="bankGrid"></div>
+    </div>
+  </div>
+
+  <!-- Confirmation -->
+  <div class="sheet-overlay" id="confirmOverlay" onclick="if(event.target===this)closeConfirm()">
+    <div class="sheet confirm-sheet">
+      <div class="sheet-grip"></div>
+      <div class="sheet-title">Confirmation</div>
+
+      <div class="party-card">
+        <span class="party-badge">RECIPIENT</span>
+        <div class="party-avatar" id="cfAvatar"></div>
+        <div class="party-info">
+          <span class="party-name" id="cfName"></span>
+          <span class="party-sub" id="cfAccount"></span>
+        </div>
+      </div>
+
+      <div class="sum-row">
+        <span class="sum-key">Receivers Bank:</span>
+        <span class="sum-val" id="cfBank"></span>
+      </div>
+      <div class="sum-row">
+        <span class="sum-key">Fee:</span>
+        <span class="sum-val" id="cfFee"></span>
+      </div>
+      <div class="sum-row total">
+        <span class="sum-key">Total:</span>
+        <span class="sum-val" id="cfTotal"></span>
+      </div>
+
+      <div class="sheet-actions">
+        <button class="sheet-btn cancel" onclick="closeConfirm()">Cancel</button>
+        <button class="sheet-btn confirm" onclick="confirmTransfer()">Confirm</button>
+      </div>
+    </div>
   </div>
 </div>
 
 <script>
-  let selectedBank = null;
-  let typingTimeout;
-  let accountResolved = false;
-  let resolvedName = '';
-  let maskedAccount = '';
-  let fullAccount = '';
-
-  const sampleNames = ['Kidist Birhanu', 'Abel Tesfaye', 'Marta Solomon', 'Yonas Girma', 'Hanna Bekele', 'Samuel Desta'];
-
-  // ── Amount ──
-  const FEE = 25.00;
-  let currentAmount = 0.00;
-
-  function formatAmount(num) {
-    return num.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
-  }
-
-  function handleAmountInput() {
-    const input = document.getElementById('amountInput');
-    const val = input.value.replace(/[^0-9]/g, '');
-    const di = val.indexOf('.');
-    if (di !== -1 && val.length - di > 3) return;
-    input.value = val;
-    currentAmount = val === '' ? 0 : parseFloat(val);
-    if (isNaN(currentAmount)) currentAmount = 0;
-    checkContinueButton();
-  }
-
-  // ── Recent / saved accounts for dropdown ──
-  const recentAccounts = [
-    { number: '1000234567', name: 'Kidist Birhanu', bank: 'CBE' },
-    { number: '2000345678', name: 'Abel Tesfaye', bank: 'Awash Bank' },
-    { number: '3000456789', name: 'Marta Solomon', bank: 'Dashen Bank' },
-    { number: '4000567890', name: 'Yonas Girma', bank: 'Abyssinia Bank' },
-    { number: '5000678901', name: 'Hanna Bekele', bank: 'COOP Bank' },
-    { number: '6000789012', name: 'Samuel Desta', bank: 'CBE' }
+  const BANKS = [
+    { key: 'cbe',     name: 'Commercial Bank of Ethiopia', logo: 'assets/banks logo/cbe-logo.png' },
+    { key: 'awash',   name: 'Awash Bank',                  logo: 'assets/banks logo/awass-bank.png' },
+    { key: 'boa',     name: 'Bank of Abyssinia',           logo: 'assets/banks logo/abyssinya-bank.png' },
+    { key: 'oromia',  name: 'Oromia International Bank',   logo: 'assets/banks logo/oromia-i-bank.png' },
+    { key: 'hibret',  name: 'Hibret Bank',                 logo: 'assets/banks logo/Hibret-bank.png' },
+    { key: 'dashen',  name: 'Dashen Bank',                 logo: 'assets/banks logo/dashen-bank.png' },
+    { key: 'zemen',   name: 'Zemen Bank',                  logo: 'assets/banks logo/zemen-bank.png' },
+    { key: 'amhara',  name: 'Amhara Bank',                 logo: 'assets/banks logo/amhara-bank.png' },
+    { key: 'coop',    name: 'Cooperative Bank of Ethiopia',logo: 'assets/banks logo/coop-bank.png' },
+    { key: 'nib',     name: 'Nib International Bank',      logo: 'assets/banks logo/nib-bank.png' },
+    { key: 'wegagen', name: 'Wegagen Bank',                logo: 'assets/banks logo/wegagen-bank.png' }
   ];
 
-  function getFilteredAccounts() {
-    const input = document.getElementById('accountInput').value.trim();
-    if (!input) return recentAccounts;
-    return recentAccounts.filter(a =>
-      a.number.includes(input) || a.name.toLowerCase().includes(input.toLowerCase())
-    );
+  // Account directory the lookup resolves against — anything else comes back invalid.
+  const DIRECTORY = [
+    { number: '0589632147896320145', name: 'Abebe Bikila Maraton' },
+    { number: '0589632321405147896', name: 'Abebech Gobena' },
+    { number: '0589632141432057896', name: 'Aster Mequanent' },
+    { number: '1000688789045',       name: 'Solomon Zewde' },
+    { number: '1000688789046',       name: 'Bekele Bikila' },
+    { number: '1000035632645',       name: 'Kidist Birhanu' }
+  ];
+
+  const RECENT = ['0589632141432057896', '1000688789045', '1000688789046'];
+
+  const MIN_AMT = 5, MAX_AMT = 75000, BALANCE = 20000, FEE = 5;
+
+  const $ = id => document.getElementById(id);
+  const fmt = n => parseFloat(n || 0).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+
+  const initials = name => name.split(/\s+/).slice(0, 2).map(w => w[0]).join('').toUpperCase();
+
+  let bank = BANKS.find(b => b.key === 'zemen');
+  let holder = null;          // resolved account holder, null until the lookup succeeds
+  let lookupTimer = null;
+
+  /* ── Bank picker ── */
+  function openSheet() { $('bankSearch').value = ''; renderBanks(); $('sheetOverlay').classList.add('show'); }
+  function closeSheet() { $('sheetOverlay').classList.remove('show'); }
+
+  function renderBanks() {
+    const q = $('bankSearch').value.trim().toLowerCase();
+    const list = BANKS.filter(b => b.name.toLowerCase().includes(q));
+    $('bankGrid').innerHTML = list.length
+      ? list.map(b =>
+          '<div class="bank-tile" onclick="pickBank(\'' + b.key + '\')">' +
+            '<span class="logo"><img src="' + b.logo + '" alt=""></span>' +
+            '<span class="nm">' + b.name + '</span>' +
+          '</div>').join('')
+      : '<div class="bank-empty">No bank matches that name</div>';
   }
 
-  function renderAccountDropdown(filtered) {
-    const list = document.getElementById('accountDropdown');
-    if (!filtered || filtered.length === 0) {
-      list.innerHTML = '<div class="account-option" style="justify-content:center;color:var(--On-Surface-Low);font-size:13px;padding:16px;">No matching accounts</div>';
-      return;
-    }
-    list.innerHTML = filtered.map((a, i) => `
-      <div class="account-option" onclick="selectAccountOption(${i})" data-index="${i}">
-        <div class="ao-icon">
-          <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg>
-        </div>
-        <div class="ao-info">
-          <span class="ao-name">${a.name}</span>
-          <span class="ao-sub">${a.number}</span>
-          <span class="ao-bank">${a.bank}</span>
-        </div>
-        <div class="ao-check"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></div>
-      </div>
-    `).join('');
+  function pickBank(key) {
+    const b = BANKS.find(x => x.key === key);
+    if (!b) return;
+    bank = b;
+    $('bankName').textContent = b.name;
+    $('bankLogo').src = b.logo;
+    closeSheet();
+    renderRecent();
+    // A different bank invalidates the name already resolved against the old one.
+    resetLookup();
+    onAccountInput();
   }
 
-  function showAccountDropdown() {
-    const filtered = getFilteredAccounts();
-    renderAccountDropdown(filtered);
-    document.getElementById('accountDropdown').classList.add('show');
-    document.getElementById('accountDropBtn').classList.add('open');
+  /* ── Account field ── */
+  function resetLookup() {
+    holder = null;
+    ['acctLoading', 'acctOk', 'acctBad'].forEach(id => $(id).classList.remove('show'));
+    $('acctField').classList.remove('err');
+    updateBtn();
   }
 
-  function hideAccountDropdown() {
-    document.getElementById('accountDropdown').classList.remove('show');
-    document.getElementById('accountDropBtn').classList.remove('open');
+  function onAccountInput() {
+    const raw = $('acctInput').value.trim();
+    clearTimeout(lookupTimer);
+    resetLookup();
+    renderSuggestions(raw);
+
+    // A full numeric account resolves; a partial one just keeps the suggestions open.
+    const digits = raw.replace(/\D/g, '');
+    if (digits.length < 10 || digits !== raw.replace(/[.\s]/g, '')) return;
+
+    $('acctLoading').classList.add('show');
+    lookupTimer = setTimeout(() => {
+      const hit = DIRECTORY.find(d => d.number === digits);
+      $('acctLoading').classList.remove('show');
+      if (hit) {
+        holder = hit;
+        $('acctOkName').textContent = hit.name;
+        $('acctOk').classList.add('show');
+      } else {
+        $('acctBad').classList.add('show');
+        $('acctField').classList.add('err');
+      }
+      updateBtn();
+    }, 1200);
   }
 
-  function toggleAccountDropdown(e) {
-    if (e) e.stopPropagation();
-    const dd = document.getElementById('accountDropdown');
-    if (dd.classList.contains('show')) {
-      hideAccountDropdown();
-    } else {
-      showAccountDropdown();
-    }
+  function renderSuggestions(raw) {
+    const box = $('suggest');
+    if (!raw) { box.classList.remove('show'); return; }
+    const q = raw.toLowerCase();
+    const hits = DIRECTORY.filter(d => d.number.startsWith(raw) || d.name.toLowerCase().includes(q));
+    // An exact match is already shown by the lookup chip, so drop the redundant row.
+    const list = hits.filter(d => d.number !== raw);
+    if (!list.length) { box.classList.remove('show'); return; }
+    box.innerHTML = list.map(d =>
+      '<div class="suggest-item" onclick="pickAccount(\'' + d.number + '\')">' +
+        '<span class="suggest-avatar">' + initials(d.name) + '</span>' +
+        '<span class="suggest-info">' +
+          '<span class="suggest-name">' + d.name + '</span>' +
+          '<span class="suggest-sub">' + d.number + '</span>' +
+        '</span>' +
+      '</div>').join('');
+    box.classList.add('show');
   }
 
-  function selectAccountOption(index) {
-    const filtered = getFilteredAccounts();
-    const acct = filtered[index];
-    if (!acct) return;
-    document.getElementById('accountInput').value = acct.number;
-    hideAccountDropdown();
-    // Auto-resolve the account
-    if (selectedBank) {
-      showAccountFound(acct.number);
-    }
+  function pickAccount(number) {
+    $('suggest').classList.remove('show');
+    $('acctInput').value = number;
+    onAccountInput();
+    $('suggest').classList.remove('show');
   }
 
-  function toggleBankDropdown(e) {
-    if (e) e.stopPropagation();
-    document.getElementById('bankDropdown').classList.toggle('show');
-    document.getElementById('bankSelector').classList.toggle('open');
+  /* ── Amount ── */
+  // The field carries a grouped "21,000.00 Br" value at rest and a bare number
+  // while it has focus, so every read goes through amountValue().
+  const amountValue = () => {
+    const raw = $('amtInput').value.replace(/[^\d.]/g, '');
+    return raw === '' ? null : parseFloat(raw);
+  };
+
+  function onAmountInput() {
+    const el = $('amtInput');
+    el.value = el.value.replace(/[^\d.]/g, '').replace(/(\..*)\./g, '$1');
+    validateAmount();
+    updateBtn();
   }
 
-  function selectBank(name, logo) {
-    selectedBank = { name, logo };
-    document.getElementById('selectedBankName').textContent = name;
-    document.getElementById('selectedBankName').style.display = 'block';
-    document.getElementById('selectedBankLogo').innerHTML = `<img src="${logo}" alt="${name}" onerror="this.style.display='none'">`;
-    document.getElementById('bankSelector').classList.add('has-bank');
-
-    document.querySelectorAll('.bank-option').forEach(opt => {
-      opt.classList.remove('selected');
-      if (opt.querySelector('.bank-option-name').textContent === name) opt.classList.add('selected');
-    });
-
-    document.getElementById('bankDropdown').classList.remove('show');
-    document.getElementById('bankSelector').classList.remove('open');
-    // Re-resolve if an account is already typed
-    if (document.getElementById('accountInput').value.length >= 8) handleAccountInput();
-    checkContinueButton();
+  function unformatAmount() {
+    const n = amountValue();
+    $('amtInput').value = n === null ? '' : String(n);
   }
 
-  function handleAccountInput() {
-    const input = document.getElementById('accountInput');
-    const fetchingState = document.getElementById('fetchingState');
-    clearTimeout(typingTimeout);
-
-    // Show matching accounts dropdown while typing
-    if (input.value.length > 0) {
-      showAccountDropdown();
-    } else {
-      hideAccountDropdown();
-    }
-
-    if (accountResolved) {
-      accountResolved = false;
-      document.getElementById('namePreview').classList.remove('show');
-      checkContinueButton();
-    }
-
-    if (selectedBank && input.value.length >= 8) {
-      typingTimeout = setTimeout(() => {
-        fetchingState.classList.add('show');
-        setTimeout(() => {
-          fetchingState.classList.remove('show');
-          showAccountFound(input.value);
-        }, 1200);
-      }, 600);
-    } else {
-      checkContinueButton();
-    }
+  function formatAmount() {
+    const n = amountValue();
+    if (n !== null && !isNaN(n)) $('amtInput').value = fmt(n) + ' Br';
   }
 
-  function showAccountFound(accountValue) {
-    accountResolved = true;
-    fullAccount = accountValue;
-    resolvedName = sampleNames[Math.floor(Math.random() * sampleNames.length)];
-    maskedAccount = '****' + accountValue.slice(-4);
-
-    document.getElementById('namePreviewText').textContent = resolvedName + ' • ' + maskedAccount;
-    document.getElementById('namePreview').classList.add('show');
-    checkContinueButton();
+  function setAmountState(state, text) {
+    const field = $('amtField'), msg = $('amtMsg');
+    field.classList.toggle('warn', state === 'warn');
+    field.classList.toggle('err', state === 'err');
+    msg.classList.toggle('warn', state === 'warn');
+    msg.classList.toggle('err', state === 'err');
+    msg.classList.toggle('show', !!state);
+    if (text) msg.textContent = text;
   }
 
-  function checkContinueButton() {
-    const btn = document.getElementById('continueBtn');
-    const hasAmount = currentAmount > 0;
-    if (selectedBank && accountResolved && hasAmount) { btn.classList.add('active'); btn.disabled = false; }
-    else { btn.classList.remove('active'); btn.disabled = true; }
+  function validateAmount() {
+    const n = amountValue();
+    if (n === null) { setAmountState(null); return null; }
+    if (isNaN(n) || n <= 0) { setAmountState('err', 'Enter a valid amount'); return null; }
+    if (n < MIN_AMT)   { setAmountState('err', 'Minimum Amount: ' + fmt(MIN_AMT) + ' Br'); return null; }
+    if (n > MAX_AMT)   { setAmountState('err', 'Maximum Amount: ' + fmt(MAX_AMT) + ' Br'); return null; }
+    if (n + FEE > BALANCE) { setAmountState('warn', 'Insufficient Balance'); return null; }
+    setAmountState(null);
+    return n;
   }
 
-  // Keypad fills the account number first, then amount
-  let inputMode = 'account'; // 'account' or 'amount'
-
-  function pressKey(key) {
-    if (inputMode === 'account') {
-      const input = document.getElementById('accountInput');
-      if (input.value.length < 15) { input.value += key; handleAccountInput(); }
-    } else {
-      const input = document.getElementById('amountInput');
-      input.value += key;
-      handleAmountInput();
-    }
-  }
-  function deleteKey() {
-    if (inputMode === 'account') {
-      const input = document.getElementById('accountInput');
-      input.value = input.value.slice(0, -1);
-      handleAccountInput();
-    } else {
-      const input = document.getElementById('amountInput');
-      input.value = input.value.slice(0, -1);
-      handleAmountInput();
-    }
+  function updateBtn() {
+    const ok = !!bank && !!holder && validateAmount() !== null;
+    $('continueBtn').classList.toggle('active', ok);
+    $('continueBtn').disabled = !ok;
   }
 
-  // Focus on account field by default, switch to amount when account is resolved
-  (function initInputFocus() {
-    setTimeout(() => document.getElementById('accountInput').focus(), 300);
-  })();
+  /* ── Recent ── */
+  function renderRecent() {
+    $('recentList').innerHTML = RECENT.map(num => {
+      const d = DIRECTORY.find(x => x.number === num);
+      if (!d) return '';
+      return '<div class="recent-item" onclick="pickAccount(\'' + d.number + '\')">' +
+        '<span class="recent-avatar"><img src="' + bank.logo + '" alt=""></span>' +
+        '<span class="recent-info">' +
+          '<span class="recent-name">' + d.name + '</span>' +
+          '<span class="recent-sub">' + d.number + '</span>' +
+        '</span>' +
+        '<svg class="chev" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>' +
+      '</div>';
+    }).join('');
+  }
+  renderRecent();
 
-  // Switch input mode when clicking on amount field
-  document.addEventListener('focusin', function(e) {
-    if (e.target.id === 'amountInput') inputMode = 'amount';
-    else if (e.target.id === 'accountInput') inputMode = 'account';
-  });
-
-  // Continue → store recipient + amount, go to Confirm Transfer
+  /* ── Continue → confirmation sheet ── */
   function continueTransfer() {
-    if (!selectedBank || !accountResolved || currentAmount <= 0) return;
-    const total = currentAmount + FEE;
+    const amount = validateAmount();
+    if (!bank || !holder || amount === null) return;
+    $('cfAvatar').textContent = initials(holder.name);
+    $('cfName').textContent = holder.name;
+    $('cfAccount').textContent = holder.number;
+    $('cfBank').textContent = bank.name;
+    $('cfFee').textContent = fmt(FEE) + ' Br';
+    $('cfTotal').textContent = fmt(amount + FEE) + ' Br';
+    $('confirmOverlay').classList.add('show');
+  }
+
+  function closeConfirm() { $('confirmOverlay').classList.remove('show'); }
+
+  function confirmTransfer() {
+    const amount = validateAmount();
+    if (!bank || !holder || amount === null) return;
     sessionStorage.setItem('sendTarget', JSON.stringify({
       type: 'bank',
-      name: selectedBank.name,
-      logo: selectedBank.logo,
-      holder: resolvedName,
-      account: maskedAccount,
-      fullAccount: fullAccount
+      name: bank.name,
+      logo: bank.logo,
+      holder: holder.name,
+      account: '****' + holder.number.slice(-4),
+      fullAccount: holder.number
     }));
-    sessionStorage.setItem('sendAmount', formatAmount(currentAmount));
-    sessionStorage.setItem('sendFee', formatAmount(FEE));
-    sessionStorage.setItem('sendTotal', formatAmount(total));
+    sessionStorage.setItem('sendAmount', fmt(amount));
+    sessionStorage.setItem('sendFee', fmt(FEE));
+    sessionStorage.setItem('sendTotal', fmt(amount + FEE));
     sessionStorage.setItem('sendAccount', 'main');
-    window.location.href = 'Transfer_Confirmation.html';
+    sessionStorage.setItem('sendReason', $('reasonInput').value.trim());
+    window.location.href = 'Transfer_Enter PIN.html';
   }
 
   function goBack() { window.location.href = 'Send Money Menu.html'; }
 
-  // Prefill the bank chosen on the Send Money modal
+  // Close the type-ahead when the tap lands outside the account field.
+  document.addEventListener('click', e => {
+    if (!e.target.closest('.account-wrap')) $('suggest').classList.remove('show');
+  });
+
+  /* ── Bank chosen on the Send Money menu carries over ── */
   (function loadTarget() {
     let target = null;
-    try { target = JSON.parse(sessionStorage.getItem('sendTarget') || 'null'); } catch (e) {}
-    if (target && target.type === 'bank' && target.logo) selectBank(target.name, target.logo);
+    try { target = JSON.parse(sessionStorage.getItem('sendTarget') || 'null'); } catch (e) { /* ignore corrupt state */ }
+    if (target && target.type === 'bank' && target.name) {
+      const b = BANKS.find(x => x.name === target.name);
+      if (b) pickBank(b.key);
+    }
   })();
-
-  document.addEventListener('click', function (e) {
-    // Bank dropdown outside click
-    const selector = document.getElementById('bankSelector');
-    const dropdown = document.getElementById('bankDropdown');
-    if (!selector.contains(e.target) && !dropdown.contains(e.target)) {
-      dropdown.classList.remove('show');
-      selector.classList.remove('open');
-    }
-    // Account dropdown outside click
-    const accWrap = document.querySelector('.account-input-wrap');
-    const accDropdown = document.getElementById('accountDropdown');
-    if (accWrap && !accWrap.contains(e.target)) {
-      accDropdown.classList.remove('show');
-      document.getElementById('accountDropBtn').classList.remove('open');
-    }
-  });
 </script>
 
 <!-- Export to Figma button (shared exporter) -->
 <script src="figma-export.js"></script>
+<script src="test-scenarios-data.js"></script>
+<script src="test-scenarios.js"></script>
 </body>
 </html>

@@ -141,6 +141,8 @@
     width: 100%; display: flex; flex-direction: column;
     gap: 13px; margin-bottom: 18px;
   }
+  /* Grouping wrappers stay out of the layout so every row keeps the list gap */
+  #detailLeadRows, #detailExtraRows { display: contents; }
   .detail-row { display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; }
   .detail-row .label {
     color: var(--On-Surface-Low); font-family: 'Switzer', sans-serif;
@@ -153,6 +155,10 @@
     text-align: right; overflow-wrap: break-word; flex: 1;
   }
   .detail-row .value.copyable { display: flex; align-items: center; gap: 8px; justify-content: flex-end; }
+
+  /* Overdraft (Errif-funded) receipt — blue primary + breakdown rows. */
+  .od-mode { --Primary: #2563EB; --Primary-Light: #EAF2FF; }
+  .od-details { border-top: 1px dashed #E0E0E0; padding-top: 10px; margin-top: 6px; gap: 12px; }
 
   .copy-btn {
     display: flex; align-items: center; gap: 4px;
@@ -241,6 +247,8 @@
   }
   .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
 </style>
+<script src="assets/qrcode.min.js"></script>
+<script src="assets/qr.js"></script>
 </head>
 <body>
 
@@ -335,6 +343,7 @@
         </div>
 
         <div class="transaction-details">
+          <div id="detailLeadRows">
           <div class="detail-row">
             <span class="label">Payer's Name</span>
             <span class="value" id="detailPayer">Abebeb Bikila Maraton</span>
@@ -347,9 +356,15 @@
             <span class="label">Receivers Business Name</span>
             <span class="value" id="detailBiller">Ethiopian Electric Utility</span>
           </div>
-          <div class="detail-row">
-            <span class="label">Serial Number</span>
-            <span class="value" id="detailSerial">4529292178</span>
+          <div id="detailExtraRows">
+            <div class="detail-row">
+              <span class="label" id="detailRefLabel">Serial Number</span>
+              <span class="value" id="detailSerial">4529292178</span>
+            </div>
+            <div class="detail-row" id="monthRow" style="display:none;">
+              <span class="label">Bill Month</span>
+              <span class="value" id="detailMonth">—</span>
+            </div>
           </div>
           <div class="detail-row">
             <span class="label">Fee</span>
@@ -363,6 +378,7 @@
             <span class="label">Transaction Type</span>
             <span class="value" id="detailType">Utility Payment</span>
           </div>
+          </div>
           <div class="detail-row">
             <span class="label">Transaction ID</span>
             <span class="value copyable">
@@ -370,12 +386,23 @@
                 <span class="copy-text">Copy ID</span>
                 <i data-lucide="copy"></i>
               </button>
-              <span id="transactionId">UH33F5LCTV</span>
+              <span id="transactionId">UA55ZKTH2N</span>
             </span>
           </div>
           <div class="detail-row">
-            <span class="label">Transaction Date</span>
+            <span class="label" id="detailDateLabel">Transaction Date</span>
             <span class="value" id="detailDate">12/12/2024 at 8 : 34 AM</span>
+          </div>
+
+          <!-- Errif overdraft breakdown — shown only when the bill was paid from Errif -->
+          <div class="od-details" id="odDetails" style="display:none;">
+            <div class="detail-row"><span class="label">From M-PESA Balance</span><span class="value" id="odFromMpesa">0.00 Br</span></div>
+            <div class="detail-row"><span class="label">From Errif Overdraft</span><span class="value" id="odFromOd">0.00 Br</span></div>
+            <div class="detail-row"><span class="label">Service Fee</span><span class="value" id="odFee">0.00 Br</span></div>
+            <div class="detail-row"><span class="label">Total Advance</span><span class="value" id="odTotal">0.00 Br</span></div>
+            <div class="detail-row"><span class="label">Daily Fee</span><span class="value" id="odDaily">0.00 Br</span></div>
+            <div class="detail-row"><span class="label">Penalty (after 30 days)</span><span class="value" id="odPenalty">0.00 Br</span></div>
+            <div class="detail-row"><span class="label">Due Date</span><span class="value" id="odDue">—</span></div>
           </div>
         </div>
 
@@ -423,22 +450,49 @@
   const biller = payData.biller || {};
   const $ = id => document.getElementById(id);
 
-  if (biller.name) { $('detailBiller').textContent = biller.name; }
-  if (payData.account) { $('detailSerial').textContent = payData.account; }
-  if (payData.payerName) { $('detailPayer').textContent = payData.payerName; $('detailName').textContent = payData.payerName; }
+  const money = v => parseFloat(v || 0).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ',') + ' Br';
 
-  // Amount reads as a debit, matching the rest of the receipt.
-  if (payData.payAmount) {
-    const n = parseFloat(payData.payAmount);
-    if (!isNaN(n)) $('detailAmount').textContent = '-' + Math.round(n).toLocaleString('en-US');
+  if (biller.fullName || biller.name) $('detailBiller').textContent = biller.fullName || biller.name;
+  if (payData.account) $('detailSerial').textContent = payData.account;
+  if (payData.payerName) $('detailPayer').textContent = payData.payerName;
+  // The name above the amount is the account the bill belongs to, not the payer.
+  if (payData.customerName) $('detailName').textContent = payData.customerName;
+
+  // An entry screen can name its own reference rows; otherwise a post-paid bill
+  // settles a contract for a month and prepaid buys credit against a meter serial.
+  const isPrepaid = payData.plan === 'pre';
+  if (payData.receiptRows) {
+    $('detailExtraRows').innerHTML = payData.receiptRows.map(r =>
+      '<div class="detail-row">' +
+        '<span class="label">' + r.key + '</span>' +
+        '<span class="value">' + r.value + '</span>' +
+      '</div>').join('');
+  } else {
+    $('detailRefLabel').textContent = isPrepaid ? 'Serial Number' : 'Contract Number';
+    if (payData.billMonth) {
+      $('detailMonth').textContent = payData.billMonth;
+      $('monthRow').style.display = '';
+    }
   }
 
-  // The token callout only belongs on billers that actually issue one.
-  const token = payData.token || ($('tokenValue').textContent || '').trim();
-  const isTokenBiller = payData.token !== undefined
-    ? !!payData.token
+  if (payData.txType) $('detailType').textContent = payData.txType;
+  if (payData.dateLabel) $('detailDateLabel').textContent = payData.dateLabel;
+
+  if (payData.serviceFee) $('detailFee').textContent = money(payData.serviceFee);
+  if (payData.vat) $('detailVat').textContent = money(payData.vat);
+
+  // Amount reads as a debit of the full total, matching the confirmation screen.
+  const debit = parseFloat(payData.total || payData.payAmount || 0);
+  if (!isNaN(debit) && debit > 0) {
+    const formatted = debit.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+    $('detailAmount').textContent = '-' + formatted;
+  }
+
+  // Only prepaid electricity issues a token — nothing else has one to redeem.
+  const issuesToken = payData.plan
+    ? isPrepaid
     : /electric|eepco|eeu|power/i.test(biller.name || $('detailBiller').textContent || '');
-  if (!isTokenBiller) $('tokenBox').style.display = 'none';
+  if (!issuesToken) $('tokenBox').style.display = 'none';
   else if (payData.token) $('tokenValue').textContent = payData.token;
 
   const now = new Date();
@@ -454,7 +508,41 @@
     type: $('detailType').textContent, biller: $('detailBiller').textContent,
     txId, amount: $('detailAmount').textContent + ' ETB'
   }));
-  $('qrCode').src = 'https://api.qrserver.com/v1/create-qr-code/?size=240x240&data=' + qrData + '&margin=10';
+  renderQR($('qrCode'), decodeURIComponent(qrData), 240);
+
+  // A biller that lays its receipt out differently supplies the whole block.
+  if (payData.receiptAllRows) {
+    $('detailLeadRows').innerHTML = payData.receiptAllRows.map(r =>
+      '<div class="detail-row">' +
+        '<span class="label">' + r.key + '</span>' +
+        '<span class="value">' + r.value + '</span>' +
+      '</div>').join('');
+  }
+
+  // Errif-funded bill → blue theme + itemise what the advance covered.
+  if (payData.payAccount === 'overdraft') {
+    document.documentElement.style.setProperty('--Primary', '#2563EB');
+    document.documentElement.style.setProperty('--Primary-Light', '#EAF2FF');
+
+    const amt = parseFloat(payData.payAmount || 0);
+    const mpesaBal = Math.min(amt, 30);
+    const odBal = Math.max(0, amt - mpesaBal);
+    const serviceFee = odBal > 0 ? parseFloat(Math.max(5, odBal * 0.05).toFixed(2)) : 0;
+    const dailyFee = odBal > 0 ? parseFloat(Math.max(0.10, odBal * 0.001).toFixed(2)) : 0;
+    const penalty = odBal > 0 ? parseFloat(Math.max(0.13, odBal * 0.0011).toFixed(2)) : 0;
+    const due = new Date(); due.setDate(due.getDate() + 30);
+    const dueFmt = String(due.getDate()).padStart(2, '0') + '/' + String(due.getMonth() + 1).padStart(2, '0') + '/' + due.getFullYear();
+    const totalAdvance = parseFloat((odBal + serviceFee).toFixed(2));
+
+    $('odDetails').style.display = '';
+    $('odFromMpesa').textContent = money(mpesaBal);
+    $('odFromOd').textContent = money(odBal);
+    $('odFee').textContent = money(serviceFee);
+    $('odTotal').textContent = money(totalAdvance);
+    $('odDaily').textContent = money(dailyFee);
+    $('odPenalty').textContent = money(penalty);
+    $('odDue').textContent = dueFmt;
+  }
 
   function copyText(text) {
     return navigator.clipboard.writeText(text).catch(() => {
@@ -497,5 +585,7 @@
 </script>
 
 <script src="figma-export.js"></script>
+<script src="test-scenarios-data.js"></script>
+<script src="test-scenarios.js"></script>
 </body>
 </html>

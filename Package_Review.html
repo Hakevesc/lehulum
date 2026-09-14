@@ -138,7 +138,7 @@
         </div>
         <div class="fund-option" id="optReward" onclick="selectAccount('reward')">
           <div class="fo-top"><span class="fo-name">Reward Account</span><span class="radio"></span></div>
-          <span class="fo-bal" id="balReward">800.00 ETB</span>
+          <span class="fo-bal" id="balReward">200.00 ETB</span>
           <span class="fo-tag">Low balance</span>
         </div>
       </div>
@@ -150,7 +150,7 @@
     </div>
 
     <div class="bottom-area">
-      <button class="btn-primary" onclick="confirmPay()">Confirm &amp; Pay</button>
+      <button class="btn-primary" onclick="confirmPay()">Confirm</button>
       <button class="btn-link" onclick="goBack()">Choose another package</button>
     </div>
 
@@ -159,7 +159,7 @@
 
 <script>
   const MAIN = 12580.00;
-  const REWARD = 800.00;
+  const REWARD = 200.00;
 
   const data = JSON.parse(sessionStorage.getItem('packageData') || '{}');
   const fmt = n => parseFloat(n || 0).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
@@ -227,5 +227,7 @@
 </script>
 
 <script src="figma-export.js"></script>
+<script src="test-scenarios-data.js"></script>
+<script src="test-scenarios.js"></script>
 </body>
 </html>

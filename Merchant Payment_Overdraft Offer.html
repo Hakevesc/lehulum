@@ -86,7 +86,7 @@
         <svg viewBox="0 0 24 24"><path d="M21 12V7H5a2 2 0 0 1 0-4h14v4"/><path d="M3 5v14a2 2 0 0 0 2 2h16v-5"/><path d="M18 12a2 2 0 0 0 0 4h4v-4Z"/></svg>
       </div>
       <h2 class="od-title" id="odTitle">You're eligible for Errif</h2>
-      <p class="od-desc" id="odDesc">Activate Errif overdraft to complete this payment now and repay later within your limit.</p>
+      <p class="od-desc" id="odDesc">Activate Errif overdraft to complete this merchant payment now and repay later within your limit.</p>
 
       <div class="od-card">
         <div class="od-row hl"><span class="label">Available Errif limit</span><span class="val" id="odLimit">5,000.00 ETB</span></div>
@@ -113,18 +113,36 @@
 
 <script>
   const OD_LIMIT = 5000.00;
-  const merchant = JSON.parse(sessionStorage.getItem('merchantData') || '{}');
+  const data = JSON.parse(sessionStorage.getItem('merchantData') || '{}');
   const fmt = n => parseFloat(n || 0).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
-  const amount = parseFloat(merchant.payAmount || '0');
+  const amount = parseFloat(data.payAmount || '0');
   const status = sessionStorage.getItem('odStatus') || 'eligible';
 
   function finalizeOverdraft() {
-    const data = JSON.parse(sessionStorage.getItem('merchantData') || '{}');
-    data.account = 'overdraft';
-    data.fee = '0.00';
-    data.total = parseFloat(data.payAmount || '0').toFixed(2);
-    sessionStorage.setItem('merchantData', JSON.stringify(data));
-    window.location.href = 'Merchant Payment_Review.html';
+    const d = JSON.parse(sessionStorage.getItem('merchantData') || '{}');
+    d.payAccount = 'overdraft';
+    d.overdraft = true;
+    d.account = 'overdraft';
+    d.fee = '0.00';
+    d.total = parseFloat(d.payAmount || '0').toFixed(2);
+    d.odBreakdown = computeOdBreakdown(parseFloat(d.payAmount || 0));
+    sessionStorage.setItem('merchantData', JSON.stringify(d));
+    window.location.href = 'Merchant Payment_Enter PIN.html';
+  }
+
+  function computeOdBreakdown(amt) {
+    const mpesaBal = Math.min(amt, 30);
+    const odBal = Math.max(0, amt - mpesaBal);
+    const serviceFee = odBal > 0 ? parseFloat(Math.max(5, odBal * 0.05).toFixed(2)) : 0;
+    const dailyFee = odBal > 0 ? parseFloat(Math.max(0.10, odBal * 0.001).toFixed(2)) : 0;
+    const penalty = odBal > 0 ? parseFloat(Math.max(0.13, odBal * 0.0011).toFixed(2)) : 0;
+    const due = new Date(); due.setDate(due.getDate() + 30);
+    return {
+      mpesaBal, odBal, serviceFee,
+      totalAdvance: parseFloat((odBal + serviceFee).toFixed(2)),
+      dailyFee, penalty,
+      dueFmt: String(due.getDate()).padStart(2, '0') + '/' + String(due.getMonth() + 1).padStart(2, '0') + '/' + due.getFullYear()
+    };
   }
 
   function primaryAction() {
@@ -132,8 +150,8 @@
     else window.location.href = 'Merchant Payment_Overdraft Activate.html';
   }
 
-  function cancel() { window.location.href = 'Merchant Payment_Enter Amount.html'; }
-  function goBack() { window.location.href = 'Merchant Payment_Enter Amount.html'; }
+  function cancel() { window.location.href = 'Pay Merchant.html'; }
+  function goBack() { window.location.href = 'Pay Merchant.html'; }
   function setStatus(s) { sessionStorage.setItem('odStatus', s); location.reload(); }
 
   function init() {
@@ -144,7 +162,7 @@
     // Active-but-insufficient OR not-eligible → cannot pay → Insufficient Balance
     if (status === 'active_low' || status === 'ineligible') {
       sessionStorage.setItem('insufReason', status === 'active_low' ? 'od_low' : 'ineligible');
-      window.location.replace('Merchant Payment_Insufficient Balance.html');
+      window.location.replace('Pay Merchant.html');
       return;
     }
 
@@ -153,11 +171,11 @@
 
     if (status === 'active_ok') {
       document.getElementById('odTitle').textContent = 'Pay with Errif Overdraft';
-      document.getElementById('odDesc').textContent = 'Your accounts are low, but your active Errif overdraft can cover this payment. Confirm to continue.';
+      document.getElementById('odDesc').textContent = 'Your accounts are low, but your active Errif overdraft can cover this bill. Confirm to continue.';
       document.getElementById('odPrimary').textContent = 'Pay ' + fmt(amount) + ' ETB with Errif';
     } else { // eligible
       document.getElementById('odTitle').textContent = "You're eligible for Errif";
-      document.getElementById('odDesc').textContent = 'Activate Errif overdraft to complete this payment now and repay later within your limit.';
+      document.getElementById('odDesc').textContent = 'Activate Errif overdraft to complete this merchant payment now and repay later within your limit.';
       document.getElementById('odPrimary').textContent = 'Activate Errif';
       document.getElementById('odInterestRow').style.display = 'none';
     }
@@ -167,5 +185,7 @@
 </script>
 
 <script src="figma-export.js"></script>
+<script src="test-scenarios-data.js"></script>
+<script src="test-scenarios.js"></script>
 </body>
 </html>

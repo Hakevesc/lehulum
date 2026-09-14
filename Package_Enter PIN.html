@@ -5,75 +5,84 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Package - Enter PIN</title>
 <style>
-  @import url("styles/component-keypad.css");
   @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@400;500;600&display=swap');
   @import url('https://api.fontshare.com/v2/css?f[]=switzer@400,500,600,700&display=swap');
 
-  :root { --Primary: #FE353D; --On-Surface: #1C1C21; --On-Surface-Low: #7C7C87; --Border: #E8E8EC; --Background: #F5F5F5; }
+  :root {
+    --Primary: #FE353D;
+    --On-Surface: #1C1C21;
+    --On-Surface-Low: #7C7C87;
+    --Border: #E8E8EC;
+    --Background: #F5F5F5;
+  }
   * { margin: 0; padding: 0; box-sizing: border-box; }
   body { font-family: 'Inter', sans-serif; background: transparent; display: flex; justify-content: center; align-items: center; min-height: 100vh; padding: 20px; }
-  .phone-frame { width: 360px; height: 780px; background: var(--Background); border-radius: 30px; overflow: hidden; position: relative; box-shadow: 0 20px 60px rgba(0,0,0,0.15); }
-  .app-content { height: 100%; overflow-y: auto; display: flex; flex-direction: column; }
-  .app-content::-webkit-scrollbar { width: 0; }
+  .phone-frame { width: 360px; height: 780px; background: var(--Background); border-radius: 30px; overflow: hidden; position: relative; box-shadow: 0 20px 60px rgba(0,0,0,0.15); display: flex; flex-direction: column; }
+  .app-content { height: 100%; display: flex; flex-direction: column; }
 
-  .status-bar { display: flex; justify-content: space-between; align-items: center; padding: 14px 24px 8px; background: var(--Background); }
+  .status-bar { display: flex; justify-content: space-between; align-items: center; padding: 14px 24px 8px; background: var(--Background); flex-shrink: 0; }
   .status-bar .time { font-size: 14px; font-weight: 600; color: var(--On-Surface); }
   .status-icons { display: flex; align-items: center; gap: 6px; }
   .status-icons svg { width: 18px; height: 18px; }
 
-  .header-nav { display: flex; align-items: center; justify-content: space-between; padding: 8px 16px 12px; background: var(--Background); }
-  .back-btn { width: 36px; height: 36px; border-radius: 50%; background: transparent; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.2s; }
+  .header-nav { display: flex; align-items: center; justify-content: space-between; padding: 8px 16px 12px; background: var(--Background); flex-shrink: 0; }
+  .back-btn { width: 36px; height: 36px; border-radius: 50%; background: transparent; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: background 0.2s; }
   .back-btn:hover { background: rgba(0,0,0,0.05); }
   .back-btn svg { width: 22px; height: 22px; stroke: var(--On-Surface); stroke-width: 1.8px; fill: none; }
   .header-title { color: var(--On-Surface); font-family: 'Switzer', sans-serif; font-size: 17px; font-weight: 500; letter-spacing: 0.3px; flex: 1; text-align: center; }
 
-  .main-content { padding: 8px 20px 20px; display: flex; flex-direction: column; flex: 1; gap: 18px; }
+  .body-wrap { flex: 1; display: flex; flex-direction: column; padding: 4px 16px 18px; overflow-y: auto; }
+  .body-wrap::-webkit-scrollbar { width: 0; }
 
-  .summary-card { background: #FFF; border-radius: 16px; padding: 18px 16px; box-shadow: 0 2px 8px rgba(0,0,0,0.04); }
-  .summary-header { display: flex; align-items: center; gap: 12px; margin-bottom: 14px; padding-bottom: 14px; border-bottom: 1px solid #F0F0F0; }
-  .summary-icon { width: 44px; height: 44px; border-radius: 12px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; font-family: 'Switzer', sans-serif; font-size: 14px; font-weight: 700; color: #FFF; }
-  .summary-recipient { font-family: 'Switzer', sans-serif; font-size: 15px; font-weight: 600; color: var(--On-Surface); letter-spacing: 0.5px; }
-  .summary-sub { font-family: 'Switzer', sans-serif; font-size: 12px; color: var(--On-Surface-Low); margin-top: 2px; }
-  .summary-amount { text-align: center; padding: 4px 0 12px; border-bottom: 1px solid #F0F0F0; margin-bottom: 12px; }
-  .summary-amount .label { font-family: 'Switzer', sans-serif; font-size: 12px; color: var(--On-Surface-Low); margin-bottom: 4px; }
-  .summary-amount .value { font-family: 'Switzer', sans-serif; font-size: 28px; font-weight: 700; color: var(--Primary); }
-  .summary-amount .currency { font-family: 'Switzer', sans-serif; font-size: 14px; color: var(--On-Surface-Low); margin-left: 4px; }
-  .summary-row { display: flex; justify-content: space-between; align-items: center; padding: 6px 0; }
-  .summary-row .lbl { font-family: 'Switzer', sans-serif; font-size: 13px; color: var(--On-Surface-Low); }
-  .summary-row .val { font-family: 'Switzer', sans-serif; font-size: 13px; font-weight: 600; color: var(--On-Surface); }
+  /* ── Recipient summary ── */
+  .party-card { background: #FFF; border-radius: 16px; padding: 14px; display: flex; align-items: center; gap: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.04); }
+  .party-avatar { width: 44px; height: 44px; border-radius: 50%; background: #FFE9EA; color: var(--Primary); display: flex; align-items: center; justify-content: center; font-family: 'Switzer', sans-serif; font-size: 14px; font-weight: 700; flex-shrink: 0; }
+  .party-info { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 3px; }
+  .party-name { font-family: 'Switzer', sans-serif; font-size: 15px; font-weight: 700; color: var(--On-Surface); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .party-sub { font-family: 'Switzer', sans-serif; font-size: 12.5px; color: var(--On-Surface-Low); }
+  .party-sub b { color: var(--On-Surface); font-weight: 600; }
 
-  .pin-section { display: flex; flex-direction: column; align-items: center; gap: 14px; }
-  .pin-label { color: var(--On-Surface); font-family: 'Switzer', sans-serif; font-size: 15px; font-weight: 500; letter-spacing: 0.3px; text-align: center; }
-  .pin-hint { color: var(--On-Surface-Low); font-family: 'Switzer', sans-serif; font-size: 11px; font-weight: 400; margin-top: -8px; }
-  .pin-container { display: flex; gap: 20px; justify-content: center; }
-  .pin-box { width: 62px; height: 62px; border-radius: 16px; background: #FFF; border: 2px solid #ECECEC; display: flex; align-items: center; justify-content: center; transition: all 0.2s; box-shadow: 0 2px 8px rgba(0,0,0,0.06); }
-  .pin-box.filled { border-color: transparent; }
-  .pin-box.filled .dot { width: 16px; height: 16px; border-radius: 50%; background: var(--On-Surface); }
-  .pin-box.active { border-color: var(--Primary); background: #FFF5F5; }
-  .pin-box.active::after { content:''; width:2px; height:24px; background:var(--Primary); animation: blink 1s step-end infinite; }
-  @keyframes blink { from,to{background:transparent} 50%{background:var(--Primary)} }
-  .pin-box.error { border-color: var(--Primary); background: #FFF5F5; animation: shake 0.4s ease-in-out; }
-  .pin-box.error .dot { width:16px; height:16px; border-radius:50%; background:var(--Primary); }
-  @keyframes shake { 0%,100%{transform:translateX(0)} 25%{transform:translateX(-6px)} 75%{transform:translateX(6px)} }
-  .pin-error { display: none; align-items: center; justify-content: center; gap: 6px; }
+  /* ── PIN prompt ── */
+  .pin-prompt { display: flex; align-items: center; justify-content: center; gap: 7px; margin-top: 34px; }
+  .pin-prompt svg { width: 15px; height: 15px; stroke: var(--On-Surface); stroke-width: 2; fill: none; }
+  .pin-prompt span { font-family: 'Switzer', sans-serif; font-size: 14px; font-weight: 600; color: var(--On-Surface); }
+
+  .pin-container { display: flex; justify-content: space-between; gap: 12px; margin-top: 16px; }
+  .pin-box { flex: 1; height: 60px; border-radius: 14px; background: #F1F1F4; border: 2px solid transparent; display: flex; align-items: center; justify-content: center; transition: border-color 0.18s, background 0.18s; }
+  .pin-box.active { border-color: var(--Primary); background: #FFF7F7; }
+  .pin-box.error { border-color: var(--Primary); background: #FFF4F4; animation: shake 0.35s; }
+  @keyframes shake { 25% { transform: translateX(-5px); } 75% { transform: translateX(5px); } }
+  .pin-box .caret { display: none; width: 2px; height: 26px; background: var(--Primary); border-radius: 1px; animation: blink 1.05s step-end infinite; }
+  .pin-box.active .caret { display: block; }
+  @keyframes blink { 50% { opacity: 0; } }
+  .pin-box .dot { display: none; width: 11px; height: 11px; border-radius: 50%; background: var(--On-Surface); }
+  .pin-box.filled .dot { display: block; }
+  .pin-box.filled .caret { display: none; }
+
+  .pin-error { display: none; align-items: center; justify-content: center; gap: 7px; margin-top: 12px; }
   .pin-error.show { display: flex; }
-  .pin-error svg { width: 14px; height: 14px; stroke: var(--Primary); stroke-width: 2; fill: none; flex-shrink: 0; }
-  .pin-error span { color: var(--Primary); font-family: 'Switzer', sans-serif; font-size: 12.5px; font-weight: 500; }
-  .pin-input { position:absolute; opacity:0; pointer-events:none; }
+  .pin-error svg { width: 15px; height: 15px; stroke: var(--Primary); stroke-width: 2.2; fill: none; flex-shrink: 0; }
+  .pin-error span { font-family: 'Switzer', sans-serif; font-size: 12.5px; font-weight: 600; color: var(--Primary); }
 
-  .pay-btn { height: 52px; border-radius: 14px; border: none; background: #E0E0E0; color: var(--On-Surface-Low); font-family: 'Poppins', sans-serif; font-size: 15px; font-weight: 500; cursor: not-allowed; transition: all 0.2s; }
-  .pay-btn.active { background: var(--Primary); color: #FFF; cursor: pointer; box-shadow: 0 4px 16px rgba(254,53,61,0.25); }
-  .pay-btn.active:hover { background: #E5303A; transform: translateY(-1px); }
-  .pay-btn.active:active { transform: scale(0.98); }
+  /* Off-screen field keeps the hardware keyboard working on a real device */
+  .pin-input { position: absolute; opacity: 0; pointer-events: none; height: 0; width: 0; }
 
-  .demo-switch { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; justify-content: center; padding: 8px 0 0; }
-  .demo-switch span { font-family: 'Switzer', sans-serif; font-size: 10.5px; color: var(--On-Surface-Low); }
-  .demo-switch button { font-family: 'Switzer', sans-serif; font-size: 10.5px; font-weight: 600; color: var(--On-Surface-Low); background: #FFF; border: 1px solid var(--Border); border-radius: 8px; padding: 4px 8px; cursor: pointer; }
-  .demo-switch button.on { color: var(--Primary); border-color: var(--Primary); background: #FFF7F7; }
+  /* ── Keypad ── */
+  .keypad { background: #FFF; border-radius: 20px; padding: 14px 10px; margin-top: auto; display: grid; grid-template-columns: repeat(3, 1fr); box-shadow: 0 2px 8px rgba(0,0,0,0.04); }
+  .key { height: 54px; border: none; background: transparent; cursor: pointer; border-radius: 12px; font-family: 'Switzer', sans-serif; font-size: 24px; font-weight: 500; color: #55555E; display: flex; align-items: center; justify-content: center; transition: background 0.12s, transform 0.1s; }
+  .key:hover { background: #F7F7F8; }
+  .key:active { background: #EFEFF2; transform: scale(0.95); }
+  .key.empty { pointer-events: none; }
+  .key svg { width: 26px; height: 26px; stroke: #55555E; stroke-width: 1.7; fill: none; }
+
+  /* ── Action ── */
+  .pay-btn { margin-top: 14px; height: 52px; border-radius: 14px; border: none; background: var(--Primary); color: #FFF; font-family: 'Poppins', sans-serif; font-size: 15px; font-weight: 500; cursor: pointer; box-shadow: 0 4px 16px rgba(254,53,61,0.25); transition: all 0.2s; flex-shrink: 0; }
+  .pay-btn:hover { background: #E5303A; box-shadow: 0 6px 20px rgba(254,53,61,0.35); transform: translateY(-1px); }
+  .pay-btn:active { transform: scale(0.98) translateY(0); }
+
 </style>
 </head>
 <body>
-
 <div class="phone-frame">
   <div class="app-content">
 
@@ -94,40 +103,34 @@
       <div style="width:36px;"></div>
     </div>
 
-    <div class="main-content">
+    <div class="body-wrap">
 
-      <div class="summary-card">
-        <div class="summary-header">
-          <div class="summary-icon" id="summaryIcon" style="background:#43B02A;">SC</div>
-          <div>
-            <div class="summary-recipient" id="summaryRecipient">0712 131 415</div>
-            <div class="summary-sub" id="summarySub">Safaricom · Weekly Data Plus</div>
-          </div>
+      <div class="party-card">
+        <div class="party-avatar" id="reviewInitials">AB</div>
+        <div class="party-info">
+          <span class="party-name" id="reviewName">Recipient</span>
+          <span class="party-sub"><b>Amount:</b> <span id="reviewAmount">0.00</span> ETB</span>
         </div>
-        <div class="summary-amount">
-          <div class="label">Package amount</div>
-          <div><span class="value" id="summaryAmount">99.00</span><span class="currency">ETB</span></div>
-        </div>
-        <div class="summary-row"><span class="lbl">Validity</span><span class="val" id="summaryValidity">7 days</span></div>
-        <div class="summary-row"><span class="lbl">Pay from</span><span class="val" id="summaryAccount">Main Account</span></div>
-        <div class="summary-row"><span class="lbl">Service Fee</span><span class="val" style="color:#1FC83B;">Free</span></div>
       </div>
 
-      <div class="pin-section">
-        <span class="pin-label">Enter Your M-PESA PIN</span>
-        <span class="pin-hint">Demo PIN: 1234</span>
-        <div class="pin-container" id="pinContainer">
-          <div class="pin-box" data-index="0"><div class="dot"></div></div>
-          <div class="pin-box" data-index="1"><div class="dot"></div></div>
-          <div class="pin-box" data-index="2"><div class="dot"></div></div>
-          <div class="pin-box" data-index="3"><div class="dot"></div></div>
-        </div>
-        <div class="pin-error" id="pinError">
-          <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
-          <span id="pinErrorText">Incorrect PIN. 2 attempts left.</span>
-        </div>
-        <input type="password" class="pin-input" id="pinInput" maxlength="4" inputmode="numeric">
+      <div class="pin-prompt">
+        <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="10.5" width="14" height="10" rx="2.5"/><path d="M8.5 10.5V7.5a3.5 3.5 0 0 1 7 0v3"/></svg>
+        <span>Enter Your M-PESA PIN</span>
       </div>
+
+      <div class="pin-container" id="pinContainer">
+        <div class="pin-box"><span class="caret"></span><span class="dot"></span></div>
+        <div class="pin-box"><span class="caret"></span><span class="dot"></span></div>
+        <div class="pin-box"><span class="caret"></span><span class="dot"></span></div>
+        <div class="pin-box"><span class="caret"></span><span class="dot"></span></div>
+      </div>
+
+      <div class="pin-error" id="pinError">
+        <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 8v5M12 16h.01"/></svg>
+        <span id="pinErrorText">Incorrect PIN. 2 attempts left.</span>
+      </div>
+
+      <input type="password" class="pin-input" id="pinInput" maxlength="4" inputmode="numeric">
 
       <div class="keypad">
         <button class="key" onclick="pressKey('1')">1</button>
@@ -141,69 +144,79 @@
         <button class="key" onclick="pressKey('9')">9</button>
         <button class="key empty"></button>
         <button class="key" onclick="pressKey('0')">0</button>
-        <button class="key delete" onclick="pressBackspace()">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M21 4H8l-7 8 7 8h13a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2z"/>
-            <line x1="18" y1="9" x2="12" y2="15"/><line x1="12" y1="9" x2="18" y2="15"/>
-          </svg>
+        <button class="key" onclick="pressBackspace()" aria-label="Delete">
+          <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M20 5H9L3 12l6 7h11a1.5 1.5 0 0 0 1.5-1.5v-11A1.5 1.5 0 0 0 20 5z"/><path d="M12 9.5l5 5M17 9.5l-5 5"/></svg>
         </button>
       </div>
 
-      <button class="pay-btn" id="payBtn" onclick="confirmPayment()" disabled>Pay Now</button>
-
-      <div class="demo-switch">
-        <span>Demo outcome:</span>
-        <button data-s="success" onclick="setOutcome('success')">Success</button>
-        <button data-s="failed" onclick="setOutcome('failed')">Failed</button>
-        <button data-s="timeout" onclick="setOutcome('timeout')">Timeout</button>
-        <button data-s="service" onclick="setOutcome('service')">Service Down</button>
-      </div>
+      <button class="pay-btn" onclick="confirmPayment()">Pay Now</button>
 
     </div>
-
   </div>
 </div>
 
 <script>
   const CORRECT_PIN = '1234';
   const MAX_ATTEMPTS = 3;
+
   let pin = '';
+  const pinInput = document.getElementById('pinInput');
+  const pinBoxes = document.querySelectorAll('.pin-box');
+  const pinError = document.getElementById('pinError');
+
   let processingOutcome = sessionStorage.getItem('packageProcessingOutcome') || 'success';
 
   const data = JSON.parse(sessionStorage.getItem('packageData') || '{}');
   const fmt = n => parseFloat(n || 0).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
-  function formatPhone(d) { d = String(d || ''); return [d.slice(0,4), d.slice(4,7), d.slice(7,10)].filter(Boolean).join(' '); }
+  const formatPhone = d => { d = String(d || ''); return [d.slice(0, 4), d.slice(4, 7), d.slice(7, 10)].filter(Boolean).join(' '); };
 
-  document.getElementById('summaryIcon').textContent = data.providerAbbr || 'SC';
-  document.getElementById('summaryIcon').style.background = data.providerColor || '#43B02A';
-  document.getElementById('summaryRecipient').textContent = formatPhone(data.recipient || '0712131415');
-  document.getElementById('summarySub').textContent = (data.provider || 'Safaricom') + ' · ' + (data.packageName || 'Package');
-  document.getElementById('summaryAmount').textContent = fmt(data.payAmount || '0');
-  document.getElementById('summaryValidity').textContent = data.validity || '—';
-  document.getElementById('summaryAccount').textContent =
-    data.payAccount === 'overdraft' ? 'Errif Overdraft'
-    : data.payAccount === 'reward' ? 'Reward Account'
-    : 'Main Account';
+  // Purchase summary shown on the card (avatar + recipient + amount).
+  (function loadReview() {
+    const name = data.packageName || formatPhone(data.recipient || '0712131415');
 
-  const pinBoxes = document.querySelectorAll('.pin-box');
-  const payBtn = document.getElementById('payBtn');
-  const pinError = document.getElementById('pinError');
+    document.getElementById('reviewName').textContent = name;
+    document.getElementById('reviewInitials').textContent = data.providerAbbr || 'SC';
+    document.getElementById('reviewInitials').style.background = data.providerColor || '#43B02A';
+    document.getElementById('reviewInitials').style.color = '#FFF';
+    document.getElementById('reviewAmount').textContent = fmt(data.payAmount || data.amount || '0');
+  })();
 
   function updatePinDisplay() {
-    pinBoxes.forEach((box, i) => {
+    pinBoxes.forEach((box, index) => {
       box.classList.remove('filled', 'active', 'error');
-      if (i < pin.length) box.classList.add('filled');
-      else if (i === pin.length) box.classList.add('active');
+      if (index < pin.length) box.classList.add('filled');
+      else if (index === pin.length) box.classList.add('active');
     });
-    payBtn.classList.toggle('active', pin.length === 4);
-    payBtn.disabled = pin.length !== 4;
   }
 
-  function pressKey(val) { pinError.classList.remove('show'); if (pin.length < 4) { pin += val; document.getElementById('pinInput').value = pin; updatePinDisplay(); } }
-  function pressBackspace() { pin = pin.slice(0, -1); document.getElementById('pinInput').value = pin; updatePinDisplay(); }
+  function pressKey(value) {
+    pinError.classList.remove('show');
+    if (pin.length < 4) {
+      pin += value;
+      pinInput.value = pin;
+      updatePinDisplay();
+    }
+  }
+
+  function pressBackspace() {
+    pin = pin.slice(0, -1);
+    pinInput.value = pin;
+    updatePinDisplay();
+  }
+
+  function showPinError(text) {
+    document.getElementById('pinErrorText').textContent = text;
+    pinBoxes.forEach(b => { b.classList.remove('filled', 'active'); b.classList.add('error'); });
+    pinError.classList.add('show');
+  }
 
   function confirmPayment() {
-    if (pin.length !== 4) return;
+    if (pin.length !== 4) {
+      showPinError('Enter your 4-digit PIN.');
+      setTimeout(updatePinDisplay, 400);
+      return;
+    }
+
     if (pin === CORRECT_PIN) {
       sessionStorage.removeItem('pinAttempts');
       if (processingOutcome === 'success') window.location.href = 'Package Confirmation.html';
@@ -212,14 +225,18 @@
       else if (processingOutcome === 'service') window.location.href = 'Package_Service Unavailable.html';
       return;
     }
-    let attempts = parseInt(sessionStorage.getItem('pinAttempts') || '0', 10) + 1;
+
+    const attempts = parseInt(sessionStorage.getItem('pinAttempts') || '0', 10) + 1;
     sessionStorage.setItem('pinAttempts', String(attempts));
-    if (attempts >= MAX_ATTEMPTS) { window.location.href = 'PIN-Locked.html'; return; }
+
+    if (attempts >= MAX_ATTEMPTS) {
+      window.location.href = 'PIN-Locked.html';
+      return;
+    }
+
     const left = MAX_ATTEMPTS - attempts;
-    document.getElementById('pinErrorText').textContent = 'Incorrect PIN. ' + left + (left === 1 ? ' attempt' : ' attempts') + ' left.';
-    pinBoxes.forEach(b => { b.classList.remove('filled', 'active'); b.classList.add('error'); });
-    pinError.classList.add('show');
-    setTimeout(() => { pin = ''; document.getElementById('pinInput').value = ''; updatePinDisplay(); }, 500);
+    showPinError('Incorrect PIN. ' + left + (left === 1 ? ' attempt' : ' attempts') + ' left.');
+    setTimeout(() => { pin = ''; pinInput.value = ''; updatePinDisplay(); }, 500);
   }
 
   function setOutcome(s) {
@@ -233,14 +250,17 @@
   document.addEventListener('keydown', e => {
     if (e.key >= '0' && e.key <= '9') pressKey(e.key);
     else if (e.key === 'Backspace') pressBackspace();
-    else if (e.key === 'Enter' && pin.length === 4) confirmPayment();
+    else if (e.key === 'Enter') confirmPayment();
   });
-  document.querySelector('.keypad').addEventListener('click', function () { document.getElementById('pinInput').focus(); });
+  document.querySelector('.keypad').addEventListener('click', function () { pinInput.focus(); });
 
   setOutcome(processingOutcome);
   updatePinDisplay();
 </script>
 
+<!-- Export to Figma button (shared exporter) -->
 <script src="figma-export.js"></script>
+<script src="test-scenarios-data.js"></script>
+<script src="test-scenarios.js"></script>
 </body>
 </html>

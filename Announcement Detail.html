@@ -137,6 +137,17 @@
     font-weight: 600;
     letter-spacing: 0.2px;
   }
+  .cover-badge.red-rect {
+    background: #FE353D !important;
+    color: #FFF !important;
+    border-radius: 6px !important;
+    padding: 5px 12px !important;
+    font-size: 11.5px !important;
+    font-weight: 700 !important;
+    letter-spacing: 0.4px !important;
+    text-transform: uppercase !important;
+    box-shadow: 0 2px 8px rgba(254, 53, 61, 0.4);
+  }
   .cover.notice .cover-title {
     color: var(--On-Surface);
     font-family: 'Switzer', sans-serif;
@@ -167,6 +178,75 @@
     opacity: 0.95;
     pointer-events: none;
     filter: drop-shadow(0 6px 14px rgba(0,0,0,0.14));
+  }
+
+  /* ---- variant: notice with background photo & black fade overlay gradient ---- */
+  .cover.notice.has-bg-image {
+    position: relative;
+    padding: 0;
+    overflow: hidden;
+    border-radius: 20px;
+    background: #000;
+  }
+  .cover.notice.has-bg-image .cover-bg-img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center 25%;
+    z-index: 1;
+    display: block;
+  }
+  .cover.notice.has-bg-image .cover-fade-overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(180deg, rgba(0, 0, 0, 0.2) 0%, rgba(0, 0, 0, 0.58) 45%, rgba(0, 0, 0, 0.94) 100%);
+    z-index: 2;
+    pointer-events: none;
+  }
+  .cover.notice.has-bg-image .cover-content-wrap {
+    position: relative;
+    z-index: 3;
+    padding: 18px 16px 16px;
+    display: flex;
+    flex-direction: column;
+  }
+  .cover.notice.has-bg-image .cover-head {
+    margin-bottom: 24px;
+  }
+  .cover.notice.has-bg-image .cover-title {
+    color: #FFFFFF !important;
+    font-family: 'Switzer', sans-serif;
+    font-size: 21px !important;
+    font-weight: 700;
+    line-height: 1.25;
+    letter-spacing: 0.1px;
+    max-width: 250px;
+    text-shadow: 0 2px 10px rgba(0, 0, 0, 0.7);
+  }
+  .cover.notice.has-bg-image .cover-kicker {
+    color: rgba(255, 255, 255, 0.9) !important;
+    font-size: 13px !important;
+    line-height: 1.5;
+    margin-top: 6px;
+    max-width: 260px;
+    text-shadow: 0 1px 6px rgba(0, 0, 0, 0.6);
+  }
+  .cover.notice.has-bg-image .cover-stats {
+    margin-top: 20px;
+    background: #FFFFFF;
+    border-radius: 14px;
+    padding: 11px 4px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35);
+  }
+  .cover.notice.has-bg-image .cover-stat {
+    padding: 0 6px;
+    gap: 6px;
+  }
+  .cover.notice.has-bg-image .cover-stat-value {
+    font-size: 12.5px;
+    white-space: nowrap;
   }
 
   /* ---- variant: photo (promotional) ---- */
@@ -621,13 +701,32 @@
       return;
     }
 
-    // Notice cover: tinted panel, icon chip, badge, illustration glyph.
+    // Notice cover with background image & black fade gradient overlay
+    if (d.image) {
+      host.innerHTML = `
+        <div class="cover notice has-bg-image">
+          <img class="cover-bg-img" src="${esc(d.image)}" alt="${esc(item.title)}">
+          <div class="cover-fade-overlay"></div>
+          <div class="cover-content-wrap">
+            <div class="cover-head">
+              <span class="cover-badge red-rect">
+                ${esc(d.badge || item.badge || A.TYPE_LABEL[item.type])}
+              </span>
+            </div>
+            <div class="cover-title">${esc(d.headline || item.title)}</div>
+            <div class="cover-kicker">${esc(d.kicker || item.desc)}</div>
+            ${statsHtml}
+          </div>
+        </div>`;
+      return;
+    }
+
+    // Notice cover: tinted panel, badge, illustration glyph.
     const accent = d.accent || '#E67E00';
     host.innerHTML = `
       <div class="cover notice" style="background:${esc(d.coverBg || 'linear-gradient(160deg,#F3F3F6 0%,#FAFAFC 100%)')}">
         <div class="cover-head">
-          <div class="cover-icon"><i data-lucide="${esc(d.icon || 'megaphone')}" style="color:${accent}"></i></div>
-          <span class="cover-badge" style="background:${esc(d.badgeBg || '#ECECEF')};color:${accent}">
+          <span class="cover-badge" style="background:${esc(d.badgeBg || '#ECECEF')};color:${esc(d.badgeColor || accent)}">
             ${esc(d.badge || item.badge || A.TYPE_LABEL[item.type])}
           </span>
         </div>
@@ -747,5 +846,7 @@
 
 <!-- Export to Figma button (shared exporter) -->
 <script src="figma-export.js"></script>
+<script src="test-scenarios-data.js"></script>
+<script src="test-scenarios.js"></script>
 </body>
 </html>

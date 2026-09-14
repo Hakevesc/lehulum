@@ -60,7 +60,7 @@
         <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
       </div>
       <h2 class="ok-title">Errif Activated</h2>
-      <p class="ok-desc">Your Errif overdraft is ready. You can now complete this payment and repay later.</p>
+      <p class="ok-desc">Your Errif overdraft is ready. You can now complete this merchant payment and repay later.</p>
       <div class="limit-card">
         <span class="lbl">Available Errif limit</span>
         <span class="amt">5,000.00 ETB</span>
@@ -79,14 +79,34 @@
     // Errif is now active and will fund this payment
     sessionStorage.setItem('odStatus', 'active_ok');
     const data = JSON.parse(sessionStorage.getItem('merchantData') || '{}');
+    data.payAccount = 'overdraft';
+    data.overdraft = true;
     data.account = 'overdraft';
     data.fee = '0.00';
     data.total = parseFloat(data.payAmount || '0').toFixed(2);
+    data.odBreakdown = computeOdBreakdown(parseFloat(data.payAmount || 0));
     sessionStorage.setItem('merchantData', JSON.stringify(data));
-    window.location.href = 'Merchant Payment_Review.html';
+    window.location.href = 'Merchant Payment_Enter PIN.html';
+  }
+
+  function computeOdBreakdown(amt) {
+    const mpesaBal = Math.min(amt, 30);
+    const odBal = Math.max(0, amt - mpesaBal);
+    const serviceFee = odBal > 0 ? parseFloat(Math.max(5, odBal * 0.05).toFixed(2)) : 0;
+    const dailyFee = odBal > 0 ? parseFloat(Math.max(0.10, odBal * 0.001).toFixed(2)) : 0;
+    const penalty = odBal > 0 ? parseFloat(Math.max(0.13, odBal * 0.0011).toFixed(2)) : 0;
+    const due = new Date(); due.setDate(due.getDate() + 30);
+    return {
+      mpesaBal, odBal, serviceFee,
+      totalAdvance: parseFloat((odBal + serviceFee).toFixed(2)),
+      dailyFee, penalty,
+      dueFmt: String(due.getDate()).padStart(2, '0') + '/' + String(due.getMonth() + 1).padStart(2, '0') + '/' + due.getFullYear()
+    };
   }
 </script>
 
 <script src="figma-export.js"></script>
+<script src="test-scenarios-data.js"></script>
+<script src="test-scenarios.js"></script>
 </body>
 </html>

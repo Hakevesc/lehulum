@@ -58,18 +58,6 @@
   .loc-opt span { font-family: 'Switzer', sans-serif; font-size: 13px; color: var(--On-Surface); }
   .loc-empty { font-family: 'Switzer', sans-serif; font-size: 12.5px; color: var(--On-Surface-Low); padding: 12px 13px; }
 
-  /* Radius chip + location grant bar */
-  .radius-chip { display: flex; align-items: center; justify-content: center; gap: 6px; background: #FFF; border-radius: 18px; padding: 6px 13px; box-shadow: 0 2px 8px rgba(0,0,0,0.04); }
-  .radius-chip svg { width: 13px; height: 13px; stroke: var(--Primary); stroke-width: 2; fill: none; }
-  .radius-chip span { font-family: 'Switzer', sans-serif; font-size: 11.5px; color: var(--On-Surface-Low); }
-  .radius-chip b { color: var(--Primary); font-weight: 700; }
-
-  /* Tabs */
-  .tabs { display: flex; background: #FFF; border-radius: 12px; padding: 4px; gap: 4px; box-shadow: 0 2px 8px rgba(0,0,0,0.04); }
-  .tab { flex: 1; height: 38px; border-radius: 9px; border: none; background: transparent; font-family: 'Switzer', sans-serif; font-size: 13px; font-weight: 600; color: var(--On-Surface-Low); cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px; transition: all 0.2s; }
-  .tab svg { width: 16px; height: 16px; stroke: currentColor; fill: none; stroke-width: 2; }
-  .tab.active { background: var(--Primary); color: #FFF; box-shadow: 0 2px 8px rgba(254,53,61,0.25); }
-
   /* Map view */
   .map-view { position: relative; background: #EDEBE6; border-radius: 16px; height: 250px; overflow: hidden; border: 1px solid var(--Border); }
   .map-roads { position: absolute; inset: 0; background-image: repeating-linear-gradient(20deg, rgba(255,255,255,0.9) 0 2px, transparent 0 26px), repeating-linear-gradient(-20deg, rgba(255,255,255,0.85) 0 2px, transparent 0 34px); opacity: 0.55; }
@@ -88,7 +76,7 @@
   .map-you::after { content: ''; position: absolute; left: -6px; bottom: -10px; width: 4px; height: 4px; border-radius: 50%; background: #2B6BFF; box-shadow: 0 4px 0 2px #2B6BFF; opacity: 0.55; }
 
   /* Agent list */
-  .agent-item { display: flex; align-items: center; gap: 12px; background: #FFF; border-radius: 14px; padding: 13px 14px; box-shadow: 0 2px 8px rgba(0,0,0,0.04); cursor: pointer; transition: box-shadow 0.15s, transform 0.12s; }
+  .agent-item { display: flex; align-items: center; gap: 12px; background: #FFF; border-radius: 14px; padding: 13px 8px 13px 14px; box-shadow: 0 2px 8px rgba(0,0,0,0.04); cursor: pointer; transition: box-shadow 0.15s, transform 0.12s; }
   .agent-item:hover { box-shadow: 0 4px 14px rgba(0,0,0,0.08); }
   .agent-item:active { transform: scale(0.99); }
   .agent-item .avatar { width: 46px; height: 46px; border-radius: 50%; background: #FFE9EA; color: var(--Primary); display: flex; align-items: center; justify-content: center; font-family: 'Switzer', sans-serif; font-size: 14px; font-weight: 700; flex-shrink: 0; }
@@ -104,17 +92,19 @@
   .list-hint { font-family: 'Switzer', sans-serif; font-size: 12px; color: var(--On-Surface-Low); }
   .list-hint b { color: var(--On-Surface); font-weight: 600; }
 
-  .empty { display: none; flex-direction: column; align-items: center; gap: 10px; padding: 30px 20px; text-align: center; }
-  .empty.show { display: flex; }
-  .empty .ico { width: 60px; height: 60px; border-radius: 20px; background: #FFF1F2; display: flex; align-items: center; justify-content: center; }
-  .empty .ico svg { width: 28px; height: 28px; stroke: var(--Primary); stroke-width: 1.8; fill: none; }
-  .empty .t { font-family: 'Switzer', sans-serif; font-size: 15px; font-weight: 700; color: var(--On-Surface); }
-  .empty .s { font-family: 'Switzer', sans-serif; font-size: 12.5px; color: var(--On-Surface-Low); line-height: 1.5; max-width: 240px; }
-
-  .grant-bar { display: flex; align-items: center; justify-content: center; gap: 8px; background: #FFF1F2; border: 1px solid #FFD6D9; border-radius: 12px; padding: 10px 14px; }
-  .grant-bar svg { width: 16px; height: 16px; stroke: var(--Primary); stroke-width: 1.9; fill: none; flex-shrink: 0; }
-  .grant-bar span { font-family: 'Switzer', sans-serif; font-size: 12px; color: #8E232C; }
-  .grant-bar button { margin-left: auto; border: none; background: var(--Primary); color: #FFF; font-family: 'Switzer', sans-serif; font-size: 12px; font-weight: 600; padding: 7px 13px; border-radius: 9px; cursor: pointer; flex-shrink: 0; }
+  /* ── Location permission modal ── */
+  .perm-overlay { position: absolute; inset: 0; background: rgba(0,0,0,0.45); display: none; align-items: center; justify-content: center; padding: 24px; z-index: 40; }
+  .perm-overlay.show { display: flex; }
+  .perm-modal { width: 100%; background: #FFF; border-radius: 22px; padding: 26px 22px 22px; display: flex; flex-direction: column; align-items: center; gap: 6px; box-shadow: 0 20px 50px rgba(0,0,0,0.25); }
+  .perm-icon { width: 56px; height: 56px; border-radius: 50%; background: #FFF1F2; display: flex; align-items: center; justify-content: center; margin-bottom: 8px; }
+  .perm-icon svg { width: 28px; height: 28px; stroke: var(--Primary); stroke-width: 1.8; fill: none; }
+  .perm-title { font-family: 'Switzer', sans-serif; font-size: 16.5px; font-weight: 700; color: var(--On-Surface); text-align: center; }
+  .perm-body { font-family: 'Switzer', sans-serif; font-size: 12.5px; line-height: 1.5; color: var(--On-Surface-Low); text-align: center; margin-top: 4px; margin-bottom: 14px; }
+  .perm-actions { width: 100%; display: flex; flex-direction: column; gap: 10px; }
+  .perm-btn { width: 100%; height: 48px; border-radius: 13px; font-family: 'Switzer', sans-serif; font-size: 14.5px; font-weight: 600; cursor: pointer; transition: opacity 0.2s; }
+  .perm-btn:active { opacity: 0.85; }
+  .perm-btn.primary { border: none; background: var(--Primary); color: #FFF; box-shadow: 0 4px 12px rgba(254,53,61,0.25); }
+  .perm-btn.ghost { border: none; background: transparent; color: var(--On-Surface-Low); }
 </style>
 </head>
 <body>
@@ -140,14 +130,7 @@
 
     <div class="scroll">
 
-      <!-- Location grant bar (denied by default to showcase the requirement) -->
-      <div class="grant-bar" id="grantBar">
-        <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg>
-        <span>Location access is required to find nearby agents.</span>
-        <button onclick="grantLocation()">Allow</button>
-      </div>
-
-      <div class="locate-bar" id="locateBar" style="display:none;">
+      <div class="locate-bar" id="locateBar">
         <svg class="pin-ico" viewBox="0 0 24 24" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s7-5.7 7-11a7 7 0 1 0-14 0c0 5.3 7 11 7 11z"/><circle cx="12" cy="10" r="2.5"/></svg>
         <div class="loc-wrap" id="locDisplay">
           <div class="loc" id="locName">Bole, Addis Ababa</div>
@@ -161,19 +144,8 @@
       </div>
       <div class="loc-suggest" id="locSuggest"></div>
 
-      <!-- View toggle -->
-      <div class="tabs">
-        <button class="tab" id="tabMap" onclick="switchView('map')"><svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><polygon points="1 6 1 22 8 18 16 22 23 18 23 2 16 6 8 2 1 6"/><line x1="8" y1="2" x2="8" y2="18"/><line x1="16" y1="6" x2="16" y2="22"/></svg>Map</button>
-        <button class="tab" id="tabList" onclick="switchView('list')"><svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><circle cx="3.5" cy="6" r="1.5"/><circle cx="3.5" cy="12" r="1.5"/><circle cx="3.5" cy="18" r="1.5"/></svg>List</button>
-      </div>
-
-      <div class="radius-chip">
-        <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><line x1="12" y1="12" x2="20" y2="8"/></svg>
-        <span>Searching within <b>7 km</b> radius</span>
-      </div>
-
       <!-- Map view -->
-      <div class="map-view" id="mapView" style="display:none;">
+      <div class="map-view" id="mapView">
         <div class="map-roads"></div>
         <div class="map-block-a"></div><span class="map-label a">Bole</span>
         <div class="map-block-b"></div><span class="map-label b">Airport Rd</span>
@@ -184,18 +156,22 @@
       </div>
 
       <!-- List view -->
-      <div id="listWrap" style="display:none;">
-        <div class="list-hint"><b id="agentCount"></b> authorized agents near <span id="areaName">Bole, Addis Ababa</span></div>
-        <div id="agentList" class="list-wrap"></div>
-      </div>
+      <div class="list-hint"><b id="agentCount"></b> authorized agents near <span id="areaName">Bole, Addis Ababa</span></div>
+      <div id="agentList" class="list-wrap"></div>
 
-      <!-- No agents found -->
-      <div class="empty" id="emptyAgents">
-        <div class="ico"><svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg></div>
-        <div class="t">No Agents Found</div>
-        <div class="s">No authorized agents found nearby. Try widening your search area.</div>
-      </div>
+    </div>
+  </div>
 
+  <!-- Location permission modal: shown first, before the map/list -->
+  <div class="perm-overlay show" id="permOverlay">
+    <div class="perm-modal">
+      <div class="perm-icon"><svg viewBox="0 0 24 24" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s7-5.7 7-11a7 7 0 1 0-14 0c0 5.3 7 11 7 11z"/><circle cx="12" cy="10" r="2.5"/></svg></div>
+      <div class="perm-title">Allow Location Access</div>
+      <div class="perm-body">Lehulum uses your location to find M-PESA agents near you and show accurate distances. Your location is only used while the app is open.</div>
+      <div class="perm-actions">
+        <button class="perm-btn primary" onclick="allowLocation()">Allow While Using App</button>
+        <button class="perm-btn ghost" onclick="denyLocation()">Not Now</button>
+      </div>
     </div>
   </div>
 </div>
@@ -208,63 +184,48 @@
     { abbr: 'BM', name: 'Bole Mini-Mart', code: '204411', dist: '2.6 km', eta: '8 min drive', addr: 'Dembel City Center', open: true, phone: '+251911000004', x: null, y: null }
   ];
 
-  let view = 'map';
-  let granted = false;
   const $ = id => document.getElementById(id);
   const pinIcon = () => '<svg viewBox="0 0 24 24" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s7-5.7 7-11a7 7 0 1 0-14 0c0 5.3 7 11 7 11z"/><circle cx="12" cy="10" r="2.4"/></svg>';
 
-  // Location permission: denied initially, per the P1 requirement.
-  function grantLocation() {
-    granted = true;
-    $('grantBar').style.display = 'none';
-    $('locateBar').style.display = 'flex';
-    renderAll();
+  // ── Location permission modal ──
+  function allowLocation() {
+    $('permOverlay').classList.remove('show');
+    $('locName').textContent = 'Bole, Addis Ababa';
+    $('locSub').textContent = 'Using your current location';
   }
 
-  function renderAll() {
-    // Map pins
-    $('mapPins').innerHTML = AGENTS
-      .filter(a => a.x)
-      .map(a =>
-        '<div class="map-pin" style="left:' + a.x + ';top:' + a.y + '" title="' + a.name + '" onclick="pickAgent(\'' + a.code + '\')">' +
-          pinIcon() +
-          '<span class="dist">' + a.dist + '</span>' +
-        '</div>'
-      ).join('');
+  function denyLocation() {
+    $('permOverlay').classList.remove('show');
+    $('locName').textContent = 'Addis Ababa';
+    $('locSub').textContent = 'Turn on location for more accurate results';
+  }
 
-    // List items
-    $('agentList').innerHTML = AGENTS.map(a =>
-      '<div class="agent-item" onclick="pickAgent(\'' + a.code + '\')">' +
-        '<div class="avatar">' + a.abbr + '</div>' +
-        '<div class="info">' +
-          '<div class="nm">' + a.name + '</div>' +
-          '<div class="sub">Agent No. ' + a.code + ' • ' + (a.open ? 'Open now' : 'Open 8:00–18:00') + '</div>' +
-        '</div>' +
-        '<div class="right">' +
-          '<div class="dist">' + a.dist + '</div>' +
-          '<div class="eta">' + a.eta + '</div>' +
-        '</div>' +
-        '<svg class="arrow" viewBox="0 0 24 24" fill="none" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>' +
+  // Map pins
+  $('mapPins').innerHTML = AGENTS
+    .filter(a => a.x)
+    .map(a =>
+      '<div class="map-pin" style="left:' + a.x + ';top:' + a.y + '" title="' + a.name + '" onclick="pickAgent(\'' + a.code + '\')">' +
+        pinIcon() +
+        '<span class="dist">' + a.dist + '</span>' +
       '</div>'
     ).join('');
-    $('agentCount').textContent = AGENTS.length;
 
-    if (!granted) {
-      $('mapView').style.display = 'none';
-      $('listWrap').style.display = 'none';
-    } else {
-      switchView(view);
-    }
-  }
-
-  function switchView(v) {
-    view = v;
-    $('tabMap').classList.toggle('active', v === 'map');
-    $('tabList').classList.toggle('active', v === 'list');
-    $('mapView').style.display = v === 'map' ? 'block' : 'none';
-    $('listWrap').style.display = v === 'list' ? 'block' : 'none';
-    $('emptyAgents').classList.remove('show');
-  }
+  // List items
+  $('agentList').innerHTML = AGENTS.map(a =>
+    '<div class="agent-item" onclick="pickAgent(\'' + a.code + '\')">' +
+      '<div class="avatar">' + a.abbr + '</div>' +
+      '<div class="info">' +
+        '<div class="nm">' + a.name + '</div>' +
+        '<div class="sub">Short Code: ' + a.code + ' • ' + (a.open ? 'Open' : 'Closed') + '</div>' +
+      '</div>' +
+      '<div class="right">' +
+        '<div class="dist">' + a.dist + '</div>' +
+        '<div class="eta">' + a.eta + '</div>' +
+      '</div>' +
+      '<svg class="arrow" viewBox="0 0 24 24" fill="none" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>' +
+    '</div>'
+  ).join('');
+  $('agentCount').textContent = AGENTS.length;
 
   // ── Location search ──
   const AREAS = [
@@ -328,5 +289,7 @@
     window.location.href = 'Cash In - Agent Details.html';
   }
 </script>
+<script src="test-scenarios-data.js"></script>
+<script src="test-scenarios.js"></script>
 </body>
 </html>

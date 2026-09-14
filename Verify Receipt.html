@@ -164,8 +164,8 @@
     <div class="sheet" id="manualSheet">
       <div class="grip"></div>
       <div class="sheet-title">Enter Receipt Code</div>
-      <div class="sheet-sub">Type the transaction ID printed on the receipt (e.g. PP-2104XYZ).</div>
-      <input class="code-input" id="codeInput" placeholder="e.g. PP-2104XYZ" value="PP-2104XYZ">
+      <div class="sheet-sub">Type the transaction ID printed on the receipt (e.g. UH82LQNP5T).</div>
+      <input class="code-input" id="codeInput" placeholder="e.g. UH82LQNP5T" value="UH82LQNP5T">
       <button class="full-btn" onclick="verifyCode()">Verify Receipt</button>
     </div>
   </div>
@@ -186,7 +186,7 @@
         <div class="lbl">Amount</div>
         <div class="val">500.00 Birr</div>
       </div>
-      <div class="receipt-row"><span class="k">Transaction ID</span><span class="v" id="resCode">PP-2104XYZ</span></div>
+      <div class="receipt-row"><span class="k">Transaction ID</span><span class="v" id="resCode">UH82LQNP5T</span></div>
       <div class="receipt-row"><span class="k">From</span><span class="v">Aster Mequanent</span></div>
       <div class="receipt-row"><span class="k">To</span><span class="v">Mom · 2517****78</span></div>
       <div class="receipt-row"><span class="k">Type</span><span class="v">P2P Send Money</span></div>
@@ -225,7 +225,7 @@
   function closeManual() { document.getElementById('manualSheet').classList.remove('show'); }
 
   function showResult(code) {
-    document.getElementById('resCode').textContent = code || 'PP-2104XYZ';
+    document.getElementById('resCode').textContent = code || 'UH82LQNP5T';
     document.getElementById('result').classList.add('show');
   }
   function closeResult() {
@@ -239,7 +239,7 @@
   }
 
   function verifyCode() {
-    const code = (document.getElementById('codeInput').value || 'PP-2104XYZ').trim().toUpperCase();
+    const code = (document.getElementById('codeInput').value || 'UH82LQNP5T').trim().toUpperCase();
     closeManual();
     showResult(code);
   }
@@ -251,5 +251,7 @@
 
 <!-- Export to Figma button (shared exporter) -->
 <script src="figma-export.js"></script>
+<script src="test-scenarios-data.js"></script>
+<script src="test-scenarios.js"></script>
 </body>
 </html>

@@ -67,18 +67,20 @@
   .qr-wrapper { padding: 8px; border: 3px solid var(--Primary); border-radius: 16px; background: #FFF; display: inline-block; position: relative; z-index: 2; }
   .qr-wrapper img { width: 80px; height: 80px; display: block; }
 
-  .bottom-actions { flex-shrink: 0; display: flex; justify-content: space-around; padding: 8px 16px 10px; width: 100%; background: #F5F5F5; border-top: 1px solid #E8E8E8; }
-  .action-btn { display: flex; flex-direction: column; align-items: center; gap: 4px; background: transparent; border: none; cursor: pointer; transition: all 0.2s; flex: 1; padding: 6px 0; }
+  .bottom-actions { flex-shrink: 0; display: flex; justify-content: space-around; padding: 10px 16px 12px; width: 100%; background: #F5F5F5; }
+  .action-btn { display: flex; flex-direction: column; align-items: center; gap: 6px; background: transparent; border: none; cursor: pointer; transition: all 0.2s; flex: 1; padding: 4px 0; }
   .action-btn:hover { transform: translateY(-2px); }
   .action-btn:active { transform: scale(0.95); }
-  .action-icon { width: 52px; height: 52px; border-radius: 14px; background: var(--Primary-Light); display: flex; align-items: center; justify-content: center; transition: all 0.2s; }
-  .action-btn:hover .action-icon { background: #FFE0E2; }
-  .action-icon svg, .action-icon i { width: 24px !important; height: 24px !important; color: var(--Primary); stroke: var(--Primary); stroke-width: 2px; }
+  .action-icon { width: 46px; height: 46px; border-radius: 13px; border: 1.5px solid var(--Primary); background: transparent; display: flex; align-items: center; justify-content: center; transition: all 0.2s; }
+  .action-btn:hover .action-icon { background: var(--Primary-Light); }
+  .action-icon svg, .action-icon i { width: 22px !important; height: 22px !important; color: var(--Primary); stroke: var(--Primary); stroke-width: 2px; }
   .action-label { color: var(--On-Surface); font-family: 'Switzer', sans-serif; font-size: 11px; font-weight: 500; letter-spacing: 0.1px; }
 
   .toast { position: fixed; bottom: 80px; left: 50%; transform: translateX(-50%) translateY(20px); background: var(--On-Surface); color: #FFF; padding: 12px 24px; border-radius: 12px; font-family: 'Switzer', sans-serif; font-size: 13px; font-weight: 500; opacity: 0; pointer-events: none; transition: all 0.3s ease; z-index: 1000; box-shadow: 0 4px 16px rgba(0,0,0,0.2); }
   .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
 </style>
+<script src="assets/qrcode.min.js"></script>
+<script src="assets/qr.js"></script>
 </head>
 <body>
 
@@ -130,7 +132,7 @@
             <span class="label">Transaction ID</span>
             <span class="value copyable">
               <button class="copy-btn" id="copyBtn" onclick="copyTransactionId()"><span class="copy-text">Copy ID</span><i data-lucide="copy"></i></button>
-              <span id="transactionId">pk2606160001</span>
+              <span id="transactionId">UH16PLWS3J</span>
             </span>
           </div>
           <div class="detail-row"><span class="label">Date and Time</span><span class="value" id="detailDate">Jun 16, 2026 at 10:00 AM</span></div>
@@ -181,7 +183,7 @@
   document.getElementById('transactionId').textContent = txId;
 
   const qrData = encodeURIComponent(JSON.stringify({ type: 'Package Purchase', provider, package: pkg, recipient: phone, txId, amount: amt + ' ETB' }));
-  document.getElementById('qrCode').src = `https://api.qrserver.com/v1/create-qr-code/?size=240x240&data=${qrData}&margin=10`;
+  renderQR(document.getElementById('qrCode'), decodeURIComponent(qrData), 240);
 
   function copyTransactionId() {
     const id = document.getElementById('transactionId').textContent;
@@ -202,5 +204,7 @@
 </script>
 
 <script src="figma-export.js"></script>
+<script src="test-scenarios-data.js"></script>
+<script src="test-scenarios.js"></script>
 </body>
 </html>

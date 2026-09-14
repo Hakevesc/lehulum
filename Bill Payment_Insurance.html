@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pay Insurance</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@400;500;600&display=swap');
+  @import url('https://api.fontshare.com/v2/css?f[]=switzer@400,500,600,700&display=swap');
+
+  :root {
+    --Primary: #FE353D;
+    --On-Surface: #1C1C21;
+    --On-Surface-Low: #7C7C87;
+    --Background: #F5F5F5;
+    --Field: #F8F8F9;
+    --Field-Border: #EFEFF1;
+    --Success: #1FC83B;
+    --Success-Light: #EEF9F0;
+    --Warning: #E09B0B;
+    --Warning-Light: #FDF6E7;
+    --Error-Light: #FDECEC;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'Inter', sans-serif; background: transparent; display: flex; justify-content: center; align-items: center; min-height: 100vh; padding: 20px; }
+  .phone-frame { width: 360px; height: 780px; background: var(--Background); border-radius: 30px; overflow: hidden; position: relative; box-shadow: 0 20px 60px rgba(0,0,0,0.15); display: flex; flex-direction: column; }
+  .app-content { height: 100%; display: flex; flex-direction: column; }
+
+  .status-bar { display: flex; justify-content: space-between; align-items: center; padding: 14px 24px 8px; background: var(--Background); flex-shrink: 0; }
+  .status-bar .time { font-size: 14px; font-weight: 600; color: var(--On-Surface); }
+  .status-icons { display: flex; align-items: center; gap: 6px; }
+  .status-icons svg { width: 18px; height: 18px; }
+
+  .header-nav { display: flex; align-items: center; justify-content: space-between; padding: 8px 16px 12px; background: var(--Background); flex-shrink: 0; }
+  .back-btn { width: 36px; height: 36px; border-radius: 50%; background: transparent; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: background 0.2s; }
+  .back-btn:hover { background: rgba(0,0,0,0.05); }
+  .back-btn svg { width: 22px; height: 22px; stroke: var(--On-Surface); stroke-width: 1.8px; fill: none; }
+  .header-title { color: var(--On-Surface); font-family: 'Switzer', sans-serif; font-size: 17px; font-weight: 500; letter-spacing: 0.3px; flex: 1; text-align: center; }
+
+  .scroll { flex: 1; overflow-y: auto; padding: 4px 16px 16px; display: flex; flex-direction: column; gap: 14px; }
+  .scroll::-webkit-scrollbar { width: 0; }
+
+  .biller-card { background: #FFF; border-radius: 16px; padding: 14px; display: flex; align-items: center; gap: 14px; box-shadow: 0 2px 8px rgba(0,0,0,0.04); flex-shrink: 0; }
+  .biller-card .logo { width: 44px; height: 44px; border-radius: 50%; background: #FFF; display: flex; align-items: center; justify-content: center; overflow: hidden; flex-shrink: 0; box-shadow: 0 2px 6px rgba(0,0,0,0.14); }
+  .biller-card .logo img { width: 100%; height: 100%; object-fit: contain; }
+  .biller-card .nm { flex: 1; min-width: 0; font-family: 'Switzer', sans-serif; font-size: 15px; font-weight: 700; color: var(--On-Surface); line-height: 1.35; }
+
+  .form-card { background: #FFF; border-radius: 16px; padding: 16px; box-shadow: 0 2px 8px rgba(0,0,0,0.04); display: flex; flex-direction: column; gap: 8px; flex-shrink: 0; }
+  .field-label { font-family: 'Switzer', sans-serif; font-size: 14px; font-weight: 500; color: var(--On-Surface); margin-top: 10px; }
+  .field-label:first-child { margin-top: 0; }
+  .field { height: 56px; background: var(--Field); border: 1px solid var(--Field-Border); border-radius: 12px; padding: 0 16px; display: flex; align-items: center; gap: 8px; transition: border-color 0.2s, box-shadow 0.2s, background 0.2s; }
+  .field:focus-within { border-color: var(--Primary); background: #FFF; box-shadow: 0 0 0 3px rgba(254,53,61,0.08); }
+  .field input { flex: 1; min-width: 0; border: none; background: transparent; outline: none; font-family: 'Switzer', sans-serif; font-size: 16px; font-weight: 700; color: var(--On-Surface); letter-spacing: 0.2px; }
+  .field input::placeholder { color: #A5A5AE; font-weight: 400; letter-spacing: 0; }
+  .field.warn { border-color: var(--Warning); background: #FFF; }
+  .field.warn input { color: var(--Warning); }
+  .field.err { border-color: var(--Primary); background: #FFF; }
+  .field.err input { color: var(--Primary); }
+
+  .balance-hint { font-family: 'Switzer', sans-serif; font-size: 11.5px; color: var(--On-Surface-Low); margin-top: 4px; }
+  .balance-hint b { color: var(--On-Surface); font-weight: 600; }
+
+  .msg { display: none; font-family: 'Switzer', sans-serif; font-size: 12.5px; font-weight: 600; margin-top: 6px; }
+  .msg.show { display: block; }
+  .msg.warn { color: var(--Warning); background: var(--Warning-Light); border-radius: 8px; padding: 10px 12px; }
+  .msg.err { color: var(--Primary); }
+
+  .status-chip { display: none; align-items: center; gap: 10px; border-radius: 12px; padding: 13px 14px; margin-top: 4px; font-family: 'Switzer', sans-serif; font-size: 14px; font-weight: 500; }
+  .status-chip.show { display: flex; }
+  .status-chip .ic { width: 24px; height: 24px; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+  .status-chip .ic svg { width: 13px; height: 13px; stroke-width: 3; fill: none; }
+  .status-chip.loading { background: #F1F1F4; color: var(--On-Surface-Low); }
+  .status-chip.loading .ic { border: 2.5px dashed var(--Success); animation: spin 1.6s linear infinite; }
+  .status-chip.ok { background: var(--Success-Light); color: var(--On-Surface); }
+  .status-chip.ok .ic { border: 1.8px solid var(--Success); }
+  .status-chip.ok .ic svg { stroke: var(--Success); }
+  .status-chip.bad { background: var(--Error-Light); color: var(--Primary); }
+  .status-chip.bad .ic { border: 1.8px solid var(--Primary); }
+  .status-chip.bad .ic svg { stroke: var(--Primary); }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  .bottom-bar { flex-shrink: 0; padding: 10px 16px 18px; background: var(--Background); }
+  .continue-btn { width: 100%; height: 52px; border-radius: 14px; border: none; background: #E0E0E0; color: var(--On-Surface-Low); font-family: 'Poppins', sans-serif; font-size: 15px; font-weight: 500; cursor: not-allowed; transition: all 0.2s; }
+  .continue-btn.active { background: var(--Primary); color: #FFF; cursor: pointer; box-shadow: 0 4px 16px rgba(254,53,61,0.25); }
+  .continue-btn.active:hover { background: #E5303A; box-shadow: 0 6px 20px rgba(254,53,61,0.35); transform: translateY(-1px); }
+  .continue-btn.active:active { transform: scale(0.98) translateY(0); }
+</style>
+</head>
+<body>
+<div class="phone-frame">
+  <div class="app-content">
+
+    <div class="status-bar">
+      <span class="time">10:00</span>
+      <div class="status-icons">
+        <svg viewBox="0 0 24 24" fill="none"><path d="M1 9l2 2c4.97-4.97 13.03-4.97 18 0l2-2C16.93 2.93 7.08 2.93 1 9z" fill="#1C1C21"/><path d="M5 13l2 2c2.76-2.76 7.24-2.76 10 0l2-2C15.14 9.14 8.87 9.14 5 13z" fill="#1C1C21"/><path d="M9 17l2 2c1.1-1.1 2.9-1.1 4 0l2-2c-2.21-2.21-5.79-2.21-8 0z" fill="#1C1C21"/></svg>
+        <svg viewBox="0 0 24 24" fill="none"><rect x="2" y="6" width="4" height="12" rx="1" fill="#1C1C21"/><rect x="8" y="4" width="4" height="14" rx="1" fill="#1C1C21"/><rect x="14" y="2" width="4" height="16" rx="1" fill="#1C1C21"/><rect x="20" y="0" width="4" height="18" rx="1" fill="#1C1C21" opacity="0.3"/></svg>
+        <svg viewBox="0 0 28 14" fill="none"><rect x="0" y="1" width="22" height="12" rx="2.5" stroke="#1C1C21" stroke-width="1.5"/><rect x="2" y="3" width="16" height="8" rx="1" fill="#1C1C21"/><rect x="24" y="4" width="2" height="6" rx="1" fill="#1C1C21"/></svg>
+      </div>
+    </div>
+
+    <div class="header-nav">
+      <button class="back-btn" onclick="goBack()">
+        <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+      </button>
+      <span class="header-title">Pay Insurance</span>
+      <div style="width:36px;"></div>
+    </div>
+
+    <div class="scroll">
+
+      <div class="biller-card">
+        <span class="logo"><img id="companyLogo" src="" alt=""></span>
+        <span class="nm" id="companyName">—</span>
+      </div>
+
+      <div class="form-card">
+        <span class="field-label">Enter Policy Number</span>
+        <div class="field" id="policyField">
+          <input id="policyInput" type="text" maxlength="12" placeholder="e.g. EJw246" autocomplete="off" oninput="onPolicyInput()">
+        </div>
+        <div class="status-chip loading" id="policyLoading">
+          <span class="ic"></span>
+          <span>Looking Up Policy Number</span>
+        </div>
+        <div class="status-chip ok" id="policyOk">
+          <span class="ic"><svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></span>
+          <span id="policyOkName"></span>
+        </div>
+        <div class="status-chip bad" id="policyBad">
+          <span class="ic"><svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M17 7 7 17M7 7l10 10"/></svg></span>
+          <span>Invalid policy number</span>
+        </div>
+
+        <span class="field-label">Enter Amount</span>
+        <div class="field" id="amtField">
+          <input id="amtInput" type="text" inputmode="decimal" placeholder="e.g. 1,000 Br" autocomplete="off"
+                 oninput="onAmountInput()" onfocus="unformatAmount()" onblur="formatAmount()">
+        </div>
+        <div class="balance-hint"><b>Balance:</b> <span id="balanceHint">—</span></div>
+        <div class="msg" id="amtMsg"></div>
+      </div>
+
+    </div>
+
+    <div class="bottom-bar">
+      <button class="continue-btn" id="continueBtn" onclick="continuePayment()" disabled>Continue</button>
+    </div>
+
+  </div>
+</div>
+
+<script>
+  // A policy number resolves to the person it covers.
+  // EJW247 is deliberately absent, so the number next to the valid one reports
+  // Invalid Policy Number without inventing a code.
+  const POLICIES = {
+    'EJW246': { name: 'Derartu Tulu Andegna' },
+    'AZK881': { name: 'Alemu Girma Bekele' }
+  };
+
+  const POLICY_LEN = 6;
+  const MIN_AMT = 5, MAX_AMT = 75000, BALANCE = 3000, FEE = 2;
+
+  const $ = id => document.getElementById(id);
+  const fmt = n => parseFloat(n || 0).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+
+  let company = { id: 'awash', name: 'Awash Insurance', logo: 'assets/bill pay logos/Awash Insurance.png' };
+  try {
+    const saved = JSON.parse(sessionStorage.getItem('insuranceCompany') || 'null');
+    if (saved && saved.name) company = saved;
+  } catch (e) { /* ignore corrupt state */ }
+
+  $('companyName').textContent = company.name;
+  $('companyLogo').src = company.logo;
+  $('balanceHint').textContent = fmt(BALANCE) + ' Br';
+
+  let policy = null;
+  let lookupTimer = null;
+
+  /* ── Policy ── */
+  function resetLookup() {
+    policy = null;
+    ['policyLoading', 'policyOk', 'policyBad'].forEach(id => $(id).classList.remove('show'));
+    $('policyField').classList.remove('err');
+    updateBtn();
+  }
+
+  function onPolicyInput() {
+    const el = $('policyInput');
+    el.value = el.value.replace(/[^A-Za-z0-9]/g, '').slice(0, 12);
+    clearTimeout(lookupTimer);
+    resetLookup();
+
+    // The number is matched case-insensitively; "EJw246" and "ejw246" agree.
+    const key = el.value.toUpperCase();
+    if (key.length > POLICY_LEN) {
+      $('policyBad').classList.add('show');
+      $('policyField').classList.add('err');
+      return;
+    }
+    if (key.length < POLICY_LEN) return;
+
+    $('policyLoading').classList.add('show');
+    lookupTimer = setTimeout(() => {
+      const hit = POLICIES[key];
+      $('policyLoading').classList.remove('show');
+      if (hit) {
+        policy = { number: el.value, name: hit.name };
+        $('policyOkName').textContent = hit.name;
+        $('policyOk').classList.add('show');
+      } else {
+        $('policyBad').classList.add('show');
+        $('policyField').classList.add('err');
+      }
+      updateBtn();
+    }, 1200);
+  }
+
+  /* ── Amount ── */
+  const amountValue = () => {
+    const raw = $('amtInput').value.replace(/[^\d.]/g, '');
+    return raw === '' ? null : parseFloat(raw);
+  };
+
+  function onAmountInput() {
+    const el = $('amtInput');
+    el.value = el.value.replace(/[^\d.]/g, '').replace(/(\..*)\./g, '$1');
+    validateAmount();
+    updateBtn();
+  }
+
+  function unformatAmount() {
+    const n = amountValue();
+    $('amtInput').value = n === null ? '' : String(n);
+  }
+
+  function formatAmount() {
+    const n = amountValue();
+    if (n !== null && !isNaN(n)) $('amtInput').value = fmt(n) + ' Br';
+  }
+
+  function setAmountState(state, text) {
+    const field = $('amtField'), msg = $('amtMsg');
+    field.classList.toggle('warn', state === 'warn');
+    field.classList.toggle('err', state === 'err');
+    msg.classList.toggle('warn', state === 'warn');
+    msg.classList.toggle('err', state === 'err');
+    msg.classList.toggle('show', !!state);
+    if (text) msg.textContent = text;
+  }
+
+  function validateAmount() {
+    const n = amountValue();
+    if (n === null) { setAmountState(null); return null; }
+    if (isNaN(n) || n <= 0) { setAmountState('err', 'Enter a valid amount'); return null; }
+    if (n < MIN_AMT) { setAmountState('err', 'Minimum Amount: ' + fmt(MIN_AMT) + ' Br'); return null; }
+    if (n > MAX_AMT) { setAmountState('err', 'Maximum Amount: ' + fmt(MAX_AMT) + ' Br'); return null; }
+    if (n + FEE > BALANCE) { setAmountState('warn', 'Insufficient Balance'); return null; }
+    setAmountState(null);
+    return n;
+  }
+
+  function updateBtn() {
+    const ok = !!policy && validateAmount() !== null;
+    $('continueBtn').classList.toggle('active', ok);
+    $('continueBtn').disabled = !ok;
+  }
+
+  function continuePayment() {
+    const amount = validateAmount();
+    if (!policy || amount === null) return;
+    sessionStorage.setItem('billPaymentData', JSON.stringify({
+      plan: 'insurance',
+      planLabel: '',
+      biller: {
+        name: company.name,
+        fullName: company.name,
+        category: 'Insurance',
+        abbr: 'IN',
+        logo: company.logo
+      },
+      account: policy.number,
+      customerName: policy.name,
+      rows: [
+        { key: 'Business Name',  value: company.name },
+        { key: 'Policy Number',  value: policy.number }
+      ],
+      receiptRows: [
+        { key: 'Policy Number', value: policy.number },
+        { key: 'Policy Holder', value: policy.name }
+      ],
+      txType: 'Insurance Payment',
+      payAmount: amount.toFixed(2),
+      fee: FEE.toFixed(2),
+      serviceFee: '2.00',
+      vat: '0.00',
+      total: (amount + FEE).toFixed(2),
+      payAccount: 'main',
+      payerName: 'Abebeb Bikila Maraton'
+    }));
+    window.location.href = 'Bill Payment_Review.html';
+  }
+
+  function goBack() { window.location.href = 'Bill Payment_Insurance Company.html'; }
+</script>
+
+<script src="figma-export.js"></script>
+<script src="test-scenarios-data.js"></script>
+<script src="test-scenarios.js"></script>
+</body>
+</html>

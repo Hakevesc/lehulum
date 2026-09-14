@@ -24,15 +24,124 @@
 
   * { margin: 0; padding: 0; box-sizing: border-box; }
 
-  body { margin: 0; padding: 0; background: transparent; font-family: "Inter", sans-serif; display: flex; justify-content: center; }
+  body {
+    font-family: 'Inter', sans-serif;
+    background: transparent;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    padding: 20px;
+  }
 
-  
+  .phone-frame {
+    width: 360px;
+    height: 780px;
+    background: #F5F5F5;
+    border-radius: 30px;
+    overflow: hidden;
+    position: relative;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
+  }
 
-  
+  .app-content {
+    height: 100%;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+  }
 
-  
+  /* Status Bar */
+  .status-bar {
+    flex-shrink: 0;
+    position: relative;
+    z-index: 5;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    padding: 14px 24px 8px;
+    background: #F5F5F5;
+  }
+  .status-bar .time { font-size: 14px; font-weight: 600; color: var(--On-Surface); }
+  .status-icons { display: flex; align-items: center; gap: 6px; }
+  .status-icons svg { width: 18px; height: 18px; }
 
-  
+  /* Header Navigation */
+  .header-nav {
+    flex-shrink: 0;
+    position: relative;
+    z-index: 5;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 16px 12px;
+    background: #F5F5F5;
+  }
+
+  .close-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .close-btn:hover {
+    background: rgba(0,0,0,0.05);
+  }
+
+  .close-btn svg {
+    width: 22px;
+    height: 22px;
+    stroke: var(--On-Surface);
+    stroke-width: 1.8px;
+  }
+
+  .header-title {
+    color: var(--On-Surface);
+    font-family: 'Switzer', sans-serif;
+    font-size: 17px;
+    font-weight: 500;
+    letter-spacing: 0.3px;
+    flex: 1;
+    text-align: center;
+  }
+
+  .header-actions {
+    display: flex;
+    gap: 4px;
+  }
+
+  .header-action-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .header-action-btn:hover {
+    background: rgba(0,0,0,0.05);
+  }
+
+  .header-action-btn svg {
+    width: 20px;
+    height: 20px;
+    stroke: var(--On-Surface);
+    stroke-width: 1.8px;
+  }
 
   /* Scrollable Content Area */
   .scrollable-content {
@@ -338,7 +447,45 @@
     display: block;
   }
 
-  
+  /* Bottom Actions - Sticky at bottom */
+  .bottom-actions { flex-shrink: 0; display: flex; justify-content: space-around; padding: 10px 16px 12px; width: 100%; background: #F5F5F5; }
+
+  .action-btn {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    transition: all 0.2s;
+    flex: 1;
+    padding: 4px 0;
+  }
+
+  .action-btn:hover {
+    transform: translateY(-2px);
+  }
+
+  .action-btn:active {
+    transform: scale(0.95);
+  }
+
+  .action-icon { width: 46px; height: 46px; border-radius: 13px; border: 1.5px solid var(--Primary); background: transparent; display: flex; align-items: center; justify-content: center; transition: all 0.2s; }
+
+  .action-btn.favorited .action-icon { background: var(--Primary-Light); }
+  .action-btn:hover .action-icon { background: var(--Primary-Light); }
+
+  .action-icon svg,
+  .action-icon i { width: 22px !important; height: 22px !important; color: var(--Primary); stroke: var(--Primary); stroke-width: 2px; }
+
+  .action-label {
+    color: var(--On-Surface);
+    font-family: 'Switzer', sans-serif;
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.1px;
+  }
 
   /* Toast Notification */
   .toast {
@@ -365,10 +512,245 @@
     transform: translateX(-50%) translateY(0);
   }
 </style>
+<script src="assets/qrcode.min.js"></script>
+<script src="assets/qr.js"></script>
 </head>
 <body>
 
-<div class="receipt-only"><!-- Toast Notification -->
+<div class="phone-frame">
+  <div class="app-content">
+
+    <!-- Status Bar -->
+    <div class="status-bar">
+      <span class="time">10:00</span>
+      <div class="status-icons">
+        <svg viewBox="0 0 24 24" fill="none">
+          <rect x="2" y="6" width="4" height="12" rx="1" fill="#1C1C21"/>
+          <rect x="8" y="4" width="4" height="14" rx="1" fill="#1C1C21"/>
+          <rect x="14" y="2" width="4" height="16" rx="1" fill="#1C1C21"/>
+          <rect x="20" y="0" width="4" height="18" rx="1" fill="#1C1C21" opacity="0.3"/>
+        </svg>
+        <svg viewBox="0 0 24 24" fill="none">
+          <path d="M5 12.55a11 11 0 0 1 14.08 0" stroke="#1C1C21" stroke-width="1.5" stroke-linecap="round"/>
+          <path d="M1.42 9a16 16 0 0 1 21.16 0" stroke="#1C1C21" stroke-width="1.5" stroke-linecap="round"/>
+          <path d="M8.53 16.11a6 6 0 0 1 6.95 0" stroke="#1C1C21" stroke-width="1.5" stroke-linecap="round"/>
+          <line x1="12" y1="20" x2="12.01" y2="20" stroke="#1C1C21" stroke-width="2" stroke-linecap="round"/>
+        </svg>
+        <svg viewBox="0 0 28 14" fill="none">
+          <rect x="0" y="1" width="22" height="12" rx="2.5" stroke="#1C1C21" stroke-width="1.5"/>
+          <rect x="2" y="3" width="16" height="8" rx="1" fill="#1C1C21"/>
+          <rect x="24" y="4" width="2" height="6" rx="1" fill="#1C1C21"/>
+        </svg>
+      </div>
+    </div>
+
+    <!-- Header Navigation -->
+    <div class="header-nav">
+      <button class="close-btn" onclick="closeReceipt()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="18" y1="6" x2="6" y2="18"></line>
+          <line x1="6" y1="6" x2="18" y2="18"></line>
+        </svg>
+      </button>
+      <span class="header-title">Agency Banking Cash Out</span>
+      <div class="header-actions">
+        <button class="header-action-btn" onclick="shareReceipt()" title="Share">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="18" cy="5" r="3"></circle>
+            <circle cx="6" cy="12" r="3"></circle>
+            <circle cx="18" cy="19" r="3"></circle>
+            <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line>
+            <line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line>
+          </svg>
+        </button>
+        <button class="header-action-btn" onclick="downloadReceipt()" title="Download">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+            <polyline points="7 10 12 15 17 10"></polyline>
+            <line x1="12" y1="15" x2="12" y2="3"></line>
+          </svg>
+        </button>
+      </div>
+    </div>
+
+    <!-- Scrollable Content -->
+    <div class="scrollable-content">
+
+      <!-- Receipt Card -->
+      <div class="receipt-card">
+
+        <!-- Success Icon (overlapping top) -->
+        <div class="success-icon-wrapper">
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M20 6 9 17l-5-5"></path>
+          </svg>
+        </div>
+
+        <!-- Stamp Watermark -->
+        <div class="stamp-watermark">
+          <img src="assets/M-PESA-official_stamp.png" alt="M-PESA Stamp">
+        </div>
+
+        <!-- Receipt Header -->
+        <div class="receipt-header">
+          <h2>Cashout Successful</h2>
+          <p>Thank you for using M-PESA Agency Banking</p>
+        </div>
+
+        <!-- Dashed Divider -->
+        <div class="dashed-divider"></div>
+
+        <!-- Transaction Details -->
+        <div class="transaction-details">
+
+          <!-- From Bank (Customer Bank) -->
+          <div class="detail-row">
+            <span class="label">From Bank</span>
+            <span class="value" id="senderBank">CBE</span>
+          </div>
+
+          <!-- From Bank Account -->
+          <div class="detail-row">
+            <span class="label">From Account</span>
+            <span class="value" id="senderAccount">**** **** 1234 / ABEBE KEBEDE</span>
+          </div>
+
+          <!-- To Agency -->
+          <div class="detail-row">
+            <span class="label">To Agency</span>
+            <span class="value" id="receiverName">BETTY MERHAT AGENCY</span>
+          </div>
+
+          <!-- Agency Short Code -->
+          <div class="detail-row">
+            <span class="label">Agency Short Code</span>
+            <span class="value" id="receiverShortCode">876543</span>
+          </div>
+
+          <!-- Amount -->
+          <div class="detail-row">
+            <span class="label">Amount</span>
+            <span class="value" id="transactionAmount">ETB 2,000.00</span>
+          </div>
+
+          <!-- Transaction Detail -->
+          <div class="detail-row">
+            <span class="label">Transaction Detail</span>
+            <span class="value" id="transactionDetail">Agency Banking Cashout - CBE</span>
+          </div>
+
+          <!-- Receipt Number -->
+          <div class="detail-row">
+            <span class="label">Receipt Number</span>
+            <span class="value" id="receiptNumber">RCP-2024-12345678</span>
+          </div>
+
+          <!-- Transaction ID -->
+          <div class="detail-row">
+            <span class="label">Transaction ID</span>
+            <span class="value copyable">
+              <button class="copy-btn" id="copyBtn" onclick="copyTransactionId()">
+                <span class="copy-text">Copy ID</span>
+                <i data-lucide="copy"></i>
+              </button>
+              <span id="transactionId">UH73NFPT8K</span>
+            </span>
+          </div>
+
+          <!-- Transaction Date and Time -->
+          <div class="detail-row">
+            <span class="label">Date and Time</span>
+            <span class="value" id="transactionDate">12/12/2024 at 8:34 AM</span>
+          </div>
+
+          <!-- Used Channel -->
+          <div class="detail-row">
+            <span class="label">Used Channel</span>
+            <span class="value" id="usedChannel">M-PESA App</span>
+          </div>
+
+          <!-- Transaction Reason -->
+          <div class="detail-row">
+            <span class="label">Transaction Reason</span>
+            <span class="value" id="transactionReason">Cash Withdrawal</span>
+          </div>
+
+        </div>
+
+        <!-- Fee Summary -->
+        <div class="transaction-details">
+          <div class="fee-detail-row">
+            <span class="label">Amount</span>
+            <span class="value">ETB 2,000.00</span>
+          </div>
+          <div class="fee-detail-row">
+            <span class="label">Service Fee</span>
+            <span class="value" id="serviceFee">ETB 35.00</span>
+          </div>
+          <div class="fee-detail-row">
+            <span class="label">VAT</span>
+            <span class="value" id="vat">ETB 6.30</span>
+          </div>
+          <div class="fee-detail-row total-row">
+            <span class="label">Total Amount</span>
+            <span class="value" id="totalAmount">ETB 2,041.30</span>
+          </div>
+        </div>
+
+        <!-- Dashed Divider -->
+        <div class="dashed-divider"></div>
+
+        <!-- Amount Section -->
+        <div class="amount-section">
+          <div class="beneficiary-name" id="merchantName">BETTY MERHAT AGENCY</div>
+          <div class="amount-display">
+            <span class="amount-value" id="amountValue">-2,041.30</span>
+            <span class="amount-currency">ETB</span>
+          </div>
+
+          <!-- Total Amount in Word -->
+          <div class="amount-in-words" id="amountInWords">
+            Two Thousand Forty-One & 30/100 Ethiopian Birr Only
+          </div>
+
+          <!-- QR Code -->
+          <div class="qr-wrapper">
+            <img id="qrCode" src="" alt="Transaction QR Code">
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+
+    <!-- Bottom Actions - Sticky at bottom -->
+    <div class="bottom-actions">
+      <button class="action-btn" onclick="addToFavorite()">
+        <div class="action-icon">
+          <i data-lucide="heart"></i>
+        </div>
+        <span class="action-label">Add to Favorite</span>
+      </button>
+
+      <button class="action-btn" onclick="cashoutAgain()">
+        <div class="action-icon">
+          <i data-lucide="arrow-left-right"></i>
+        </div>
+        <span class="action-label">Cash Out Again</span>
+      </button>
+
+      <button class="action-btn" onclick="reverseTransaction()">
+        <div class="action-icon">
+          <i data-lucide="rotate-ccw"></i>
+        </div>
+        <span class="action-label">Reverse</span>
+      </button>
+    </div>
+
+  </div>
+</div>
+
+<!-- Toast Notification -->
 <div class="toast" id="toast"></div>
 
 <!-- Lucide Icons -->
@@ -389,7 +771,7 @@
     transactionDetail: 'Agency Banking Cashout - CBE',
     receiptNumber: 'RCP-2024-12345678',
     bankTransactionId: 'BNK-TXN-98765432',
-    transactionId: 'fxt45632578',
+    transactionId: 'UH73NFPT8K',
     date: '12/12/2024',
     time: '8:34 AM',
     serviceFee: '35.00',
@@ -405,8 +787,8 @@
   function generateQRCode() {
     const qrData = JSON.stringify(transactionData);
     const encodedData = encodeURIComponent(qrData);
-    const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=240x240&data=${encodedData}&margin=10`;
-    document.getElementById('qrCode').src = qrUrl;
+
+    renderQR(document.getElementById('qrCode'), decodeURIComponent(encodedData), 240);
   }
 
   // Copy Transaction ID
@@ -506,5 +888,7 @@
 
 <!-- Export to Figma button (shared exporter) -->
 <script src="figma-export.js"></script>
+<script src="test-scenarios-data.js"></script>
+<script src="test-scenarios.js"></script>
 </body>
 </html>

@@ -241,6 +241,8 @@
   }
   .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
 </style>
+<script src="assets/qrcode.min.js"></script>
+<script src="assets/qr.js"></script>
 </head>
 <body>
 
@@ -348,7 +350,7 @@
             <span class="value" id="detailPoint">&mdash;</span>
           </div>
           <div class="detail-row">
-            <span class="label" id="detailRefLabel">Agent No.</span>
+            <span class="label" id="detailRefLabel">Short Code</span>
             <span class="value" id="detailRef">&mdash;</span>
           </div>
           <div class="detail-row">
@@ -443,7 +445,7 @@
   $('detailPoint').textContent = isAtm
     ? (data.atmName || 'Participating M-PESA ATM')
     : (data.agentName || agent.name || 'Agent');
-  $('detailRefLabel').textContent = isAtm ? 'Bank' : 'Agent No.';
+  $('detailRefLabel').textContent = isAtm ? 'Bank' : 'Short Code';
   $('detailRef').textContent = isAtm
     ? (data.atmBank || 'Any participating bank')
     : (data.agentCode || agent.code || '\u2014');
@@ -464,7 +466,7 @@
 
   $('detailDate').textContent = stamp(new Date());
   $('detailExpiry').textContent = data.expiry ? stamp(new Date(data.expiry)) : '24 hours';
-  $('transactionId').textContent = data.ref || ('WDC-' + Date.now().toString().slice(-8));
+  $('transactionId').textContent = data.ref || ('U' + 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'[Math.floor(Math.random()*26)] + Array.from({length:8},()=>'ABCDEFGHJKLMNPQRSTUVWXYZ23456789'[Math.floor(Math.random()*31)]).join(''));
 
   const qrData = encodeURIComponent(JSON.stringify({
     type: $('detailType').textContent,
@@ -472,7 +474,7 @@
     txId: $('transactionId').textContent,
     amount: fmt(total) + ' ETB'
   }));
-  $('qrCode').src = 'https://api.qrserver.com/v1/create-qr-code/?size=240x240&data=' + qrData + '&margin=10';
+  renderQR($('qrCode'), decodeURIComponent(qrData), 240);
 
   function copyText(text) {
     return navigator.clipboard.writeText(text).catch(() => {
@@ -523,5 +525,7 @@
 </script>
 
 <script src="figma-export.js"></script>
+<script src="test-scenarios-data.js"></script>
+<script src="test-scenarios.js"></script>
 </body>
 </html>

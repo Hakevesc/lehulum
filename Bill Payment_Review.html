@@ -3,118 +3,99 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Bill Payment - Confirm</title>
+<title>Bill Payment</title>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@400;500;600&display=swap');
   @import url('https://api.fontshare.com/v2/css?f[]=switzer@400,500,600,700&display=swap');
 
   :root {
     --Primary: #FE353D;
+    --Warning: #E09B0B;
+    --Warning-Light: #FDF6E7;
     --On-Surface: #1C1C21;
     --On-Surface-Low: #7C7C87;
     --Border: #E8E8EC;
     --Background: #F5F5F5;
-    --Success: #1FC83B;
+    --Field-Border: #EFEFF1;
   }
-
   * { margin: 0; padding: 0; box-sizing: border-box; }
-  body {
-    font-family: 'Inter', sans-serif; background: transparent;
-    display: flex; justify-content: center; align-items: center;
-    min-height: 100vh; padding: 20px;
-  }
-  .phone-frame {
-    width: 360px; height: 780px; background: var(--Background); border-radius: 30px;
-    overflow: hidden; position: relative; box-shadow: 0 20px 60px rgba(0,0,0,0.15);
-  }
+  body { font-family: 'Inter', sans-serif; background: transparent; display: flex; justify-content: center; align-items: center; min-height: 100vh; padding: 20px; }
+  .phone-frame { width: 360px; height: 780px; background: var(--Background); border-radius: 30px; overflow: hidden; position: relative; box-shadow: 0 20px 60px rgba(0,0,0,0.15); display: flex; flex-direction: column; }
   .app-content { height: 100%; display: flex; flex-direction: column; }
 
-  .status-bar {
-    flex-shrink: 0; display: flex; justify-content: space-between; align-items: center;
-    width: 100%; padding: 14px 24px 8px; background: var(--Background);
-  }
+  .status-bar { display: flex; justify-content: space-between; align-items: center; padding: 14px 24px 8px; background: var(--Background); flex-shrink: 0; }
   .status-bar .time { font-size: 14px; font-weight: 600; color: var(--On-Surface); }
   .status-icons { display: flex; align-items: center; gap: 6px; }
   .status-icons svg { width: 18px; height: 18px; }
 
-  .header-nav {
-    flex-shrink: 0; width: 100%; display: flex; align-items: center; justify-content: space-between;
-    padding: 8px 16px 12px; background: var(--Background);
-  }
-  .back-btn {
-    display: flex; align-items: center; justify-content: center;
-    width: 36px; height: 36px; border-radius: 50%;
-    background: transparent; border: none; cursor: pointer; transition: all 0.2s;
-  }
+  .header-nav { display: flex; align-items: center; justify-content: space-between; padding: 8px 16px 12px; background: var(--Background); flex-shrink: 0; }
+  .back-btn { width: 36px; height: 36px; border-radius: 50%; background: transparent; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: background 0.2s; }
   .back-btn:hover { background: rgba(0,0,0,0.05); }
   .back-btn svg { width: 22px; height: 22px; stroke: var(--On-Surface); stroke-width: 1.8px; fill: none; }
-  .header-title {
-    color: var(--On-Surface); font-family: 'Switzer', sans-serif;
-    font-size: 17px; font-weight: 500; letter-spacing: 0.3px; flex: 1; text-align: center;
-  }
+  .header-title { color: var(--On-Surface); font-family: 'Switzer', sans-serif; font-size: 17px; font-weight: 500; letter-spacing: 0.3px; flex: 1; text-align: center; }
 
-  .scroll { flex: 1; overflow-y: auto; padding: 4px 20px 12px; display: flex; flex-direction: column; gap: 16px; }
+  .scroll { flex: 1; overflow-y: auto; padding: 12px 16px 16px; display: flex; flex-direction: column; gap: 14px; }
   .scroll::-webkit-scrollbar { width: 0; }
 
-  /* Biller header card */
-  .biller-card {
-    background: #FFF; border-radius: 16px; padding: 16px; display: flex; align-items: center; gap: 14px;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.04);
-  }
-  .biller-icon {
-    width: 48px; height: 48px; border-radius: 13px; flex-shrink: 0;
-    display: flex; align-items: center; justify-content: center;
-    font-family: 'Switzer', sans-serif; font-size: 15px; font-weight: 700;
-  }
-  .biller-info { flex: 1; display: flex; flex-direction: column; gap: 4px; min-width: 0; }
-  .biller-name { color: var(--On-Surface); font-family: 'Switzer', sans-serif; font-size: 15px; font-weight: 600; }
-  .biller-sub { color: var(--On-Surface-Low); font-family: 'Switzer', sans-serif; font-size: 12.5px; }
-  .biller-badge {
-    display: inline-flex; align-items: center; gap: 4px; margin-top: 2px;
-    padding: 3px 8px; border-radius: 6px; align-self: flex-start;
-    background: rgba(31,200,59,0.08); color: var(--Success);
-    font-family: 'Switzer', sans-serif; font-size: 11px; font-weight: 600;
-  }
-  .biller-badge svg { width: 11px; height: 11px; stroke: var(--Success); fill: none; stroke-width: 2.5; }
+  /* ── Payee ── */
+  .party-card { position: relative; background: #FFF; border-radius: 16px; padding: 14px; display: flex; align-items: center; gap: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.04); }
+  .party-badge { position: absolute; top: -11px; right: 14px; background: #EDEDF0; color: var(--On-Surface-Low); font-family: 'Switzer', sans-serif; font-size: 9.5px; font-weight: 700; letter-spacing: 0.6px; padding: 4px 9px; border-radius: 6px; }
+  .party-logo { width: 44px; height: 44px; border-radius: 50%; overflow: hidden; display: flex; align-items: center; justify-content: center; flex-shrink: 0; background: #FFE9EA; color: var(--Primary); font-family: 'Switzer', sans-serif; font-size: 14px; font-weight: 700; }
+  .party-logo img { width: 100%; height: 100%; object-fit: contain; }
+  .party-info { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 3px; }
+  .party-name { font-family: 'Switzer', sans-serif; font-size: 15px; font-weight: 700; color: var(--On-Surface); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .party-sub { font-family: 'Switzer', sans-serif; font-size: 12.5px; font-weight: 600; color: var(--On-Surface-Low); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 
-  /* Details + breakdown card */
-  .breakdown {
-    background: #FFF; border-radius: 16px; padding: 18px 16px; display: flex; flex-direction: column; gap: 14px;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.04);
-  }
-  .b-row { display: flex; justify-content: space-between; align-items: center; gap: 12px; }
-  .b-row .label { color: var(--On-Surface-Low); font-family: 'Switzer', sans-serif; font-size: 13px; flex-shrink: 0; }
-  .b-row .value { color: var(--On-Surface); font-family: 'Switzer', sans-serif; font-size: 14px; font-weight: 600; text-align: right; word-break: break-word; }
-  .b-row .value.free { color: var(--Success); }
-  .b-divider { height: 1px; background: var(--Border); margin: 2px 0; }
-  .b-row.total .label { color: var(--On-Surface); font-size: 14px; font-weight: 600; }
-  .b-row.total .value { color: var(--Primary); font-size: 20px; font-weight: 700; }
+  /* ── Summary ── */
+  .summary-card { background: #FFF; border-radius: 16px; padding: 4px 16px 16px; box-shadow: 0 2px 8px rgba(0,0,0,0.04); }
+  .sum-row { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 16px 2px; border-bottom: 1px solid #F0F0F3; }
+  .sum-key { font-family: 'Switzer', sans-serif; font-size: 13px; font-weight: 400; color: var(--On-Surface-Low); flex-shrink: 0; }
+  .sum-val { font-family: 'Switzer', sans-serif; font-size: 13.5px; font-weight: 700; color: var(--On-Surface); text-align: right; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .sum-row.total .sum-val { color: var(--Primary); font-size: 15px; }
 
-  /* Funding account */
-  .funding {
-    background: #FFF; border-radius: 16px; padding: 14px 16px; display: flex; align-items: center; gap: 12px;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.04);
-  }
-  .funding .icon { width: 38px; height: 38px; border-radius: 10px; background: #FFF1F2; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
-  .funding .icon svg { width: 20px; height: 20px; stroke: var(--Primary); stroke-width: 2; fill: none; }
-  .funding .info { flex: 1; display: flex; flex-direction: column; gap: 2px; }
-  .funding .info .t { color: var(--On-Surface-Low); font-family: 'Switzer', sans-serif; font-size: 11.5px; }
-  .funding .info .v { color: var(--On-Surface); font-family: 'Switzer', sans-serif; font-size: 14px; font-weight: 600; }
+  .sum-row.total.od .sum-val { color: #2563EB; font-size: 15px; }
 
-  .bottom-area { flex-shrink: 0; padding: 8px 20px 24px; display: flex; flex-direction: column; gap: 10px; background: var(--Background); }
-  .btn-primary {
-    width: 100%; height: 52px; border-radius: 14px; background: var(--Primary); color: #FFF;
-    font-family: 'Poppins', sans-serif; font-size: 15px; font-weight: 500; border: none; cursor: pointer;
-    transition: all 0.2s; box-shadow: 0 4px 16px rgba(254,53,61,0.25);
-  }
-  .btn-primary:hover { background: #E5303A; transform: translateY(-1px); box-shadow: 0 6px 20px rgba(254,53,61,0.35); }
-  .btn-primary:active { transform: scale(0.98); }
-  .btn-link { color: var(--On-Surface-Low); font-family: 'Switzer', sans-serif; font-size: 13px; font-weight: 500; cursor: pointer; background: none; border: none; padding: 6px 0; transition: color 0.2s; }
-  .btn-link:hover { color: var(--On-Surface); }
-</style>
+  .sum-row.total.short .sum-val { color: var(--Warning); }
+  .short-strip { display: none; margin-top: 14px; font-family: 'Switzer', sans-serif; font-size: 12.5px; font-weight: 600; color: var(--Warning); background: var(--Warning-Light); border-radius: 8px; padding: 10px 12px; }
+  .short-strip.show { display: block; }
+  .short-strip.od { color: #2563EB; background: #EAF2FF; }
+
+  /* ── Funding selector (same thin layout as the airtime screen) ── */
+  .funding-selector { display: flex; align-items: center; background: #FCFCFD; border: 1px solid #E4E4EC; border-radius: 14px; padding: 7px 8px; margin-top: 16px; }
+  .fo-divider { width: 1px; height: 28px; background: #DCDCE4; margin: 0 2px; flex-shrink: 0; }
+  .fund-option { flex: 1; background: transparent; cursor: pointer; transition: all 0.18s; display: flex; align-items: center; gap: 5px; padding: 3px 0; min-width: 0; }
+  /* keep the outer edges flush and the divider dead-centre */
+  .funding-selector .fund-option:first-child { justify-content: flex-start; }
+  .funding-selector .fund-option:last-child { justify-content: flex-end; }
+  .fo-icon { width: 22px; height: 22px; border-radius: 50%; background: #EDEDF2; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+  .fo-icon svg { width: 13px; height: 13px; stroke: #1A2332; stroke-width: 1.8; fill: none; }
+  .fo-info { display: flex; flex-direction: column; flex: 0 1 auto; min-width: 0; }
+  .fund-option .fo-name { font-family: 'Switzer', sans-serif; font-size: 11px; font-weight: 700; color: #1A2332; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; letter-spacing: -0.1px; }
+  .fund-option .fo-bal { font-family: 'Switzer', sans-serif; font-size: 10px; font-weight: 500; color: #6B7280; margin-top: 1px; white-space: nowrap; }
+  .fund-option .radio { width: 15px; height: 15px; border-radius: 50%; border: 1.5px solid #E2E2EA; flex-shrink: 0; display: flex; align-items: center; justify-content: center; transition: all 0.18s; background: #FFF; margin-left: 4px; }
+  .fund-option .radio::after { content: ''; width: 7px; height: 7px; border-radius: 50%; background: transparent; transition: all 0.18s; }
+  .fund-option.selected .radio { border-color: var(--Primary); border-width: 2px; }
+  .fund-option.selected .radio::after { background: var(--Primary); }
+
+  /* ── Actions ── */
+  .bottom-bar { flex-shrink: 0; padding: 10px 16px 18px; background: var(--Background); display: flex; flex-direction: column; gap: 12px; }
+  .btn-row { display: flex; gap: 12px; }
+  .btn-row .btn { flex: 1; }
+  .btn.partial { display: none; border: none; background: var(--Primary); color: #FFF; font-family: 'Poppins', sans-serif; font-weight: 500; box-shadow: 0 4px 16px rgba(254,53,61,0.25); }
+  .btn.partial.show { display: block; }
+  .btn.partial:hover { background: #E5303A; box-shadow: 0 6px 20px rgba(254,53,61,0.35); }
+  .btn { height: 52px; flex-shrink: 0; border-radius: 14px; background: #FFF; cursor: pointer; font-family: 'Switzer', sans-serif; font-size: 15px; font-weight: 500; transition: background 0.15s, transform 0.12s; }
+  .btn:active { transform: scale(0.98); }
+  .btn.cancel { border: 1.5px solid var(--Field-Border); color: var(--On-Surface-Low); }
+  .btn.cancel:hover { background: #FAFAFA; }
+  .btn.confirm { border: 1.5px solid var(--Primary); color: var(--Primary); font-weight: 600; }
+  .btn.confirm:hover { background: #FFF5F5; }
+  .btn.confirm.disabled { border-color: var(--Field-Border); color: var(--On-Surface-Low); cursor: not-allowed; }
+  .btn.confirm.disabled:hover { background: #FFF; }
+
+  </style>
 </head>
 <body>
-
 <div class="phone-frame">
   <div class="app-content">
 
@@ -131,105 +112,183 @@
       <button class="back-btn" onclick="goBack()">
         <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
       </button>
-      <span class="header-title">Confirm Payment</span>
-      <div style="width: 36px;"></div>
+      <span class="header-title">Bill Payment</span>
+      <div style="width:36px;"></div>
     </div>
 
     <div class="scroll">
 
-      <!-- Biller -->
-      <div class="biller-card">
-        <div class="biller-icon" id="bIcon" style="background:#FFF3E0;color:#F57C00;">EP</div>
-        <div class="biller-info">
-          <span class="biller-name" id="bName">EEPCO</span>
-          <span class="biller-sub" id="bSub">Ref. 4523061 • Abebe Girma</span>
-          <span class="biller-badge">
-            <svg viewBox="0 0 24 24" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
-            Verified
-          </span>
-        </div>
+      <div class="party-card">
+        <span class="party-badge">PAYING FOR</span>
+        <span class="party-logo" id="payeeLogo"></span>
+        <span class="party-info">
+          <span class="party-name" id="payeeName">—</span>
+          <span class="party-sub" id="payeeRef">—</span>
+        </span>
       </div>
 
-      <!-- Details + breakdown -->
-      <div class="breakdown">
-        <div class="b-row">
-          <span class="label">Service</span>
-          <span class="value" id="service">Electricity bill</span>
+      <div class="summary-card">
+        <div id="detailRows"></div>
+        <div class="sum-row">
+          <span class="sum-key">Fee:</span>
+          <span class="sum-val" id="fee">—</span>
         </div>
-        <div class="b-row">
-          <span class="label">Customer reference</span>
-          <span class="value" id="reference">4523061</span>
+        <div class="sum-row total" id="totalRow" style="border-bottom:none;">
+          <span class="sum-key">Total:</span>
+          <span class="sum-val" id="total">—</span>
         </div>
-        <div class="b-divider"></div>
-        <div class="b-row">
-          <span class="label">Payment amount</span>
-          <span class="value" id="amount">0.00 ETB</span>
-        </div>
-        <div class="b-row">
-          <span class="label">Applicable charges</span>
-          <span class="value free" id="fee">Free</span>
-        </div>
-        <div class="b-divider"></div>
-        <div class="b-row total">
-          <span class="label">Total deduction</span>
-          <span class="value" id="total">0.00 ETB</span>
-        </div>
-      </div>
 
-      <!-- Funding account -->
-      <div class="funding">
-        <div class="icon">
-          <svg viewBox="0 0 24 24"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg>
-        </div>
-        <div class="info">
-          <span class="t">Paying from</span>
-          <span class="v" id="fundingAccount">Main Account</span>
+        <div class="short-strip" id="shortStrip">Insufficient Balance</div>
+
+        <div class="funding-selector">
+          <div class="fund-option selected" id="optMain" onclick="pickAccount('main')">
+            <div class="fo-icon">
+              <svg viewBox="0 0 24 24" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M20 12V8H6a2 2 0 0 1-2-2c0-1.1.9-2 2-2h12v4"/><path d="M4 6v12c0 1.1.9 2 2 2h14v-4"/><path d="M18 12a2 2 0 0 0-2 2c0 1.1.9 2 2 2h4v-4h-4z"/></svg>
+            </div>
+            <div class="fo-info">
+              <span class="fo-name">Main Account</span>
+              <span class="fo-bal" id="mainBal">—</span>
+            </div>
+            <span class="radio"></span>
+          </div>
+          <div class="fo-divider"></div>
+          <div class="fund-option" id="optReward" onclick="pickAccount('reward')">
+            <div class="fo-icon">
+              <svg viewBox="0 0 24 24" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 12 20 22 4 22 4 12"/><rect x="2" y="7" width="20" height="5"/><line x1="12" y1="22" x2="12" y2="7"/><path d="M12 7H7.5a2.5 2.5 0 0 1 0-5C11 2 12 7 12 7z"/><path d="M12 7h4.5a2.5 2.5 0 0 0 0-5C13 2 12 7 12 7z"/></svg>
+            </div>
+            <div class="fo-info">
+              <span class="fo-name">Reward Account</span>
+              <span class="fo-bal" id="rewardBal">—</span>
+            </div>
+            <span class="radio"></span>
+          </div>
         </div>
       </div>
 
     </div>
 
-    <div class="bottom-area">
-      <button class="btn-primary" onclick="confirmPay()">Confirm &amp; Pay</button>
-      <button class="btn-link" onclick="goBack()">Edit payment</button>
+    <div class="bottom-bar">
+      <button class="btn partial" id="partialBtn" onclick="editPartial()">Edit Partial Payment</button>
+      <div class="btn-row">
+        <button class="btn cancel" onclick="goBack()">Cancel</button>
+        <button class="btn confirm" id="confirmBtn" onclick="confirmPay()">Confirm</button>
+      </div>
     </div>
 
   </div>
 </div>
 
 <script>
-  const data = JSON.parse(sessionStorage.getItem('billPaymentData') || '{}');
-  const biller = data.biller || { abbr:'EP', bg:'#FFF3E0', color:'#F57C00', name:'EEPCO' };
+  // Errif OD reads exactly like the Airtime screen: when it's active, main
+  // shows 0.00 and the reward slot becomes the Errif Balance.
+  const errifOdActive = sessionStorage.getItem('errifOdActive') === '1';
+  const MAIN_BALANCE = errifOdActive ? 0 : 3000;
+  const REWARD_BALANCE = errifOdActive ? 3000 : 200;
+
+  const $ = id => document.getElementById(id);
   const fmt = n => parseFloat(n || 0).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
 
-  const amount = fmt(data.payAmount || '0');
-  const feeNum = parseFloat(data.fee || '0');
-  const total  = fmt(data.total || data.payAmount || '0');
-  const ACCOUNT_LABELS = { main: 'Main Account', reward: 'Reward Account', overdraft: 'Errif Overdraft' };
+  let data = {};
+  try { data = JSON.parse(sessionStorage.getItem('billPaymentData') || '{}'); } catch (e) { /* ignore corrupt state */ }
+  const biller = data.biller || {};
 
-  document.getElementById('bIcon').textContent = biller.abbr || 'EP';
-  document.getElementById('bIcon').style.background = biller.bg || '#FFF3E0';
-  document.getElementById('bIcon').style.color = biller.color || '#F57C00';
-  document.getElementById('bName').textContent = biller.name || 'EEPCO';
-  document.getElementById('bSub').textContent =
-    (data.account ? 'Ref. ' + data.account : 'Ref. 4523061') + ' • ' + (data.customerName || 'Verified');
+  $('payeeLogo').innerHTML = biller.logo
+    ? '<img src="' + biller.logo + '" alt="">'
+    : (biller.abbr || 'EE');
+  $('payeeName').textContent = data.customerName || biller.fullName || 'Customer';
+  $('payeeRef').textContent = (data.planLabel ? data.planLabel + ': ' : '') + (data.account || '—');
 
-  document.getElementById('service').textContent =
-    (biller.fullName || biller.desc || (biller.category ? biller.category + ' bill' : 'Bill payment'));
-  document.getElementById('reference').textContent = data.account || '4523061';
-  document.getElementById('amount').textContent = amount + ' ETB';
+  // An entry screen can hand over its own rows; otherwise the utility set is
+  // built here — a post-paid bill belongs to a month, prepaid bought by reading
+  // shows the kilowatt hours instead, and prepaid bought by birr shows neither.
+  const rows = data.rows || [
+    { key: 'Business Name', value: biller.fullName || biller.name || 'Biller' }
+  ].concat(
+    data.billMonth ? [{ key: 'Bill Month', value: data.billMonth }] : [],
+    data.kilowatts ? [{ key: 'Kilowatt', value: data.kilowatts }] : []
+  );
 
-  const feeEl = document.getElementById('fee');
-  if (feeNum > 0) { feeEl.textContent = feeNum.toFixed(2) + ' ETB'; feeEl.classList.remove('free'); }
-  else { feeEl.textContent = 'Free'; }
+  $('detailRows').innerHTML = rows.map(r =>
+    '<div class="sum-row">' +
+      '<span class="sum-key">' + r.key + '</span>' +
+      '<span class="sum-val">' + r.value + '</span>' +
+    '</div>').join('');
 
-  document.getElementById('total').textContent = total + ' ETB';
-  document.getElementById('fundingAccount').textContent = ACCOUNT_LABELS[data.payAccount] || 'Main Account';
+  const feeNum = parseFloat(data.fee || 0);
+  $('fee').textContent = feeNum > 0 ? fmt(feeNum) + ' Br' : 'Free';
+  $('total').textContent = fmt(data.total || data.payAmount) + ' Br';
+  $('mainBal').textContent = fmt(MAIN_BALANCE) + ' Br';
+  $('rewardBal').textContent = fmt(REWARD_BALANCE) + ' Br';
+  if (errifOdActive) {
+    const rewardName = document.querySelector('#optReward .fo-name');
+    if (rewardName) rewardName.textContent = 'Errif Balance';
+  }
 
-  function confirmPay() { window.location.href = 'Bill Payment_Enter PIN.html'; }
-  function goBack() { window.location.href = 'Bill Payment_Enter Amount.html'; }
+  // Whether the bill is affordable depends on which account pays it, so the
+  // warning is re-checked every time the selection changes.
+  const totalDue = parseFloat(data.total || data.payAmount || 0);
+
+  let payAccount = data.payAccount || (errifOdActive ? 'reward' : 'main');
+  function pickAccount(which) {
+    payAccount = which;
+    $('optMain').classList.toggle('selected', which === 'main');
+    $('optReward').classList.toggle('selected', which === 'reward');
+
+    const fundedByOd = which === 'overdraft';
+    const balance = which === 'reward' ? REWARD_BALANCE : MAIN_BALANCE;
+    const short = !fundedByOd && totalDue > balance;
+    $('totalRow').classList.toggle('short', short);
+
+    if (fundedByOd) {
+      $('totalRow').classList.add('od');
+      $('shortStrip').classList.add('od');
+      $('shortStrip').textContent = 'Paying with Errif Overdraft · up to 5,000.00 ETB limit';
+      $('shortStrip').classList.add('show');
+      $('confirmBtn').disabled = false;
+      $('confirmBtn').classList.remove('disabled');
+    } else {
+      $('totalRow').classList.remove('od');
+      $('shortStrip').classList.remove('od');
+      $('shortStrip').textContent = 'Insufficient Balance';
+      $('shortStrip').classList.toggle('show', short);
+      $('confirmBtn').disabled = short;
+      $('confirmBtn').classList.toggle('disabled', short);
+    }
+  }
+  pickAccount(payAccount);
+
+  if (data.partial) $('partialBtn').classList.add('show');
+
+  function editPartial() {
+    data.payAccount = payAccount;
+    sessionStorage.setItem('billPaymentData', JSON.stringify(data));
+    window.location.href = 'Bill Payment_Partial.html';
+  }
+
+  function confirmPay() {
+    data.payAccount = payAccount;
+    sessionStorage.setItem('billPaymentData', JSON.stringify(data));
+    window.location.href = 'Bill Payment_Enter PIN.html';
+  }
+
+  // Back lands on whichever entry screen filled this payload: EEU has its own
+  // post-paid / prepaid screen, every other biller goes through the amount step.
+  function goBack() {
+    const ENTRY = {
+      school:    'Bill Payment_School.html',
+      water:     'Bill Payment_Water.html',
+      airlines:  'Bill Payment_Airlines.html',
+      insurance: 'Bill Payment_Insurance.html',
+      dstv:      'Bill Payment_DSTV.html',
+      post:      'Bill Payment_EEU.html',
+      pre:       'Bill Payment_EEU.html'
+    };
+    window.location.href = ENTRY[data.plan] || 'Bill Payment_Enter Amount.html';
+  }
 </script>
 
 <script src="figma-export.js"></script>
+<script src="test-scenarios-data.js"></script>
+<script src="test-scenarios.js"></script>
 </body>
 </html>

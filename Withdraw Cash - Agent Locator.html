@@ -38,10 +38,10 @@
   .scroll::-webkit-scrollbar { width: 0; }
 
   /* ── Top tabs ── */
-  .tabs { display: flex; background: #EDEDF0; border-radius: 14px; padding: 4px; gap: 4px; flex-shrink: 0; }
-  .tab { flex: 1; height: 40px; border: none; background: transparent; border-radius: 11px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 7px; font-family: 'Switzer', sans-serif; font-size: 13.5px; font-weight: 600; color: var(--On-Surface-Low); transition: background 0.2s, color 0.2s, box-shadow 0.2s; }
+  .tabs { display: flex; gap: 4px; background: #FFF; border-radius: 999px; padding: 5px; box-shadow: 0 2px 8px rgba(0,0,0,0.04); flex-shrink: 0; }
+  .tab { flex: 1; height: 44px; border: none; background: transparent; border-radius: 999px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; font-family: 'Switzer', sans-serif; font-size: 14px; font-weight: 600; color: var(--On-Surface-Low); transition: background 0.2s, color 0.2s, box-shadow 0.2s; }
   .tab svg { width: 17px; height: 17px; stroke: currentColor; stroke-width: 1.9; fill: none; }
-  .tab.active { background: #FFF; color: var(--Primary); box-shadow: 0 2px 8px rgba(0,0,0,0.08); }
+  .tab.active { background: var(--Primary); color: #FFF; box-shadow: 0 4px 12px rgba(254,53,61,0.25); }
 
   .panel { display: none; flex-direction: column; gap: 14px; }
   .panel.active { display: flex; }
@@ -82,18 +82,22 @@
   .agent-chip .nm { font-family: 'Switzer', sans-serif; font-size: 14px; font-weight: 500; color: var(--On-Surface); }
   .agent-chip .sub { font-family: 'Switzer', sans-serif; font-size: 11.5px; color: var(--On-Surface-Low); }
 
-  /* ── QR scanner viewport ── */
-  .qr-stage { background: #1C1C21; border-radius: 14px; min-height: 232px; position: relative; display: flex; flex-direction: column; align-items: center; justify-content: center; overflow: hidden; cursor: pointer; padding: 24px 16px 24px; gap: 24px; margin-bottom: 12px; }
-  .qr-stage .grid-bg { position: absolute; inset: 0; background-image: linear-gradient(rgba(255,255,255,0.05) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.05) 1px, transparent 1px); background-size: 22px 22px; pointer-events: none; }
-  .qr-window { position: relative; width: 100px; height: 100px; flex-shrink: 0; }
-  .qr-window i { position: absolute; width: 24px; height: 24px; border: 3px solid var(--Primary); }
-  .qr-window i:nth-child(1) { top: 0; left: 0; border-right: none; border-bottom: none; border-radius: 8px 0 0 0; }
-  .qr-window i:nth-child(2) { top: 0; right: 0; border-left: none; border-bottom: none; border-radius: 0 8px 0 0; }
-  .qr-window i:nth-child(3) { bottom: 0; left: 0; border-right: none; border-top: none; border-radius: 0 0 0 8px; }
-  .qr-window i:nth-child(4) { bottom: 0; right: 0; border-left: none; border-top: none; border-radius: 0 0 8px 0; }
-  .qr-laser { position: absolute; left: 6px; right: 6px; height: 2px; background: var(--Primary); box-shadow: 0 0 10px rgba(254,53,61,0.9); border-radius: 2px; animation: sweep 2.2s ease-in-out infinite; }
-  @keyframes sweep { 0%, 100% { top: 6px; } 50% { top: 92px; } }
-  .qr-caption { position: relative; z-index: 1; text-align: center; font-family: 'Switzer', sans-serif; font-size: 12px; line-height: 1.45; color: rgba(255,255,255,0.78); margin: 0; }
+  /* ── QR stage (Merchant QR scanner style) ── */
+  .qr-stage { background: #141414; border-radius: 24px; padding: 22px 20px 20px; display: flex; flex-direction: column; align-items: center; gap: 12px; cursor: pointer; }
+  .qr-window { position: relative; width: 140px; height: 140px; background: #262626; border-radius: 18px; }
+  #qrCameraFeed { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; border-radius: 18px; display: none; }
+  .qr-window.live { background: transparent; }
+  .qr-window.live #qrCameraFeed { display: block; }
+  .qr-window.live .qr-laser { display: none; }
+  .qr-window i { position: absolute; width: 32px; height: 32px; border: 3px solid rgba(255,255,255,0.9); }
+  .qr-window i:nth-of-type(1) { top: -1px; left: -1px; border-right: none; border-bottom: none; border-radius: 18px 0 0 0; }
+  .qr-window i:nth-of-type(2) { top: -1px; right: -1px; border-left: none; border-bottom: none; border-radius: 0 18px 0 0; }
+  .qr-window i:nth-of-type(3) { bottom: -1px; left: -1px; border-right: none; border-top: none; border-radius: 0 0 0 18px; }
+  .qr-window i:nth-of-type(4) { bottom: -1px; right: -1px; border-left: none; border-top: none; border-radius: 0 0 18px 0; }
+  .qr-laser { position: absolute; left: 10px; right: 10px; height: 2px; background: var(--Primary); box-shadow: 0 0 14px rgba(254,53,61,0.9); border-radius: 2px; animation: sweep 2.6s ease-in-out infinite; }
+  @keyframes sweep { 0%, 100% { top: 12px; } 50% { top: 122px; } }
+  .qr-copy { display: flex; flex-direction: column; align-items: center; gap: 4px; }
+  .qr-sub { font-family: 'Switzer', sans-serif; font-size: 11px; line-height: 1.4; color: rgba(255,255,255,0.6); text-align: center; max-width: 220px; }
   .qr-actions { display: flex; gap: 10px; }
   .qr-action { flex: 1; height: 42px; border: 1.5px solid var(--Border); background: var(--Field); border-radius: 12px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 7px; font-family: 'Switzer', sans-serif; font-size: 12.5px; font-weight: 600; color: var(--On-Surface); transition: border-color 0.2s, background 0.2s; }
   .qr-action:hover { border-color: var(--Primary); background: #FFF; }
@@ -175,12 +179,12 @@
       <!-- Top tabs -->
       <div class="tabs">
         <button class="tab active" id="tabCode" onclick="switchTab('code')">
-          <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="6" width="18" height="12" rx="2.5"/><path d="M7 12h1.5M11.2 12h1.6M15.5 12H17"/></svg>
-          Short Code
+          <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="3"/><path d="M10 10 8 12l2 2M14 10l2 2-2 2"/></svg>
+          Enter Code
         </button>
         <button class="tab" id="tabQr" onclick="switchTab('qr')">
-          <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><rect x="3.5" y="3.5" width="7" height="7" rx="1.5"/><rect x="13.5" y="3.5" width="7" height="7" rx="1.5"/><rect x="3.5" y="13.5" width="7" height="7" rx="1.5"/><path d="M13.5 13.5h3v3M20.5 17v3.5H17"/></svg>
-          QR Code
+          <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+          Scan QR
         </button>
       </div>
 
@@ -225,13 +229,16 @@
       <!-- ── QR panel ── -->
       <div class="panel" id="panelQr">
         <div class="form-card">
-          <div class="qr-stage">
-            <div class="grid-bg"></div>
-            <div class="qr-window">
+          <div class="qr-stage" id="qrStage" onclick="simulateScan()">
+
+            <div class="qr-window" id="qrWindow">
+              <video id="qrCameraFeed" autoplay playsinline muted></video>
               <i></i><i></i><i></i><i></i>
               <div class="qr-laser"></div>
             </div>
-            <div class="qr-caption">Point the camera at<br>the agent's QR code</div>
+            <div class="qr-copy">
+              <span class="qr-sub">Open the camera and align the agent's QR code within the frame.</span>
+            </div>
           </div>
           <div class="loading-chip" id="qrLoading">
             <div class="loading-spinner"></div>
@@ -366,10 +373,35 @@
 
     // Auto-scan after 10 seconds on QR tab
     if (t === 'qr') {
+      startCamera();
       clearTimeout(qrScanTimeout);
       qrScanTimeout = setTimeout(() => simulateScan(), 10000);
+    } else {
+      clearTimeout(qrScanTimeout);
+      stopCamera();
     }
     updateBtn();
+  }
+
+  /* The QR scanner opens the device camera, same as the Scan QR page.
+     Falls back to the animated window when no camera is available. */
+  async function startCamera() {
+    if (window._qrCamStream) return;
+    if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) return;
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } });
+      const v = $('qrCameraFeed');
+      if (!v) return;
+      window._qrCamStream = stream;
+      v.srcObject = stream;
+      $('qrWindow').classList.add('live');
+    } catch (e) {}
+  }
+
+  function stopCamera() {
+    if (window._qrCamStream) window._qrCamStream.getTracks().forEach(t => t.stop());
+    window._qrCamStream = null;
+    $('qrWindow').classList.remove('live');
   }
 
   /* ── Short code ── */
@@ -395,7 +427,7 @@
       if (a) {
         agent = a;
         chip.querySelector('.nm').textContent = a.name;
-        chip.querySelector('.sub').textContent = 'Agent No. ' + a.code + ' • ' + a.dist;
+        chip.querySelector('.sub').textContent = 'Short Code: ' + a.code + ' • ' + a.dist;
         loading.classList.remove('show');
         chip.classList.add('show');
         msg.classList.remove('show');
@@ -411,6 +443,7 @@
 
   /* ── QR ── */
   function simulateScan() {
+    clearTimeout(qrScanTimeout);
     // Show loading state
     const loading = $('qrLoading'), chip = $('qrChip');
     loading.classList.add('show');
@@ -420,8 +453,9 @@
     setTimeout(() => {
       const a = AGENTS['562394'];
       agent = a;
+      stopCamera();
       chip.querySelector('.nm').textContent = a.name;
-      chip.querySelector('.sub').textContent = 'Agent No. ' + a.code + ' • ' + a.dist;
+      chip.querySelector('.sub').textContent = 'Short Code: ' + a.code;
       loading.classList.remove('show');
       chip.classList.add('show');
       updateBtn();
@@ -488,7 +522,7 @@
     const fee = computeFee(amt);
     $('cfAvatar').textContent = agent.abbr;
     $('cfName').textContent = agent.name;
-    $('cfSub').textContent = 'Agent No. ' + agent.code;
+    $('cfSub').textContent = 'Short Code: ' + agent.code;
     $('cfAmount').textContent = fmt(amt) + ' Br';
     $('cfFee').textContent = fmt(fee) + ' Br';
     $('cfTotal').textContent = fmt(amt + fee) + ' Br';
@@ -526,5 +560,7 @@
     if (/^\d{6}$/.test(code)) useRecent(code);
   } catch (e) { /* ignore corrupt state and render the screen as-is */ }
 </script>
+<script src="test-scenarios-data.js"></script>
+<script src="test-scenarios.js"></script>
 </body>
 </html>

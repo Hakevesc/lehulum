@@ -207,11 +207,11 @@
   position: absolute;
   inset: 0;
   z-index: 80;
-  background: rgba(0,0,0,0.5);
+  background: rgba(0, 0, 0, 0.5);
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 22px;
+  padding: 16px;
   animation: annFade 0.22s ease-out;
 }
 .ann-modal.ann-hidden { display: none; }
@@ -220,12 +220,13 @@
 
 .ann-modal-card {
   width: 100%;
-  max-width: 300px;
+  max-width: 320px;
   background: #FFF;
-  border-radius: 22px;
+  border-radius: 28px;
   overflow: hidden;
-  box-shadow: 0 22px 60px rgba(0,0,0,0.32);
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.28);
   animation: annPop 0.36s cubic-bezier(0.34, 1.5, 0.64, 1);
+  position: relative;
 }
 
 @keyframes annPop {
@@ -233,15 +234,27 @@
   to   { opacity: 1; transform: translateY(0) scale(1); }
 }
 
-/* lightweight CSS artwork header — no image request */
 .ann-modal-art {
   position: relative;
-  height: 122px;
+  height: 185px;
   display: flex;
   align-items: center;
   justify-content: center;
   overflow: hidden;
+  background: linear-gradient(175deg, #DE2B35 0%, #B31922 100%);
 }
+
+/* Subtle background lighting & curved waves */
+.ann-modal-wave-bg {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: 
+    radial-gradient(circle at 10% 40%, rgba(255, 255, 255, 0.18) 0%, transparent 60%),
+    radial-gradient(circle at 90% 20%, rgba(0, 0, 0, 0.25) 0%, transparent 55%),
+    radial-gradient(circle at 85% 65%, rgba(120, 10, 18, 0.4) 0%, transparent 50%);
+}
+
 .ann-modal-art .ann-art-circle {
   position: absolute;
   border-radius: 50%;
@@ -250,101 +263,180 @@
 }
 .ann-modal-art .ann-art-circle.a1 { width: 150px; height: 150px; right: -46px; top: -60px; }
 .ann-modal-art .ann-art-circle.a2 { width: 96px;  height: 96px;  left: -34px; bottom: -44px; background: rgba(255,255,255,0.09); }
+
 .ann-modal-art .ann-art-glyph {
   position: relative;
   font-size: 54px;
   filter: drop-shadow(0 6px 14px rgba(0,0,0,0.22));
 }
+
+/* The 3D illustration */
+.ann-modal-img-wrap {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 10px;
+}
+
+.ann-modal-img {
+  width: 145px;
+  height: auto;
+  max-height: 142px;
+  object-fit: contain;
+  filter: drop-shadow(0 8px 18px rgba(0, 0, 0, 0.2));
+  transform: translateY(6px);
+}
+
+/* Bottom white curve dividing art and body */
+.ann-modal-bottom-curve {
+  position: absolute;
+  bottom: -1px;
+  left: 0;
+  width: 100%;
+  height: 24px;
+  z-index: 3;
+  pointer-events: none;
+}
+
 .ann-modal-badge {
   position: absolute;
-  top: 12px;
-  left: 14px;
-  padding: 4px 10px;
+  top: 18px;
+  left: 18px;
+  padding: 5px 12px;
   border-radius: 20px;
-  background: rgba(255,255,255,0.24);
+  background: rgba(255, 255, 255, 0.25);
   backdrop-filter: blur(4px);
   color: #FFF;
   font-family: var(--Font-Family, 'Switzer', sans-serif);
-  font-size: 9.5px;
-  font-weight: 600;
-  letter-spacing: 0.4px;
+  font-size: 10.5px;
+  font-weight: 700;
+  letter-spacing: 0.6px;
   text-transform: uppercase;
+  z-index: 5;
 }
+
 .ann-modal-close {
   position: absolute;
-  top: 10px;
-  right: 10px;
-  width: 28px;
-  height: 28px;
+  top: 16px;
+  right: 16px;
+  width: 32px;
+  height: 32px;
   border: none;
   border-radius: 50%;
-  background: rgba(0,0,0,0.22);
+  background: rgba(255, 255, 255, 0.22);
   color: #FFF;
-  font-size: 16px;
-  line-height: 1;
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: background 0.15s;
+  transition: all 0.2s;
+  z-index: 5;
 }
-.ann-modal-close:hover { background: rgba(0,0,0,0.4); }
+.ann-modal-close:hover {
+  background: rgba(255, 255, 255, 0.35);
+  transform: scale(1.05);
+}
 
-.ann-modal-body { padding: 18px 18px 20px; text-align: center; }
+.ann-modal-body {
+  padding: 16px 22px 24px;
+  text-align: center;
+  position: relative;
+  z-index: 4;
+}
+
 .ann-modal-title {
-  color: var(--On-Surface);
+  color: #1E293B;
   font-family: var(--Font-Family, 'Switzer', sans-serif);
-  font-size: 18px;
-  font-weight: 600;
-  line-height: 1.3;
+  font-size: 21px;
+  font-weight: 800;
+  line-height: 1.25;
   letter-spacing: 0.2px;
-  margin-bottom: 8px;
+  text-transform: uppercase;
+  margin-bottom: 12px;
 }
+
+.ann-modal-title-red {
+  color: #DE2B35;
+  font-weight: 800;
+}
+
 .ann-modal-text {
-  color: var(--On-Surface-Low);
+  color: #64748B;
   font-family: var(--Font-Family, 'Switzer', sans-serif);
-  font-size: 12.5px;
-  line-height: 1.6;
-  margin-bottom: 8px;
+  font-size: 13px;
+  line-height: 1.55;
+  margin: 0 auto 16px;
+  max-width: 260px;
 }
+
 .ann-modal-expiry {
   display: inline-flex;
   align-items: center;
-  gap: 5px;
-  padding: 4px 10px;
-  margin-bottom: 16px;
-  border-radius: 10px;
-  background: var(--On-Primary);
-  color: var(--Primary);
+  gap: 6px;
+  padding: 6px 14px;
+  margin-bottom: 20px;
+  border-radius: 20px;
+  background: #FFF1F2;
+  color: #DE2B35;
   font-family: var(--Font-Family, 'Switzer', sans-serif);
-  font-size: 10.5px;
+  font-size: 12px;
   font-weight: 600;
-  letter-spacing: 0.3px;
+  letter-spacing: 0.2px;
 }
-.ann-modal-actions { display: flex; flex-direction: column; gap: 9px; }
+
+.ann-modal-expiry svg {
+  stroke: #DE2B35;
+}
+
+.ann-modal-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
 .ann-btn {
   width: 100%;
-  height: 46px;
-  border: none;
-  border-radius: 13px;
+  height: 48px;
+  border-radius: 14px;
   font-family: var(--Font-Family, 'Switzer', sans-serif);
-  font-size: 14px;
+  font-size: 14.5px;
   font-weight: 600;
-  letter-spacing: 0.3px;
+  letter-spacing: 0.2px;
   cursor: pointer;
   transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
+
 .ann-btn.primary {
-  background: var(--Primary);
+  border: none;
+  background: #DE2B35;
   color: #FFF;
-  box-shadow: 0 4px 16px rgba(254,53,61,0.25);
+  box-shadow: 0 4px 14px rgba(222, 43, 53, 0.3);
 }
-.ann-btn.primary:hover { background: #E5303A; transform: translateY(-1px); }
-.ann-btn.primary:active { transform: scale(0.98); }
-.ann-btn.ghost {
-  height: 38px;
-  background: transparent;
-  color: var(--On-Surface-Low);
+.ann-btn.primary:hover {
+  background: #C41520;
+  transform: translateY(-1px);
+  box-shadow: 0 6px 18px rgba(222, 43, 53, 0.38);
+}
+.ann-btn.primary:active {
+  transform: scale(0.98);
+}
+
+.ann-btn.secondary {
+  border: 1.5px solid #E2E8F0;
+  background: #FFF;
+  color: #64748B;
   font-weight: 500;
 }
-.ann-btn.ghost:hover { color: var(--On-Surface); }
+.ann-btn.secondary:hover {
+  background: #F8FAFC;
+  color: #1E293B;
+  border-color: #CBD5E1;
+}
+.ann-btn.secondary:active {
+  transform: scale(0.98);
+}

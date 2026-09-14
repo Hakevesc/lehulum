@@ -3,36 +3,68 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Payment Failed</title>
+<title>Transaction Failed</title>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@400;500;600&display=swap');
   @import url('https://api.fontshare.com/v2/css?f[]=switzer@400,500,600,700&display=swap');
 
-  :root { --Primary:#FE353D; --On-Surface:#1C1C21; --On-Surface-Low:#7C7C87; --Border:#E8E8EC; --Background:#F5F5F5; }
-  * { margin:0; padding:0; box-sizing:border-box; }
-  body { font-family:'Inter',sans-serif; background:transparent; display:flex; justify-content:center; align-items:center; min-height:100vh; padding:20px; }
-  .phone-frame { width:360px; height:780px; background:var(--Background); border-radius:30px; overflow:hidden; position:relative; box-shadow:0 20px 60px rgba(0,0,0,0.15); }
-  .app-content { height:100%; display:flex; flex-direction:column; }
-  .status-bar { display:flex; justify-content:space-between; align-items:center; width:100%; padding:14px 24px 8px; background:var(--Background); }
-  .status-bar .time { font-size:14px; font-weight:600; color:var(--On-Surface); }
-  .status-icons { display:flex; align-items:center; gap:6px; }
-  .status-icons svg { width:18px; height:18px; }
-  .header-nav { width:100%; display:flex; align-items:center; justify-content:space-between; padding:8px 16px 12px; background:var(--Background); }
-  .back-btn { display:flex; align-items:center; justify-content:center; width:36px; height:36px; border-radius:50%; background:transparent; border:none; cursor:pointer; transition:all 0.2s; }
-  .back-btn:hover { background:rgba(0,0,0,0.05); }
-  .back-btn svg { width:22px; height:22px; stroke:var(--On-Surface); stroke-width:1.8px; fill:none; }
-  .header-title { color:var(--On-Surface); font-family:'Switzer',sans-serif; font-size:17px; font-weight:500; letter-spacing:0.3px; flex:1; text-align:center; }
-  .result-body { flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; padding:16px 24px; text-align:center; }
-  .result-icon { width:92px; height:92px; border-radius:50%; display:flex; align-items:center; justify-content:center; margin-bottom:20px; background:#FFF1F2; box-shadow:0 4px 20px rgba(254,53,61,0.15); }
-  .result-icon svg { width:46px; height:46px; stroke:var(--Primary); stroke-width:2; fill:none; stroke-linecap:round; stroke-linejoin:round; }
-  .result-title { color:var(--On-Surface); font-family:'Switzer',sans-serif; font-size:22px; font-weight:700; margin-bottom:10px; }
-  .result-desc { color:var(--On-Surface-Low); font-family:'Switzer',sans-serif; font-size:14px; line-height:1.6; max-width:286px; }
-  .bottom-area { width:100%; display:flex; flex-direction:column; align-items:center; padding:16px 24px 28px; gap:12px; }
-  .btn-primary { width:100%; height:50px; border-radius:14px; background:var(--Primary); color:#FFF1F2; font-family:'Poppins',sans-serif; font-size:15px; font-weight:500; border:none; cursor:pointer; transition:all 0.2s; box-shadow:0 4px 16px rgba(254,53,61,0.25); }
-  .btn-primary:hover { background:#E5303A; transform:translateY(-1px); }
-  .btn-primary:active { transform:scale(0.98); }
-  .btn-link { color:var(--On-Surface-Low); font-family:'Switzer',sans-serif; font-size:13px; font-weight:500; cursor:pointer; background:none; border:none; padding:6px 0; }
-  .btn-link:hover { color:var(--On-Surface); }
+  :root {
+    --Primary: #FE353D;
+    --On-Surface: #1C1C21;
+    --On-Surface-Low: #7C7C87;
+    --Border: #E8E8EC;
+    --Background: #F5F5F5;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'Inter', sans-serif; background: transparent; display: flex; justify-content: center; align-items: center; min-height: 100vh; padding: 20px; }
+  .phone-frame { width: 360px; height: 780px; background: var(--Background); border-radius: 30px; overflow: hidden; position: relative; box-shadow: 0 20px 60px rgba(0,0,0,0.15); display: flex; flex-direction: column; }
+  .app-content { height: 100%; display: flex; flex-direction: column; }
+
+  .status-bar { display: flex; justify-content: space-between; align-items: center; padding: 14px 24px 8px; background: var(--Background); flex-shrink: 0; }
+  .status-bar .time { font-size: 14px; font-weight: 600; color: var(--On-Surface); }
+  .status-icons { display: flex; align-items: center; gap: 6px; }
+  .status-icons svg { width: 18px; height: 18px; }
+
+  .header-nav { display: flex; align-items: center; justify-content: space-between; padding: 8px 16px 12px; background: var(--Background); flex-shrink: 0; }
+  .back-btn { width: 36px; height: 36px; border-radius: 50%; background: transparent; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: background 0.2s; }
+  .back-btn:hover { background: rgba(0,0,0,0.05); }
+  .back-btn svg { width: 22px; height: 22px; stroke: var(--On-Surface); stroke-width: 1.8px; fill: none; }
+  .header-title { color: var(--On-Surface); font-family: 'Switzer', sans-serif; font-size: 17px; font-weight: 500; letter-spacing: 0.3px; flex: 1; text-align: center; }
+
+  .body-wrap { flex: 1; display: flex; flex-direction: column; padding: 8px 16px 0; overflow-y: auto; }
+  .body-wrap::-webkit-scrollbar { width: 0; }
+
+  /* ── Result header ── */
+  .result-icon { width: 56px; height: 56px; border-radius: 16px; border: 1.8px solid var(--Primary); background: #FFF5F5; display: flex; align-items: center; justify-content: center; margin: 6px auto 16px; }
+  .result-icon svg { width: 26px; height: 26px; stroke: var(--Primary); stroke-width: 2.2; fill: none; }
+  .result-title { text-align: center; font-family: 'Switzer', sans-serif; font-size: 20px; font-weight: 700; color: var(--On-Surface); }
+  .result-lead { text-align: center; font-family: 'Switzer', sans-serif; font-size: 13.5px; font-weight: 600; color: var(--On-Surface-Low); margin-top: 8px; }
+  .result-desc { text-align: center; font-family: 'Switzer', sans-serif; font-size: 13px; color: var(--On-Surface-Low); margin-top: 2px; }
+
+  /* ── Receipt summary ── */
+  .summary-card { background: #FFF; border-radius: 16px; padding: 16px; margin-top: 22px; box-shadow: 0 2px 8px rgba(0,0,0,0.04); }
+
+  .party-card { position: relative; border: 1px solid var(--Border); border-radius: 14px; padding: 14px; display: flex; align-items: center; gap: 12px; margin-bottom: 8px; }
+  .party-badge { position: absolute; top: -11px; right: 14px; background: #EDEDF0; color: var(--On-Surface-Low); font-family: 'Switzer', sans-serif; font-size: 9.5px; font-weight: 700; letter-spacing: 0.6px; padding: 4px 9px; border-radius: 6px; }
+  .party-avatar { width: 44px; height: 44px; border-radius: 50%; background: #FFE9EA; color: var(--Primary); display: flex; align-items: center; justify-content: center; font-family: 'Switzer', sans-serif; font-size: 14px; font-weight: 700; flex-shrink: 0; }
+  .party-info { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 3px; }
+  .party-name { font-family: 'Switzer', sans-serif; font-size: 15px; font-weight: 700; color: var(--On-Surface); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .party-sub { font-family: 'Switzer', sans-serif; font-size: 12.5px; color: var(--On-Surface-Low); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+  .sum-row { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 14px 2px; border-bottom: 1px solid #F0F0F3; }
+  .sum-row.total { border-bottom: none; }
+  .sum-key { font-family: 'Switzer', sans-serif; font-size: 13px; font-weight: 400; color: var(--On-Surface-Low); flex-shrink: 0; }
+  .sum-val { font-family: 'Switzer', sans-serif; font-size: 13.5px; font-weight: 700; color: var(--On-Surface); text-align: right; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .sum-row.total .sum-val { color: var(--Primary); font-size: 15px; }
+
+  /* ── Actions ── */
+  .bottom-area { flex-shrink: 0; padding: 16px 16px 22px; display: flex; flex-direction: column; gap: 12px; background: var(--Background); }
+  .btn { height: 52px; border-radius: 14px; font-family: 'Poppins', sans-serif; font-size: 15px; font-weight: 500; cursor: pointer; transition: all 0.2s; }
+  .btn:active { transform: scale(0.98); }
+  .btn.primary { border: none; background: var(--Primary); color: #FFF; box-shadow: 0 4px 16px rgba(254,53,61,0.25); }
+  .btn.primary:hover { background: #E5303A; box-shadow: 0 6px 20px rgba(254,53,61,0.35); transform: translateY(-1px); }
+  .btn.outline { border: 1.5px solid var(--Primary); background: #FFF; color: var(--Primary); }
+  .btn.outline:hover { background: #FFF5F5; }
 </style>
 </head>
 <body>
@@ -49,37 +81,81 @@
     </div>
 
     <div class="header-nav">
-      <button class="back-btn" onclick="goHome()">
+      <button class="back-btn" onclick="tryAgain()">
         <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
       </button>
-      <span class="header-title">Payment Failed</span>
+      <span class="header-title">Merchant Payment</span>
       <div style="width:36px;"></div>
     </div>
 
-    <div class="result-body">
+    <div class="body-wrap">
+
       <div class="result-icon">
-        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>
+        <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M17 7 7 17M7 7l10 10"/></svg>
       </div>
-      <h2 class="result-title">Payment Failed</h2>
-      <p class="result-desc">We couldn't complete your payment and you have not been charged. Please try again.</p>
+      <h2 class="result-title">Transaction Failed</h2>
+      <p class="result-lead">We couldn't complete your payment.</p>
+      <p class="result-desc">Please check your details and try again.</p>
+
+      <div class="summary-card">
+        <div class="party-card">
+          <span class="party-badge">MERCHANT</span>
+          <div class="party-avatar" id="initials">AB</div>
+          <div class="party-info">
+            <span class="party-name" id="holder">Recipient</span>
+            <span class="party-sub" id="account">—</span>
+          </div>
+        </div>
+
+        <div class="sum-row">
+          <span class="sum-key">Merchant Short Code:</span>
+          <span class="sum-val" id="bank">—</span>
+        </div>
+        <div class="sum-row">
+          <span class="sum-key">Fee:</span>
+          <span class="sum-val" id="fee">0.00 Br</span>
+        </div>
+        <div class="sum-row total">
+          <span class="sum-key">Total:</span>
+          <span class="sum-val" id="total">0.00 Br</span>
+        </div>
+      </div>
+
     </div>
 
     <div class="bottom-area">
-      <button class="btn-primary" onclick="tryAgain()">Try Again</button>
-      <button class="btn-link" onclick="goHome()">Back to Home</button>
+      <button class="btn primary" onclick="tryAgain()">Try Again</button>
+      <button class="btn outline" onclick="window.location.href='Lehulum Home.html'">Back to Home</button>
     </div>
 
   </div>
 </div>
 
 <script>
-  function tryAgain() {
-    sessionStorage.setItem('processingOutcome', 'success');
-    window.location.href = 'Merchant Payment_Enter PIN.html';
-  }
-  function goHome() { window.location.href = 'Lehulum Home.html'; }
+  const $ = id => document.getElementById(id);
+  const initials = name => name.split(/\s+/).slice(0, 2).map(w => w[0]).join('').toUpperCase();
+
+  (function loadFailure() {
+    let m = {};
+    try { m = JSON.parse(sessionStorage.getItem('merchantData') || '{}'); } catch (e) { /* ignore corrupt state */ }
+    const name = m.name || 'Merchant';
+    const money = v => parseFloat(v || 0).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+
+    $('holder').textContent = name;
+    $('initials').textContent = m.abbr || initials(name);
+    $('account').textContent = m.sub || m.code || '—';
+    $('bank').textContent = m.code || '—';
+    $('fee').textContent = parseFloat(m.fee || 0) > 0 ? money(m.fee) + ' Br' : 'Free';
+    $('total').textContent = money(m.total || m.payAmount) + ' Br';
+  })();
+
+  // The entry screen still holds the merchant and amount, so retry lands there.
+  function tryAgain() { window.location.href = 'Pay Merchant.html'; }
 </script>
 
+<!-- Export to Figma button (shared exporter) -->
 <script src="figma-export.js"></script>
+<script src="test-scenarios-data.js"></script>
+<script src="test-scenarios.js"></script>
 </body>
 </html>

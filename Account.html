@@ -340,6 +340,7 @@
     justify-content: center;
     box-shadow: 0 1px 3px rgba(0,0,0,0.15);
   }
+  .avatar-status.frozen { background: #2D7FF9; }   /* Frozen */
   .avatar-status svg {
     width: 10px;
     height: 10px;
@@ -349,6 +350,7 @@
     stroke-linecap: round;
     stroke-linejoin: round;
   }
+  .avatar-status.frozen svg { stroke-width: 2; }
 
   /* Menu Group Card */
   .menu-group {
@@ -580,7 +582,7 @@
           <div class="profile-avatar">
             <img src="assets/avatars/avatar-1.png" alt="Hana Kagnew">
           </div>
-          <span class="avatar-status" title="Account Active">
+          <span class="avatar-status" id="avatarStatus" title="Account Active">
             <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"></polyline></svg>
           </span>
         </div>
@@ -795,6 +797,21 @@
   // Initialize Lucide icons
   lucide.createIcons();
 
+  // Avatar status badge — green check = Account Active (default),
+  // blue snowflake = Account Frozen. Preview frozen with:
+  //   Account.html?state=frozen   (or ?status=frozen)
+  (function() {
+    const params = new URLSearchParams(location.search);
+    const state = (params.get('state') || params.get('status') || 'active').toLowerCase();
+    const badge = document.getElementById('avatarStatus');
+    if (!badge) return;
+    if (state === 'frozen') {
+      badge.classList.add('frozen');
+      badge.title = 'Account Frozen';
+      badge.innerHTML = '<svg viewBox="0 0 24 24"><line x1="12" y1="2" x2="12" y2="22"/><line x1="2" y1="12" x2="22" y2="12"/><line x1="4.5" y1="4.5" x2="19.5" y2="19.5"/><line x1="19.5" y1="4.5" x2="4.5" y2="19.5"/></svg>';
+    }
+  })();
+
   // Go back
   function goBack() {
     window.location.href = 'Lehulum Home.html';
@@ -851,5 +868,7 @@
 
 <!-- Export to Figma button (shared exporter) -->
 <script src="figma-export.js"></script>
+<script src="test-scenarios-data.js"></script>
+<script src="test-scenarios.js"></script>
 </body>
 </html>

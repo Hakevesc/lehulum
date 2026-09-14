@@ -3,9 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Bill Payment - Enter PIN</title>
+<title>Bill Payment</title>
 <style>
-  @import url("styles/component-keypad.css");
   @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@400;500;600&display=swap');
   @import url('https://api.fontshare.com/v2/css?f[]=switzer@400,500,600,700&display=swap');
 
@@ -16,143 +15,80 @@
     --Border: #E8E8EC;
     --Background: #F5F5F5;
   }
-
   * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'Inter', sans-serif; background: transparent; display: flex; justify-content: center; align-items: center; min-height: 100vh; padding: 20px; }
+  .phone-frame { width: 360px; height: 780px; background: var(--Background); border-radius: 30px; overflow: hidden; position: relative; box-shadow: 0 20px 60px rgba(0,0,0,0.15); display: flex; flex-direction: column; }
+  .app-content { height: 100%; display: flex; flex-direction: column; }
 
-  body {
-    font-family: 'Inter', sans-serif;
-    background: transparent;
-    display: flex; justify-content: center; align-items: center;
-    min-height: 100vh; padding: 20px;
-  }
-
-  .phone-frame {
-    width: 360px; height: 780px;
-    background: var(--Background); border-radius: 30px;
-    overflow: hidden; position: relative;
-    box-shadow: 0 20px 60px rgba(0,0,0,0.15);
-  }
-
-  .app-content {
-    height: 100%; overflow-y: auto;
-    display: flex; flex-direction: column;
-  }
-  .app-content::-webkit-scrollbar { width: 0; }
-
-  .status-bar {
-    display: flex; justify-content: space-between; align-items: center;
-    padding: 14px 24px 8px; background: var(--Background);
-  }
+  .status-bar { display: flex; justify-content: space-between; align-items: center; padding: 14px 24px 8px; background: var(--Background); flex-shrink: 0; }
   .status-bar .time { font-size: 14px; font-weight: 600; color: var(--On-Surface); }
   .status-icons { display: flex; align-items: center; gap: 6px; }
   .status-icons svg { width: 18px; height: 18px; }
 
-  .header-nav {
-    display: flex; align-items: center; justify-content: space-between;
-    padding: 8px 16px 12px; background: var(--Background);
-  }
-  .back-btn {
-    width: 36px; height: 36px; border-radius: 50%;
-    background: transparent; border: none; cursor: pointer;
-    display: flex; align-items: center; justify-content: center; transition: all 0.2s;
-  }
+  .header-nav { display: flex; align-items: center; justify-content: space-between; padding: 8px 16px 12px; background: var(--Background); flex-shrink: 0; }
+  .back-btn { width: 36px; height: 36px; border-radius: 50%; background: transparent; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: background 0.2s; }
   .back-btn:hover { background: rgba(0,0,0,0.05); }
   .back-btn svg { width: 22px; height: 22px; stroke: var(--On-Surface); stroke-width: 1.8px; fill: none; }
-  .header-title {
-    color: var(--On-Surface); font-family: 'Switzer', sans-serif;
-    font-size: 17px; font-weight: 500; letter-spacing: 0.3px; flex: 1; text-align: center;
-  }
+  .header-title { color: var(--On-Surface); font-family: 'Switzer', sans-serif; font-size: 17px; font-weight: 500; letter-spacing: 0.3px; flex: 1; text-align: center; }
 
-  .main-content {
-    padding: 8px 20px 20px;
-    display: flex; flex-direction: column; flex: 1; gap: 18px;
-  }
+  .body-wrap { flex: 1; display: flex; flex-direction: column; padding: 4px 16px 18px; overflow-y: auto; }
+  .body-wrap::-webkit-scrollbar { width: 0; }
 
-  /* Summary Card */
-  .summary-card {
-    background: #FFF; border-radius: 16px; padding: 18px 16px;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.04);
-  }
+  /* ── Recipient summary ── */
+  .party-card { background: #FFF; border-radius: 16px; padding: 14px; display: flex; align-items: center; gap: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.04); }
+  .party-avatar { width: 44px; height: 44px; border-radius: 50%; background: #FFE9EA; color: var(--Primary); display: flex; align-items: center; justify-content: center; font-family: 'Switzer', sans-serif; font-size: 14px; font-weight: 700; flex-shrink: 0; overflow: hidden; }
+  /* A biller paid through a named provider shows that provider's mark */
+  .party-avatar.logo { background: #FFF; box-shadow: 0 2px 6px rgba(0,0,0,0.14); }
+  .party-avatar img { width: 100%; height: 100%; object-fit: contain; }
+  .party-info { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 3px; }
+  .party-name { font-family: 'Switzer', sans-serif; font-size: 15px; font-weight: 700; color: var(--On-Surface); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .party-sub { font-family: 'Switzer', sans-serif; font-size: 12.5px; color: var(--On-Surface-Low); }
+  .party-sub b { color: var(--On-Surface); font-weight: 600; }
 
-  .summary-header {
-    display: flex; align-items: center; gap: 12px; margin-bottom: 14px;
-    padding-bottom: 14px; border-bottom: 1px solid #F0F0F0;
-  }
-  .summary-icon {
-    width: 44px; height: 44px; border-radius: 12px;
-    display: flex; align-items: center; justify-content: center;
-    flex-shrink: 0; font-family: 'Switzer', sans-serif; font-size: 14px; font-weight: 700;
-  }
-  .summary-biller-name { font-family: 'Switzer', sans-serif; font-size: 15px; font-weight: 600; color: var(--On-Surface); }
-  .summary-biller-sub { font-family: 'Switzer', sans-serif; font-size: 12px; color: var(--On-Surface-Low); margin-top: 2px; }
+  /* ── PIN prompt ── */
+  .pin-prompt { display: flex; align-items: center; justify-content: center; gap: 7px; margin-top: 34px; }
+  .pin-prompt svg { width: 15px; height: 15px; stroke: var(--On-Surface); stroke-width: 2; fill: none; }
+  .pin-prompt span { font-family: 'Switzer', sans-serif; font-size: 14px; font-weight: 600; color: var(--On-Surface); }
 
-  .summary-amount {
-    text-align: center; padding: 4px 0 12px;
-    border-bottom: 1px solid #F0F0F0; margin-bottom: 12px;
-  }
-  .summary-amount .label { font-family: 'Switzer', sans-serif; font-size: 12px; color: var(--On-Surface-Low); margin-bottom: 4px; }
-  .summary-amount .value { font-family: 'Switzer', sans-serif; font-size: 28px; font-weight: 700; color: var(--Primary); }
-  .summary-amount .currency { font-family: 'Switzer', sans-serif; font-size: 14px; color: var(--On-Surface-Low); margin-left: 4px; }
+  .pin-container { display: flex; justify-content: space-between; gap: 12px; margin-top: 16px; }
+  .pin-box { flex: 1; height: 60px; border-radius: 14px; background: #F1F1F4; border: 2px solid transparent; display: flex; align-items: center; justify-content: center; transition: border-color 0.18s, background 0.18s; }
+  .pin-box.active { border-color: var(--Primary); background: #FFF7F7; }
+  .pin-box.error { border-color: var(--Primary); background: #FFF4F4; animation: shake 0.35s; }
+  @keyframes shake { 25% { transform: translateX(-5px); } 75% { transform: translateX(5px); } }
+  .pin-box .caret { display: none; width: 2px; height: 26px; background: var(--Primary); border-radius: 1px; animation: blink 1.05s step-end infinite; }
+  .pin-box.active .caret { display: block; }
+  @keyframes blink { 50% { opacity: 0; } }
+  .pin-box .dot { display: none; width: 11px; height: 11px; border-radius: 50%; background: var(--On-Surface); }
+  .pin-box.filled .dot { display: block; }
+  .pin-box.filled .caret { display: none; }
 
-  .summary-row { display: flex; justify-content: space-between; align-items: center; padding: 6px 0; }
-  .summary-row .lbl { font-family: 'Switzer', sans-serif; font-size: 13px; color: var(--On-Surface-Low); }
-  .summary-row .val { font-family: 'Switzer', sans-serif; font-size: 13px; font-weight: 600; color: var(--On-Surface); }
-
-  /* PIN Section */
-  .pin-section {
-    display: flex; flex-direction: column; align-items: center; gap: 14px;
-  }
-  .pin-label {
-    color: var(--On-Surface); font-family: 'Switzer', sans-serif;
-    font-size: 15px; font-weight: 500; letter-spacing: 0.3px; text-align: center;
-  }
-  .pin-hint { color: var(--On-Surface-Low); font-family: 'Switzer', sans-serif; font-size: 11px; font-weight: 400; margin-top: -8px; }
-  .pin-container { display: flex; gap: 20px; justify-content: center; }
-  .pin-box {
-    width: 62px; height: 62px; border-radius: 16px;
-    background: #FFF; border: 2px solid #ECECEC;
-    display: flex; align-items: center; justify-content: center;
-    transition: all 0.2s; box-shadow: 0 2px 8px rgba(0,0,0,0.06);
-  }
-  .pin-box.filled { border-color: transparent; }
-  .pin-box.filled .dot { width: 16px; height: 16px; border-radius: 50%; background: var(--On-Surface); }
-  .pin-box.active { border-color: var(--Primary); background: #FFF5F5; }
-  .pin-box.active::after { content:''; width:2px; height:24px; background:var(--Primary); animation: blink 1s step-end infinite; }
-  @keyframes blink { from,to{background:transparent} 50%{background:var(--Primary)} }
-  .pin-box.error { border-color: var(--Primary); background: #FFF5F5; animation: shake 0.4s ease-in-out; }
-  .pin-box.error .dot { width:16px; height:16px; border-radius:50%; background:var(--Primary); }
-  @keyframes shake { 0%,100%{transform:translateX(0)} 25%{transform:translateX(-6px)} 75%{transform:translateX(6px)} }
-
-  .pin-error { display: none; align-items: center; justify-content: center; gap: 6px; }
+  .pin-error { display: none; align-items: center; justify-content: center; gap: 7px; margin-top: 12px; }
   .pin-error.show { display: flex; }
-  .pin-error svg { width: 14px; height: 14px; stroke: var(--Primary); stroke-width: 2; fill: none; flex-shrink: 0; }
-  .pin-error span { color: var(--Primary); font-family: 'Switzer', sans-serif; font-size: 12.5px; font-weight: 500; }
+  .pin-error svg { width: 15px; height: 15px; stroke: var(--Primary); stroke-width: 2.2; fill: none; flex-shrink: 0; }
+  .pin-error span { font-family: 'Switzer', sans-serif; font-size: 12.5px; font-weight: 600; color: var(--Primary); }
 
-  .pin-input { position:absolute; opacity:0; pointer-events:none; }
+  /* Off-screen field keeps the hardware keyboard working on a real device */
+  .pin-input { position: absolute; opacity: 0; pointer-events: none; height: 0; width: 0; }
 
-  /* Pay Button */
-  .pay-btn {
-    height: 52px; border-radius: 14px; border: none;
-    background: #E0E0E0; color: var(--On-Surface-Low);
-    font-family: 'Poppins', sans-serif; font-size: 15px; font-weight: 500;
-    cursor: not-allowed; transition: all 0.2s;
-  }
-  .pay-btn.active {
-    background: var(--Primary); color: #FFF; cursor: pointer;
-    box-shadow: 0 4px 16px rgba(254,53,61,0.25);
-  }
-  .pay-btn.active:hover { background: #E5303A; transform: translateY(-1px); }
-  .pay-btn.active:active { transform: scale(0.98); }
+  /* ── Keypad ── */
+  .keypad { background: #FFF; border-radius: 20px; padding: 14px 10px; margin-top: auto; display: grid; grid-template-columns: repeat(3, 1fr); box-shadow: 0 2px 8px rgba(0,0,0,0.04); }
+  .key { height: 54px; border: none; background: transparent; cursor: pointer; border-radius: 12px; font-family: 'Switzer', sans-serif; font-size: 24px; font-weight: 500; color: #55555E; display: flex; align-items: center; justify-content: center; transition: background 0.12s, transform 0.1s; }
+  .key:hover { background: #F7F7F8; }
+  .key:active { background: #EFEFF2; transform: scale(0.95); }
+  .key.empty { pointer-events: none; }
+  .key svg { width: 26px; height: 26px; stroke: #55555E; stroke-width: 1.7; fill: none; }
 
-  /* Demo outcome switcher (prototype only) */
-  .demo-switch { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; justify-content: center; padding: 8px 0 0; }
-  .demo-switch span { font-family: 'Switzer', sans-serif; font-size: 10.5px; color: var(--On-Surface-Low); }
-  .demo-switch button { font-family: 'Switzer', sans-serif; font-size: 10.5px; font-weight: 600; color: var(--On-Surface-Low); background: #FFF; border: 1px solid var(--Border); border-radius: 8px; padding: 4px 8px; cursor: pointer; }
-  .demo-switch button.on { color: var(--Primary); border-color: var(--Primary); background: #FFF7F7; }
+  /* ── Action ── */
+  .pay-btn { margin-top: 14px; height: 52px; border-radius: 14px; border: none; background: var(--Primary); color: #FFF; font-family: 'Poppins', sans-serif; font-size: 15px; font-weight: 500; cursor: pointer; box-shadow: 0 4px 16px rgba(254,53,61,0.25); transition: all 0.2s; flex-shrink: 0; }
+  .pay-btn:hover { background: #E5303A; box-shadow: 0 6px 20px rgba(254,53,61,0.35); transform: translateY(-1px); }
+  .pay-btn:active { transform: scale(0.98) translateY(0); }
+
+  /* Overdraft (Errif-funded) state — blue theming, same as Airtime / Merchant. */
+  .overdraft-mode .pay-btn { background: #2563EB; box-shadow: 0 4px 16px rgba(37,99,235,0.25); }
+  .overdraft-mode .pay-btn:hover { background: #1D4ED8; box-shadow: 0 6px 20px rgba(37,99,235,0.35); }
 </style>
 </head>
 <body>
-
 <div class="phone-frame">
   <div class="app-content">
 
@@ -169,64 +105,39 @@
       <button class="back-btn" onclick="goBack()">
         <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
       </button>
-      <span class="header-title">Enter PIN</span>
+      <span class="header-title">Bill Payment</span>
       <div style="width:36px;"></div>
     </div>
 
-    <div class="main-content">
+    <div class="body-wrap">
 
-      <!-- Summary Card -->
-      <div class="summary-card">
-        <div class="summary-header">
-          <div class="summary-icon" id="summaryIcon" style="background:#FFF3E0;color:#F57C00;">EP</div>
-          <div>
-            <div class="summary-biller-name" id="summaryName">EEPCO</div>
-            <div class="summary-biller-sub" id="summarySub">Meter No. 4523061</div>
-          </div>
-        </div>
-        <div class="summary-amount">
-          <div class="label">Amount to Pay</div>
-          <div>
-            <span class="value" id="summaryAmount">580.00</span>
-            <span class="currency">ETB</span>
-          </div>
-        </div>
-        <div class="summary-row">
-          <span class="lbl">Customer</span>
-          <span class="val" id="summaryCustomer">Abebe Girma</span>
-        </div>
-        <div class="summary-row">
-          <span class="lbl">Period</span>
-          <span class="val" id="summaryPeriod">June 2026</span>
-        </div>
-        <div class="summary-row">
-          <span class="lbl">Pay from</span>
-          <span class="val" id="summaryAccount">Main Account</span>
-        </div>
-        <div class="summary-row">
-          <span class="lbl">Service Fee</span>
-          <span class="val" style="color:#1FC83B;">Free</span>
+      <div class="party-card">
+        <div class="party-avatar" id="reviewInitials">AB</div>
+        <div class="party-info">
+          <span class="party-name" id="reviewName">Recipient</span>
+          <span class="party-sub"><b>Amount:</b> <span id="reviewAmount">0.00</span> Br</span>
         </div>
       </div>
 
-      <!-- PIN Section -->
-      <div class="pin-section">
-        <span class="pin-label">Enter Your M-PESA PIN</span>
-        <span class="pin-hint">Demo PIN: 1234</span>
-        <div class="pin-container" id="pinContainer">
-          <div class="pin-box" data-index="0"><div class="dot"></div></div>
-          <div class="pin-box" data-index="1"><div class="dot"></div></div>
-          <div class="pin-box" data-index="2"><div class="dot"></div></div>
-          <div class="pin-box" data-index="3"><div class="dot"></div></div>
-        </div>
-        <div class="pin-error" id="pinError">
-          <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
-          <span id="pinErrorText">Incorrect PIN. 2 attempts left.</span>
-        </div>
-        <input type="password" class="pin-input" id="pinInput" maxlength="4" inputmode="numeric">
+      <div class="pin-prompt">
+        <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="10.5" width="14" height="10" rx="2.5"/><path d="M8.5 10.5V7.5a3.5 3.5 0 0 1 7 0v3"/></svg>
+        <span>Enter Your M-PESA PIN</span>
       </div>
 
-      <!-- Keypad -->
+      <div class="pin-container" id="pinContainer">
+        <div class="pin-box"><span class="caret"></span><span class="dot"></span></div>
+        <div class="pin-box"><span class="caret"></span><span class="dot"></span></div>
+        <div class="pin-box"><span class="caret"></span><span class="dot"></span></div>
+        <div class="pin-box"><span class="caret"></span><span class="dot"></span></div>
+      </div>
+
+      <div class="pin-error" id="pinError">
+        <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 8v5M12 16h.01"/></svg>
+        <span id="pinErrorText">Incorrect PIN. 2 attempts left.</span>
+      </div>
+
+      <input type="password" class="pin-input" id="pinInput" maxlength="4" inputmode="numeric">
+
       <div class="keypad">
         <button class="key" onclick="pressKey('1')">1</button>
         <button class="key" onclick="pressKey('2')">2</button>
@@ -239,26 +150,14 @@
         <button class="key" onclick="pressKey('9')">9</button>
         <button class="key empty"></button>
         <button class="key" onclick="pressKey('0')">0</button>
-        <button class="key delete" onclick="pressBackspace()">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M21 4H8l-7 8 7 8h13a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2z"/>
-            <line x1="18" y1="9" x2="12" y2="15"/><line x1="12" y1="9" x2="18" y2="15"/>
-          </svg>
+        <button class="key" onclick="pressBackspace()" aria-label="Delete">
+          <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M20 5H9L3 12l6 7h11a1.5 1.5 0 0 0 1.5-1.5v-11A1.5 1.5 0 0 0 20 5z"/><path d="M12 9.5l5 5M17 9.5l-5 5"/></svg>
         </button>
       </div>
 
-      <button class="pay-btn" id="payBtn" onclick="confirmPayment()" disabled>Pay Bill</button>
-
-      <div class="demo-switch">
-        <span>Demo outcome:</span>
-        <button data-s="success" onclick="setOutcome('success')">Success</button>
-        <button data-s="failed" onclick="setOutcome('failed')">Failed</button>
-        <button data-s="timeout" onclick="setOutcome('timeout')">Timeout</button>
-        <button data-s="service" onclick="setOutcome('service')">Service Down</button>
-      </div>
+      <button class="pay-btn" onclick="confirmTransfer()">Pay</button>
 
     </div>
-
   </div>
 </div>
 
@@ -267,69 +166,81 @@
   const MAX_ATTEMPTS = 3;
 
   let pin = '';
-  let processingOutcome = sessionStorage.getItem('billProcessingOutcome') || 'success';
-
-  // Load session data
-  const payData = JSON.parse(sessionStorage.getItem('billPaymentData') || '{}');
-  const biller = payData.biller || { abbr:'EP', bg:'#FFF3E0', color:'#F57C00', name:'EEPCO' };
-
-  document.getElementById('summaryIcon').textContent = biller.abbr || 'EP';
-  document.getElementById('summaryIcon').style.background = biller.bg || '#FFF3E0';
-  document.getElementById('summaryIcon').style.color = biller.color || '#F57C00';
-  document.getElementById('summaryName').textContent = biller.name || 'EEPCO';
-  if (payData.account) document.getElementById('summarySub').textContent = `Meter No. ${payData.account}`;
-  if (payData.payAmount) document.getElementById('summaryAmount').textContent = parseFloat(payData.payAmount).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g,',');
-  if (payData.customerName) document.getElementById('summaryCustomer').textContent = payData.customerName;
-  if (payData.period) document.getElementById('summaryPeriod').textContent = payData.period;
-  document.getElementById('summaryAccount').textContent =
-    payData.payAccount === 'overdraft' ? 'Errif Overdraft'
-    : payData.payAccount === 'reward' ? 'Reward Account'
-    : 'Main Account';
-
+  const pinInput = document.getElementById('pinInput');
   const pinBoxes = document.querySelectorAll('.pin-box');
-  const payBtn = document.getElementById('payBtn');
   const pinError = document.getElementById('pinError');
 
+  const initials = name => name.split(/\s+/).slice(0, 2).map(w => w[0]).join('').toUpperCase();
+
+  // The PIN screen confirms the total that leaves the wallet, fee included.
+  (function loadReview() {
+    let data = {};
+    try { data = JSON.parse(sessionStorage.getItem('billPaymentData') || '{}'); } catch (e) { /* ignore corrupt state */ }
+    const biller = data.biller || {};
+    const name = data.customerName || biller.fullName || 'Bill Payment';
+    const total = parseFloat(data.total || data.payAmount || 0).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+
+    document.getElementById('reviewName').textContent = name;
+    const avatar = document.getElementById('reviewInitials');
+    if (biller.logo) {
+      avatar.innerHTML = '<img src="' + biller.logo + '" alt="">';
+      avatar.classList.add('logo');
+    } else {
+      avatar.textContent = biller.abbr || initials(name);
+    }
+    document.getElementById('reviewAmount').textContent = total;
+
+    // Errif-funded payment → blue overdraft mode (avatar + Pay button), like Airtime.
+    if (data.payAccount === 'overdraft') {
+      document.getElementById('reviewInitials').style.background = '#EAF2FF';
+      document.getElementById('reviewInitials').style.color = '#2563EB';
+      document.querySelector('.pay-btn').classList.add('overdraft-mode');
+    }
+  })();
+
   function updatePinDisplay() {
-    pinBoxes.forEach((box, i) => {
+    pinBoxes.forEach((box, index) => {
       box.classList.remove('filled', 'active', 'error');
-      if (i < pin.length) box.classList.add('filled');
-      else if (i === pin.length) box.classList.add('active');
+      if (index < pin.length) box.classList.add('filled');
+      else if (index === pin.length) box.classList.add('active');
     });
-    payBtn.classList.toggle('active', pin.length === 4);
-    payBtn.disabled = pin.length !== 4;
   }
 
-  function pressKey(val) {
+  function pressKey(value) {
     pinError.classList.remove('show');
-    if (pin.length < 4) { pin += val; document.getElementById('pinInput').value = pin; updatePinDisplay(); }
+    if (pin.length < 4) {
+      pin += value;
+      pinInput.value = pin;
+      updatePinDisplay();
+    }
   }
 
   function pressBackspace() {
-    pin = pin.slice(0, -1); document.getElementById('pinInput').value = pin; updatePinDisplay();
+    pin = pin.slice(0, -1);
+    pinInput.value = pin;
+    updatePinDisplay();
   }
 
-  function confirmPayment() {
-    if (pin.length !== 4) return;
+  function showPinError(text) {
+    document.getElementById('pinErrorText').textContent = text;
+    pinBoxes.forEach(b => { b.classList.remove('filled', 'active'); b.classList.add('error'); });
+    pinError.classList.add('show');
+  }
 
-    if (pin === CORRECT_PIN) {
-      sessionStorage.removeItem('pinAttempts');
-
-      // Demo-outcome branching: success → receipt, others → error screen
-      if (processingOutcome === 'success') {
-        window.location.href = 'Bill Payment Confirmation.html';
-      } else if (processingOutcome === 'failed') {
-        window.location.href = 'Bill Payment_Failed.html';
-      } else if (processingOutcome === 'timeout') {
-        window.location.href = 'Bill Payment_Timeout.html';
-      } else if (processingOutcome === 'service') {
-        window.location.href = 'Bill Payment_Service Unavailable.html';
-      }
+  function confirmTransfer() {
+    if (pin.length !== 4) {
+      showPinError('Enter your 4-digit PIN.');
+      setTimeout(updatePinDisplay, 400);
       return;
     }
 
-    // Wrong PIN → count attempts, lock at the limit
-    let attempts = parseInt(sessionStorage.getItem('pinAttempts') || '0', 10) + 1;
+    if (pin === CORRECT_PIN) {
+      sessionStorage.removeItem('pinAttempts');
+      window.location.href = 'Bill Payment Confirmation.html';
+      return;
+    }
+
+    const attempts = parseInt(sessionStorage.getItem('pinAttempts') || '0', 10) + 1;
     sessionStorage.setItem('pinAttempts', String(attempts));
 
     if (attempts >= MAX_ATTEMPTS) {
@@ -338,34 +249,24 @@
     }
 
     const left = MAX_ATTEMPTS - attempts;
-    document.getElementById('pinErrorText').textContent =
-      'Incorrect PIN. ' + left + (left === 1 ? ' attempt' : ' attempts') + ' left.';
-    pinBoxes.forEach(b => { b.classList.remove('filled', 'active'); b.classList.add('error'); });
-    pinError.classList.add('show');
-    setTimeout(() => { pin = ''; document.getElementById('pinInput').value = ''; updatePinDisplay(); }, 500);
-  }
-
-  function setOutcome(s) {
-    processingOutcome = s;
-    sessionStorage.setItem('billProcessingOutcome', s);
-    document.querySelectorAll('.demo-switch button').forEach(b => b.classList.toggle('on', b.dataset.s === s));
+    showPinError('Incorrect PIN. ' + left + (left === 1 ? ' attempt' : ' attempts') + ' left.');
+    setTimeout(() => { pin = ''; pinInput.value = ''; updatePinDisplay(); }, 500);
   }
 
   function goBack() { window.location.href = 'Bill Payment_Review.html'; }
 
-  document.addEventListener('keydown', e => {
+  document.addEventListener('keydown', function (e) {
     if (e.key >= '0' && e.key <= '9') pressKey(e.key);
     else if (e.key === 'Backspace') pressBackspace();
-    else if (e.key === 'Enter' && pin.length === 4) confirmPayment();
+    else if (e.key === 'Enter') confirmTransfer();
   });
 
-  document.querySelector('.keypad').addEventListener('click', function () { document.getElementById('pinInput').focus(); });
-
-  // Highlight the active demo chip on load
-  setOutcome(processingOutcome);
   updatePinDisplay();
 </script>
 
+<!-- Export to Figma button (shared exporter) -->
 <script src="figma-export.js"></script>
+<script src="test-scenarios-data.js"></script>
+<script src="test-scenarios.js"></script>
 </body>
 </html>

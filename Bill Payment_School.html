@@ -1,0 +1,561 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bill Payment</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@400;500;600&display=swap');
+  @import url('https://api.fontshare.com/v2/css?f[]=switzer@400,500,600,700&display=swap');
+
+  :root {
+    --Primary: #FE353D;
+    --On-Surface: #1C1C21;
+    --On-Surface-Low: #7C7C87;
+    --Border: #E8E8EC;
+    --Background: #F5F5F5;
+    --Field: #F8F8F9;
+    --Field-Border: #EFEFF1;
+    --Success: #1FC83B;
+    --Success-Light: #EEF9F0;
+    --Error-Light: #FDECEC;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'Inter', sans-serif; background: transparent; display: flex; justify-content: center; align-items: center; min-height: 100vh; padding: 20px; }
+  .phone-frame { width: 360px; height: 780px; background: var(--Background); border-radius: 30px; overflow: hidden; position: relative; box-shadow: 0 20px 60px rgba(0,0,0,0.15); display: flex; flex-direction: column; }
+  .app-content { height: 100%; display: flex; flex-direction: column; }
+
+  .status-bar { display: flex; justify-content: space-between; align-items: center; padding: 14px 24px 8px; background: var(--Background); flex-shrink: 0; }
+  .status-bar .time { font-size: 14px; font-weight: 600; color: var(--On-Surface); }
+  .status-icons { display: flex; align-items: center; gap: 6px; }
+  .status-icons svg { width: 18px; height: 18px; }
+
+  .header-nav { display: flex; align-items: center; justify-content: space-between; padding: 8px 16px 12px; background: var(--Background); flex-shrink: 0; }
+  .back-btn { width: 36px; height: 36px; border-radius: 50%; background: transparent; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: background 0.2s; }
+  .back-btn:hover { background: rgba(0,0,0,0.05); }
+  .back-btn svg { width: 22px; height: 22px; stroke: var(--On-Surface); stroke-width: 1.8px; fill: none; }
+  .header-title { color: var(--On-Surface); font-family: 'Switzer', sans-serif; font-size: 17px; font-weight: 500; letter-spacing: 0.3px; flex: 1; text-align: center; }
+
+  .scroll { flex: 1; overflow-y: auto; padding: 4px 16px 16px; display: flex; flex-direction: column; gap: 14px; }
+  .scroll::-webkit-scrollbar { width: 0; }
+
+  /* ── Accordion ── */
+  .accordion { background: #FFF; border-radius: 16px; box-shadow: 0 2px 8px rgba(0,0,0,0.04); overflow: hidden; flex-shrink: 0; }
+  .acc-head { padding: 16px; display: flex; align-items: center; gap: 14px; cursor: pointer; }
+  .acc-head .badge { width: 44px; height: 44px; border-radius: 50%; background: var(--Primary); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+  .acc-head .badge svg { width: 22px; height: 22px; stroke: #FFF; stroke-width: 1.9; fill: none; }
+  .acc-head .nm { flex: 1; min-width: 0; font-family: 'Switzer', sans-serif; font-size: 16px; font-weight: 700; color: var(--On-Surface); }
+  .acc-head .caret { width: 18px; height: 18px; stroke: var(--Primary); stroke-width: 2.4; fill: none; flex-shrink: 0; transition: transform 0.25s; }
+  .accordion.open .acc-head .caret { transform: rotate(180deg); }
+
+  /* Collapsed panels stay in the DOM so a typed value survives a toggle */
+  .acc-body { display: none; padding: 0 0 16px; flex-direction: column; gap: 8px; border-top: 1px solid #F0F0F3; margin: 0 16px; }
+  .accordion.open .acc-body { display: flex; }
+
+  .field-label { font-family: 'Switzer', sans-serif; font-size: 14px; font-weight: 500; color: var(--On-Surface); margin-top: 10px; }
+  .field { height: 56px; background: var(--Field); border: 1px solid var(--Field-Border); border-radius: 12px; padding: 0 16px; display: flex; align-items: center; gap: 8px; transition: border-color 0.2s, box-shadow 0.2s, background 0.2s; }
+  .field:focus-within { border-color: var(--Primary); background: #FFF; box-shadow: 0 0 0 3px rgba(254,53,61,0.08); }
+  .field input { flex: 1; min-width: 0; border: none; background: transparent; outline: none; font-family: 'Switzer', sans-serif; font-size: 16px; font-weight: 700; color: var(--On-Surface); letter-spacing: 0.2px; }
+  .field input::placeholder { color: #A5A5AE; font-weight: 400; letter-spacing: 0; }
+  .field.err { border-color: var(--Primary); background: #FFF; }
+  .field.err input { color: var(--Primary); }
+  .field.phone { padding-right: 0; overflow: hidden; }
+  .field .dial { font-family: 'Switzer', sans-serif; font-size: 16px; font-weight: 400; color: var(--On-Surface-Low); flex-shrink: 0; }
+  .contact-btn { width: 56px; align-self: stretch; border: none; background: var(--Primary); cursor: pointer; display: flex; align-items: center; justify-content: center; flex-shrink: 0; transition: background 0.15s; }
+  .contact-btn:hover { background: #E5303A; }
+  .contact-btn svg { width: 22px; height: 22px; stroke: #FFF; stroke-width: 1.9; fill: none; }
+
+  /* ── Lookup status chip ── */
+  .status-chip { display: none; align-items: center; gap: 10px; border-radius: 12px; padding: 13px 14px; margin-top: 4px; font-family: 'Switzer', sans-serif; font-size: 14px; font-weight: 500; }
+  .status-chip.show { display: flex; }
+  .status-chip .ic { width: 24px; height: 24px; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+  .status-chip .ic svg { width: 13px; height: 13px; stroke-width: 3; fill: none; }
+  .status-chip.loading { background: #F1F1F4; color: var(--On-Surface-Low); }
+  .status-chip.loading .ic { border: 2.5px dashed var(--Success); animation: spin 1.6s linear infinite; }
+  .status-chip.info { background: #EDEDF0; color: var(--On-Surface); }
+  .status-chip.bad { background: var(--Error-Light); color: var(--Primary); }
+  .status-chip.bad .ic { border: 1.8px solid var(--Primary); }
+  .status-chip.bad .ic svg { stroke: var(--Primary); }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  .students-wrap { display: flex; flex-direction: column; gap: 14px; }
+  .students-wrap:empty { display: none; }
+
+  /* ── Outstanding fees ── */
+  .fees-card { background: #FFF; border-radius: 16px; padding: 16px; box-shadow: 0 2px 8px rgba(0,0,0,0.04); display: none; flex-direction: column; flex-shrink: 0; }
+  .fees-card.show { display: flex; }
+  .fees-head { display: flex; align-items: center; gap: 8px; cursor: pointer; }
+  .fees-head .who { flex: 1; min-width: 0; font-family: 'Switzer', sans-serif; font-size: 14px; font-weight: 700; color: var(--On-Surface); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .fees-head .who span { font-weight: 400; color: var(--On-Surface-Low); }
+  .fees-head .caret { width: 18px; height: 18px; stroke: var(--Primary); stroke-width: 2.4; fill: none; flex-shrink: 0; transition: transform 0.25s; }
+  .fees-card:not(.collapsed) .fees-head .caret { transform: rotate(180deg); }
+  .fees-list { display: flex; flex-direction: column; margin-top: 6px; }
+  .fees-card.collapsed .fees-list { display: none; }
+  .fee-item { display: flex; align-items: center; gap: 12px; padding: 12px 0; cursor: pointer; }
+  .fee-item + .fee-item { border-top: 1px solid #F4F4F7; }
+  .fee-radio { width: 20px; height: 20px; border-radius: 50%; border: 1.8px solid #D8D8DE; flex-shrink: 0; display: flex; align-items: center; justify-content: center; transition: border-color 0.15s; }
+  .fee-item.selected .fee-radio { border-color: var(--Primary); border-width: 2px; }
+  .fee-item.selected .fee-radio::after { content: ''; width: 9px; height: 9px; border-radius: 50%; background: var(--Primary); }
+  .fee-info { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px; }
+  .fee-name { font-family: 'Switzer', sans-serif; font-size: 13px; font-weight: 700; color: var(--On-Surface); }
+  .fee-sub { font-family: 'Switzer', sans-serif; font-size: 11px; color: var(--On-Surface-Low); }
+  .fee-money { display: flex; flex-direction: column; align-items: flex-end; gap: 2px; flex-shrink: 0; }
+  .fee-amount { font-family: 'Switzer', sans-serif; font-size: 13px; font-weight: 700; color: var(--On-Surface); }
+  .fee-due { font-family: 'Switzer', sans-serif; font-size: 10px; color: var(--On-Surface-Low); }
+
+  /* ── Contacts sheet ── */
+  .sheet-overlay { position: absolute; inset: 0; background: rgba(0,0,0,0.45); display: flex; align-items: flex-end; opacity: 0; pointer-events: none; transition: opacity 0.25s; z-index: 50; }
+  .sheet-overlay.show { opacity: 1; pointer-events: auto; }
+  .sheet { width: 100%; max-height: 76%; background: #FFF; border-radius: 24px 24px 0 0; padding: 12px 16px 22px; display: flex; flex-direction: column; transform: translateY(100%); transition: transform 0.3s cubic-bezier(0.2, 0.8, 0.3, 1); }
+  .sheet-overlay.show .sheet { transform: translateY(0); }
+  .sheet-grip { width: 44px; height: 4px; border-radius: 2px; background: #D8D8DE; margin: 0 auto 14px; flex-shrink: 0; }
+  .sheet-title { text-align: center; font-family: 'Switzer', sans-serif; font-size: 18px; font-weight: 700; color: var(--On-Surface); margin-bottom: 10px; flex-shrink: 0; }
+  .contact-list { display: flex; flex-direction: column; overflow-y: auto; }
+  .contact-list::-webkit-scrollbar { width: 0; }
+  .contact-item { display: flex; align-items: center; gap: 12px; padding: 12px 4px; cursor: pointer; border-radius: 12px; transition: background 0.15s; }
+  .contact-item:hover { background: #FAFAFA; }
+  .contact-avatar { width: 38px; height: 38px; border-radius: 50%; background: #FFE9EA; color: var(--Primary); display: flex; align-items: center; justify-content: center; font-family: 'Switzer', sans-serif; font-size: 12px; font-weight: 700; flex-shrink: 0; }
+  .contact-info { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px; }
+  .contact-name { font-family: 'Switzer', sans-serif; font-size: 14px; font-weight: 700; color: var(--On-Surface); }
+  .contact-sub { font-family: 'Switzer', sans-serif; font-size: 12px; color: var(--On-Surface-Low); }
+
+  /* ── Bottom button ── */
+  .bottom-bar { flex-shrink: 0; padding: 10px 16px 18px; background: var(--Background); }
+  .continue-btn { width: 100%; height: 52px; border-radius: 14px; border: none; background: #E0E0E0; color: var(--On-Surface-Low); font-family: 'Poppins', sans-serif; font-size: 15px; font-weight: 500; cursor: not-allowed; transition: all 0.2s; }
+  .continue-btn.active { background: var(--Primary); color: #FFF; cursor: pointer; box-shadow: 0 4px 16px rgba(254,53,61,0.25); }
+  .continue-btn.active:hover { background: #E5303A; box-shadow: 0 6px 20px rgba(254,53,61,0.35); transform: translateY(-1px); }
+  .continue-btn.active:active { transform: scale(0.98) translateY(0); }
+</style>
+</head>
+<body>
+<div class="phone-frame">
+  <div class="app-content">
+
+    <div class="status-bar">
+      <span class="time">10:00</span>
+      <div class="status-icons">
+        <svg viewBox="0 0 24 24" fill="none"><path d="M1 9l2 2c4.97-4.97 13.03-4.97 18 0l2-2C16.93 2.93 7.08 2.93 1 9z" fill="#1C1C21"/><path d="M5 13l2 2c2.76-2.76 7.24-2.76 10 0l2-2C15.14 9.14 8.87 9.14 5 13z" fill="#1C1C21"/><path d="M9 17l2 2c1.1-1.1 2.9-1.1 4 0l2-2c-2.21-2.21-5.79-2.21-8 0z" fill="#1C1C21"/></svg>
+        <svg viewBox="0 0 24 24" fill="none"><rect x="2" y="6" width="4" height="12" rx="1" fill="#1C1C21"/><rect x="8" y="4" width="4" height="14" rx="1" fill="#1C1C21"/><rect x="14" y="2" width="4" height="16" rx="1" fill="#1C1C21"/><rect x="20" y="0" width="4" height="18" rx="1" fill="#1C1C21" opacity="0.3"/></svg>
+        <svg viewBox="0 0 28 14" fill="none"><rect x="0" y="1" width="22" height="12" rx="2.5" stroke="#1C1C21" stroke-width="1.5"/><rect x="2" y="3" width="16" height="8" rx="1" fill="#1C1C21"/><rect x="24" y="4" width="2" height="6" rx="1" fill="#1C1C21"/></svg>
+      </div>
+    </div>
+
+    <div class="header-nav">
+      <button class="back-btn" onclick="goBack()">
+        <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+      </button>
+      <span class="header-title">Bill Payment</span>
+      <div style="width:36px;"></div>
+    </div>
+
+    <div class="scroll">
+
+      <!-- ── Look the student up by the number registered with the school ── -->
+      <div class="accordion" id="accPhone">
+        <div class="acc-head" onclick="toggle('phone')">
+          <span class="badge">
+            <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><rect x="6.5" y="2.5" width="11" height="19" rx="2.5"/><path d="M11 18.5h2"/></svg>
+          </span>
+          <span class="nm">Phone Number</span>
+          <svg class="caret" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+        </div>
+        <div class="acc-body">
+          <span class="field-label">Enter Phone Number</span>
+          <div class="field phone" id="phoneField">
+            <span class="dial">+251</span>
+            <input id="phoneInput" type="text" inputmode="numeric" maxlength="11" placeholder="e.g. 715965321"
+                   autocomplete="off" oninput="onPhoneInput()">
+            <button class="contact-btn" type="button" onclick="openContacts(event)" aria-label="Pick from contacts">
+              <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="3.4"/><path d="M5.5 19.5a6.5 6.5 0 0 1 13 0"/></svg>
+            </button>
+          </div>
+          <div class="status-chip loading" id="phoneLoading">
+            <span class="ic"></span>
+            <span>Looking Up Phone Number</span>
+          </div>
+          <div class="status-chip info" id="phoneNone">
+            <span>There is no open invoice</span>
+          </div>
+          <div class="status-chip bad" id="phoneBad">
+            <span class="ic"><svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M17 7 7 17M7 7l10 10"/></svg></span>
+            <span>No student registered on this number</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── Outstanding fees found by phone sit under the phone card ── -->
+      <div class="students-wrap" id="studentsWrapPhone"></div>
+
+      <!-- ── Or by the school's code and the student's ID ── -->
+      <div class="accordion" id="accCode">
+        <div class="acc-head" onclick="toggle('code')">
+          <span class="badge">
+            <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="3"/><path d="M10 10 8 12l2 2M14 10l2 2-2 2"/></svg>
+          </span>
+          <span class="nm">School Code</span>
+          <svg class="caret" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+        </div>
+        <div class="acc-body">
+          <span class="field-label">Enter School Code</span>
+          <div class="field" id="codeField">
+            <input id="codeInput" type="text" inputmode="numeric" maxlength="8" placeholder="e.g. 452929"
+                   autocomplete="off" oninput="onCodeInput()">
+          </div>
+
+          <span class="field-label">Enter Student ID</span>
+          <div class="field" id="studentField">
+            <input id="studentInput" type="text" maxlength="16" placeholder="e.g. SMU01214"
+                   autocomplete="off" oninput="onStudentInput()">
+          </div>
+
+          <div class="status-chip loading" id="codeLoading">
+            <span class="ic"></span>
+            <span>Looking Up Student</span>
+          </div>
+          <div class="status-chip info" id="codeNone">
+            <span>There is no open invoice</span>
+          </div>
+          <div class="status-chip bad" id="codeBad">
+            <span class="ic"><svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M17 7 7 17M7 7l10 10"/></svg></span>
+            <span id="codeBadText">Invalid school code or student ID</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── Fees found by school code sit under the code card ── -->
+      <div class="students-wrap" id="studentsWrapCode"></div>
+
+    </div>
+
+    <div class="bottom-bar">
+      <button class="continue-btn" id="continueBtn" onclick="continuePayment()" disabled>Continue</button>
+    </div>
+
+  </div>
+
+  <!-- Numbers registered with a school -->
+  <div class="sheet-overlay" id="contactsOverlay" onclick="if(event.target===this)closeContacts()">
+    <div class="sheet">
+      <div class="sheet-grip"></div>
+      <div class="sheet-title">Select Contact</div>
+      <div class="contact-list" id="contactList"></div>
+    </div>
+  </div>
+</div>
+
+<script>
+  const SCHOOLS = {
+    '452929': { name: "St. Mary's University", abbr: 'SMU' },
+    '452930': { name: "St. Mary's University", abbr: 'SMU', partial: true },
+    '318204': { name: 'Addis Ababa University', abbr: 'AAU' }
+  };
+
+  const STUDENTS = {
+    'SMU-01214': {
+      name: 'Mikias Kebede Deresa',
+      // The same student is reachable under either of the school's codes; the
+      // partial-payment one simply unlocks paying part of a fee.
+      schools: ['452929', '452930'],
+      school: '452929',
+      phone: '715965321',
+      fees: [
+        { id: 'tuition', label: 'School Fee',        sub: 'SMU-01214',    amount: 30000, due: 'June 2026' },
+        { id: 'books',   label: 'Supplementary Fee', sub: 'Book Payment', amount: 3000,  due: 'June 2026' }
+      ]
+    },
+    'SMU-01215': {
+      name: 'Mikias Kebede Deresa',
+      schools: ['452929'],
+      school: '452929',
+      fees: []
+    },
+    'SMU-01216': {
+      name: 'Mikias Kebede Deresa',
+      schools: ['452929'],
+      school: '452929',
+      fees: [
+        { id: 'tuition', label: 'School Fee', sub: 'SMU-01216', amount: 30000, due: 'June 2026' }
+      ]
+    },
+    'SMU-01245': {
+      name: 'Liya Kebede Deresa',
+      schools: ['452929', '452930'],
+      school: '452929',
+      fees: [
+        { id: 'tuition', label: 'School Fee',        sub: 'SMU-01245',    amount: 24000, due: 'June 2026' },
+        { id: 'books',   label: 'Supplementary Fee', sub: 'Book Payment', amount: 2500,  due: 'June 2026' }
+      ]
+    },
+    'AAU-00482': {
+      name: 'Hanna Bekele Tadesse',
+      schools: ['318204'],
+      school: '318204',
+      phone: '922334455',
+      fees: [
+        { id: 'tuition', label: 'School Fee', sub: 'AAU-00482', amount: 18500, due: 'July 2026' }
+      ]
+    }
+  };
+
+  const normalizeId = v => v.toUpperCase().replace(/[^A-Z0-9]/g, '');
+  const ID_INDEX = Object.keys(STUDENTS).reduce((acc, id) => {
+    acc[normalizeId(id)] = id;
+    return acc;
+  }, {});
+
+  const PHONES = {
+    '715965321': ['SMU-01214'],
+    '715965322': ['SMU-01214', 'SMU-01245'],
+    '922334455': ['AAU-00482']
+  };
+
+  const FEE = 5;
+
+  const $ = id => document.getElementById(id);
+  const fmt = n => parseFloat(n || 0).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+
+  // The provider the sheet on the biller screen picked rides along on the receipt.
+  let provider = { name: 'Awash Bank', logo: 'assets/bill pay logos/Awash_International_Bank.png' };
+  try {
+    const saved = JSON.parse(sessionStorage.getItem('selectedBiller') || '{}');
+    if (saved.provider) provider = { name: saved.provider, logo: saved.logo || provider.logo };
+  } catch (e) { /* ignore corrupt state */ }
+
+  let open = 'code';      // 'phone' | 'code' | null
+  let students = [];      // every student registered on the resolved entry
+  let route = 'code';     // which lookup produced them: 'phone' | 'code'
+  let picked = null;      // { student, fee } — only one fee is paid at a time
+  let lookupTimer = null;
+
+  /* ── Accordion ── */
+  function toggle(which) {
+    open = open === which ? null : which;
+    $('accPhone').classList.toggle('open', open === 'phone');
+    $('accCode').classList.toggle('open', open === 'code');
+    // Each route resolves its own student, so switching clears the other's result.
+    clearTimeout(lookupTimer);
+    resetLookup();
+  }
+
+  function resetLookup() {
+    students = [];
+    picked = null;
+    ['phoneLoading', 'phoneBad', 'phoneNone', 'codeLoading', 'codeBad', 'codeNone']
+      .forEach(id => $(id).classList.remove('show'));
+    ['phoneField', 'codeField', 'studentField'].forEach(id => $(id).classList.remove('err'));
+    $('studentsWrapPhone').innerHTML = '';
+    $('studentsWrapCode').innerHTML = '';
+    updateBtn();
+  }
+
+  function resolve(found, badId, badFields, noneId) {
+    const withFees = (found || []).filter(st => st.fees && st.fees.length);
+    if (found && found.length && !withFees.length) {
+      // Every student on the record is settled up.
+      if (noneId) $(noneId).classList.add('show');
+    } else if (withFees.length) {
+      students = withFees;
+      renderStudents();
+    } else {
+      $(badId).classList.add('show');
+      badFields.forEach(id => $(id).classList.add('err'));
+    }
+    updateBtn();
+  }
+
+  const initials = name => name.split(/\s+/).slice(0, 2).map(w => w[0]).join('').toUpperCase();
+
+  /* -- By phone: one number can carry more than one student -- */
+  function onPhoneInput() {
+    const el = $('phoneInput');
+    el.value = el.value.replace(/\D/g, '').slice(0, 11);
+    clearTimeout(lookupTimer);
+    resetLookup();
+    if (el.value.length < 8) return;
+
+    $('phoneLoading').classList.add('show');
+    lookupTimer = setTimeout(() => {
+      $('phoneLoading').classList.remove('show');
+      const ids = PHONES[el.value] || [];
+      route = 'phone';
+      resolve(ids.map(id => withSchool(id)), 'phoneBad', ['phoneField'], 'phoneNone');
+    }, 1200);
+  }
+
+  /* -- Contacts -- */
+  function openContacts(e) {
+    if (e) e.stopPropagation();
+    $('contactList').innerHTML = Object.keys(PHONES).map(num => {
+      const names = PHONES[num].map(id => STUDENTS[id].name);
+      const label = names.length > 1 ? names.length + ' students' : names[0];
+      return '<div class="contact-item" onclick="pickContact(&quot;' + num + '&quot;)">' +
+        '<span class="contact-avatar">' + initials(names[0]) + '</span>' +
+        '<span class="contact-info">' +
+          '<span class="contact-name">' + label + '</span>' +
+          '<span class="contact-sub">+251 ' + num + '</span>' +
+        '</span>' +
+      '</div>';
+    }).join('');
+    $('contactsOverlay').classList.add('show');
+  }
+
+  function closeContacts() { $('contactsOverlay').classList.remove('show'); }
+
+  function pickContact(num) {
+    closeContacts();
+    $('phoneInput').value = num;
+    onPhoneInput();
+  }
+
+  /* -- By school code + student ID -- */
+  function onCodeInput() {
+    $('codeInput').value = $('codeInput').value.replace(/\D/g, '').slice(0, 8);
+    tryCodeLookup();
+    // A school code that matches no school is wrong on its own, without
+    // waiting for a student id that could never resolve against it.
+    const code = $('codeInput').value;
+    if (code.length >= 6 && !SCHOOLS[code]) {
+      $('codeBadText').textContent = 'Invalid School Code';
+      $('codeBad').classList.add('show');
+      $('codeField').classList.add('err');
+    }
+  }
+
+  function onStudentInput() {
+    $('studentInput').value = $('studentInput').value.toUpperCase().slice(0, 16);
+    tryCodeLookup();
+  }
+
+  // "SMU01214", "SMU-01214" and "smu 01214" all name the same student.
+  const findStudentId = typed => ID_INDEX[normalizeId(typed)] || null;
+
+  // Both fields feed one lookup; it only runs once each side has a plausible value.
+  function tryCodeLookup() {
+    const code = $('codeInput').value, id = $('studentInput').value.trim();
+    clearTimeout(lookupTimer);
+    resetLookup();
+    if (code.length < 6 || normalizeId(id).length < 6) return;
+
+    $('codeLoading').classList.add('show');
+    lookupTimer = setTimeout(() => {
+      $('codeLoading').classList.remove('show');
+      const canonical = findStudentId(id);
+      const st = canonical ? STUDENTS[canonical] : null;
+      const ok = st && (st.schools || [st.school]).indexOf(code) !== -1;
+      if (!ok) {
+        $('codeBadText').textContent = SCHOOLS[code]
+          ? 'No student with that ID at this school'
+          : 'Invalid school code or student ID';
+      }
+      // An ID names exactly one student, so this route never returns a list.
+      route = 'code';
+      resolve(ok ? [withSchool(canonical, code)] : null, 'codeBad', ['codeField', 'studentField'], 'codeNone');
+    }, 1200);
+  }
+
+  const withSchool = (id, code) => {
+    const used = code || STUDENTS[id].school;
+    return Object.assign({ id: id }, STUDENTS[id], { school: used, schoolInfo: SCHOOLS[used] });
+  };
+
+  /* -- Fees: one card per student, the first one open -- */
+  function renderStudents() {
+    const wrap = route === 'phone' ? $('studentsWrapPhone') : $('studentsWrapCode');
+    wrap.innerHTML = students.map((st, si) =>
+      '<div class="fees-card show' + (si === 0 ? '' : ' collapsed') + '" id="card' + si + '">' +
+        '<div class="fees-head" onclick="toggleFees(' + si + ')">' +
+          '<span class="who">' + st.name + ' <span>- ' + st.id + '</span></span>' +
+          '<svg class="caret" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>' +
+        '</div>' +
+        '<div class="fees-list">' +
+          st.fees.map((f, fi) =>
+            '<div class="fee-item" id="fee' + si + '_' + fi + '" onclick="pickFee(' + si + ',' + fi + ')">' +
+              '<span class="fee-radio"></span>' +
+              '<span class="fee-info">' +
+                '<span class="fee-name">' + f.label + '</span>' +
+                '<span class="fee-sub">' + f.sub + '</span>' +
+              '</span>' +
+              '<span class="fee-money">' +
+                '<span class="fee-amount">' + fmt(f.amount) + ' Br</span>' +
+                '<span class="fee-due">' + f.due + '</span>' +
+              '</span>' +
+            '</div>').join('') +
+        '</div>' +
+      '</div>').join('');
+  }
+
+  // The cards behave like the accordions above them: opening one closes the rest.
+  function toggleFees(si) {
+    const card = $('card' + si), wasOpen = !card.classList.contains('collapsed');
+    students.forEach((st, n) => $('card' + n).classList.add('collapsed'));
+    card.classList.toggle('collapsed', wasOpen);
+  }
+
+  // Only one fee is paid at a time, whichever student's card it sits in.
+  function pickFee(si, fi) {
+    picked = { student: students[si], fee: students[si].fees[fi] };
+    students.forEach((st, s2) => st.fees.forEach((f, f2) => {
+      $('fee' + s2 + '_' + f2).classList.toggle('selected', s2 === si && f2 === fi);
+    }));
+    updateBtn();
+  }
+
+  function updateBtn() {
+    const ok = !!picked;
+    $('continueBtn').classList.toggle('active', ok);
+    $('continueBtn').disabled = !ok;
+  }
+
+  /* ── Continue ── */
+  function continuePayment() {
+    if (!picked) return;
+    const student = picked.student, selectedFee = picked.fee;
+    const amount = selectedFee.amount;
+    sessionStorage.setItem('billPaymentData', JSON.stringify({
+      plan: 'school',
+      planLabel: '',
+      biller: {
+        name: student.schoolInfo.name,
+        fullName: student.schoolInfo.name,
+        category: 'Education',
+        abbr: student.schoolInfo.abbr,
+        logo: provider.logo
+      },
+      account: student.id,
+      customerName: student.name,
+      // The confirmation and the receipt each render the rows handed to them.
+      rows: [
+        { key: 'School Name', value: student.schoolInfo.name },
+        { key: 'School Code', value: student.school },
+        { key: 'Fee Type', value: selectedFee.label + ' - ' + selectedFee.due }
+      ],
+      receiptRows: [
+        { key: 'School Code', value: student.school },
+        { key: 'Student ID', value: student.id },
+        { key: 'Fee Type', value: selectedFee.label + ' - ' + selectedFee.due }
+      ],
+      txType: 'School Payment',
+      payAmount: amount.toFixed(2),
+      fullAmount: amount.toFixed(2),
+      partial: !!student.schoolInfo.partial,
+      fee: FEE.toFixed(2),
+      serviceFee: '2.00',
+      vat: '5.00',
+      total: (amount + FEE).toFixed(2),
+      payAccount: 'main',
+      payerName: 'Abebeb Bikila Maraton'
+    }));
+    window.location.href = 'Bill Payment_Review.html';
+  }
+
+  function goBack() { window.location.href = 'Pay Bill.html'; }
+
+  // The code route is the one the design opens on.
+  $('accCode').classList.add('open');
+</script>
+
+<script src="figma-export.js"></script>
+<script src="test-scenarios-data.js"></script>
+<script src="test-scenarios.js"></script>
+</body>
+</html>

@@ -448,27 +448,19 @@
   }
 
   /* Bottom Actions - Sticky at bottom */
-  .bottom-actions {
-    flex-shrink: 0;
-    display: flex;
-    justify-content: space-around;
-    padding: 8px 16px 10px;
-    width: 100%;
-    background: #F5F5F5;
-    border-top: 1px solid #E8E8E8;
-  }
+  .bottom-actions { flex-shrink: 0; display: flex; justify-content: space-around; padding: 10px 16px 12px; width: 100%; background: #F5F5F5; }
 
   .action-btn {
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 4px;
+    gap: 6px;
     background: transparent;
     border: none;
     cursor: pointer;
     transition: all 0.2s;
     flex: 1;
-    padding: 6px 0;
+    padding: 4px 0;
   }
 
   .action-btn:hover {
@@ -479,32 +471,13 @@
     transform: scale(0.95);
   }
 
-  .action-icon {
-    width: 52px;
-    height: 52px;
-    border-radius: 14px;
-    background: var(--Primary-Light);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: all 0.2s;
-  }
+  .action-icon { width: 46px; height: 46px; border-radius: 13px; border: 1.5px solid var(--Primary); background: transparent; display: flex; align-items: center; justify-content: center; transition: all 0.2s; }
 
-  .action-btn.favorited .action-icon {
-    background: #FFE0E2;
-  }
-  .action-btn:hover .action-icon {
-    background: #FFE0E2;
-  }
+  .action-btn.favorited .action-icon { background: var(--Primary-Light); }
+  .action-btn:hover .action-icon { background: var(--Primary-Light); }
 
   .action-icon svg,
-  .action-icon i {
-    width: 24px !important;
-    height: 24px !important;
-    color: var(--Primary);
-    stroke: var(--Primary);
-    stroke-width: 2px;
-  }
+  .action-icon i { width: 22px !important; height: 22px !important; color: var(--Primary); stroke: var(--Primary); stroke-width: 2px; }
 
   .action-label {
     color: var(--On-Surface);
@@ -539,6 +512,8 @@
     transform: translateX(-50%) translateY(0);
   }
 </style>
+<script src="assets/qrcode.min.js"></script>
+<script src="assets/qr.js"></script>
 </head>
 <body>
 
@@ -678,7 +653,7 @@
                 <span class="copy-text">Copy ID</span>
                 <i data-lucide="copy"></i>
               </button>
-              <span id="transactionId">fxt87654321</span>
+              <span id="transactionId">UH61KQXM3L</span>
             </span>
           </div>
 
@@ -795,7 +770,7 @@
     amount: '2000.00',
     transactionDetail: 'Agency Banking Cash In - CBE',
     receiptNumber: 'RCP-2024-87654321',
-    transactionId: 'fxt87654321',
+    transactionId: 'UH61KQXM3L',
     date: '12/12/2024',
     time: '9:15 AM',
     serviceFee: '20.00',
@@ -811,8 +786,8 @@
   function generateQRCode() {
     const qrData = JSON.stringify(transactionData);
     const encodedData = encodeURIComponent(qrData);
-    const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=240x240&data=${encodedData}&margin=10`;
-    document.getElementById('qrCode').src = qrUrl;
+
+    renderQR(document.getElementById('qrCode'), decodeURIComponent(encodedData), 240);
   }
 
   // Copy Transaction ID
@@ -912,5 +887,7 @@
 
 <!-- Export to Figma button (shared exporter) -->
 <script src="figma-export.js"></script>
+<script src="test-scenarios-data.js"></script>
+<script src="test-scenarios.js"></script>
 </body>
 </html>

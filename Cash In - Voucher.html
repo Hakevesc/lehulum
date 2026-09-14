@@ -85,8 +85,12 @@
   .amount-row.total .v { color: var(--Primary); font-weight: 700; font-size: 15px; }
 
   /* ── Steps card ── */
-  .steps-card { background: #FFF; border-radius: 16px; padding: 16px; box-shadow: 0 2px 8px rgba(0,0,0,0.04); display: flex; flex-direction: column; gap: 12px; }
-  .steps-title { font-family: 'Switzer', sans-serif; font-size: 14px; font-weight: 700; color: var(--On-Surface); }
+  .steps-card { background: #FFF; border-radius: 16px; padding: 16px; box-shadow: 0 2px 8px rgba(0,0,0,0.04); display: flex; flex-direction: column; }
+  .steps-title { display: flex; align-items: center; justify-content: space-between; gap: 8px; font-family: 'Switzer', sans-serif; font-size: 14px; font-weight: 700; color: var(--On-Surface); cursor: pointer; }
+  .steps-chevron { width: 18px; height: 18px; stroke: var(--On-Surface-Low); stroke-width: 2; fill: none; flex-shrink: 0; transition: transform 0.2s ease; }
+  .steps-chevron.open { transform: rotate(180deg); }
+  .steps-body { display: none; flex-direction: column; gap: 12px; margin-top: 14px; }
+  .steps-body.open { display: flex; }
   .step { display: flex; gap: 11px; }
   .step-num { width: 24px; height: 24px; border-radius: 50%; background: #FFF1F2; color: var(--Primary); font-family: 'Switzer', sans-serif; font-size: 12px; font-weight: 700; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
   .step-txt { font-family: 'Switzer', sans-serif; font-size: 12.5px; line-height: 1.5; color: var(--On-Surface-Low); }
@@ -147,7 +151,7 @@
       <div class="voucher-card">
         <span class="voucher-type">Cash-In Voucher</span>
         <div class="voucher-code">
-          <span id="voucherCode">CI-XXXX-XXXX-XXXX</span>
+          <span id="voucherCode">000000000</span>
           <button class="copy" onclick="copyVoucher()" title="Copy code">
             <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="12" height="12" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h10"/></svg>
           </button>
@@ -171,7 +175,7 @@
         <div class="agent-avatar" id="agAvatar">AG</div>
         <div class="agent-info">
           <div class="agent-name" id="agName">Agent</div>
-          <div class="agent-sub" id="agSub">Agent No. &mdash;</div>
+          <div class="agent-sub" id="agSub">Short Code: &mdash;</div>
         </div>
       </div>
 
@@ -184,11 +188,16 @@
 
       <!-- Redemption steps -->
       <div class="steps-card">
-        <div class="steps-title">How to Complete Your Deposit</div>
-        <div class="step"><div class="step-num">1</div><div class="step-txt">Visit the agent with the <b>cash amount</b> and this <b>Cash-In voucher</b>.</div></div>
-        <div class="step"><div class="step-num">2</div><div class="step-txt">The agent enters or scans your voucher code.</div></div>
-        <div class="step"><div class="step-num">3</div><div class="step-txt">The system validates the voucher and confirms it is <b>valid &amp; unused</b>.</div></div>
-        <div class="step"><div class="step-num">4</div><div class="step-txt">Only then is your wallet credited and the deposit marked <b>Successful</b>.</div></div>
+        <div class="steps-title" onclick="toggleSteps()">
+          <span>How to Complete Your Deposit</span>
+          <svg class="steps-chevron" id="stepsChevron" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+        </div>
+        <div class="steps-body" id="stepsBody">
+          <div class="step"><div class="step-num">1</div><div class="step-txt">Visit the agent with the <b>cash amount</b> and this <b>Cash-In voucher</b>.</div></div>
+          <div class="step"><div class="step-num">2</div><div class="step-txt">The agent enters or scans your voucher code.</div></div>
+          <div class="step"><div class="step-num">3</div><div class="step-txt">The system validates the voucher and confirms it is <b>valid &amp; unused</b>.</div></div>
+          <div class="step"><div class="step-num">4</div><div class="step-txt">Only then is your wallet credited and the deposit marked <b>Successful</b>.</div></div>
+        </div>
       </div>
 
       <!-- Key UX rule: voucher != money deposited -->
@@ -216,10 +225,10 @@
   const $ = id => document.getElementById(id);
 
   // ── Populate ──
-  $('voucherCode').textContent = data.voucherCode || 'CI-XXXX-XXXX-XXXX';
+  $('voucherCode').textContent = data.voucherCode || '000000000';
   $('agAvatar').textContent = agent.abbr || 'AG';
   $('agName').textContent = data.agentName || agent.name || 'Agent';
-  $('agSub').textContent = 'Agent No. ' + (data.agentCode || agent.code || '—');
+  $('agSub').textContent = 'Short Code: ' + (data.agentCode || agent.code || '—');
   $('amt').textContent = fmt(data.amount || 0) + ' Br';
   $('total').textContent = fmt(data.total || data.amount || 0) + ' Br';
 
@@ -246,6 +255,11 @@
   setInterval(refreshCountdown, 1000);
 
   // ── Actions ──
+  function toggleSteps() {
+    const open = $('stepsBody').classList.toggle('open');
+    $('stepsChevron').classList.toggle('open', open);
+  }
+
   function showToast(msg) {
     const t = $('toast');
     t.textContent = msg;
@@ -278,5 +292,7 @@
     window.location.href = 'Cash In - Receipt.html';
   }
 </script>
+<script src="test-scenarios-data.js"></script>
+<script src="test-scenarios.js"></script>
 </body>
 </html>

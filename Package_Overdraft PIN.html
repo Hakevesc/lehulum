@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Activate Errif</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@400;500;600&display=swap');
+  @import url('https://api.fontshare.com/v2/css?f[]=switzer@400,500,600,700&display=swap');
+
+  :root {
+    --Primary: #FE353D;
+    --On-Surface: #1C1C21;
+    --On-Surface-Low: #7C7C87;
+    --Border: #E8E8EC;
+    --Background: #F5F5F5;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'Inter', sans-serif; background: transparent; display: flex; justify-content: center; align-items: center; min-height: 100vh; padding: 20px; }
+  .phone-frame { width: 360px; height: 780px; background: var(--Background); border-radius: 30px; overflow: hidden; position: relative; box-shadow: 0 20px 60px rgba(0,0,0,0.15); display: flex; flex-direction: column; }
+  .app-content { height: 100%; display: flex; flex-direction: column; }
+
+  .status-bar { display: flex; justify-content: space-between; align-items: center; padding: 14px 24px 8px; background: var(--Background); flex-shrink: 0; }
+  .status-bar .time { font-size: 14px; font-weight: 600; color: var(--On-Surface); }
+  .status-icons { display: flex; align-items: center; gap: 6px; }
+  .status-icons svg { width: 18px; height: 18px; }
+
+  .header-nav { display: flex; align-items: center; justify-content: space-between; padding: 8px 16px 12px; background: var(--Background); flex-shrink: 0; }
+  .back-btn { width: 36px; height: 36px; border-radius: 50%; background: transparent; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: background 0.2s; }
+  .back-btn:hover { background: rgba(0,0,0,0.05); }
+  .back-btn svg { width: 22px; height: 22px; stroke: var(--On-Surface); stroke-width: 1.8px; fill: none; }
+  .header-title { color: var(--On-Surface); font-family: 'Switzer', sans-serif; font-size: 17px; font-weight: 500; letter-spacing: 0.3px; flex: 1; text-align: center; }
+
+  .body-wrap { flex: 1; display: flex; flex-direction: column; padding: 4px 16px 18px; overflow-y: auto; }
+  .body-wrap::-webkit-scrollbar { width: 0; }
+
+  /* ── Activation heading ── */
+  .act-head { display: flex; flex-direction: column; align-items: center; text-align: center; gap: 8px; }
+  .act-title { font-family: 'Switzer', sans-serif; font-size: 22px; font-weight: 700; color: var(--On-Surface); }
+  .act-sub { font-family: 'Switzer', sans-serif; font-size: 13.5px; line-height: 1.5; color: var(--On-Surface-Low); max-width: 250px; }
+
+  /* ── PIN prompt ── */
+  .pin-prompt { display: flex; align-items: center; justify-content: center; gap: 7px; margin-top: 34px; }
+  .pin-prompt svg { width: 15px; height: 15px; stroke: var(--On-Surface); stroke-width: 2; fill: none; }
+  .pin-prompt span { font-family: 'Switzer', sans-serif; font-size: 14px; font-weight: 600; color: var(--On-Surface); }
+
+  .pin-container { display: flex; justify-content: space-between; gap: 12px; margin-top: 16px; }
+  .pin-box { flex: 1; height: 60px; border-radius: 14px; background: #F1F1F4; border: 2px solid transparent; display: flex; align-items: center; justify-content: center; transition: border-color 0.18s, background 0.18s; }
+  .pin-box.active { border-color: var(--Primary); background: #FFF7F7; }
+  .pin-box.error { border-color: var(--Primary); background: #FFF4F4; animation: shake 0.35s; }
+  @keyframes shake { 25% { transform: translateX(-5px); } 75% { transform: translateX(5px); } }
+  .pin-box .caret { display: none; width: 2px; height: 26px; background: var(--Primary); border-radius: 1px; animation: blink 1.05s step-end infinite; }
+  .pin-box.active .caret { display: block; }
+  @keyframes blink { 50% { opacity: 0; } }
+  .pin-box .dot { display: none; width: 11px; height: 11px; border-radius: 50%; background: var(--On-Surface); }
+  .pin-box.filled .dot { display: block; }
+  .pin-box.filled .caret { display: none; }
+
+  .pin-error { display: none; align-items: center; justify-content: center; gap: 7px; margin-top: 12px; }
+  .pin-error.show { display: flex; }
+  .pin-error svg { width: 15px; height: 15px; stroke: var(--Primary); stroke-width: 2.2; fill: none; flex-shrink: 0; }
+  .pin-error span { font-family: 'Switzer', sans-serif; font-size: 12.5px; font-weight: 600; color: var(--Primary); }
+
+  /* Off-screen field keeps the hardware keyboard working on a real device */
+  .pin-input { position: absolute; opacity: 0; pointer-events: none; height: 0; width: 0; }
+
+  /* ── Keypad ── */
+  .keypad { background: #FFF; border-radius: 20px; padding: 14px 10px; margin-top: auto; display: grid; grid-template-columns: repeat(3, 1fr); box-shadow: 0 2px 8px rgba(0,0,0,0.04); }
+  .key { height: 54px; border: none; background: transparent; cursor: pointer; border-radius: 12px; font-family: 'Switzer', sans-serif; font-size: 24px; font-weight: 500; color: #55555E; display: flex; align-items: center; justify-content: center; transition: background 0.12s, transform 0.1s; }
+  .key:hover { background: #F7F7F8; }
+  .key:active { background: #EFEFF2; transform: scale(0.95); }
+  .key.empty { pointer-events: none; }
+  .key svg { width: 26px; height: 26px; stroke: #55555E; stroke-width: 1.7; fill: none; }
+
+  /* ── Action ── */
+  .pay-btn { margin-top: 14px; height: 52px; border-radius: 14px; border: none; background: var(--Primary); color: #FFF; font-family: 'Poppins', sans-serif; font-size: 15px; font-weight: 500; cursor: pointer; box-shadow: 0 4px 16px rgba(254,53,61,0.25); transition: all 0.2s; flex-shrink: 0; }
+  .pay-btn:hover { background: #E5303A; box-shadow: 0 6px 20px rgba(254,53,61,0.35); transform: translateY(-1px); }
+  .pay-btn:active { transform: scale(0.98) translateY(0); }
+</style>
+</head>
+<body>
+<div class="phone-frame">
+  <div class="app-content">
+
+    <div class="status-bar">
+      <span class="time">10:00</span>
+      <div class="status-icons">
+        <svg viewBox="0 0 24 24" fill="none"><path d="M1 9l2 2c4.97-4.97 13.03-4.97 18 0l2-2C16.93 2.93 7.08 2.93 1 9z" fill="#1C1C21"/><path d="M5 13l2 2c2.76-2.76 7.24-2.76 10 0l2-2C15.14 9.14 8.87 9.14 5 13z" fill="#1C1C21"/><path d="M9 17l2 2c1.1-1.1 2.9-1.1 4 0l2-2c-2.21-2.21-5.79-2.21-8 0z" fill="#1C1C21"/></svg>
+        <svg viewBox="0 0 24 24" fill="none"><rect x="2" y="6" width="4" height="12" rx="1" fill="#1C1C21"/><rect x="8" y="4" width="4" height="14" rx="1" fill="#1C1C21"/><rect x="14" y="2" width="4" height="16" rx="1" fill="#1C1C21"/><rect x="20" y="0" width="4" height="18" rx="1" fill="#1C1C21" opacity="0.3"/></svg>
+        <svg viewBox="0 0 28 14" fill="none"><rect x="0" y="1" width="22" height="12" rx="2.5" stroke="#1C1C21" stroke-width="1.5"/><rect x="2" y="3" width="16" height="8" rx="1" fill="#1C1C21"/><rect x="24" y="4" width="2" height="6" rx="1" fill="#1C1C21"/></svg>
+      </div>
+    </div>
+
+    <div class="header-nav">
+      <button class="back-btn" onclick="goBack()">
+        <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+      </button>
+      <span class="header-title">Activate Errif</span>
+      <div style="width:36px;"></div>
+    </div>
+
+    <div class="body-wrap">
+
+      <div class="act-head">
+        <div class="act-title">Activate Errif Overdraft</div>
+        <p class="act-sub">Get instant credit to buy packages when your balance is low.</p>
+      </div>
+
+      <div class="pin-prompt">
+        <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="10.5" width="14" height="10" rx="2.5"/><path d="M8.5 10.5V7.5a3.5 3.5 0 0 1 7 0v3"/></svg>
+        <span>Enter Your M-PESA PIN</span>
+      </div>
+
+      <div class="pin-container" id="pinContainer">
+        <div class="pin-box"><span class="caret"></span><span class="dot"></span></div>
+        <div class="pin-box"><span class="caret"></span><span class="dot"></span></div>
+        <div class="pin-box"><span class="caret"></span><span class="dot"></span></div>
+        <div class="pin-box"><span class="caret"></span><span class="dot"></span></div>
+      </div>
+
+      <div class="pin-error" id="pinError">
+        <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 8v5M12 16h.01"/></svg>
+        <span id="pinErrorText">Incorrect PIN. 2 attempts left.</span>
+      </div>
+
+      <input type="password" class="pin-input" id="pinInput" maxlength="4" inputmode="numeric">
+
+      <div class="keypad">
+        <button class="key" onclick="pressKey('1')">1</button>
+        <button class="key" onclick="pressKey('2')">2</button>
+        <button class="key" onclick="pressKey('3')">3</button>
+        <button class="key" onclick="pressKey('4')">4</button>
+        <button class="key" onclick="pressKey('5')">5</button>
+        <button class="key" onclick="pressKey('6')">6</button>
+        <button class="key" onclick="pressKey('7')">7</button>
+        <button class="key" onclick="pressKey('8')">8</button>
+        <button class="key" onclick="pressKey('9')">9</button>
+        <button class="key empty"></button>
+        <button class="key" onclick="pressKey('0')">0</button>
+        <button class="key" onclick="pressBackspace()" aria-label="Delete">
+          <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M20 5H9L3 12l6 7h11a1.5 1.5 0 0 0 1.5-1.5v-11A1.5 1.5 0 0 0 20 5z"/><path d="M12 9.5l5 5M17 9.5l-5 5"/></svg>
+        </button>
+      </div>
+
+      <button class="pay-btn" onclick="confirmActivation()">Activate</button>
+
+    </div>
+  </div>
+</div>
+
+<script>
+  const CORRECT_PIN = '1234';
+  const MAX_ATTEMPTS = 3;
+
+  let pin = '';
+  const pinInput = document.getElementById('pinInput');
+  const pinBoxes = document.querySelectorAll('.pin-box');
+  const pinError = document.getElementById('pinError');
+
+  function updatePinDisplay() {
+    pinBoxes.forEach((box, index) => {
+      box.classList.remove('filled', 'active', 'error');
+      if (index < pin.length) box.classList.add('filled');
+      else if (index === pin.length) box.classList.add('active');
+    });
+  }
+
+  function pressKey(value) {
+    pinError.classList.remove('show');
+    if (pin.length < 4) {
+      pin += value;
+      pinInput.value = pin;
+      updatePinDisplay();
+    }
+  }
+
+  function pressBackspace() {
+    pin = pin.slice(0, -1);
+    pinInput.value = pin;
+    updatePinDisplay();
+  }
+
+  function showPinError(text) {
+    document.getElementById('pinErrorText').textContent = text;
+    pinBoxes.forEach(b => { b.classList.remove('filled', 'active'); b.classList.add('error'); });
+    pinError.classList.add('show');
+  }
+
+  // This PIN authorizes the Errif overdraft activation itself.
+  function confirmActivation() {
+    if (pin.length !== 4) {
+      showPinError('Enter your 4-digit PIN.');
+      setTimeout(updatePinDisplay, 400);
+      return;
+    }
+
+    if (pin === CORRECT_PIN) {
+      sessionStorage.removeItem('pinAttempts');
+      window.location.href = 'Package_Overdraft Activated.html';
+      return;
+    }
+
+    const attempts = parseInt(sessionStorage.getItem('pinAttempts') || '0', 10) + 1;
+    sessionStorage.setItem('pinAttempts', String(attempts));
+
+    if (attempts >= MAX_ATTEMPTS) {
+      window.location.href = 'PIN-Locked.html';
+      return;
+    }
+
+    const left = MAX_ATTEMPTS - attempts;
+    showPinError('Incorrect PIN. ' + left + (left === 1 ? ' attempt' : ' attempts') + ' left.');
+    setTimeout(() => { pin = ''; pinInput.value = ''; updatePinDisplay(); }, 500);
+  }
+
+  function goBack() { window.location.href = 'Package_Overdraft Terms.html'; }
+
+  document.addEventListener('keydown', function (e) {
+    if (e.key >= '0' && e.key <= '9') pressKey(e.key);
+    else if (e.key === 'Backspace') pressBackspace();
+    else if (e.key === 'Enter') confirmActivation();
+  });
+
+  updatePinDisplay();
+</script>
+
+<!-- Export to Figma button (shared exporter) -->
+<script src="figma-export.js"></script>
+<script src="test-scenarios-data.js"></script>
+<script src="test-scenarios.js"></script>
+</body>
+</html>

@@ -129,7 +129,7 @@
         <div class="payee-avatar" id="agAvatar">AG</div>
         <div class="payee-info">
           <span class="payee-name" id="agName">Agent</span>
-          <span class="payee-sub"><b>Agent No.</b> <span id="agCode">&mdash;</span></span>
+          <span class="payee-sub"><b>Short Code:</b> <span id="agCode">&mdash;</span></span>
         </div>
       </div>
 
@@ -295,7 +295,7 @@
     if (amount === null) return;
     $('cfAvatar').textContent = a.abbr || 'AG';
     $('cfName').textContent = a.name || 'Agent';
-    $('cfSub').textContent = 'Agent No. ' + (a.code || '—');
+    $('cfSub').textContent = 'Short Code: ' + (a.code || '—');
     $('cfAmount').textContent = fmt(amount) + ' Br';
     $('cfTotal').textContent = fmt(amount) + ' Br';
     $('sheetOverlay').classList.add('show');
@@ -329,5 +329,7 @@
     window.location.href = 'Cash In - Enter PIN.html';
   }
 </script>
+<script src="test-scenarios-data.js"></script>
+<script src="test-scenarios.js"></script>
 </body>
 </html>

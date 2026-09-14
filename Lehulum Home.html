@@ -138,7 +138,7 @@
           <div class="balance-card-bottom">
             <div class="other-balance">
               <span class="header-label">Reward Balance</span>
-              <span class="amount" id="rewardBalance" data-value="1,250.00">****</span>
+              <span class="amount" id="rewardBalance" data-value="200.00">****</span>
             </div>
             <div class="other-balance">
               <span class="header-label">Errif Balance</span>
@@ -366,10 +366,10 @@
   // ============================================================
   const activeAnnouncements = window.MPESA_ANN ? window.MPESA_ANN.active() : [];
 
-  // The strip carries the top-priority item; the modal promotes the
-  // top campaign/offer, so the two never duplicate each other.
-  const stripItem = activeAnnouncements[0];
-  const modalItem = activeAnnouncements.find(a => a.type !== 'notice') || stripItem;
+  // The strip carries the top-priority item flagged for the home strip;
+  // the modal promotes the top campaign/offer.
+  const stripItem = activeAnnouncements.find(a => a.homeStrip);
+  const modalItem = activeAnnouncements.find(a => a.homePopup) || activeAnnouncements.find(a => a.type !== 'notice' && a.id !== 'sys-maintenance') || activeAnnouncements[0];
 
   const annExpiryLabel = days =>
     (days > 0 ? window.MPESA_ANN.expiryLabel(days) : null);
@@ -497,6 +497,8 @@
     const host = document.getElementById('announcementTipContainer');
     if (!host) return;
     const n = activeAnnouncements.length;
+    const tipLead = stripItem || activeAnnouncements.find(a => a.id !== 'sys-maintenance') || activeAnnouncements[0];
+    const tipText = tipLead && tipLead.short ? `${tipLead.short}. ` : '';
     host.innerHTML = `
       <div class="ann-tip ann-hidden" id="annTip" onclick="openAnnouncements()">
         <div class="ann-tip-arrow" id="annTipArrow"></div>
@@ -506,7 +508,7 @@
           <button class="ann-tip-close" aria-label="Dismiss"
                   onclick="event.stopPropagation();hideAnnouncementTip()">&times;</button>
         </div>
-        <div class="ann-tip-text">${stripItem.short}. Tap to see all offers and notices.</div>
+        <div class="ann-tip-text">${tipText}Tap to see all offers and notices.</div>
         <span class="ann-tip-link">View announcements &rsaquo;</span>
       </div>`;
   }
@@ -554,28 +556,56 @@
     const host = document.getElementById('announcementModalContainer');
     if (!host || !modalItem) return;
     const expiry = annExpiryLabel(modalItem.expiresInDays);
+    const hasImg = !!modalItem.popupImage;
     host.innerHTML = `
       <div class="ann-modal ann-hidden" id="annModal"
            onclick="if(event.target===this)hideAnnouncementModal()">
         <div class="ann-modal-card">
-          <div class="ann-modal-art" style="background:${modalItem.gradient}">
-            <div class="ann-art-circle a1"></div>
-            <div class="ann-art-circle a2"></div>
+          <div class="ann-modal-art ${hasImg ? 'has-image' : ''}" style="background:${modalItem.gradient || 'linear-gradient(175deg, #DE2B35 0%, #B31922 100%)'}">
+            <div class="ann-modal-wave-bg"></div>
             <span class="ann-modal-badge">${modalItem.badge}</span>
-            <button class="ann-modal-close" aria-label="Close"
-                    onclick="hideAnnouncementModal()">&times;</button>
-            <span class="ann-art-glyph">${modalItem.glyph}</span>
+            <button class="ann-modal-close" aria-label="Close" onclick="hideAnnouncementModal()">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="18" y1="6" x2="6" y2="18"></line>
+                <line x1="6" y1="6" x2="18" y2="18"></line>
+              </svg>
+            </button>
+            ${hasImg ? `
+              <div class="ann-modal-img-wrap">
+                <img class="ann-modal-img" src="${modalItem.popupImage}" alt="${modalItem.title}">
+              </div>
+            ` : `
+              <div class="ann-art-circle a1"></div>
+              <div class="ann-art-circle a2"></div>
+              <span class="ann-art-glyph">${modalItem.glyph}</span>
+            `}
+            <svg class="ann-modal-bottom-curve" viewBox="0 0 320 24" fill="none" preserveAspectRatio="none">
+              <path d="M0,24 Q160,0 320,24 L320,24 L0,24 Z" fill="#FFFFFF"/>
+            </svg>
           </div>
           <div class="ann-modal-body">
-            <h2 class="ann-modal-title">${modalItem.title}</h2>
-            <p class="ann-modal-text">${(modalItem.body || modalItem.desc).split('\n\n')[0]}</p>
-            ${expiry ? `<div class="ann-modal-expiry">⏳ ${expiry}</div>` : ''}
+            <h2 class="ann-modal-title">${modalItem.popupTitleHtml || modalItem.title}</h2>
+            <p class="ann-modal-text">${modalItem.popupDesc || (modalItem.body || modalItem.desc).split('\n\n')[0]}</p>
+            ${expiry ? `
+              <div class="ann-modal-expiry">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                  <circle cx="12" cy="13" r="8"></circle>
+                  <path d="M12 9v4l2 2"></path>
+                  <path d="M5 3L2 6"></path>
+                  <path d="M22 6l-3-3"></path>
+                  <path d="M12 2v3"></path>
+                </svg>
+                <span>${expiry}</span>
+              </div>
+            ` : ''}
             <div class="ann-modal-actions">
               <button class="ann-btn primary"
                       onclick="announcementCta('${modalItem.cta.href}','${modalItem.id}')">
                 ${modalItem.cta.label}
               </button>
-              <button class="ann-btn ghost" onclick="hideAnnouncementModal()">Maybe later</button>
+              <button class="ann-btn secondary" onclick="hideAnnouncementModal()">
+                ${(modalItem.ghostCta && modalItem.ghostCta.label) || 'Maybe Later'}
+              </button>
             </div>
           </div>
         </div>
@@ -755,5 +785,7 @@
 
 <!-- Export to Figma button (shared exporter) -->
 <script src="figma-export.js"></script>
+<script src="test-scenarios-data.js"></script>
+<script src="test-scenarios.js"></script>
 </body>
 </html>

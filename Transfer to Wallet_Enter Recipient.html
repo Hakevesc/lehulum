@@ -3,154 +3,182 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Transfer to Wallet - Enter Recipient</title>
+<title>Transfer Money</title>
 <style>
-  @import url("styles/component-keypad.css");
   @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@400;500;600&display=swap');
   @import url('https://api.fontshare.com/v2/css?f[]=switzer@400,500,600,700&display=swap');
 
   :root {
     --Primary: #FE353D;
-    --Primary-Dark: #C41520;
     --On-Surface: #1C1C21;
     --On-Surface-Low: #7C7C87;
-    --Gray-0: #FFF;
-    --On-Primary: #FFF1F2;
     --Border: #E8E8EC;
     --Background: #F5F5F5;
+    --Field: #F8F8F9;
+    --Field-Border: #EFEFF1;
     --Success: #1FC83B;
+    --Success-Light: #EEF9F0;
+    --Warning: #E09B0B;
+    --Warning-Light: #FDF6E7;
+    --Error-Light: #FDECEC;
   }
-
   * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'Inter', sans-serif; background: transparent; display: flex; justify-content: center; align-items: center; min-height: 100vh; padding: 20px; }
+  .phone-frame { width: 360px; height: 780px; background: var(--Background); border-radius: 30px; overflow: hidden; position: relative; box-shadow: 0 20px 60px rgba(0,0,0,0.15); display: flex; flex-direction: column; }
+  .app-content { height: 100%; display: flex; flex-direction: column; }
 
-  body {
-    font-family: 'Inter', sans-serif; background: transparent;
-    display: flex; justify-content: center; align-items: center;
-    min-height: 100vh; padding: 20px;
-  }
-  .phone-frame {
-    width: 360px; height: 780px; background: var(--Background); border-radius: 30px;
-    overflow: hidden; position: relative; box-shadow: 0 20px 60px rgba(0,0,0,0.15);
-  }
-  .app-content { height: 100%; overflow-y: auto; position: relative; display: flex; flex-direction: column; }
-  .app-content::-webkit-scrollbar { width: 0; }
-
-  .status-bar {
-    display: flex; justify-content: space-between; align-items: center;
-    width: 100%; padding: 14px 24px 8px; background: var(--Background);
-  }
+  .status-bar { display: flex; justify-content: space-between; align-items: center; padding: 14px 24px 8px; background: var(--Background); flex-shrink: 0; }
   .status-bar .time { font-size: 14px; font-weight: 600; color: var(--On-Surface); }
   .status-icons { display: flex; align-items: center; gap: 6px; }
   .status-icons svg { width: 18px; height: 18px; }
 
-  .header-nav {
-    width: 100%; display: flex; align-items: center; justify-content: space-between;
-    padding: 8px 16px 12px; background: var(--Background);
-  }
-  .back-btn {
-    display: flex; align-items: center; justify-content: center;
-    width: 36px; height: 36px; border-radius: 50%;
-    background: transparent; border: none; cursor: pointer; transition: all 0.2s;
-  }
+  .header-nav { display: flex; align-items: center; justify-content: space-between; padding: 8px 16px 12px; background: var(--Background); flex-shrink: 0; }
+  .back-btn { width: 36px; height: 36px; border-radius: 50%; background: transparent; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: background 0.2s; }
   .back-btn:hover { background: rgba(0,0,0,0.05); }
-  .back-btn svg { width: 22px; height: 22px; stroke: var(--On-Surface); stroke-width: 1.8px; }
-  .header-title {
-    color: var(--On-Surface); font-family: 'Switzer', sans-serif;
-    font-size: 17px; font-weight: 500; letter-spacing: 0.3px; flex: 1; text-align: center;
-  }
+  .back-btn svg { width: 22px; height: 22px; stroke: var(--On-Surface); stroke-width: 1.8px; fill: none; }
+  .header-title { color: var(--On-Surface); font-family: 'Switzer', sans-serif; font-size: 17px; font-weight: 500; letter-spacing: 0.3px; flex: 1; text-align: center; }
 
-  .main-content {
-    padding: 12px 20px 18px; display: flex; flex-direction: column; flex: 1; width: 100%; gap: 14px;
-  }
+  .scroll { flex: 1; overflow-y: auto; padding: 4px 16px 16px; display: flex; flex-direction: column; gap: 14px; }
+  .scroll::-webkit-scrollbar { width: 0; }
 
-  /* Wallet chip */
-  .wallet-chip {
-    align-self: center; display: flex; align-items: center; gap: 8px;
-    background: #FFF; border: 1px solid var(--Border); border-radius: 999px;
-    padding: 6px 14px 6px 6px; box-shadow: 0 2px 8px rgba(0,0,0,0.04);
-  }
-  .wallet-chip .logo {
-    width: 28px; height: 28px; border-radius: 50%; overflow: hidden; background: #F5F5F5;
-    display: flex; align-items: center; justify-content: center; flex-shrink: 0;
-  }
-  .wallet-chip .logo img { width: 100%; height: 100%; object-fit: contain; padding: 3px; }
-  .wallet-chip .text { font-family: 'Switzer', sans-serif; font-size: 12.5px; font-weight: 500; color: var(--On-Surface); }
+  /* ── Form card ── */
+  .form-card { background: #FFF; border-radius: 16px; padding: 16px; box-shadow: 0 2px 8px rgba(0,0,0,0.04); display: flex; flex-direction: column; gap: 8px; }
 
-  /* Number entry */
-  .entry-label {
-    color: var(--On-Surface-Low); font-family: 'Switzer', sans-serif;
-    font-size: 12px; font-weight: 500; text-align: center; margin-top: 6px; letter-spacing: 0.2px;
-  }
-  .number-display {
-    display: flex; align-items: center; justify-content: center; gap: 3px;
-    min-height: 46px; padding: 0 8px;
-  }
-  .number-value {
-    font-family: 'Switzer', sans-serif; font-size: 30px; font-weight: 700;
-    letter-spacing: 1px; color: var(--On-Surface);
-  }
-  .number-value.placeholder { color: #C5C5CB; font-weight: 500; letter-spacing: 0.5px; }
-  .number-caret { width: 2px; height: 30px; background: var(--Primary); animation: caret-blink 1s step-end infinite; }
-  @keyframes caret-blink { 0%, 49% { opacity: 1; } 50%, 100% { opacity: 0; } }
+  /* Wallet row doubles as the picker trigger */
+  .wallet-row { height: 64px; border: 1px solid var(--Field-Border); border-radius: 12px; padding: 0 14px; display: flex; align-items: center; gap: 12px; cursor: pointer; transition: border-color 0.2s, box-shadow 0.2s; }
+  .wallet-row:hover { border-color: #DCDCE2; box-shadow: 0 2px 10px rgba(0,0,0,0.04); }
+  .wallet-row .logo { width: 42px; height: 42px; border-radius: 50%; background: #FFF; border: 1px solid var(--Field-Border); display: flex; align-items: center; justify-content: center; overflow: hidden; flex-shrink: 0; }
+  .wallet-row .logo img { width: 30px; height: 30px; object-fit: contain; }
+  .wallet-row .nm { flex: 1; min-width: 0; font-family: 'Switzer', sans-serif; font-size: 16px; font-weight: 700; color: var(--On-Surface); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .wallet-row .caret { width: 18px; height: 18px; stroke: var(--Primary); stroke-width: 2.4; fill: none; flex-shrink: 0; }
 
-  .field-error {
-    display: none; align-items: center; justify-content: center; gap: 6px; margin-top: 2px;
-  }
-  .field-error.show { display: flex; }
-  .field-error svg { width: 14px; height: 14px; stroke: var(--Primary); stroke-width: 2; fill: none; }
-  .field-error span { color: var(--Primary); font-family: 'Switzer', sans-serif; font-size: 12px; font-weight: 500; }
+  .field-label { font-family: 'Switzer', sans-serif; font-size: 14px; font-weight: 500; color: var(--On-Surface); margin-top: 10px; }
+  .field { height: 56px; background: var(--Field); border: 1px solid var(--Field-Border); border-radius: 12px; padding: 0 16px; display: flex; align-items: center; gap: 8px; transition: border-color 0.2s, box-shadow 0.2s, background 0.2s; }
+  .field:focus-within { border-color: var(--Primary); background: #FFF; box-shadow: 0 0 0 3px rgba(254,53,61,0.08); }
+  .field input { flex: 1; min-width: 0; border: none; background: transparent; outline: none; font-family: 'Switzer', sans-serif; font-size: 16px; font-weight: 700; color: var(--On-Surface); letter-spacing: 0.2px; }
+  .field input::placeholder { color: #A5A5AE; font-weight: 400; letter-spacing: 0; }
+  /* Out-of-range amounts tint the value itself */
+  .field.warn { border-color: var(--Warning); background: #FFF; }
+  .field.warn input { color: var(--Warning); }
+  .field.err { border-color: var(--Primary); background: #FFF; }
+  .field.err input { color: var(--Primary); }
 
-  /* Contacts button */
-  .contacts-btn {
-    align-self: center; display: flex; align-items: center; gap: 8px;
-    background: var(--On-Primary); border: none; border-radius: 12px;
-    padding: 10px 18px; cursor: pointer; transition: all 0.2s;
-  }
-  .contacts-btn:hover { background: #FFE0E2; }
-  .contacts-btn svg { width: 18px; height: 18px; stroke: var(--Primary); stroke-width: 2; fill: none; }
-  .contacts-btn span { color: var(--Primary); font-family: 'Switzer', sans-serif; font-size: 13px; font-weight: 600; }
+  /* Phone field: dial-code prefix, plus a contact picker flush to the right edge */
+  .field.phone { padding-right: 0; overflow: hidden; }
+  .field.phone .dial { font-family: 'Switzer', sans-serif; font-size: 16px; font-weight: 400; color: var(--On-Surface-Low); flex-shrink: 0; }
+  .contact-btn { width: 56px; align-self: stretch; border: none; background: var(--Primary); cursor: pointer; display: flex; align-items: center; justify-content: center; flex-shrink: 0; transition: background 0.15s; }
+  .contact-btn:hover { background: #E5303A; }
+  .contact-btn svg { width: 22px; height: 22px; stroke: #FFF; stroke-width: 1.9; fill: none; }
 
-  .bottom-section { margin-top: auto; display: flex; flex-direction: column; }
+  .balance-hint { font-family: 'Switzer', sans-serif; font-size: 11.5px; color: var(--On-Surface-Low); margin-top: 4px; }
+  .balance-hint b { color: var(--On-Surface); font-weight: 600; }
 
-  .continue-btn {
-    height: 52px; border-radius: 14px; border: none; background: #E0E0E0;
-    color: var(--On-Surface-Low); font-family: 'Poppins', sans-serif;
-    font-size: 15px; font-weight: 500; cursor: not-allowed; transition: all 0.2s; margin-top: 14px;
-  }
-  .continue-btn.active {
-    background: var(--Primary); color: #FFF; cursor: pointer; box-shadow: 0 4px 16px rgba(254,53,61,0.25);
-  }
+  /* Amber strip for a balance shortfall, plain red for the hard limits */
+  .msg { display: none; font-family: 'Switzer', sans-serif; font-size: 12.5px; font-weight: 600; margin-top: 6px; }
+  .msg.show { display: block; }
+  .msg.warn { color: var(--Warning); background: var(--Warning-Light); border-radius: 8px; padding: 10px 12px; }
+  .msg.err { color: var(--Primary); }
+
+  /* ── Number lookup state ── */
+  .status-chip { display: none; align-items: center; gap: 10px; border-radius: 12px; padding: 13px 14px; margin-top: 4px; font-family: 'Switzer', sans-serif; font-size: 14px; font-weight: 500; }
+  .status-chip.show { display: flex; }
+  .status-chip .ic { width: 24px; height: 24px; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+  .status-chip .ic svg { width: 13px; height: 13px; stroke-width: 3; fill: none; }
+  .status-chip.loading { background: #F1F1F4; color: var(--On-Surface-Low); }
+  .status-chip.loading .ic { border: 2.5px dashed var(--Success); animation: spin 1.6s linear infinite; }
+  .status-chip.ok { background: var(--Success-Light); color: var(--On-Surface); }
+  .status-chip.ok .ic { border: 1.8px solid var(--Success); }
+  .status-chip.ok .ic svg { stroke: var(--Success); }
+  .status-chip.bad { background: var(--Error-Light); color: var(--Primary); }
+  .status-chip.bad .ic { border: 1.8px solid var(--Primary); }
+  .status-chip.bad .ic svg { stroke: var(--Primary); }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* ── Type-ahead over the phone field ── */
+  .phone-wrap { position: relative; }
+  .suggest { position: absolute; top: calc(100% + 6px); left: 0; right: 0; z-index: 30; display: none; flex-direction: column; background: #FFF; border: 1px solid var(--Field-Border); border-radius: 14px; box-shadow: 0 10px 28px rgba(0,0,0,0.12); overflow: hidden; max-height: 208px; overflow-y: auto; }
+  .suggest.show { display: flex; }
+  .suggest::-webkit-scrollbar { width: 0; }
+  .suggest-item { display: flex; align-items: center; gap: 12px; padding: 11px 14px; cursor: pointer; transition: background 0.15s; }
+  .suggest-item:hover { background: #FAFAFA; }
+  .suggest-avatar { width: 38px; height: 38px; border-radius: 50%; background: #FFE9EA; color: var(--Primary); display: flex; align-items: center; justify-content: center; font-family: 'Switzer', sans-serif; font-size: 12px; font-weight: 700; flex-shrink: 0; }
+  .suggest-info { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+  .suggest-name { font-family: 'Switzer', sans-serif; font-size: 14px; font-weight: 700; color: var(--On-Surface); }
+  .suggest-sub { font-family: 'Switzer', sans-serif; font-size: 12px; color: var(--On-Surface-Low); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+  /* ── Recent card ── */
+  .recent-card { background: #FFF; border-radius: 16px; padding: 16px; box-shadow: 0 2px 8px rgba(0,0,0,0.04); display: flex; flex-direction: column; gap: 10px; }
+  .recent-title { font-family: 'Switzer', sans-serif; font-size: 14px; font-weight: 600; color: var(--On-Surface); letter-spacing: 0.2px; }
+  .recent-list { display: flex; flex-direction: column; gap: 4px; }
+  .recent-item { display: flex; align-items: center; gap: 12px; padding: 7px 0; cursor: pointer; border-radius: 10px; transition: background 0.15s; }
+  .recent-item:hover { background: #FAFAFA; }
+  .recent-avatar { width: 40px; height: 40px; border-radius: 50%; overflow: hidden; flex-shrink: 0; background: #FFF; border: 1px solid #ECECEC; display: flex; align-items: center; justify-content: center; }
+  .recent-avatar img { width: 28px; height: 28px; object-fit: contain; }
+  .recent-info { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px; }
+  .recent-name { font-family: 'Switzer', sans-serif; font-size: 14px; font-weight: 500; color: var(--On-Surface); }
+  .recent-sub { font-family: 'Switzer', sans-serif; font-size: 12px; color: var(--On-Surface-Low); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .chev { width: 18px; height: 18px; stroke: var(--Primary); stroke-width: 2.4; fill: none; flex-shrink: 0; }
+
+  /* ── Bottom button ── */
+  .bottom-bar { flex-shrink: 0; padding: 10px 16px 18px; background: var(--Background); }
+  .continue-btn { width: 100%; height: 52px; border-radius: 14px; border: none; background: #E0E0E0; color: var(--On-Surface-Low); font-family: 'Poppins', sans-serif; font-size: 15px; font-weight: 500; cursor: not-allowed; transition: all 0.2s; }
+  .continue-btn.active { background: var(--Primary); color: #FFF; cursor: pointer; box-shadow: 0 4px 16px rgba(254,53,61,0.25); }
   .continue-btn.active:hover { background: #E5303A; box-shadow: 0 6px 20px rgba(254,53,61,0.35); transform: translateY(-1px); }
   .continue-btn.active:active { transform: scale(0.98) translateY(0); }
 
-  /* ===== Bottom sheet (contacts) ===== */
-  .modal-overlay {
-    position: absolute; inset: 0; z-index: 1000; background: rgba(0,0,0,0.5);
-    display: none; align-items: flex-end; justify-content: center; animation: fadeInOverlay 0.2s ease-out;
-  }
-  .modal-overlay.show { display: flex; }
-  @keyframes fadeInOverlay { from { opacity: 0; } to { opacity: 1; } }
-  .bottom-sheet {
-    width: 100%; background: #FFF; border-radius: 24px 24px 0 0; padding: 20px 20px 28px;
-    animation: slideUpSheet 0.35s cubic-bezier(0.34, 1.56, 0.64, 1); max-height: 70%; overflow-y: auto;
-  }
-  .bottom-sheet::-webkit-scrollbar { width: 0; }
-  @keyframes slideUpSheet { from { transform: translateY(100%); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
-  .sheet-grip { width: 40px; height: 4px; background: #D8D8DD; border-radius: 2px; margin: 0 auto 16px; }
-  .sheet-title { font-family: 'Switzer', sans-serif; font-size: 17px; font-weight: 700; color: var(--On-Surface); margin-bottom: 16px; text-align: center; }
-  .sheet-list { display: flex; flex-direction: column; gap: 4px; }
-  .sheet-item { display: flex; align-items: center; gap: 12px; padding: 12px 10px; border-radius: 14px; cursor: pointer; transition: background 0.15s; }
-  .sheet-item:hover { background: #FFF1F2; }
-  .sheet-item:active { background: #FFDFE0; }
-  .sheet-avatar { width: 44px; height: 44px; border-radius: 50%; background: #E8E8EC; display: flex; align-items: center; justify-content: center; flex-shrink: 0; font-family: 'Switzer', sans-serif; font-size: 15px; font-weight: 600; color: var(--On-Surface); overflow: hidden; }
-  .sheet-avatar img { width: 100%; height: 100%; object-fit: cover; }
-  .sheet-item-info { flex: 1; }
-  .sheet-item-name { font-family: 'Switzer', sans-serif; font-size: 14px; font-weight: 600; color: var(--On-Surface); }
-  .sheet-item-sub { font-family: 'Switzer', sans-serif; font-size: 12px; color: var(--On-Surface-Low); margin-top: 1px; }
-</style>
+  /* ── Sheets ── */
+  .sheet-overlay { position: absolute; inset: 0; background: rgba(0,0,0,0.45); display: flex; align-items: flex-end; opacity: 0; pointer-events: none; transition: opacity 0.25s; z-index: 50; }
+  .sheet-overlay.show { opacity: 1; pointer-events: auto; }
+  .sheet { width: 100%; max-height: 82%; background: #FFF; border-radius: 24px 24px 0 0; padding: 12px 16px 20px; display: flex; flex-direction: column; transform: translateY(100%); transition: transform 0.3s cubic-bezier(0.2, 0.8, 0.3, 1); }
+  .sheet-overlay.show .sheet { transform: translateY(0); }
+  .sheet-grip { width: 44px; height: 4px; border-radius: 2px; background: #D8D8DE; margin: 0 auto 14px; flex-shrink: 0; }
+  .sheet-title { text-align: center; font-family: 'Switzer', sans-serif; font-size: 18px; font-weight: 700; color: var(--On-Surface); margin-bottom: 16px; flex-shrink: 0; }
+  .search-field { height: 52px; background: var(--Field); border: 1px solid var(--Field-Border); border-radius: 12px; padding: 0 14px; display: flex; align-items: center; gap: 10px; flex-shrink: 0; }
+  .search-field:focus-within { border-color: var(--Primary); background: #FFF; }
+  .search-field svg { width: 18px; height: 18px; stroke: var(--On-Surface); stroke-width: 2; fill: none; flex-shrink: 0; }
+  .search-field input { flex: 1; min-width: 0; border: none; background: transparent; outline: none; font-family: 'Switzer', sans-serif; font-size: 14px; font-weight: 500; color: var(--On-Surface); }
+  .search-field input::placeholder { color: var(--On-Surface-Low); font-weight: 400; }
+
+  .wallet-grid { margin-top: 14px; display: grid; grid-template-columns: 1fr 1fr; gap: 10px; overflow-y: auto; padding-bottom: 4px; }
+  .wallet-grid::-webkit-scrollbar { width: 0; }
+  .wallet-tile { background: #FFF; border: 1px solid var(--Field-Border); border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.04); padding: 14px 8px; display: flex; flex-direction: column; align-items: center; gap: 8px; cursor: pointer; transition: border-color 0.2s, transform 0.15s, box-shadow 0.2s; }
+  .wallet-tile:hover { border-color: var(--Primary); box-shadow: 0 6px 18px rgba(0,0,0,0.08); transform: translateY(-1px); }
+  .wallet-tile:active { transform: scale(0.98); }
+  .wallet-tile .logo { width: 40px; height: 40px; border-radius: 50%; background: #FFF; display: flex; align-items: center; justify-content: center; overflow: hidden; }
+  .wallet-tile .logo img { width: 32px; height: 32px; object-fit: contain; }
+  .wallet-tile .nm { font-family: 'Switzer', sans-serif; font-size: 11px; font-weight: 600; color: var(--On-Surface); text-align: center; line-height: 1.3; }
+  .grid-empty { grid-column: 1 / -1; padding: 24px; text-align: center; font-family: 'Switzer', sans-serif; font-size: 13px; color: var(--On-Surface-Low); }
+
+  /* Contacts sheet reuses the suggestion row */
+  .contact-list { margin-top: 14px; display: flex; flex-direction: column; overflow-y: auto; }
+  .contact-list::-webkit-scrollbar { width: 0; }
+
+  /* ── Confirmation sheet ── */
+  .sheet.confirm-sheet { padding: 12px 20px 22px; }
+  .party-card { position: relative; border: 1px solid var(--Field-Border); border-radius: 14px; padding: 14px; display: flex; align-items: center; gap: 12px; margin: 4px 0 12px; }
+  .party-badge { position: absolute; top: -11px; right: 14px; background: #EDEDF0; color: var(--On-Surface-Low); font-family: 'Switzer', sans-serif; font-size: 9.5px; font-weight: 700; letter-spacing: 0.6px; padding: 4px 9px; border-radius: 6px; }
+  .party-avatar { width: 44px; height: 44px; border-radius: 50%; background: #FFE9EA; color: var(--Primary); display: flex; align-items: center; justify-content: center; font-family: 'Switzer', sans-serif; font-size: 14px; font-weight: 700; flex-shrink: 0; }
+  .party-info { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 3px; }
+  .party-name { font-family: 'Switzer', sans-serif; font-size: 15px; font-weight: 700; color: var(--On-Surface); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .party-sub { font-family: 'Switzer', sans-serif; font-size: 12.5px; color: var(--On-Surface-Low); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+  .sum-row { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 14px 2px; border-bottom: 1px solid #F0F0F3; }
+  .sum-row.total { border-bottom: none; }
+  .sum-key { font-family: 'Switzer', sans-serif; font-size: 13px; font-weight: 400; color: var(--On-Surface-Low); flex-shrink: 0; }
+  .sum-val { font-family: 'Switzer', sans-serif; font-size: 13.5px; font-weight: 700; color: var(--On-Surface); text-align: right; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .sum-row.total .sum-val { color: var(--Primary); font-size: 15px; }
+
+  .sheet-actions { display: flex; gap: 12px; margin-top: 18px; }
+  .sheet-btn { flex: 1; height: 50px; border-radius: 12px; background: #FFF; cursor: pointer; font-family: 'Switzer', sans-serif; font-size: 14.5px; font-weight: 500; transition: background 0.15s, transform 0.12s; }
+  .sheet-btn:active { transform: scale(0.98); }
+  .sheet-btn.cancel { border: 1.5px solid var(--Field-Border); color: var(--On-Surface-Low); }
+  .sheet-btn.cancel:hover { background: #FAFAFA; }
+  .sheet-btn.confirm { border: 1.5px solid var(--Primary); color: var(--Primary); font-weight: 600; }
+  .sheet-btn.confirm:hover { background: #FFF5F5; }
+
+  </style>
 </head>
 <body>
-
 <div class="phone-frame">
   <div class="app-content">
 
@@ -165,219 +193,412 @@
 
     <div class="header-nav">
       <button class="back-btn" onclick="goBack()">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M19 12H5M12 19l-7-7 7-7"/>
-        </svg>
+        <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
       </button>
-      <span class="header-title" id="headerTitle">Send to M-PESA</span>
-      <div style="width: 36px;"></div>
+      <span class="header-title">Transfer Money</span>
+      <div style="width:36px;"></div>
     </div>
 
-    <div class="main-content">
+    <div class="scroll">
 
-      <div class="wallet-chip">
-        <div class="logo"><img id="walletLogo" src="assets/banks logo/M-PESA-logo-icon.png" alt="M-PESA" onerror="this.style.display='none'"></div>
-        <span class="text"><span id="walletName">M-PESA</span></span>
-      </div>
-
-      <div class="entry-label">Recipient mobile number</div>
-      <div class="number-display">
-        <span class="number-value placeholder" id="numberValue">09XX XXX XXX</span>
-        <span class="number-caret"></span>
-      </div>
-
-      <div class="field-error" id="fieldError">
-        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
-        <span>Enter a valid 10-digit number starting with 09 or 07</span>
-      </div>
-
-      <button class="contacts-btn" onclick="openContacts()">
-        <svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
-        <span>Select from Contacts</span>
-      </button>
-
-      <div class="bottom-section">
-        <div class="keypad">
-          <button class="key" onclick="pressKey('1')">1</button>
-          <button class="key" onclick="pressKey('2')">2</button>
-          <button class="key" onclick="pressKey('3')">3</button>
-          <button class="key" onclick="pressKey('4')">4</button>
-          <button class="key" onclick="pressKey('5')">5</button>
-          <button class="key" onclick="pressKey('6')">6</button>
-          <button class="key" onclick="pressKey('7')">7</button>
-          <button class="key" onclick="pressKey('8')">8</button>
-          <button class="key" onclick="pressKey('9')">9</button>
-          <button class="key empty"></button>
-          <button class="key" onclick="pressKey('0')">0</button>
-          <button class="key delete" onclick="deleteKey()">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M21 4H8l-7 8 7 8h13a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2z"></path>
-              <line x1="18" y1="9" x2="12" y2="15"></line>
-              <line x1="12" y1="9" x2="18" y2="15"></line>
-            </svg>
-          </button>
+      <div class="form-card">
+        <!-- Selected wallet — tapping anywhere on the row reopens the picker -->
+        <div class="wallet-row" onclick="openSheet()">
+          <span class="logo"><img id="walletLogo" src="assets/wallets/kacha.png" alt=""></span>
+          <span class="nm" id="walletName">Kacha</span>
+          <svg class="caret" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
         </div>
 
-        <button class="continue-btn" id="continueBtn" onclick="continueToValidation()" disabled>Continue</button>
+        <span class="field-label">Enter Phone Number</span>
+        <div class="phone-wrap">
+          <div class="field phone" id="phoneField">
+            <span class="dial">+251</span>
+            <input id="phoneInput" type="text" inputmode="numeric" maxlength="24" placeholder=""
+                   autocomplete="off" oninput="onPhoneInput()" onfocus="onPhoneInput()">
+            <button class="contact-btn" onclick="openContacts(event)" aria-label="Pick from contacts" type="button">
+              <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="3.4"/><path d="M5.5 19.5a6.5 6.5 0 0 1 13 0"/></svg>
+            </button>
+          </div>
+          <div class="suggest" id="suggest"></div>
+        </div>
+
+        <div class="status-chip loading" id="phoneLoading">
+          <span class="ic"></span>
+          <span>Looking Up Phone Number</span>
+        </div>
+        <div class="status-chip ok" id="phoneOk">
+          <span class="ic"><svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></span>
+          <span id="phoneOkName"></span>
+        </div>
+        <div class="status-chip bad" id="phoneBad">
+          <span class="ic"><svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M17 7 7 17M7 7l10 10"/></svg></span>
+          <span>Invalid phone number</span>
+        </div>
+
+        <span class="field-label">Amount</span>
+        <div class="field" id="amtField">
+          <input id="amtInput" type="text" inputmode="decimal" placeholder="e.g. 120 Br" autocomplete="off"
+                 oninput="onAmountInput()" onfocus="unformatAmount()" onblur="formatAmount()">
+        </div>
+        <div class="balance-hint"><b>Balance:</b> 20,000.00 Br</div>
+        <div class="msg" id="amtMsg"></div>
+
+        <span class="field-label">Payment Reason (Optional)</span>
+        <div class="field">
+          <input id="reasonInput" type="text" maxlength="40" placeholder="payment reason" autocomplete="off">
+        </div>
       </div>
 
+      <div class="recent-card">
+        <span class="recent-title">Recent</span>
+        <div class="recent-list" id="recentList"></div>
+      </div>
+
+    </div>
+
+    <div class="bottom-bar">
+      <button class="continue-btn" id="continueBtn" onclick="continueTransfer()" disabled>Continue</button>
     </div>
 
   </div>
 
-  <!-- Contacts bottom sheet -->
-  <div class="modal-overlay" id="contactsOverlay" onclick="if(event.target===this)closeContacts()">
-    <div class="bottom-sheet">
+  <!-- Wallet picker -->
+  <div class="sheet-overlay" id="sheetOverlay" onclick="if(event.target===this)closeSheet()">
+    <div class="sheet">
       <div class="sheet-grip"></div>
-      <div class="sheet-title">Choose a contact</div>
-      <div class="sheet-list" id="contactList"></div>
+      <div class="sheet-title">Select Wallet</div>
+      <div class="search-field">
+        <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+        <input id="walletSearch" type="text" placeholder="Search by wallet name" autocomplete="off" oninput="renderWallets()">
+      </div>
+      <div class="wallet-grid" id="walletGrid"></div>
+    </div>
+  </div>
+
+  <!-- Contacts -->
+  <div class="sheet-overlay" id="contactsOverlay" onclick="if(event.target===this)closeContacts()">
+    <div class="sheet">
+      <div class="sheet-grip"></div>
+      <div class="sheet-title">Select Contact</div>
+      <div class="search-field">
+        <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+        <input id="contactSearch" type="text" placeholder="Search by name or number" autocomplete="off" oninput="renderContacts()">
+      </div>
+      <div class="contact-list" id="contactList"></div>
+    </div>
+  </div>
+
+  <!-- Confirmation -->
+  <div class="sheet-overlay" id="confirmOverlay" onclick="if(event.target===this)closeConfirm()">
+    <div class="sheet confirm-sheet">
+      <div class="sheet-grip"></div>
+      <div class="sheet-title">Confirmation</div>
+
+      <div class="party-card">
+        <span class="party-badge">RECIPIENT</span>
+        <div class="party-avatar" id="cfAvatar"></div>
+        <div class="party-info">
+          <span class="party-name" id="cfName"></span>
+          <span class="party-sub" id="cfPhone"></span>
+        </div>
+      </div>
+
+      <div class="sum-row">
+        <span class="sum-key">Receivers Wallet:</span>
+        <span class="sum-val" id="cfWallet"></span>
+      </div>
+      <div class="sum-row">
+        <span class="sum-key">Fee:</span>
+        <span class="sum-val" id="cfFee"></span>
+      </div>
+      <div class="sum-row total">
+        <span class="sum-key">Total:</span>
+        <span class="sum-val" id="cfTotal"></span>
+      </div>
+
+      <div class="sheet-actions">
+        <button class="sheet-btn cancel" onclick="closeConfirm()">Cancel</button>
+        <button class="sheet-btn confirm" onclick="confirmTransfer()">Confirm</button>
+      </div>
     </div>
   </div>
 </div>
 
 <script>
-  let digits = '';
-
-  const contacts = [
-    { name: 'Henok Chala',   number: '0712131415' },
-    { name: 'Aster Mequanent', number: '0911223344' },
-    { name: 'Kidist Birhanu', number: '0922334455' },
-    { name: 'Samuel Desta',   number: '0933445566' },
-    { name: 'Marta Solomon',  number: '0944556677' }
+  const WALLETS = [
+    { key: 'mpesa',    name: 'M-PESA',   logo: 'assets/banks logo/M-PESA-logo-icon.png' },
+    { key: 'telebirr', name: 'Telebirr', logo: 'assets/wallets/telebirr.png' },
+    { key: 'cbebirr',  name: 'CBE Birr', logo: 'assets/wallets/cbe-birr.png' },
+    { key: 'kacha',    name: 'Kacha',    logo: 'assets/wallets/kacha.png' },
+    { key: 'yaya',     name: 'Yaya',     logo: 'assets/wallets/yaya.png' }
   ];
 
-  function initials(name) {
-    return name.split(' ').map(p => p[0]).slice(0, 2).join('').toUpperCase();
+  // Numbers the lookup resolves against — anything else comes back invalid.
+  const DIRECTORY = [
+    { number: '915965211', name: 'Abebe Bikila Maraton' },
+    { number: '911223344', name: 'Aster Mequanent' },
+    { number: '922334455', name: 'Solomon Zewde' },
+    { number: '933445566', name: 'Bekele Bikila' },
+    { number: '944556677', name: 'Kidist Birhanu' },
+    { number: '955667788', name: 'Abebech Gobena' }
+  ];
+
+  const RECENT = ['911223344', '922334455', '933445566'];
+
+  const MIN_AMT = 5, MAX_AMT = 75000, BALANCE = 20000, FEE = 5;
+
+  const $ = id => document.getElementById(id);
+  const fmt = n => parseFloat(n || 0).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+
+  const initials = name => name.split(/\s+/).slice(0, 2).map(w => w[0]).join('').toUpperCase();
+  // Recent rows and the stored target both show the number half-hidden.
+  const mask = num => '+2519****' + num.slice(-3);
+
+  let wallet = WALLETS.find(w => w.key === 'kacha');
+  let holder = null;          // resolved recipient, null until the lookup succeeds
+  let lookupTimer = null;
+
+  /* ── Wallet picker ── */
+  function openSheet() { $('walletSearch').value = ''; renderWallets(); $('sheetOverlay').classList.add('show'); }
+  function closeSheet() { $('sheetOverlay').classList.remove('show'); }
+
+  function renderWallets() {
+    const q = $('walletSearch').value.trim().toLowerCase();
+    const list = WALLETS.filter(w => w.name.toLowerCase().includes(q));
+    $('walletGrid').innerHTML = list.length
+      ? list.map(w =>
+          '<div class="wallet-tile" onclick="pickWallet(\'' + w.key + '\')">' +
+            '<span class="logo"><img src="' + w.logo + '" alt=""></span>' +
+            '<span class="nm">' + w.name + '</span>' +
+          '</div>').join('')
+      : '<div class="grid-empty">No wallet matches that name</div>';
   }
 
-  function formatNumber(d) {
-    // group as 09XX XXX XXX
-    if (!d) return '';
-    const a = d.slice(0, 4), b = d.slice(4, 7), c = d.slice(7, 10);
-    return [a, b, c].filter(Boolean).join(' ');
+  function pickWallet(key) {
+    const w = WALLETS.find(x => x.key === key);
+    if (!w) return;
+    wallet = w;
+    $('walletName').textContent = w.name;
+    $('walletLogo').src = w.logo;
+    closeSheet();
+    renderRecent();
+    // A different wallet invalidates the name already resolved against the old one.
+    resetLookup();
+    onPhoneInput();
   }
 
-  let walletName = '';
+  /* ── Contacts ── */
+  function openContacts(e) {
+    if (e) e.stopPropagation();
+    $('contactSearch').value = '';
+    renderContacts();
+    $('contactsOverlay').classList.add('show');
+  }
+  function closeContacts() { $('contactsOverlay').classList.remove('show'); }
 
-  function getWalletPrefix() {
-    // M-PESA → 07, Telebirr/Ethiotele → 09
-    if (walletName.toLowerCase().includes('mpesa') || walletName.toLowerCase().includes('m-pesa')) return '07';
-    return '09';
+  function renderContacts() {
+    const q = $('contactSearch').value.trim().toLowerCase();
+    const list = DIRECTORY.filter(d => d.name.toLowerCase().includes(q) || d.number.includes(q));
+    $('contactList').innerHTML = list.length
+      ? list.map(d =>
+          '<div class="suggest-item" onclick="pickContact(\'' + d.number + '\')">' +
+            '<span class="suggest-avatar">' + initials(d.name) + '</span>' +
+            '<span class="suggest-info">' +
+              '<span class="suggest-name">' + d.name + '</span>' +
+              '<span class="suggest-sub">+251 ' + d.number + '</span>' +
+            '</span>' +
+          '</div>').join('')
+      : '<div class="grid-empty">No contact matches that search</div>';
   }
 
-  function isValid(d) {
-    const prefix = getWalletPrefix();
-    return d.length === 10 && d.startsWith(prefix);
-  }
-
-  function render() {
-    const el = document.getElementById('numberValue');
-    const err = document.getElementById('fieldError');
-    const btn = document.getElementById('continueBtn');
-    const prefix = getWalletPrefix();
-
-    if (digits.length === 0) {
-      el.textContent = prefix + 'XX XXX XXX';
-      el.classList.add('placeholder');
-    } else {
-      el.textContent = formatNumber(digits);
-      el.classList.remove('placeholder');
-    }
-
-    // Only show the error once a full-length but invalid number is entered
-    const showErr = digits.length === 10 && !isValid(digits);
-    err.classList.toggle('show', showErr);
-
-    if (isValid(digits)) { btn.classList.add('active'); btn.disabled = false; }
-    else { btn.classList.remove('active'); btn.disabled = true; }
-  }
-
-  function pressKey(k) {
-    if (digits.length < 10) { digits += k; render(); }
-  }
-  function deleteKey() {
-    digits = digits.slice(0, -1); render();
-  }
-
-  function openContacts() {
-    const list = document.getElementById('contactList');
-    list.innerHTML = contacts.map((c, i) => `
-      <div class="sheet-item" onclick="pickContact(${i})">
-        <div class="sheet-avatar">${initials(c.name)}</div>
-        <div class="sheet-item-info">
-          <div class="sheet-item-name">${c.name}</div>
-          <div class="sheet-item-sub">${formatNumber(c.number)}</div>
-        </div>
-      </div>
-    `).join('');
-    document.getElementById('contactsOverlay').classList.add('show');
-  }
-  function closeContacts() {
-    document.getElementById('contactsOverlay').classList.remove('show');
-  }
-  function pickContact(i) {
-    const c = contacts[i];
+  function pickContact(number) {
     closeContacts();
-    storeAndGo(c.number, c.name);
+    pickNumber(number);
   }
 
-  function maskNumber(d) {
-    return '+251 9** *** ' + d.slice(-3);
+  /* ── Phone field ── */
+  function resetLookup() {
+    holder = null;
+    ['phoneLoading', 'phoneOk', 'phoneBad'].forEach(id => $(id).classList.remove('show'));
+    $('phoneField').classList.remove('err');
+    updateBtn();
   }
 
-  const sampleNames = ['Henok Chala', 'Kidist Birhanu', 'Abel Tesfaye', 'Marta Solomon', 'Yonas Girma', 'Hanna Bekele'];
+  function onPhoneInput() {
+    const raw = $('phoneInput').value.trim();
+    clearTimeout(lookupTimer);
+    resetLookup();
+    renderSuggestions(raw);
 
-  function storeAndGo(number, holder) {
-    let target = {};
-    try { target = JSON.parse(sessionStorage.getItem('sendTarget') || '{}'); } catch (e) {}
-    target.type = 'wallet';
-    target.phone = maskNumber(number);
-    target.fullNumber = number;
-    if (holder) target.holder = holder;          // pre-known when picked from contacts
-    else target.holder = sampleNames[Math.floor(Math.random() * sampleNames.length)];
-    sessionStorage.setItem('sendTarget', JSON.stringify(target));
-    window.location.href = 'Transfer to Wallet_Enter Amount.html';
+    // A full local number resolves; a partial one or a name search just keeps
+    // the suggestions open.
+    if (!/^\d{9}$/.test(raw)) return;
+
+    $('phoneLoading').classList.add('show');
+    lookupTimer = setTimeout(() => {
+      const hit = DIRECTORY.find(d => d.number === raw);
+      $('phoneLoading').classList.remove('show');
+      if (hit) {
+        holder = hit;
+        $('phoneOkName').textContent = hit.name;
+        $('phoneOk').classList.add('show');
+      } else {
+        $('phoneBad').classList.add('show');
+        $('phoneField').classList.add('err');
+      }
+      updateBtn();
+    }, 1200);
   }
 
-  function continueToValidation() {
-    if (isValid(digits)) storeAndGo(digits);
+  function renderSuggestions(raw) {
+    const box = $('suggest');
+    if (!raw) { box.classList.remove('show'); return; }
+    const q = raw.toLowerCase();
+    const hits = DIRECTORY.filter(d => d.number.startsWith(raw) || d.name.toLowerCase().includes(q));
+    // An exact match is already shown by the lookup chip, so drop the redundant row.
+    const list = hits.filter(d => d.number !== raw);
+    if (!list.length) { box.classList.remove('show'); return; }
+    box.innerHTML = list.map(d =>
+      '<div class="suggest-item" onclick="pickNumber(\'' + d.number + '\')">' +
+        '<span class="suggest-avatar">' + initials(d.name) + '</span>' +
+        '<span class="suggest-info">' +
+          '<span class="suggest-name">' + d.name + '</span>' +
+          '<span class="suggest-sub">+251 ' + d.number + '</span>' +
+        '</span>' +
+      '</div>').join('');
+    box.classList.add('show');
+  }
+
+  function pickNumber(number) {
+    $('suggest').classList.remove('show');
+    $('phoneInput').value = number;
+    onPhoneInput();
+    $('suggest').classList.remove('show');
+  }
+
+  /* ── Amount ── */
+  // The field carries a grouped "1,200.00 Br" value at rest and a bare number
+  // while it has focus, so every read goes through amountValue().
+  const amountValue = () => {
+    const raw = $('amtInput').value.replace(/[^\d.]/g, '');
+    return raw === '' ? null : parseFloat(raw);
+  };
+
+  function onAmountInput() {
+    const el = $('amtInput');
+    el.value = el.value.replace(/[^\d.]/g, '').replace(/(\..*)\./g, '$1');
+    validateAmount();
+    updateBtn();
+  }
+
+  function unformatAmount() {
+    const n = amountValue();
+    $('amtInput').value = n === null ? '' : String(n);
+  }
+
+  function formatAmount() {
+    const n = amountValue();
+    if (n !== null && !isNaN(n)) $('amtInput').value = fmt(n) + ' Br';
+  }
+
+  function setAmountState(state, text) {
+    const field = $('amtField'), msg = $('amtMsg');
+    field.classList.toggle('warn', state === 'warn');
+    field.classList.toggle('err', state === 'err');
+    msg.classList.toggle('warn', state === 'warn');
+    msg.classList.toggle('err', state === 'err');
+    msg.classList.toggle('show', !!state);
+    if (text) msg.textContent = text;
+  }
+
+  function validateAmount() {
+    const n = amountValue();
+    if (n === null) { setAmountState(null); return null; }
+    if (isNaN(n) || n <= 0) { setAmountState('err', 'Enter a valid amount'); return null; }
+    if (n < MIN_AMT)   { setAmountState('err', 'Minimum Amount: ' + fmt(MIN_AMT) + ' Br'); return null; }
+    if (n > MAX_AMT)   { setAmountState('err', 'Maximum Amount: ' + fmt(MAX_AMT) + ' Br'); return null; }
+    if (n + FEE > BALANCE) { setAmountState('warn', 'Insufficient Balance'); return null; }
+    setAmountState(null);
+    return n;
+  }
+
+  function updateBtn() {
+    const ok = !!wallet && !!holder && validateAmount() !== null;
+    $('continueBtn').classList.toggle('active', ok);
+    $('continueBtn').disabled = !ok;
+  }
+
+  /* ── Recent ── */
+  function renderRecent() {
+    $('recentList').innerHTML = RECENT.map(num => {
+      const d = DIRECTORY.find(x => x.number === num);
+      if (!d) return '';
+      return '<div class="recent-item" onclick="pickNumber(\'' + d.number + '\')">' +
+        '<span class="recent-avatar"><img src="' + wallet.logo + '" alt=""></span>' +
+        '<span class="recent-info">' +
+          '<span class="recent-name">' + d.name + '</span>' +
+          '<span class="recent-sub">' + mask(d.number) + '</span>' +
+        '</span>' +
+        '<svg class="chev" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>' +
+      '</div>';
+    }).join('');
+  }
+  renderRecent();
+
+  /* ── Continue → confirmation sheet ── */
+  function continueTransfer() {
+    const amount = validateAmount();
+    if (!wallet || !holder || amount === null) return;
+    $('cfAvatar').textContent = initials(holder.name);
+    $('cfName').textContent = holder.name;
+    $('cfPhone').textContent = '+251 ' + holder.number;
+    $('cfWallet').textContent = wallet.name;
+    $('cfFee').textContent = fmt(FEE) + ' Br';
+    $('cfTotal').textContent = fmt(amount + FEE) + ' Br';
+    $('confirmOverlay').classList.add('show');
+  }
+
+  function closeConfirm() { $('confirmOverlay').classList.remove('show'); }
+
+  function confirmTransfer() {
+    const amount = validateAmount();
+    if (!wallet || !holder || amount === null) return;
+    sessionStorage.setItem('sendTarget', JSON.stringify({
+      type: 'wallet',
+      name: wallet.name,
+      logo: wallet.logo,
+      holder: holder.name,
+      phone: mask(holder.number),
+      fullNumber: holder.number
+    }));
+    sessionStorage.setItem('sendAmount', fmt(amount));
+    sessionStorage.setItem('sendFee', fmt(FEE));
+    sessionStorage.setItem('sendTotal', fmt(amount + FEE));
+    sessionStorage.setItem('sendAccount', 'main');
+    sessionStorage.setItem('sendReason', $('reasonInput').value.trim());
+    window.location.href = 'Transfer to Wallet_Enter PIN.html';
   }
 
   function goBack() { window.location.href = 'Send Money Menu.html'; }
 
-  // Reflect the wallet chosen on the Send Money menu
-  (function loadTarget() {
-    let target = null;
-    try { target = JSON.parse(sessionStorage.getItem('sendTarget') || 'null'); } catch (e) {}
-    if (target && target.type === 'wallet') {
-      if (target.name) {
-        walletName = target.name;
-        document.getElementById('walletName').textContent = target.name;
-        document.getElementById('headerTitle').textContent = 'Send to ' + target.name;
-      }
-      if (target.logo) {
-        const img = document.getElementById('walletLogo');
-        img.src = target.logo; img.alt = target.name || 'wallet'; img.style.display = '';
-      }
-    }
-    // Update placeholder and error message based on wallet
-    const prefix = getWalletPrefix();
-    document.getElementById('numberValue').textContent = prefix + 'XX XXX XXX';
-    const errMsg = document.querySelector('.field-error span');
-    if (errMsg) {
-      errMsg.textContent = 'Enter a valid 10-digit number starting with ' + prefix;
-    }
-  })();
-
-  document.addEventListener('keydown', function (e) {
-    if (e.key >= '0' && e.key <= '9') pressKey(e.key);
-    else if (e.key === 'Backspace') deleteKey();
-    else if (e.key === 'Enter') continueToValidation();
+  // Close the type-ahead when the tap lands outside the phone field.
+  document.addEventListener('click', e => {
+    if (!e.target.closest('.phone-wrap')) $('suggest').classList.remove('show');
   });
 
-  render();
+  /* ── Wallet chosen on the Send Money menu carries over ── */
+  (function loadTarget() {
+    let target = null;
+    try { target = JSON.parse(sessionStorage.getItem('sendTarget') || 'null'); } catch (e) { /* ignore corrupt state */ }
+    if (target && target.type === 'wallet' && target.name) {
+      const w = WALLETS.find(x => x.name === target.name);
+      if (w) pickWallet(w.key);
+    }
+  })();
 </script>
 
 <script src="figma-export.js"></script>
+<script src="test-scenarios-data.js"></script>
+<script src="test-scenarios.js"></script>
 </body>
 </html>

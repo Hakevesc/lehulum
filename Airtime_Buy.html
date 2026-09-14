@@ -3,10 +3,220 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Buy Airtime / Packages</title>
+<title>Buy Airtime</title>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@400;500;600&display=swap');
   @import url('https://api.fontshare.com/v2/css?f[]=switzer@400,500,600,700&display=swap');
+
+  /* === 🧪 Floating Test Scenarios Circle FAB (Positioned ABOVE the first bottom icon) === */
+  .test-fab {
+    position: fixed;
+    bottom: 86px;
+    right: 24px;
+    z-index: 999999;
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    background: #2563EB;
+    border: 3.5px solid #FFFFFF;
+    color: #FFF;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    box-shadow: 0 8px 24px rgba(37, 99, 235, 0.45), 0 2px 8px rgba(0, 0, 0, 0.2);
+    transition: all 0.22s cubic-bezier(0.34, 1.56, 0.64, 1);
+    user-select: none;
+    padding: 0;
+  }
+  .test-fab:hover {
+    background: #1D4ED8;
+    transform: translateY(-3px) scale(1.06);
+    box-shadow: 0 12px 28px rgba(37, 99, 235, 0.6), 0 4px 12px rgba(0, 0, 0, 0.25);
+  }
+  .test-fab:active {
+    transform: scale(0.95);
+  }
+  .test-fab .tp-emoji {
+    font-size: 22px;
+    line-height: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .test-fab-dot {
+    position: absolute;
+    top: -2px;
+    right: -2px;
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    background: #FF9800;
+    border: 2.5px solid #FFF;
+    display: none;
+    box-shadow: 0 0 10px #FF9800;
+  }
+  .test-fab.active .test-fab-dot { display: block; }
+
+  .test-popup {
+    position: fixed;
+    bottom: 148px;
+    right: 24px;
+    width: 320px;
+    background: #1C1C21;
+    border: 1px solid rgba(255, 255, 255, 0.14);
+    border-radius: 18px;
+    box-shadow: 0 16px 40px rgba(0, 0, 0, 0.5);
+    z-index: 999999;
+    display: none;
+    flex-direction: column;
+    overflow: hidden;
+    animation: popupSlide 0.25s cubic-bezier(0.34, 1.2, 0.64, 1);
+  }
+  .test-popup.show { display: flex; }
+  @keyframes popupSlide {
+    from { opacity: 0; transform: translateY(12px) scale(0.96); }
+    to { opacity: 1; transform: translateY(0) scale(1); }
+  }
+
+  .test-popup-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 16px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  }
+  .test-popup-title {
+    font-family: 'Switzer', sans-serif;
+    font-size: 13.5px;
+    font-weight: 700;
+    color: #FFF;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .test-popup-close {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.08);
+    border: none;
+    color: rgba(255, 255, 255, 0.7);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: background 0.15s;
+  }
+  .test-popup-close:hover {
+    background: rgba(255, 255, 255, 0.18);
+    color: #FFF;
+  }
+  .test-popup-close svg {
+    width: 14px;
+    height: 14px;
+    stroke: currentColor;
+    stroke-width: 2.2;
+    fill: none;
+  }
+
+  .test-popup-body {
+    padding: 12px 14px 14px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    max-height: 380px;
+    overflow-y: auto;
+  }
+  .test-section-title {
+    font-family: 'Switzer', sans-serif;
+    font-size: 10px;
+    font-weight: 700;
+    color: rgba(255,255,255,0.4);
+    letter-spacing: 0.8px;
+    text-transform: uppercase;
+    margin-bottom: 2px;
+  }
+  .test-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 8px 4px;
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+    gap: 10px;
+  }
+  .test-row:last-child { border-bottom: none; }
+  .test-row-left {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex: 1;
+    min-width: 0;
+  }
+  .test-row-icon {
+    width: 32px;
+    height: 32px;
+    border-radius: 10px;
+    background: rgba(255, 255, 255, 0.08);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+  .test-row-icon svg {
+    width: 16px;
+    height: 16px;
+    stroke: #FFF;
+    fill: none;
+    stroke-width: 2;
+  }
+  .test-row-info { display: flex; flex-direction: column; gap: 2px; flex: 1; min-width: 0; }
+  .test-row-label {
+    font-family: 'Switzer', sans-serif;
+    font-size: 12.5px;
+    font-weight: 600;
+    color: #FFF;
+  }
+  .test-row-desc {
+    font-family: 'Switzer', sans-serif;
+    font-size: 10.5px;
+    color: rgba(255,255,255,0.45);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  /* Toggle switch */
+  .tp-toggle {
+    position: relative; width: 38px; height: 22px; flex-shrink: 0;
+  }
+  .tp-toggle input { opacity: 0; width: 0; height: 0; position: absolute; }
+  .tp-slider {
+    position: absolute; inset: 0; background: rgba(255,255,255,0.15);
+    border-radius: 11px; cursor: pointer; transition: background 0.2s;
+  }
+  .tp-slider::before {
+    content: ''; position: absolute;
+    width: 16px; height: 16px; left: 3px; bottom: 3px;
+    background: #FFF; border-radius: 50%; transition: transform 0.2s;
+  }
+  .tp-toggle input:checked + .tp-slider { background: #FF9800; }
+  .tp-toggle input:checked + .tp-slider::before { transform: translateX(16px); }
+  /* Overdraft badge on body */
+  .overdraft-badge {
+    display: inline-flex; align-items: center; gap: 4px;
+    background: rgba(255,152,0,0.15); border: 1px solid rgba(255,152,0,0.35);
+    border-radius: 6px; padding: 1px 6px; margin-top: 3px;
+    font-family: 'Switzer', sans-serif; font-size: 9.5px; font-weight: 600;
+    color: #FF9800; letter-spacing: 0.2px; width: fit-content;
+  }
+  /* Overdraft continue button */
+  .continue-btn.overdraft {
+    background: var(--Warning);
+    color: #FFF;
+    cursor: pointer;
+    box-shadow: 0 4px 16px rgba(255,152,0,0.28);
+  }
+  .continue-btn.overdraft:hover { background: #e68a00; transform: translateY(-1px); }
 
   :root {
     --Primary: #FE353D;
@@ -48,7 +258,7 @@
   .section-label { color: var(--On-Surface-Low); font-family: 'Switzer', sans-serif; font-size: 11.5px; font-weight: 600; letter-spacing: 0.4px; text-transform: uppercase; }
 
   /* === Phone section === */
-  .phone-section { display: flex; flex-direction: column; gap: 6px; }
+  .phone-section { display: flex; flex-direction: column; gap: 12px; margin-top: 4px; }
   .phone-input-container {
     display: flex;
     align-items: center;
@@ -56,77 +266,34 @@
     background: #FFF;
     border: 1.5px solid var(--Border);
     border-radius: 12px;
-    padding: 6px 10px 6px 4px;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+    padding: 6px 6px 6px 16px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.02);
     width: 100%;
   }
-  .phone-input-wrapper {
-    display: flex;
-    align-items: center;
-    flex: 1;
-    min-width: 0;
-    gap: 8px;
-    padding-left: 8px;
-  }
-  .phone-icon {
-    width: 20px;
-    height: 20px;
-    stroke: var(--On-Surface-Low);
-    stroke-width: 2;
-    fill: none;
-    flex-shrink: 0;
+  .phone-prefix {
+    font-family: 'Switzer', sans-serif;
+    font-size: 16px;
+    font-weight: 500;
+    color: var(--On-Surface-Low);
   }
   .phone-input {
     flex: 1;
     height: 46px;
     border: none;
     background: transparent;
-    padding: 0 8px 0 14px;
-    min-width: 0;
-    width: 40px;
     font-family: 'Switzer', sans-serif;
-    font-size: 16px;
-    font-weight: 600;
+    font-size: 18px;
+    font-weight: 700;
     color: var(--On-Surface);
     outline: none;
-  }
-  .recipient-btn {
-    height: 40px;
-    padding: 0 14px;
-    border: none;
-    border-radius: 7px;
-    background: transparent;
-    font-family:'Switzer', sans-serif;
-    font-size: 12px;
-    font-weight: 600;
-    color: var(--On-Surface-Low);
-    cursor: pointer;
-    transition: all 0.2s;
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    justify-content: center;
-    gap: 6px;
-    white-space: nowrap;
-  }
-  .recipient-btn svg {
-    width: 16px;
-    height: 16px;
-    stroke: currentColor;
-    fill: none;
-    stroke-width: 2;
-  }
-  .recipient-btn.active {
-    background: #FFF;
-    color: var(--On-Surface);
-    box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+    min-width: 0;
   }
   .contacts-btn {
-    width: 40px;
-    height: 40px;
+    width: 44px;
+    height: 44px;
     border-radius: 10px;
     border: 1.5px solid var(--Border);
-    background: #FFF;
+    background: transparent;
     cursor: pointer;
     display: flex;
     align-items: center;
@@ -135,74 +302,87 @@
     flex-shrink: 0;
   }
   .contacts-btn:hover {
-    border-color: var(--Primary);
-    background: var(--On-Primary);
+    background: var(--Background);
+  }
+  .phone-input:read-only {
+    color: var(--On-Surface-Low);
   }
   .contacts-btn svg {
-    width: 18px;
-    height: 18px;
+    width: 20px;
+    height: 20px;
     stroke: var(--On-Surface-Low);
     stroke-width: 2;
     fill: none;
   }
-  /* === Service tabs (inspiration) === */
-  .service-tabs-container {
+
+  /* Recipient Tabs */
+  .recipient-tabs {
     display: flex;
-    align-items: center;
-  }
-  .service-tabs {
-    flex: 1;
     background: var(--Primary);
-    border: 1.5px solid var(--Primary);
     border-radius: 14px;
     padding: 3px;
-    display: flex;
-    gap: 0;
+    margin-top: 4px;
   }
-  .service-tab {
+  .recip-tab {
     flex: 1;
-    height: 40px;
-    border-radius: 11px;
+    height: 44px;
     border: none;
+    border-radius: 11px;
     background: transparent;
     font-family: 'Switzer', sans-serif;
-    font-size: 13px;
-    font-weight: 600;
-    color: var(--On-Surface-Low);
+    font-size: 15px;
+    font-weight: 500;
+    color: rgba(255, 255, 255, 0.85);
     cursor: pointer;
-    transition: all 0.18s;
+    transition: all 0.2s;
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 6px;
-    white-space: nowrap;
   }
-  .service-tab svg {
-    width: 17px;
-    height: 17px;
-    stroke: currentColor;
-    fill: none;
-    stroke-width: 2;
-  }
-  .service-tab.active {
+  .recip-tab.active {
     background: #FFF;
     color: var(--Primary);
-    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    box-shadow: 0 2px 6px rgba(0,0,0,0.1);
   }
-  .service-tab.inactive {
-    background: transparent;
-    color: rgba(255,255,255,0.7);
+
+  /* Verified Name Badge */
+  .verified-name-badge {
+    display: none;
+    align-items: center;
+    gap: 10px;
+    background: #F4FCF4;
+    border-radius: 10px;
+    padding: 10px 14px;
   }
-  .service-tab.tab-fav {
-    flex: none;
-    width: 44px;
-    padding: 0;
-    color: rgba(255,255,255,0.7);
+  .verified-name-badge.show {
+    display: flex;
   }
-  .service-tab.tab-fav svg {
-    width: 18px;
-    height: 18px;
+  .verified-icon {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    border: 1.5px solid var(--Success);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
   }
+  .verified-icon svg {
+    width: 12px;
+    height: 12px;
+    stroke: var(--Success);
+    stroke-width: 3;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    fill: none;
+  }
+  .verified-name {
+    font-family: 'Switzer', sans-serif;
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--On-Surface);
+  }
+
 
 
   /* === Provider cards === */
@@ -227,90 +407,265 @@
   .amount-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
   .amount-grid.hidden { display: none; }
   
-  /* Package section */
-  .pkg-section { display: none; flex-direction: column; gap: 12px; }
-  .pkg-section.show { display: flex; }
-  .pkg-cat-row { display: flex; gap: 6px; flex-wrap: wrap; }
-  .pkg-cat-tab { padding: 7px 14px; border-radius: 0; border: 1.5px solid var(--Border); border-right-width: 0.5px; background: #FFF; font-family: 'Switzer', sans-serif; font-size: 12px; font-weight: 600; color: var(--On-Surface-Low); cursor: pointer; transition: all 0.18s; white-space: nowrap; }
-  .pkg-cat-tab:last-child { border-right-width: 1.5px; border-radius: 0 20px 20px 0; }
-  .pkg-cat-tab:first-child { border-radius: 20px 0 0 20px; }
-  .pkg-cat-tab.active { background: var(--Primary); border-color: var(--Primary); color: #FFF; box-shadow: 0 2px 8px rgba(254,53,61,0.2); }
-  .pkg-cat-tab:hover { border-color: var(--Primary); color: var(--Primary); }
-  .pkg-cat-scroll { overflow-x: auto; white-space: nowrap; display: flex; gap: 0; padding: 0; -webkit-overflow-scrolling: touch; scrollbar-width: none; }
-  .pkg-cat-scroll::-webkit-scrollbar { display: none; }
-  .pkg-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 5px; align-content: start; }
-  .pkg-card { background: #FFF; border: 1.5px solid var(--Border); border-radius: 14px; padding: 10px; cursor: pointer; transition: all 0.18s; display: flex; flex-direction: column; gap: 5px; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04); position: relative; }
-  .pkg-card:hover { border-color: var(--Primary); background: #FFF7F7; transform: translateY(-1px); }
-  .pkg-card.active { border-color: var(--Primary); background: var(--Primary); box-shadow: 0 2px 10px rgba(254,53,61,0.15); }
-  .pkg-card.active .pkg-card-title { color: #FFF; }
-  .pkg-card-title { font-family: 'Switzer', sans-serif; font-size: 14px; font-weight: 700; color: var(--On-Surface); display: flex; align-items: center; justify-content: space-between; }
-  .pkg-card.active .pkg-card-desc { color: rgba(255,255,255,0.7); }
-  .pkg-card-desc { font-family: 'Switzer', sans-serif; font-size: 11px; color: var(--On-Surface-Low); line-height: 1.3; }
-  .pkg-card.active .pkg-card-price { color: #FFF; }
-  .pkg-card-price { font-family: 'Switzer', sans-serif; font-size: 12px; font-weight: 700; color: var(--Primary); flex-shrink: 0; margin-left: auto; }
-  .pkg-card-badge { position: absolute; top: -4px; right: -4px; background: var(--Warning); color: #FFF; font-family: 'Switzer', sans-serif; font-size: 9px; font-weight: 700; padding: 3px 7px; border-radius: 8px; line-height: 1; }
-  .pkg-card-fav { position: absolute; bottom: 6px; right: 6px; width: 18px; height: 18px; stroke: #B0B0B8; stroke-width: 2; fill: rgba(176,176,184,0.3); cursor: pointer; transition: all 0.15s; }
-  .pkg-card-fav:hover { stroke: #FFB800; fill: rgba(255,184,0,0.4); }
-  .pkg-subcat-title { font-family: 'Switzer', sans-serif; font-size: 12px; font-weight: 700; color: var(--On-Surface-Low); text-transform: uppercase; letter-spacing: 0.5px; padding: 8px 2px 4px; grid-column: 1 / -1; }
-  .pkg-subcat-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; grid-column: 1 / -1; }
-  .pkg-card.active .pkg-card-fav { stroke: rgba(255,255,255,0.6); fill: rgba(255,255,255,0.3); }
-  .pkg-card.active .pkg-card-fav.active { stroke: #FFF; fill: #FFF; }
-  .pkg-card.active .pkg-card-fav:hover { stroke: #FFF; fill: #FFF; }
-  .pkg-card-fav.active { stroke: #FFB800; fill: #FFB800; }
+
   
   /* Amount card - side by side layout */
-  .amt-card { background: #FFF; border: 1.5px solid var(--Border); border-radius: 14px; padding: 14px 12px; cursor: pointer; transition: all 0.18s; display: flex; flex-direction: row; align-items: center; justify-content: center; gap: 6px; box-shadow: 0 2px 8px rgba(0,0,0,0.04); }
-  .amt-card:hover { border-color: var(--Primary); background: #FFF7F7; transform: translateY(-1px); }
-  .amt-card.active { border-color: var(--Primary); background: var(--Primary); box-shadow: 0 2px 10px rgba(254,53,61,0.25); }
-  .amt-card.active .amt-card-val { color: #FFF; }
-  .amt-card.active .amt-card-cur { color: rgba(255,255,255,0.8); }
+  .amt-card { position: relative; background: #FFF; border: none; border-radius: 14px; padding: 14px 12px; cursor: pointer; transition: all 0.18s; display: flex; flex-direction: row; align-items: center; justify-content: center; gap: 6px; box-shadow: 0 2px 8px rgba(0,0,0,0.04); }
+  .amt-card:hover { transform: translateY(-1px); box-shadow: 0 4px 12px rgba(0,0,0,0.08); }
+  .amt-card.active { background: var(--Primary); box-shadow: 0 4px 16px rgba(254,53,61,0.25); }
+  .amt-card.active .amt-card-val, .amt-card.active .amt-card-cur { color: #FFF; }
   .amt-card-val { font-family: 'Switzer', sans-serif; font-size: 20px; font-weight: 700; color: var(--On-Surface); line-height: 1.2; }
-  .amt-card-cur { font-family: 'Inter', sans-serif; font-size: 13px; font-weight: 500; color: var(--On-Surface-Low); }
+  .amt-card-cur { font-family: 'Inter', sans-serif; font-size: 15px; font-weight: 500; color: var(--On-Surface-Low); }
+  
+  .amt-card-badge {
+    position: absolute;
+    top: -10px;
+    right: -10px;
+    background: var(--Primary);
+    color: #FFF;
+    font-family: 'Switzer', sans-serif;
+    font-size: 11px;
+    font-weight: 700;
+    padding: 3px 8px;
+    border-radius: 12px;
+    white-space: nowrap;
+    z-index: 2;
+  }
+  /* Special offer card — red border stroke when unselected */
+  .amt-card.special-offer {
+    border: 2px solid var(--Primary);
+  }
+  .amt-card.special-offer.active {
+    border-color: var(--Primary);
+  }
+  .amt-card.special-offer.active .amt-card-badge {
+    background: #FFF;
+    color: var(--Primary);
+  }
+
+  /* === OD insufficient (not yet activated) → orange === */
+  .od-insufficient .amt-card.active {
+    background: var(--Warning);
+    box-shadow: 0 4px 16px rgba(255,152,0,0.28);
+  }
+  .od-insufficient .amt-card.special-offer { border-color: var(--Warning); }
+  .od-insufficient .amt-card.special-offer.active { border-color: var(--Warning); }
+  .od-insufficient .amt-card.special-offer.active .amt-card-badge {
+    background: #FFF;
+    color: var(--Warning);
+  }
+  .od-insufficient .custom-amount-input {
+    border-color: var(--Warning);
+    color: var(--Warning);
+  }
+  .od-insufficient .custom-amount-input:focus { border-color: var(--Warning); }
+
+  /* === OD already activated → blue cards & input === */
+  .od-active-mode .amt-card.active {
+    background: #2563EB;
+    box-shadow: 0 4px 16px rgba(37,99,235,0.28);
+  }
+  .od-active-mode .amt-card.special-offer { border-color: #2563EB; }
+  .od-active-mode .amt-card.special-offer.active { border-color: #2563EB; }
+  .od-active-mode .amt-card.special-offer.active .amt-card-badge {
+    background: #FFF;
+    color: #2563EB;
+  }
+  .od-active-mode .custom-amount-input {
+    border-color: #2563EB;
+    color: #2563EB;
+  }
+  .od-active-mode .custom-amount-input:focus { border-color: #2563EB; }
+  .od-active-mode .fund-option.selected .radio { border-color: #2563EB; }
+  .od-active-mode .fund-option.selected .radio::after { background: #2563EB; }
+  .od-active-mode .prov-card:hover { border-color: #2563EB; background: #F5F8FF; }
+  .od-active-mode .prov-card.active {
+    border-color: #2563EB;
+    background: #EFF6FF;
+    box-shadow: 0 2px 10px rgba(37,99,235,0.12);
+  }
+  .od-active-mode .prov-card.active .prov-radio { border-color: #2563EB; }
+  .od-active-mode .prov-card.active .prov-radio::after { background: #2563EB; }
 
   /* Continue button */
   .continue-btn { width: 100%; height: 52px; border-radius: 14px; border: none; background: #E0E0E0; color: var(--On-Surface-Low); font-family: 'Poppins', sans-serif; font-size: 15px; font-weight: 500; cursor: not-allowed; transition: all 0.2s; flex-shrink: 0; }
   .continue-btn.active { background: var(--Primary); color: #FFF; cursor: pointer; box-shadow: 0 4px 16px rgba(254,53,61,0.25); }
   .continue-btn.active:hover { background: #E5303A; transform: translateY(-1px); }
+
+  /* === Continue button — OD already activated (blue). Must follow .active to win. === */
+  .continue-btn.od-activated {
+    background: #2563EB;
+    color: #FFF;
+    cursor: pointer;
+    box-shadow: 0 4px 16px rgba(37,99,235,0.28);
+  }
+  .continue-btn.od-activated:hover { background: #1D4ED8; transform: translateY(-1px); }
   .continue-btn.active:active { transform: scale(0.98); }
 
-  /* === Funding selector (matching other pages) === */
-  .funding-selector { display: flex; gap: 10px; }
-  .fund-option { flex: 1; background: #FFF; border: 1.5px solid var(--Border); border-radius: 14px; padding: 11px 12px; cursor: pointer; transition: all 0.18s; display: flex; flex-direction: column; gap: 3px; }
-  .fund-option:hover { border-color: var(--Primary); background: #FFF7F7; }
-  .fund-option.selected { border-color: var(--Primary); background: #FFF1F2; box-shadow: 0 2px 10px rgba(254,53,61,0.12); }
-  .fund-option .fo-top { display: flex; align-items: center; justify-content: space-between; }
-  .fund-option .fo-name { font-family: 'Switzer', sans-serif; font-size: 13px; font-weight: 600; color: var(--On-Surface); }
-  .fund-option .radio { width: 18px; height: 18px; border-radius: 50%; border: 2px solid var(--Border); flex-shrink: 0; display: flex; align-items: center; justify-content: center; transition: all 0.18s; }
-  .fund-option .radio::after { content: ''; width: 9px; height: 9px; border-radius: 50%; background: transparent; transition: all 0.18s; }
-  .fund-option.selected .radio { border-color: var(--Primary); }
+  /* === Funding selector (new thin layout) === */
+  .funding-selector { 
+    display: flex; 
+    align-items: center;
+    background: #FCFCFD;
+    border: 1px solid #E4E4EC; 
+    border-radius: 14px; 
+    padding: 7px 8px; 
+    margin-top: -4px;
+  }
+  .fo-divider {
+    width: 1px;
+    height: 28px;
+    background: #DCDCE4;
+    margin: 0 2px;
+    flex-shrink: 0;
+  }
+  .fund-option { 
+    flex: 1; 
+    background: transparent; 
+    cursor: pointer; 
+    transition: all 0.18s; 
+    display: flex; 
+    align-items: center; 
+    gap: 6px; 
+    padding: 3px 0;
+    min-width: 0;
+  }
+  /* keep the outer edges flush and the divider dead-centre */
+  .funding-selector .fund-option:first-child { justify-content: flex-start; }
+  .funding-selector .fund-option:last-child { justify-content: flex-end; }
+  .fo-icon {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    background: #EDEDF2;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+  .fo-icon svg {
+    width: 13px;
+    height: 13px;
+    stroke: #1A2332;
+  }
+  .fo-info {
+    display: flex;
+    flex-direction: column;
+    flex: 0 1 auto;
+    min-width: 0;
+  }
+  .fund-option .fo-name { font-family: 'Switzer', sans-serif; font-size: 11px; font-weight: 700; color: #1A2332; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; letter-spacing: -0.1px; }
+  .fund-option .fo-bal { font-family: 'Switzer', sans-serif; font-size: 10px; font-weight: 500; color: #6B7280; margin-top: 1px; white-space: nowrap; }
+  
+  .fund-option .radio { width: 15px; height: 15px; border-radius: 50%; border: 1.5px solid #E2E2EA; flex-shrink: 0; display: flex; align-items: center; justify-content: center; transition: all 0.18s; background: #FFF; margin-left: 6px; }
+  .fund-option .radio::after { content: ''; width: 7px; height: 7px; border-radius: 50%; background: transparent; transition: all 0.18s; }
+  .fund-option.selected .radio { border-color: var(--Primary); border-width: 2px; }
   .fund-option.selected .radio::after { background: var(--Primary); }
-  .fund-option .fo-bal { font-family: 'Switzer', sans-serif; font-size: 12px; font-weight: 500; color: var(--On-Surface); }
-  .fund-option .fo-tag { display: none; font-family: 'Switzer', sans-serif; font-size: 10px; font-weight: 500; color: var(--Warning); }
-  .fund-option .fo-tag.show { display: inline; }
+  .msg { display: none; font-family: 'Switzer', sans-serif; font-size: 12.5px; font-weight: 600; margin-top: -2px; }
+  .msg.show { display: block; }
+  .msg.warn { color: #E09B0B; background: #FDF6E7; border-radius: 8px; padding: 10px 12px; }
+  .msg.err { color: var(--Primary); }
+  .custom-amount-input.warn { border-color: #E09B0B; color: #E09B0B; }
+  .custom-amount-input.warn:focus { border-color: #E09B0B; }
   .account-select-label { color: var(--On-Surface-Low); font-family: 'Switzer', sans-serif; font-size: 11.5px; font-weight: 600; letter-spacing: 0.4px; text-transform: uppercase; }
 
   /* === Bottom sheets === */
   .modal-overlay { position: absolute; inset: 0; z-index: 1000; background: rgba(0,0,0,0.5); display: none; align-items: flex-end; justify-content: center; }
   .modal-overlay.show { display: flex; }
-  .bottom-sheet { width: 100%; background: #FFF; border-radius: 24px 24px 0 0; padding: 20px 20px 28px; animation: slideUpSheet 0.35s cubic-bezier(0.34,1.56,0.64,1); max-height: 70%; overflow-y: auto; }
+  .modal-overlay.center { align-items: flex-end; }
+  .bottom-sheet { width: 100%; background: #FFF; border-radius: 24px 24px 0 0; padding: 20px 20px 0; animation: slideUpSheet 0.35s cubic-bezier(0.34,1.56,0.64,1); max-height: 82%; overflow-y: auto; display: flex; flex-direction: column; }
   .bottom-sheet::-webkit-scrollbar { width: 0; }
   @keyframes slideUpSheet { from { transform: translateY(100%); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
-  .sheet-grip { width: 40px; height: 4px; background: #D8D8DD; border-radius: 2px; margin: 0 auto 16px; }
-  .sheet-title { font-family: 'Switzer', sans-serif; font-size: 17px; font-weight: 700; color: var(--On-Surface); margin-bottom: 16px; text-align: center; }
-  .sheet-list { display: flex; flex-direction: column; gap: 4px; }
-  .sheet-item { display: flex; align-items: center; gap: 12px; padding: 12px 10px; border-radius: 14px; cursor: pointer; transition: background 0.15s; }
-  .sheet-item:hover { background: #FFF1F2; }
-  .sheet-avatar { width: 44px; height: 44px; border-radius: 50%; background: #E8E8EC; display: flex; align-items: center; justify-content: center; flex-shrink: 0; font-family: 'Switzer', sans-serif; font-size: 15px; font-weight: 600; color: var(--On-Surface); }
+  .sheet-grip { width: 40px; height: 4px; background: #D8D8DD; border-radius: 2px; margin: 0 auto 16px; flex-shrink: 0; }
+  .sheet-title { font-family: 'Switzer', sans-serif; font-size: 17px; font-weight: 700; color: var(--On-Surface); margin-bottom: 14px; text-align: center; flex-shrink: 0; }
+
+  /* Search bar */
+  .sheet-search-wrap { flex-shrink: 0; margin-bottom: 18px; }
+  .sheet-search {
+    display: flex; align-items: center; gap: 10px;
+    background: var(--Background); border-radius: 12px;
+    padding: 10px 14px;
+  }
+  .sheet-search svg { width: 18px; height: 18px; stroke: var(--On-Surface-Low); stroke-width: 2; fill: none; flex-shrink: 0; }
+  .sheet-search input {
+    flex: 1; border: none; background: transparent; outline: none;
+    font-family: 'Switzer', sans-serif; font-size: 14px; color: var(--On-Surface);
+  }
+  .sheet-search input::placeholder { color: var(--On-Surface-Low); }
+
+  /* Favorites row */
+  .sheet-section-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; flex-shrink: 0; }
+  .sheet-section-title { font-family: 'Switzer', sans-serif; font-size: 14px; font-weight: 600; color: var(--On-Surface); }
+  .sheet-see-all { font-family: 'Switzer', sans-serif; font-size: 13px; font-weight: 500; color: var(--Primary); background: none; border: none; cursor: pointer; }
+  .favorites-row { display: flex; gap: 16px; overflow-x: auto; padding-bottom: 14px; flex-shrink: 0; }
+  .favorites-row::-webkit-scrollbar { display: none; }
+  .fav-item { display: flex; flex-direction: column; align-items: center; gap: 6px; cursor: pointer; flex-shrink: 0; }
+  .fav-avatar {
+    width: 52px; height: 52px; border-radius: 50%;
+    background: #FDECEA;
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'Switzer', sans-serif; font-size: 15px; font-weight: 700;
+    color: var(--Primary);
+    transition: transform 0.15s;
+  }
+  .fav-item:hover .fav-avatar { transform: scale(1.05); }
+  .fav-name { font-family: 'Switzer', sans-serif; font-size: 11.5px; font-weight: 500; color: var(--On-Surface); text-align: center; max-width: 56px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+  /* Contacts section divider */
+  .contacts-section-header { flex-shrink: 0; margin-bottom: 4px; }
+  .sheet-contacts-scroll { flex: 1; overflow-y: auto; padding-bottom: 28px; }
+  .sheet-contacts-scroll::-webkit-scrollbar { width: 0; }
+
+  /* Contact list items */
+  .sheet-list { display: flex; flex-direction: column; gap: 0; }
+  .sheet-item { display: flex; align-items: center; gap: 12px; padding: 11px 4px; border-radius: 0; cursor: pointer; transition: background 0.15s; border-bottom: 1px solid #F5F5F7; }
+  .sheet-item:last-child { border-bottom: none; }
+  .sheet-item:hover { background: #FFF7F7; border-radius: 12px; }
+  .sheet-avatar { width: 46px; height: 46px; border-radius: 50%; background: #FDECEA; display: flex; align-items: center; justify-content: center; flex-shrink: 0; font-family: 'Switzer', sans-serif; font-size: 15px; font-weight: 700; color: var(--Primary); }
   .sheet-item-info { flex: 1; }
   .sheet-item-name { font-family: 'Switzer', sans-serif; font-size: 14px; font-weight: 600; color: var(--On-Surface); }
-  .sheet-item-sub { font-family: 'Switzer', sans-serif; font-size: 12px; color: var(--On-Surface-Low); margin-top: 1px; }
-  .sheet-item .fav-star { width: 16px; height: 16px; stroke: #FFB800; stroke-width: 2; fill: #FFB800; flex-shrink: 0; }
+  .sheet-item-sub { font-family: 'Switzer', sans-serif; font-size: 12px; color: var(--On-Surface-Low); margin-top: 2px; }
+
+  /* === Permission dialog === */
+  .perm-overlay { position: absolute; inset: 0; z-index: 1100; background: rgba(0,0,0,0.45); display: none; align-items: flex-end; justify-content: center; }
+  .perm-overlay.show { display: flex; }
+  .perm-sheet {
+    width: 100%; background: #FFF; border-radius: 24px 24px 0 0;
+    padding: 28px 20px 28px;
+    animation: slideUpSheet 0.15s cubic-bezier(0.34,1.2,0.64,1);
+  }
+  .perm-row { display: flex; align-items: center; gap: 14px; margin-bottom: 22px; }
+  .perm-icon {
+    width: 48px; height: 48px; border-radius: 14px;
+    background: var(--Primary);
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+  }
+  .perm-icon svg { width: 26px; height: 26px; stroke: #FFF; fill: none; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+  .perm-text { font-family: 'Switzer', sans-serif; font-size: 14px; color: var(--On-Surface); line-height: 1.5; }
+  .perm-text strong { color: var(--Primary); font-weight: 700; }
+  .perm-actions { display: flex; gap: 12px; }
+  .perm-deny {
+    flex: 1; height: 48px; border-radius: 12px;
+    border: 1.5px solid var(--Border); background: #FFF;
+    font-family: 'Switzer', sans-serif; font-size: 14px; font-weight: 500;
+    color: var(--On-Surface-Low); cursor: pointer;
+    transition: all 0.18s;
+  }
+  .perm-deny:hover { background: var(--Background); }
+  .perm-allow {
+    flex: 1; height: 48px; border-radius: 12px;
+    border: 1.5px solid var(--Primary); background: #FFF;
+    font-family: 'Switzer', sans-serif; font-size: 14px; font-weight: 600;
+    color: var(--Primary); cursor: pointer;
+    transition: all 0.18s;
+  }
+  .perm-allow:hover { background: #FFF1F2; }
 
   /* Custom amount box */
   .custom-amount-box {
     grid-column: 1 / -1;
     margin-top: 10px;
-    margin-bottom: 4px;
   }
   .custom-amount-input {
     width: 100%;
@@ -334,12 +689,916 @@
     color: var(--On-Surface-Low);
     font-weight: 400;
   }
-  .amt-card {
+
+  /* === Overdraft Confirmation Bottom Sheet === */
+  .od-confirm-overlay {
+    position: absolute;
+    inset: 0;
+    z-index: 1150;
+    background: rgba(0, 0, 0, 0.45);
+    display: none;
+    align-items: flex-end;
+    justify-content: center;
+  }
+  .od-confirm-overlay.show {
+    display: flex;
+  }
+
+  /* === Already-Activated OD Prompt Sheet (No/Yes) === */
+  .od-prompt-overlay {
+    position: absolute;
+    inset: 0;
+    z-index: 1160;
+    background: rgba(0,0,0,0.45);
+    display: none;
+    align-items: flex-end;
+    justify-content: center;
+  }
+  .od-prompt-overlay.show { display: flex; }
+  .od-prompt-sheet {
+    width: 100%;
+    background: #FFF;
+    border-radius: 24px 24px 0 0;
+    padding: 16px 20px 28px;
+    animation: slideUpSheet 0.15s cubic-bezier(0.34, 1.2, 0.64, 1);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+  .od-prompt-grip {
+    width: 36px; height: 4px; background: #D1D5DB;
+    border-radius: 2px; margin: 0 auto 18px;
+  }
+  .od-prompt-title {
+    font-family: 'Switzer', sans-serif;
+    font-size: 16px; font-weight: 700; color: #111827;
+    margin-bottom: 10px; line-height: 1.35;
+  }
+  .od-prompt-desc {
+    font-family: 'Switzer', sans-serif;
+    font-size: 13.5px; line-height: 1.55; color: #4B5563;
+    margin-bottom: 24px; max-width: 280px;
+  }
+  .od-prompt-desc b { color: #2563EB; font-weight: 700; }
+  .od-prompt-actions {
+    display: flex; gap: 12px; width: 100%;
+  }
+  .od-prompt-btn-no {
+    flex: 1; height: 48px; border-radius: 12px;
+    border: 1.5px solid #D1D5DB; background: #FFF;
+    font-family: 'Switzer', sans-serif; font-size: 15px;
+    font-weight: 600; color: #6B7280; cursor: pointer;
+    transition: background 0.15s;
+  }
+  .od-prompt-btn-no:hover { background: #F9FAFB; }
+  .od-prompt-btn-yes {
+    flex: 1; height: 48px; border-radius: 12px;
+    border: 1.5px solid #2563EB; background: #FFF;
+    font-family: 'Switzer', sans-serif; font-size: 15px;
+    font-weight: 600; color: #2563EB; cursor: pointer;
+    transition: background 0.15s;
+  }
+  .od-prompt-btn-yes:hover { background: #EFF6FF; }
+  .od-confirm-sheet {
+    width: 100%;
+    background: #FFF;
+    border-radius: 24px 24px 0 0;
+    padding: 16px 20px 24px;
+    animation: slideUpSheet 0.15s cubic-bezier(0.34, 1.2, 0.64, 1);
+    display: flex;
+    flex-direction: column;
+  }
+  .od-sheet-grip {
+    width: 36px;
+    height: 4px;
+    background: #D1D5DB;
+    border-radius: 2px;
+    margin: 0 auto 16px;
+  }
+  .od-sheet-title {
+    font-family: 'Switzer', sans-serif;
+    font-size: 16px;
+    font-weight: 700;
+    color: #111827;
+    margin-bottom: 8px;
+    line-height: 1.35;
+  }
+  .od-sheet-desc {
+    font-family: 'Switzer', sans-serif;
+    font-size: 13.5px;
+    line-height: 1.45;
+    color: #4B5563;
+    margin-bottom: 24px;
+  }
+  .od-sheet-actions {
+    display: flex;
+    gap: 12px;
+  }
+  .od-btn-cancel {
+    flex: 1;
+    height: 46px;
+    border-radius: 12px;
+    border: 1.5px solid #E5E7EB;
+    background: #FFF;
+    font-family: 'Switzer', sans-serif;
+    font-size: 14.5px;
+    font-weight: 600;
+    color: #6B7280;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .od-btn-cancel:hover {
+    background: #F9FAFB;
+  }
+  .od-btn-activate {
+    flex: 1;
+    height: 46px;
+    border-radius: 12px;
+    border: 1.5px solid #2563EB;
+    background: #FFF;
+    font-family: 'Switzer', sans-serif;
+    font-size: 14.5px;
+    font-weight: 600;
+    color: #2563EB;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .od-btn-activate:hover {
+    background: #EFF6FF;
+  }
+
+  /* === Activate Errif Full Screen View === */
+  .errif-screen {
+    position: absolute;
+    inset: 0;
+    z-index: 1200;
+    background: #FFF;
+    display: none;
+    flex-direction: column;
+    overflow: hidden;
+  }
+  .errif-screen.show {
+    display: flex;
+  }
+  .errif-header {
+    position: relative;
+    z-index: 10;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 6px 16px 8px;
+    background: transparent;
+  }
+  .errif-header-title {
+    color: #111827;
+    font-family: 'Switzer', sans-serif;
+    font-size: 16px;
+    font-weight: 600;
+    flex: 1;
+    text-align: center;
+    margin-right: 36px;
+  }
+  .errif-scroll {
+    flex: 1;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
     position: relative;
   }
+  .errif-scroll::-webkit-scrollbar { width: 0; }
+
+  .errif-hero-wrap {
+    position: relative;
+    min-height: 335px;
+    background: url('assets/Errif Cover.jpg') right top / cover no-repeat;
+    display: flex;
+    flex-direction: column;
+    padding: 0 0 24px;
+  }
+  .errif-hero-wrap .status-bar {
+    background: transparent;
+    padding: 14px 20px 4px;
+    position: relative;
+    z-index: 10;
+  }
+  .errif-hero-wrap .errif-header {
+    padding: 4px 16px 10px;
+    background: transparent;
+  }
+  .errif-hero-content {
+    position: relative;
+    z-index: 2;
+    max-width: 58%;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    padding: 4px 18px 0;
+  }
+  .errif-hero-title {
+    font-family: 'Switzer', sans-serif;
+    font-size: 19px;
+    font-weight: 700;
+    color: #111827;
+    line-height: 1.15;
+  }
+  .errif-hero-by {
+    font-family: 'Switzer', sans-serif;
+    font-size: 17px;
+    font-weight: 700;
+    color: #111827;
+  }
+  .errif-hero-by span {
+    color: #FE353D;
+  }
+  .errif-hero-sub {
+    font-family: 'Switzer', sans-serif;
+    font-size: 11.5px;
+    line-height: 1.38;
+    color: #4B5563;
+    margin-top: 4px;
+  }
+  .errif-hero-icon {
+    width: 44px;
+    height: 44px;
+    border-radius: 12px;
+    background: #E52E38;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: 6px;
+    box-shadow: 0 4px 12px rgba(229,46,56,0.25);
+  }
+  .errif-hero-icon svg {
+    width: 24px;
+    height: 24px;
+    stroke: #FFF;
+    fill: none;
+    stroke-width: 1.8;
+  }
+
+  .errif-card {
+    background: #FFF;
+    border-radius: 20px;
+    margin: -16px 16px 16px;
+    padding: 6px 18px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    position: relative;
+    z-index: 3;
+    display: flex;
+    flex-direction: column;
+    border: 1px solid #F3F4F6;
+  }
+  .errif-feature-row {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    padding: 18px 0;
+  }
+  .errif-feature-row:not(:last-child) {
+    border-bottom: 1px solid #F3F4F6;
+  }
+  .errif-feat-icon {
+    width: 42px;
+    height: 42px;
+    border-radius: 14px;
+    background: #FEE2E2;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+  .errif-feat-icon svg {
+    width: 21px;
+    height: 21px;
+    stroke: #EF4444;
+    fill: none;
+    stroke-width: 2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+  .errif-feat-info {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+  .errif-feat-title {
+    font-family: 'Switzer', sans-serif;
+    font-size: 14px;
+    font-weight: 700;
+    color: #111827;
+  }
+  .errif-feat-desc {
+    font-family: 'Switzer', sans-serif;
+    font-size: 12px;
+    color: #6B7280;
+    line-height: 1.4;
+  }
+
+  .errif-bottom-bar {
+    padding: 8px 20px 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    background: #FFF;
+    flex-shrink: 0;
+  }
+  .errif-btn-activate {
+    width: 100%;
+    height: 48px;
+    border-radius: 12px;
+    background: #2563EB;
+    color: #FFF;
+    font-family: 'Switzer', sans-serif;
+    font-size: 15px;
+    font-weight: 600;
+    border: none;
+    cursor: pointer;
+    transition: all 0.2s;
+    box-shadow: 0 4px 14px rgba(37, 99, 235, 0.28);
+  }
+  .errif-btn-activate:hover {
+    background: #1D4ED8;
+    transform: translateY(-1px);
+  }
+  .errif-btn-activate:active {
+    transform: scale(0.98);
+  }
+  .errif-btn-notnow {
+    width: 100%;
+    height: 48px;
+    border-radius: 12px;
+    background: #FFF;
+    border: 1.5px solid #E5E7EB;
+    color: #6B7280;
+    font-family: 'Switzer', sans-serif;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .errif-btn-notnow:hover {
+    background: #F9FAFB;
+    color: #374151;
+  }
+
+  /* === Screen 2: Terms & Conditions === */
+  .terms-screen {
+    position: absolute;
+    inset: 0;
+    z-index: 1250;
+    background: #F9FAFB;
+    display: none;
+    flex-direction: column;
+    overflow: hidden;
+  }
+  .terms-screen.show { display: flex; }
+  .terms-header {
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 6px 16px 10px;
+    background: #F9FAFB;
+  }
+  .terms-scroll {
+    flex: 1;
+    overflow-y: auto;
+    padding: 6px 18px 16px;
+    display: flex;
+    flex-direction: column;
+  }
+  .terms-scroll::-webkit-scrollbar { width: 0; }
+  .summary-row { display: flex; gap: 12px; margin-bottom: 20px; }
+  .summary-card {
+    flex: 1; background: #FFF; border-radius: 16px; padding: 14px 12px;
+    border: 1px solid #F0F1F3; box-shadow: 0 2px 8px rgba(0,0,0,0.02);
+    display: flex; flex-direction: column; gap: 8px;
+  }
+  .summary-head { display: flex; align-items: center; gap: 8px; }
+  .summary-head svg { width: 18px; height: 18px; stroke: var(--Primary); fill: none; stroke-width: 2; flex-shrink: 0; }
+  .summary-title { font-family: 'Switzer', sans-serif; font-size: 13.5px; font-weight: 700; color: #111827; }
+  .summary-text { font-family: 'Switzer', sans-serif; font-size: 11px; line-height: 1.45; color: #6B7280; }
+  .summary-text strong { color: #111827; font-weight: 600; }
+  .section-title { font-family: 'Switzer', sans-serif; font-size: 15px; font-weight: 700; color: #111827; margin-bottom: 12px; }
+  .terms-content-card {
+    background: #FFF; border-radius: 16px; padding: 18px 16px;
+    border: 1px solid #F0F1F3; box-shadow: 0 2px 10px rgba(0,0,0,0.02);
+    display: flex; flex-direction: column; gap: 16px;
+  }
+  .terms-p { font-family: 'Switzer', sans-serif; font-size: 12.5px; line-height: 1.55; color: #4B5563; }
+  .terms-p strong { color: #111827; font-weight: 700; }
+  .bottom-sheet-fixed {
+    background: #FFF; border-radius: 22px 22px 0 0; padding: 18px 20px 22px;
+    box-shadow: 0 -4px 20px rgba(0,0,0,0.04); display: flex; flex-direction: column;
+    gap: 14px; flex-shrink: 0;
+  }
+  .agree-row { display: flex; align-items: center; gap: 10px; cursor: pointer; user-select: none; }
+  .custom-checkbox {
+    width: 22px; height: 22px; border-radius: 6px; background: #2563EB;
+    display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+    transition: background 0.15s;
+  }
+  .custom-checkbox.unchecked { background: #FFF; border: 2px solid #E5E7EB; }
+  .custom-checkbox svg { width: 13px; height: 13px; stroke: #FFF; stroke-width: 3; fill: none; }
+  .custom-checkbox.unchecked svg { display: none; }
+  .agree-label { font-family: 'Switzer', sans-serif; font-size: 12px; line-height: 1.4; color: #111827; }
+  .agree-label strong { font-weight: 700; }
+  .btn-agree {
+    width: 100%; height: 48px; border-radius: 12px; background: #2563EB; color: #FFF;
+    font-family: 'Switzer', sans-serif; font-size: 15px; font-weight: 600;
+    border: none; cursor: pointer; transition: all 0.2s;
+    box-shadow: 0 4px 14px rgba(37,99,235,0.28);
+  }
+  .btn-agree:hover { background: #1D4ED8; transform: translateY(-1px); }
+  .btn-agree:disabled { background: #E5E7EB; color: #9CA3AF; box-shadow: none; cursor: not-allowed; transform: none; }
+
+  /* === Screen 3: Errif Activated! === */
+  .activated-screen {
+    position: absolute;
+    inset: 0;
+    z-index: 1300;
+    background: #F9FAFB;
+    display: none;
+    flex-direction: column;
+    overflow: hidden;
+  }
+  .activated-screen.show { display: flex; }
+  .activated-header {
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 6px 16px 4px;
+    background: #F9FAFB;
+  }
+  .activated-scroll {
+    flex: 1;
+    overflow-y: auto;
+    padding: 8px 18px 14px;
+    display: flex;
+    flex-direction: column;
+  }
+  .activated-scroll::-webkit-scrollbar { width: 0; }
+  .hero-badge-wrap { display: flex; flex-direction: column; align-items: center; text-align: center; margin-top: 2px; margin-bottom: 22px; }
+  .success-squircle {
+    width: 68px; height: 68px; border-radius: 20px; background: #DCFCE7;
+    border: 3px solid #22C55E; display: flex; align-items: center;
+    justify-content: center; margin-bottom: 12px;
+    animation: popIn 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+  @keyframes slideUpSheet { from { transform: translateY(100%); } to { transform: translateY(0); } }
+  @keyframes popIn { from { transform: scale(0.7); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+  .success-squircle svg { width: 34px; height: 34px; stroke: #16A34A; stroke-width: 3.5; fill: none; stroke-linecap: round; stroke-linejoin: round; }
+  .activated-title { font-family: 'Switzer', sans-serif; font-size: 21px; font-weight: 800; color: #111827; margin-bottom: 6px; }
+  .activated-subtitle { font-family: 'Switzer', sans-serif; font-size: 12px; line-height: 1.45; color: #6B7280; max-width: 270px; }
+  .od-summary-card {
+    background: #FFF; border-radius: 16px; padding: 14px 16px;
+    border: 1px solid #F0F1F3; box-shadow: 0 2px 10px rgba(0,0,0,0.02);
+    display: flex; flex-direction: column; margin-bottom: 12px;
+  }
+  .od-bal-header { display: flex; align-items: center; justify-content: space-between; padding-bottom: 10px; border-bottom: 1px solid #F3F4F6; }
+  .od-bal-left { display: flex; align-items: center; gap: 8px; }
+  .od-bal-left svg { width: 20px; height: 20px; stroke: var(--Primary); fill: none; stroke-width: 2; }
+  .od-bal-label { font-family: 'Switzer', sans-serif; font-size: 13.5px; font-weight: 700; color: #111827; }
+  .od-grid { display: flex; flex-direction: column; padding-top: 0; }
+  .od-grid-row { display: flex; align-items: stretch; justify-content: space-between; }
+  .od-grid-row:not(:last-child) { border-bottom: 1px solid #F3F4F6; }
+  .od-grid-item { flex: 1; display: flex; align-items: center; gap: 8px; padding: 12px 4px; }
+  .od-grid-item:last-child { justify-content: flex-end; }
+  .od-grid-item:last-child .od-item-data { align-items: flex-start; text-align: left; }
+  .od-vdivider { width: 0; border-left: 1px solid #E5E7EB; align-self: stretch; min-height: 44px; flex-shrink: 0; margin: 0 6px; }
+  .od-item-icon { width: 28px; height: 28px; border-radius: 50%; background: #FEE2E2; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+  .od-item-icon svg { width: 14px; height: 14px; stroke: #FE353D; fill: none; stroke-width: 2; }
+  .od-item-data { display: flex; flex-direction: column; gap: 1px; }
+  .od-item-lbl { font-family: 'Switzer', sans-serif; font-size: 10.5px; color: #6B7280; }
+  .od-item-val { font-family: 'Switzer', sans-serif; font-size: 13.5px; font-weight: 700; color: #111827; }
+  .services-card {
+    background: #FFF; border-radius: 16px; padding: 6px 14px;
+    border: 1px solid #F0F1F3; box-shadow: 0 2px 10px rgba(0,0,0,0.02);
+    display: flex; flex-direction: column;
+  }
+  .service-row { display: flex; align-items: center; gap: 12px; padding: 18px 0; }
+  .service-row:not(:last-child) { border-bottom: 1px solid #F3F4F6; }
+  .service-icon-wrap {
+    width: 38px; height: 38px; border-radius: 12px; background: #DBEAFE;
+    display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+  }
+  .service-icon-wrap svg { width: 20px; height: 20px; stroke: #2563EB; fill: none; stroke-width: 1.8; }
+  .service-info { display: flex; flex-direction: column; gap: 2px; }
+  .service-title { font-family: 'Switzer', sans-serif; font-size: 13.5px; font-weight: 700; color: #111827; }
+  .service-desc { font-family: 'Switzer', sans-serif; font-size: 11.5px; color: #6B7280; }
+  .activated-bottom-bar { padding: 10px 20px 20px; background: #F9FAFB; flex-shrink: 0; }
+  .btn-continue-od {
+    width: 100%; height: 48px; border-radius: 12px; background: #2563EB; color: #FFF;
+    font-family: 'Switzer', sans-serif; font-size: 15px; font-weight: 600;
+    border: none; cursor: pointer; transition: all 0.2s;
+    box-shadow: 0 4px 14px rgba(37,99,235,0.28);
+  }
+  .btn-continue-od:hover { background: #1D4ED8; transform: translateY(-1px); }
+
+  /* === Normal Purchase Confirmation Modal (non-overdraft) === */
+  .buy-confirm-overlay {
+    position: absolute; inset: 0; z-index: 1400;
+    background: rgba(0,0,0,0.5);
+    display: none; align-items: flex-end; justify-content: center;
+  }
+  .buy-confirm-overlay.show { display: flex; }
+  .buy-confirm-sheet {
+    width: 100%; background: #FFF;
+    border-radius: 24px 24px 0 0;
+    animation: slideUpSheet 0.3s cubic-bezier(0.34, 1.2, 0.64, 1);
+    display: flex; flex-direction: column;
+    max-height: 88vh; overflow: hidden;
+  }
+  .buy-confirm-grip-bar { display: flex; justify-content: center; padding: 12px 0 6px; flex-shrink: 0; }
+  .buy-confirm-grip { width: 36px; height: 4px; background: #D1D5DB; border-radius: 2px; }
+  .buy-confirm-scroll {
+    flex: 1; overflow-y: auto; padding: 4px 20px 24px;
+    display: flex; flex-direction: column; gap: 12px;
+  }
+  .buy-confirm-scroll::-webkit-scrollbar { width: 0; }
+
+  .buy-confirm-party-card {
+    position: relative;
+    background: #FFF; border: 1px solid #EFEFF1; border-radius: 14px; padding: 14px;
+    display: flex; align-items: center; gap: 12px;
+    margin-top: 11px;
+  }
+  .buy-confirm-badge {
+    position: absolute; top: -11px; right: 14px;
+    background: #EDEDF0; color: var(--On-Surface-Low);
+    font-family: 'Switzer', sans-serif; font-size: 9.5px; font-weight: 700;
+    letter-spacing: 0.6px; padding: 4px 9px; border-radius: 6px;
+  }
+  .buy-confirm-avatar {
+    width: 44px; height: 44px; border-radius: 50%;
+    background: #FFE9EA; color: var(--Primary);
+    font-family: 'Switzer', sans-serif; font-size: 14px; font-weight: 700;
+    display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+  }
+  .buy-confirm-party-info { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px; }
+  .buy-confirm-party-name {
+    font-family: 'Switzer', sans-serif; font-size: 15px; font-weight: 700;
+    color: var(--On-Surface); overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+  }
+  .buy-confirm-party-sub { font-family: 'Switzer', sans-serif; font-size: 12.5px; color: var(--On-Surface-Low); }
+
+  .buy-confirm-summary { display: flex; flex-direction: column; }
+  .buy-confirm-row {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 11px 0; border-bottom: 1px solid #F3F4F6;
+  }
+  .buy-confirm-row.total { border-bottom: none; padding-top: 14px; padding-bottom: 0; }
+  .buy-confirm-lbl { font-family: 'Switzer', sans-serif; font-size: 13px; color: var(--On-Surface-Low); }
+  .buy-confirm-row.total .buy-confirm-lbl { font-size: 14px; font-weight: 700; color: var(--On-Surface); }
+  .buy-confirm-val { font-family: 'Switzer', sans-serif; font-size: 13.5px; font-weight: 600; color: var(--On-Surface); }
+  .buy-confirm-row.total .buy-confirm-val { font-size: 18px; font-weight: 700; color: var(--Primary); }
+  .buy-confirm-divider { height: 1px; background: #E8E8EC; margin: 4px 0 0; }
+  .buy-confirm-row:has(+ .buy-confirm-divider) { border-bottom: none; }
+
+  .buy-confirm-actions { display: flex; gap: 12px; padding-top: 16px; flex-shrink: 0; }
+  .buy-confirm-actions button {
+    flex: 1; height: 50px; border-radius: 12px; background: #FFF;
+    font-family: 'Switzer', sans-serif; font-size: 14.5px; font-weight: 500;
+    cursor: pointer; transition: background 0.15s, transform 0.12s;
+  }
+  .buy-confirm-actions button:active { transform: scale(0.98); }
+  .buy-confirm-cancel-btn { border: 1.5px solid #EFEFF1; color: var(--On-Surface-Low); }
+  .buy-confirm-cancel-btn:hover { background: #FAFAFA; }
+  .buy-confirm-pay-btn { border: 1.5px solid var(--Primary); color: var(--Primary); font-weight: 600; }
+  .buy-confirm-pay-btn:hover { background: #FFF5F5; }
+
+  /* === OD Final Confirmation Modal Overlay === */
+  .od-final-overlay {
+    position: absolute; inset: 0; z-index: 1400;
+    background: rgba(0,0,0,0.5);
+    display: none; align-items: flex-end; justify-content: center;
+  }
+  .od-final-overlay.show { display: flex; }
+  .od-final-sheet {
+    width: 100%; background: #FFF;
+    border-radius: 24px 24px 0 0;
+    padding: 0 0 0 0;
+    animation: slideUpSheet 0.15s cubic-bezier(0.34, 1.2, 0.64, 1);
+    display: flex; flex-direction: column;
+    max-height: 88vh; overflow: hidden;
+  }
+  .od-final-grip-bar {
+    display: flex; justify-content: center; padding: 12px 0 6px;
+    flex-shrink: 0;
+  }
+  .od-final-grip {
+    width: 36px; height: 4px; background: #D1D5DB; border-radius: 2px;
+  }
+  .od-final-header {
+    display: flex; align-items: center; justify-content: center;
+    padding: 4px 20px 16px; flex-shrink: 0;
+  }
+  .od-final-title {
+    font-family: 'Switzer', sans-serif; font-size: 17px; font-weight: 700;
+    color: #111827;
+  }
+  .od-final-scroll {
+    flex: 1; overflow-y: auto; padding: 0 20px 24px;
+    display: flex; flex-direction: column; gap: 12px;
+  }
+  .od-final-scroll::-webkit-scrollbar { width: 0; }
+
+  /* Recipient row inside final modal */
+  .od-review-party-card {
+    position: relative;
+    background: #FFF; border: 1px solid #EFEFF1; border-radius: 14px; padding: 14px;
+    display: flex; align-items: center; gap: 12px;
+    margin-top: 11px;
+  }
+  .od-review-badge {
+    position: absolute; top: -11px; right: 14px;
+    background: #EDEDF0; color: var(--On-Surface-Low);
+    font-family: 'Switzer', sans-serif; font-size: 9.5px; font-weight: 700;
+    letter-spacing: 0.6px; padding: 4px 9px; border-radius: 6px;
+  }
+  .od-review-avatar {
+    width: 44px; height: 44px; border-radius: 50%;
+    background: #EFF6FF; color: #2563EB;
+    font-family: 'Switzer', sans-serif; font-size: 14px; font-weight: 700;
+    display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+  }
+  .od-review-party-info {
+    flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px;
+  }
+  .od-review-party-name {
+    font-family: 'Switzer', sans-serif; font-size: 15px; font-weight: 700;
+    color: var(--On-Surface); overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+  }
+  .od-review-party-sub {
+    font-family: 'Switzer', sans-serif; font-size: 12.5px; color: var(--On-Surface-Low);
+  }
+  .od-review-party-sub b { font-weight: 600; color: var(--On-Surface); }
+
+  /* Summary rows */
+  .od-review-summary-card {
+    background: #FFF; border-radius: 0; padding: 0;
+    display: flex; flex-direction: column;
+  }
+  .od-review-row {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 11px 0; border-bottom: 1px solid #F3F4F6;
+  }
+  .od-review-lbl {
+    font-family: 'Switzer', sans-serif; font-size: 13px; font-weight: 400; color: var(--On-Surface-Low);
+  }
+  .od-review-lbl.blue { color: #2563EB; font-weight: 600; }
+  .od-review-val {
+    font-family: 'Switzer', sans-serif; font-size: 13.5px; font-weight: 600; color: var(--On-Surface);
+  }
+  .od-review-val.blue { color: #2563EB; font-weight: 700; }
+  .od-review-divider { height: 1px; background: #E8E8EC; margin: 4px 0 0; }
+  /* The divider is the separator, so the row above it drops its own line */
+  .od-review-row:has(+ .od-review-divider) { border-bottom: none; }
+  .od-review-row.total {
+    border-bottom: none; padding-top: 14px; padding-bottom: 0;
+  }
+  .od-review-row.total .od-review-lbl {
+    font-family: 'Switzer', sans-serif; font-size: 14px; font-weight: 700; color: var(--On-Surface);
+  }
+  .od-review-row.total .od-review-val {
+    font-family: 'Switzer', sans-serif; font-size: 18px; font-weight: 700; color: #2563EB;
+  }
+
+  /* Actions */
+  .od-review-actions {
+    display: flex; gap: 12px; padding-top: 16px; flex-shrink: 0;
+  }
+  .od-review-pay-btn, .od-review-cancel-btn {
+    flex: 1; height: 50px; border-radius: 12px; background: #FFF;
+    font-family: 'Switzer', sans-serif; font-size: 14.5px; font-weight: 500;
+    cursor: pointer; transition: background 0.15s, transform 0.12s;
+  }
+  .od-review-pay-btn:active, .od-review-cancel-btn:active { transform: scale(0.98); }
+  .od-review-cancel-btn {
+    border: 1.5px solid #EFEFF1; color: var(--On-Surface-Low);
+  }
+  .od-review-cancel-btn:hover { background: #FAFAFA; }
+  .od-review-pay-btn {
+    border: 1.5px solid #2563EB; color: #2563EB; font-weight: 600;
+  }
+  .od-review-pay-btn:hover { background: #EFF6FF; }
+
+  /* === OD Activation PIN Screen === */
+  .od-pin-screen {
+    position: absolute; inset: 0; z-index: 1500;
+    background: #F5F5F5; display: none; flex-direction: column; overflow: hidden;
+  }
+  .od-pin-screen.show { display: flex; }
+  .od-pin-body {
+    flex: 1; display: flex; flex-direction: column;
+    padding: 4px 16px 18px; overflow-y: auto;
+  }
+  .od-pin-body::-webkit-scrollbar { width: 0; }
+  .od-pin-info-card {
+    background: #FFF; border-radius: 16px; padding: 14px;
+    display: flex; align-items: center; gap: 12px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+  }
+  .od-pin-info-avatar {
+    width: 44px; height: 44px; border-radius: 50%;
+    background: #EFF6FF; color: #2563EB;
+    font-family: 'Switzer', sans-serif; font-size: 14px; font-weight: 700;
+    display: flex; align-items: center; justify-content: center; flex-shrink: 0; overflow: hidden;
+  }
+  .od-pin-info-text { display: flex; flex-direction: column; gap: 3px; min-width: 0; flex: 1; }
+  .od-pin-info-title {
+    font-family: 'Switzer', sans-serif; font-size: 15px; font-weight: 700; color: #2563EB;
+    overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+  }
+  .od-pin-info-sub {
+    font-family: 'Switzer', sans-serif; font-size: 12.5px; color: var(--On-Surface-Low);
+  }
+  .od-pin-info-sub b { font-weight: 600; color: var(--On-Surface); }
+  .od-pin-prompt {
+    display: flex; align-items: center; justify-content: center; gap: 7px; margin-top: 34px;
+  }
+  .od-pin-prompt svg {
+    width: 15px; height: 15px; stroke: var(--On-Surface); stroke-width: 2; fill: none;
+  }
+  .od-pin-prompt span {
+    font-family: 'Switzer', sans-serif; font-size: 14px; font-weight: 600; color: var(--On-Surface);
+  }
+  .od-pin-dots {
+    display: flex; justify-content: space-between; gap: 12px; margin-top: 16px;
+  }
+  .od-pin-dot {
+    flex: 1; height: 60px; border-radius: 14px; background: #F1F1F4; border: 2px solid transparent;
+    display: flex; align-items: center; justify-content: center; transition: border-color 0.18s, background 0.18s;
+  }
+  .od-pin-dot.active { border-color: #2563EB; background: #EFF6FF; }
+  .od-pin-dot .od-caret { display: none; width: 2px; height: 26px; background: #2563EB; border-radius: 1px; animation: blink 1.05s step-end infinite; }
+  .od-pin-dot.active .od-caret { display: block; }
+  .od-pin-dot .od-dot-circle { display: none; width: 11px; height: 11px; border-radius: 50%; background: var(--On-Surface); }
+  .od-pin-dot.filled .od-dot-circle { display: block; }
+  .od-pin-dot.filled .od-caret { display: none; }
+
+  .od-pin-keypad {
+    background: #FFF; border-radius: 20px; padding: 14px 10px; margin-top: auto;
+    display: grid; grid-template-columns: repeat(3, 1fr); box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+  }
+  .od-pin-key {
+    height: 54px; border: none; background: transparent; cursor: pointer; border-radius: 12px;
+    font-family: 'Switzer', sans-serif; font-size: 24px; font-weight: 500; color: #55555E;
+    display: flex; align-items: center; justify-content: center; transition: background 0.12s, transform 0.1s;
+  }
+  .od-pin-key:hover { background: #F7F7F8; }
+  .od-pin-key:active { background: #EFEFF2; transform: scale(0.95); }
+  .od-pin-key.empty { pointer-events: none; }
+  .od-pin-key svg { width: 26px; height: 26px; stroke: #55555E; stroke-width: 1.7; fill: none; }
+
+  .od-pin-bottom {
+    margin-top: 14px; flex-shrink: 0;
+  }
+  .od-pin-action-btn {
+    width: 100%; height: 52px; border-radius: 14px; background: #2563EB; color: #FFF;
+    font-family: 'Poppins', sans-serif; font-size: 15px; font-weight: 500;
+    border: none; cursor: pointer; transition: all 0.2s;
+    box-shadow: 0 4px 16px rgba(37,99,235,0.28);
+  }
+  .od-pin-action-btn:hover { background: #1D4ED8; box-shadow: 0 6px 20px rgba(37,99,235,0.35); transform: translateY(-1px); }
+  .od-pin-action-btn:active { transform: scale(0.98); }
+
+  /* === Standard PIN styles used by activation and purchase PIN screens === */
+  .pin-prompt { display: flex; align-items: center; justify-content: center; gap: 7px; margin-top: 34px; }
+  .pin-prompt svg { width: 15px; height: 15px; stroke: var(--On-Surface); stroke-width: 2; fill: none; }
+  .pin-prompt span { font-family: 'Switzer', sans-serif; font-size: 14px; font-weight: 600; color: var(--On-Surface); }
+
+  .pin-container { display: flex; justify-content: space-between; gap: 12px; margin-top: 16px; }
+  .pin-box { flex: 1; height: 60px; border-radius: 14px; background: #F1F1F4; border: 2px solid transparent; display: flex; align-items: center; justify-content: center; transition: border-color 0.18s, background 0.18s; }
+  .pin-box.active { border-color: var(--Primary); background: #FFF7F7; }
+  .pin-box.error { border-color: var(--Primary); background: #FFF4F4; animation: shake 0.35s; }
+  .pin-box .caret { display: none; width: 2px; height: 26px; background: var(--Primary); border-radius: 1px; animation: blink 1.05s step-end infinite; }
+  .pin-box.active .caret { display: block; }
+  .pin-box .dot { display: none; width: 11px; height: 11px; border-radius: 50%; background: var(--On-Surface); }
+  .pin-box.filled .dot { display: block; }
+  .pin-box.filled .caret { display: none; }
+
+  .keypad { background: #FFF; border-radius: 20px; padding: 14px 10px; margin-top: auto; display: grid; grid-template-columns: repeat(3, 1fr); box-shadow: 0 2px 8px rgba(0,0,0,0.04); }
+  .key { height: 54px; border: none; background: transparent; cursor: pointer; border-radius: 12px; font-family: 'Switzer', sans-serif; font-size: 24px; font-weight: 500; color: #55555E; display: flex; align-items: center; justify-content: center; transition: background 0.12s, transform 0.1s; }
+  .key:hover { background: #F7F7F8; }
+  .key:active { background: #EFEFF2; transform: scale(0.95); }
+  .key.empty { pointer-events: none; }
+  .key svg { width: 26px; height: 26px; stroke: #55555E; stroke-width: 1.7; fill: none; }
+
+  .pay-btn-standard { margin-top: 14px; height: 52px; border-radius: 14px; border: none; background: var(--Primary); color: #FFF; font-family: 'Poppins', sans-serif; font-size: 15px; font-weight: 500; cursor: pointer; box-shadow: 0 4px 16px rgba(254,53,61,0.25); transition: all 0.2s; flex-shrink: 0; width: 100%; }
+  .pay-btn-standard:hover { background: #E5303A; box-shadow: 0 6px 20px rgba(254,53,61,0.35); transform: translateY(-1px); }
+  .pay-btn-standard.blue { background: #2563EB; box-shadow: 0 4px 16px rgba(37,99,235,0.28); }
+  .pay-btn-standard.blue:hover { background: #1D4ED8; box-shadow: 0 6px 20px rgba(37,99,235,0.35); }
 </style>
 </head>
 <body>
+
+<!-- 🧪 Floating Test Scenarios Circle FAB (Bottom Right) -->
+<div class="test-fab" id="testFab" onclick="toggleTestPopup()" title="Test Scenario 2">
+  <span class="tp-emoji">🧪</span>
+  <span class="test-fab-dot" id="testFabDot"></span>
+</div>
+
+<div class="test-popup" id="testPopup">
+  <div class="test-popup-header">
+    <div class="test-popup-title"><span class="tp-emoji">🧪</span> Test Scenario 2</div>
+    <button class="test-popup-close" onclick="toggleTestPopup()">
+      <svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+    </button>
+  </div>
+
+  <div class="test-popup-body">
+    <div class="test-section-title">Overdraft Services</div>
+
+    <!-- Airtime Top-up (Active) -->
+    <div class="test-row">
+      <div class="test-row-left">
+        <div class="test-row-icon" style="background: rgba(37,99,235,0.15);">
+          <svg viewBox="0 0 24 24" style="stroke: #2563EB;"><rect x="5" y="2" width="14" height="20" rx="2" ry="2"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg>
+        </div>
+        <div class="test-row-info">
+          <span class="test-row-label">Errif OD Activated</span>
+          <span class="test-row-desc">Main: 0.00 Br • Errif OD: 3,000 Br</span>
+          <span class="overdraft-badge" id="odBadge">⚡ Errif Active</span>
+        </div>
+      </div>
+      <label class="tp-toggle">
+        <input type="checkbox" id="odToggle" onchange="toggleOverdraft(this.checked)">
+        <span class="tp-slider"></span>
+      </label>
+    </div>
+
+    <!-- Bill Payments -->
+    <div class="test-row">
+      <div class="test-row-left" onclick="window.location.href='Pay Bill.html'" style="cursor:pointer;">
+        <div class="test-row-icon">
+          <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+        </div>
+        <div class="test-row-info">
+          <span class="test-row-label">Bill Payments</span>
+          <span class="test-row-desc">Tap to open Bill Payment screen</span>
+        </div>
+      </div>
+      <label class="tp-toggle">
+        <input type="checkbox" id="odToggleBill" onchange="toggleOverdraft(this.checked)">
+        <span class="tp-slider"></span>
+      </label>
+    </div>
+
+    <!-- Merchant Payment -->
+    <div class="test-row">
+      <div class="test-row-left" onclick="window.location.href='Pay Merchant.html'" style="cursor:pointer;">
+        <div class="test-row-icon">
+          <svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+        </div>
+        <div class="test-row-info">
+          <span class="test-row-label">Merchant Payment</span>
+          <span class="test-row-desc">Tap to open Merchant Payment screen</span>
+        </div>
+      </div>
+      <label class="tp-toggle">
+        <input type="checkbox" id="odToggleMerchant" onchange="toggleOverdraft(this.checked)">
+        <span class="tp-slider"></span>
+      </label>
+    </div>
+
+    <!-- Transfer to Bank -->
+    <div class="test-row">
+      <div class="test-row-left" onclick="window.location.href='Transfer_Select Bank.html'" style="cursor:pointer;">
+        <div class="test-row-icon">
+          <svg viewBox="0 0 24 24"><line x1="3" y1="21" x2="21" y2="21"/><line x1="3" y1="10" x2="21" y2="10"/><polyline points="5 6 12 3 19 6"/><line x1="6" y1="10" x2="6" y2="21"/><line x1="10" y1="10" x2="10" y2="21"/><line x1="14" y1="10" x2="14" y2="21"/><line x1="18" y1="10" x2="18" y2="21"/></svg>
+        </div>
+        <div class="test-row-info">
+          <span class="test-row-label">Transfer to Bank</span>
+          <span class="test-row-desc">Tap to open Bank Transfer screen</span>
+        </div>
+      </div>
+      <label class="tp-toggle">
+        <input type="checkbox" id="odToggleBank" onchange="toggleOverdraft(this.checked)">
+        <span class="tp-slider"></span>
+      </label>
+    </div>
+
+    <!-- Wallet Transfer -->
+    <div class="test-row">
+      <div class="test-row-left" onclick="window.location.href='Transfer to Wallet_Enter Recipient.html'" style="cursor:pointer;">
+        <div class="test-row-icon">
+          <svg viewBox="0 0 24 24"><path d="M21 12V7H5a2 2 0 0 1 0-4h14v4"/><path d="M3 5v14a2 2 0 0 0 2 2h16v-5"/><path d="M18 12a2 2 0 0 0 0 4h4v-4Z"/></svg>
+        </div>
+        <div class="test-row-info">
+          <span class="test-row-label">Wallet Transfer</span>
+          <span class="test-row-desc">Tap to open Wallet Transfer screen</span>
+        </div>
+      </div>
+      <label class="tp-toggle">
+        <input type="checkbox" id="odToggleWallet" onchange="toggleOverdraft(this.checked)">
+        <span class="tp-slider"></span>
+      </label>
+    </div>
+  </div>
+</div>
 
 <div class="phone-frame">
 
@@ -356,7 +1615,7 @@
       <button class="back-btn" onclick="goBack()">
         <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
       </button>
-      <span class="header-title">Buy Airtime/Packages</span>
+      <span class="header-title">Buy Airtime</span>
       <div style="width:36px;"></div>
   </div>
 
@@ -367,19 +1626,17 @@
       <!-- rendered by JS -->
     </div>
 
+    <!-- For Self / For Others Tabs -->
+    <div class="recipient-tabs">
+      <button class="recip-tab active" id="tabSelf" onclick="setRecipientType('self')">For Self</button>
+      <button class="recip-tab" id="tabOthers" onclick="setRecipientType('others')">For Others</button>
+    </div>
+
     <!-- Phone Number & Self/Others merged -->
     <div class="phone-section">
       <div class="phone-input-container">
-        <div class="phone-input-wrapper">
-          <svg class="phone-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2h10l4 4v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2z"/><line x1="8" y1="12" x2="16" y2="12"/><line x1="10" y1="8" x2="14" y2="8"/><line x1="10" y1="16" x2="14" y2="16"/></svg>
-          <input class="phone-input" id="numberInput" type="tel" inputmode="numeric" placeholder="09XX XXX XXX" value="0712 131 415" readonly>
-        </div>
-        <div class="recipient-toggle">
-          <button class="recipient-btn active" id="tabOthers" onclick="setRecipientType('others')">
-            <svg viewBox="0 0 24 24"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
-            <span>Other</span>
-          </button>
-        </div>
+        <span class="phone-prefix">+251</span>
+        <input class="phone-input" id="numberInput" type="tel" inputmode="numeric" placeholder="9XX XXX XXX" value="912 192 716">
         <button class="contacts-btn" onclick="openContacts()" aria-label="Select from contacts">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
@@ -387,28 +1644,16 @@
           </svg>
         </button>
       </div>
+      <!-- Verified Name Badge -->
+      <div class="verified-name-badge" id="verifiedNameBadge">
+        <div class="verified-icon">
+          <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"></polyline></svg>
+        </div>
+        <span class="verified-name" id="verifiedNameText">Abudlhafiz Shikur</span>
+      </div>
       <div class="field-error" id="fieldError">
         <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
-        <span>Enter a valid 10-digit number starting with 09 or 07</span>
-      </div>
-    </div>
-
-    <!-- Airtime / Packages tabs + Fav icon -->
-    <div class="service-tabs-container">
-      <div class="service-tabs">
-        <button class="service-tab active" id="tabAirtime" onclick="setPurchaseType('airtime')">
-          <svg viewBox="0 0 24 24"><rect x="4" y="2" width="16" height="20" rx="2"/><line x1="9" y1="22" x2="15" y2="22"/></svg>
-          Airtime
-        </button>
-        <button class="service-tab inactive" id="tabPackage" onclick="setPurchaseType('package')">
-          <svg viewBox="0 0 24 24"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg>
-          Packages
-        </button>
-        <button class="service-tab inactive tab-fav" id="tabFav" onclick="openFav()" aria-label="Favourite">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
-          </svg>
-        </button>
+        <span>Enter a valid 9-digit number starting with 9 or 7</span>
       </div>
     </div>
 
@@ -417,36 +1662,37 @@
     <div class="amount-grid" id="amountGrid">
       <!-- rendered by JS -->
     </div>
+
     
-    <!-- Account selection (funding selector like other pages) - shown for airtime -->
+    <!-- Amount validation -->
+    <div class="msg" id="msg"></div>
+
+    <!-- Account selection (funding selector new style) -->
     <div class="funding-selector" id="accountSelect">
       <div class="fund-option selected" id="optMain" onclick="selectPayAccount('main')">
-        <div class="fo-top">
+        <div class="fo-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20 12V8H6a2 2 0 0 1-2-2c0-1.1.9-2 2-2h12v4"/><path d="M4 6v12c0 1.1.9 2 2 2h14v-4"/><path d="M18 12a2 2 0 0 0-2 2c0 1.1.9 2 2 2h4v-4h-4z"/></svg>
+        </div>
+        <div class="fo-info">
           <span class="fo-name">Main Account</span>
-          <span class="radio" id="radioMain"></span>
+          <span class="fo-bal" id="balMain">30.00 Br</span>
         </div>
-        <span class="fo-bal" id="balMain">12,580.00 ETB</span>
-        <span class="fo-tag">Low balance</span>
+        <span class="radio" id="radioMain"></span>
       </div>
+      <div class="fo-divider"></div>
       <div class="fund-option" id="optReward" onclick="selectPayAccount('reward')">
-        <div class="fo-top">
-          <span class="fo-name">Reward Account</span>
-          <span class="radio" id="radioReward"></span>
+        <div class="fo-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 12 20 22 4 22 4 12"></polyline><rect x="2" y="7" width="20" height="5"></rect><line x1="12" y1="22" x2="12" y2="7"></line><path d="M12 7H7.5a2.5 2.5 0 0 1 0-5C11 2 12 7 12 7z"></path><path d="M12 7h4.5a2.5 2.5 0 0 0 0-5C13 2 12 7 12 7z"></path></svg>
         </div>
-        <span class="fo-bal" id="balReward">800.00 ETB</span>
-        <span class="fo-tag">Low balance</span>
+        <div class="fo-info">
+          <span class="fo-name" id="rewardLabel">Reward Account</span>
+          <span class="fo-bal" id="balReward">200.00 Br</span>
+        </div>
+        <span class="radio" id="radioReward"></span>
       </div>
     </div>
     
-    <!-- Package section (shown for package) -->
-    <div class="pkg-section" id="pkgSection">
-      <div class="pkg-cat-scroll" id="pkgCatScroll">
-        <!-- rendered by JS -->
-      </div>
-      <div class="pkg-grid" id="pkgGrid">
-        <!-- rendered by JS -->
-      </div>
-    </div>
+
 
   </div>
 
@@ -455,12 +1701,50 @@
     <button class="continue-btn" id="continueBtn" onclick="proceed()">Continue</button>
   </div>
 
+  <!-- Permission dialog -->
+  <div class="perm-overlay" id="permOverlay">
+    <div class="perm-sheet">
+      <div class="perm-row">
+        <div class="perm-icon">
+          <svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+        </div>
+        <p class="perm-text">Allow <strong>M-PESA Lehulum</strong> to access your phone contacts?</p>
+      </div>
+      <div class="perm-actions">
+        <button class="perm-deny" onclick="denyContacts()">Don't Allow</button>
+        <button class="perm-allow" onclick="allowContacts()">Allow</button>
+      </div>
+    </div>
+  </div>
+
   <!-- Contacts bottom sheet -->
   <div class="modal-overlay" id="contactsOverlay" onclick="if(event.target===this)closeContacts()">
     <div class="bottom-sheet">
       <div class="sheet-grip"></div>
-      <div class="sheet-title">Choose a contact</div>
-      <div class="sheet-list" id="contactList"></div>
+      <div class="sheet-title">Contacts</div>
+
+      <!-- Search -->
+      <div class="sheet-search-wrap">
+        <div class="sheet-search">
+          <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          <input type="text" id="contactSearch" placeholder="Search contacts" oninput="filterContacts(this.value)">
+        </div>
+      </div>
+
+      <!-- Favourites -->
+      <div class="sheet-section-header">
+        <span class="sheet-section-title">Favorites</span>
+        <button class="sheet-see-all" onclick="void(0)">See All</button>
+      </div>
+      <div class="favorites-row" id="favRow"></div>
+
+      <!-- All Contacts -->
+      <div class="contacts-section-header">
+        <span class="sheet-section-title">Contacts</span>
+      </div>
+      <div class="sheet-contacts-scroll">
+        <div class="sheet-list" id="contactList"></div>
+      </div>
     </div>
   </div>
 
@@ -470,6 +1754,506 @@
       <div class="sheet-grip"></div>
       <div class="sheet-title" id="favTitle">Favourites</div>
       <div class="sheet-list" id="favList"></div>
+    </div>
+  </div>
+
+  <!-- Already-Activated OD Prompt: No / Yes -->
+  <div class="od-prompt-overlay" id="odPromptOverlay" onclick="if(event.target===this)closeOdPrompt()">
+    <div class="od-prompt-sheet">
+      <div class="od-prompt-grip"></div>
+      <div class="od-prompt-title">Pay with M-PESA using Overdraft?</div>
+      <div class="od-prompt-desc">Your balance is insufficient for this transaction. Do you want to use <b id="odPromptAmt">20.00 Br</b> on Overdraft to complete this transaction?</div>
+      <div class="od-prompt-actions">
+        <button class="od-prompt-btn-no" onclick="closeOdPrompt()">No</button>
+        <button class="od-prompt-btn-yes" onclick="onConfirmOdPrompt()">Yes</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Overdraft Confirmation Dialog -->
+  <div class="od-confirm-overlay" id="odConfirmOverlay" onclick="if(event.target===this)closeOverdraftConfirm()">
+    <div class="od-confirm-sheet">
+      <div class="od-sheet-grip"></div>
+      <div class="od-sheet-title">Pay with M-PESA using Overdraft?</div>
+      <div class="od-sheet-desc">You have insufficient funds on M-PESA to complete this transaction. Would you like to activate to Errif OD by M-PESA?</div>
+      <div class="od-sheet-actions">
+        <button class="od-btn-cancel" onclick="closeOverdraftConfirm()">Cancel</button>
+        <button class="od-btn-activate" onclick="onConfirmActivateOverdraft()">Activate</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Activate Errif Screen -->
+  <div class="errif-screen" id="errifActivateScreen">
+    <div class="errif-scroll">
+      <div class="errif-hero-wrap">
+        <div class="status-bar">
+          <span class="time">10:00</span>
+          <div class="status-icons">
+            <svg viewBox="0 0 24 24" fill="none"><path d="M1 9l2 2c4.97-4.97 13.03-4.97 18 0l2-2C16.93 2.93 7.08 2.93 1 9z" fill="#1C1C21"/><path d="M5 13l2 2c2.76-2.76 7.24-2.76 10 0l2-2C15.14 9.14 8.87 9.14 5 13z" fill="#1C1C21"/><path d="M9 17l2 2c1.1-1.1 2.9-1.1 4 0l2-2c-2.21-2.21-5.79-2.21-8 0z" fill="#1C1C21"/></svg>
+            <svg viewBox="0 0 24 24" fill="none"><rect x="2" y="6" width="4" height="12" rx="1" fill="#1C1C21"/><rect x="8" y="4" width="4" height="14" rx="1" fill="#1C1C21"/><rect x="14" y="2" width="4" height="16" rx="1" fill="#1C1C21"/><rect x="20" y="0" width="4" height="18" rx="1" fill="#1C1C21" opacity="0.3"/></svg>
+            <svg viewBox="0 0 28 14" fill="none"><rect x="0" y="1" width="22" height="12" rx="2.5" stroke="#1C1C21" stroke-width="1.5"/><rect x="2" y="3" width="16" height="8" rx="1" fill="#1C1C21"/><rect x="24" y="4" width="2" height="6" rx="1" fill="#1C1C21"/></svg>
+          </div>
+        </div>
+
+        <div class="errif-header">
+          <button class="back-btn" onclick="closeErrifActivate()">
+            <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+          </button>
+          <span class="errif-header-title">Activate Errif</span>
+        </div>
+        <div class="errif-hero-content">
+          <div class="errif-hero-title">Activate Errif</div>
+          <div class="errif-hero-by">By <span>M-PESA</span></div>
+          <p class="errif-hero-sub">Get instant credit to buy airtime when your balance is low, and repay conveniently later.</p>
+          <div class="errif-hero-icon">
+            <svg viewBox="0 0 24 24"><path d="M21 12V7H5a2 2 0 0 1 0-4h14v4"/><path d="M3 5v14a2 2 0 0 0 2 2h16v-5"/><path d="M18 12a2 2 0 0 0 0 4h4v-4Z"/></svg>
+          </div>
+        </div>
+      </div>
+
+      <div class="errif-card">
+        <div class="errif-feature-row">
+          <div class="errif-feat-icon">
+            <svg viewBox="0 0 24 24"><polyline points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+          </div>
+          <div class="errif-feat-info">
+            <div class="errif-feat-title">Buy Instantly</div>
+            <div class="errif-feat-desc">Complete this airtime purchase right away</div>
+          </div>
+        </div>
+
+        <div class="errif-feature-row">
+          <div class="errif-feat-icon">
+            <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+          </div>
+          <div class="errif-feat-info">
+            <div class="errif-feat-title">Flexible Repayment</div>
+            <div class="errif-feat-desc">Repay within 30 days, interest free for the first 7</div>
+          </div>
+        </div>
+
+        <div class="errif-feature-row">
+          <div class="errif-feat-icon">
+            <svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+          </div>
+          <div class="errif-feat-info">
+            <div class="errif-feat-title">Safe &amp; in your control</div>
+            <div class="errif-feat-desc">Use only what you need, when you need it</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="errif-bottom-bar">
+      <button class="errif-btn-activate" onclick="showErrifTerms()">Activate</button>
+      <button class="errif-btn-notnow" onclick="closeErrifActivate()">Not now</button>
+    </div>
+  </div>
+
+  <!-- Screen 2: Terms & Conditions -->
+  <div class="terms-screen" id="errifTermsScreen">
+    <div class="status-bar">
+      <span class="time">10:00</span>
+      <div class="status-icons">
+        <svg viewBox="0 0 24 24" fill="none"><path d="M1 9l2 2c4.97-4.97 13.03-4.97 18 0l2-2C16.93 2.93 7.08 2.93 1 9z" fill="#111827"/><path d="M5 13l2 2c2.76-2.76 7.24-2.76 10 0l2-2C15.14 9.14 8.87 9.14 5 13z" fill="#111827"/><path d="M9 17l2 2c1.1-1.1 2.9-1.1 4 0l2-2c-2.21-2.21-5.79-2.21-8 0z" fill="#111827"/></svg>
+        <svg viewBox="0 0 24 24" fill="none"><rect x="2" y="6" width="4" height="12" rx="1" fill="#111827"/><rect x="8" y="4" width="4" height="14" rx="1" fill="#111827"/><rect x="14" y="2" width="4" height="16" rx="1" fill="#111827"/><rect x="20" y="0" width="4" height="18" rx="1" fill="#111827" opacity="0.3"/></svg>
+        <svg viewBox="0 0 28 14" fill="none"><rect x="0" y="1" width="22" height="12" rx="2.5" stroke="#111827" stroke-width="1.5"/><rect x="2" y="3" width="16" height="8" rx="1" fill="#111827"/><rect x="24" y="4" width="2" height="6" rx="1" fill="#111827"/></svg>
+      </div>
+    </div>
+
+    <div class="terms-header">
+      <button class="back-btn" onclick="closeErrifTerms()">
+        <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+      </button>
+      <span class="header-title">Terms &amp; Conditions</span>
+    </div>
+
+    <div class="terms-scroll">
+      <div class="summary-row">
+        <div class="summary-card">
+          <div class="summary-head">
+            <svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+            <span class="summary-title">Repayment</span>
+          </div>
+          <p class="summary-text">Due Date in <strong>30 days.</strong><br>Auto-deducted from incoming funds.</p>
+        </div>
+
+        <div class="summary-card">
+          <div class="summary-head">
+            <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+            <span class="summary-title">Fees</span>
+          </div>
+          <p class="summary-text"><strong>0% Interest</strong> for first 7 days. Daily fee after.</p>
+        </div>
+      </div>
+
+      <div class="section-title">Terms &amp; Conditions</div>
+
+      <div class="terms-content-card">
+        <p class="terms-p">Your approved Errif overdraft limit is 3,000.00 ETB. This limit is dynamic and may change based on your usage, repayment history, and overall account standing.</p>
+        <p class="terms-p">Outstanding amounts are due within 30 days of activation. Amounts may be recovered automatically from incoming funds until the balance is cleared.</p>
+        <p class="terms-p">Enjoy <strong>0% interest for the first 7 days.</strong> A daily service fee applies thereafter as published in the official Tariffs &amp; Fees schedule.</p>
+      </div>
+    </div>
+
+    <div class="bottom-sheet-fixed">
+      <div class="agree-row" onclick="toggleAgreeBuy()">
+        <div class="custom-checkbox" id="agreeCheckboxBuy">
+          <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+        </div>
+        <span class="agree-label">I have read and agree to the <strong>Errif Overdraft Terms &amp; Conditions</strong> and Tariffs.</span>
+      </div>
+      <button class="btn-agree" id="agreeBtnBuy" onclick="showErrifActivationPin()">Agree &amp; Activate</button>
+    </div>
+  </div>
+
+  <!-- Screen 2.5: Errif Activation PIN Screen (Before Errif Activated!) -->
+  <div class="terms-screen" id="errifActivationPinScreen" style="background: var(--Background);">
+    <div class="status-bar">
+      <span class="time">10:00</span>
+      <div class="status-icons">
+        <svg viewBox="0 0 24 24" fill="none"><path d="M1 9l2 2c4.97-4.97 13.03-4.97 18 0l2-2C16.93 2.93 7.08 2.93 1 9z" fill="#111827"/><path d="M5 13l2 2c2.76-2.76 7.24-2.76 10 0l2-2C15.14 9.14 8.87 9.14 5 13z" fill="#111827"/><path d="M9 17l2 2c1.1-1.1 2.9-1.1 4 0l2-2c-2.21-2.21-5.79-2.21-8 0z" fill="#111827"/></svg>
+        <svg viewBox="0 0 24 24" fill="none"><rect x="2" y="6" width="4" height="12" rx="1" fill="#111827"/><rect x="8" y="4" width="4" height="14" rx="1" fill="#111827"/><rect x="14" y="2" width="4" height="16" rx="1" fill="#111827"/><rect x="20" y="0" width="4" height="18" rx="1" fill="#111827" opacity="0.3"/></svg>
+        <svg viewBox="0 0 28 14" fill="none"><rect x="0" y="1" width="22" height="12" rx="2.5" stroke="#111827" stroke-width="1.5"/><rect x="2" y="3" width="16" height="8" rx="1" fill="#111827"/><rect x="24" y="4" width="2" height="6" rx="1" fill="#111827"/></svg>
+      </div>
+    </div>
+
+    <div class="terms-header">
+      <button class="back-btn" onclick="closeErrifActivationPin()">
+        <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+      </button>
+      <span class="header-title">Activate Errif</span>
+      <div style="width:36px;"></div>
+    </div>
+
+    <div class="body-wrap" style="flex:1; display:flex; flex-direction:column; padding:4px 16px 18px; overflow-y:auto;">
+
+      <!-- Info card like screenshot -->
+      <div style="background:#FFF; border-radius:16px; padding:14px 16px; display:flex; align-items:center; gap:14px; margin-top:8px; border:1px solid #F0F1F3; box-shadow:0 2px 8px rgba(0,0,0,0.04);">
+        <div style="width:44px; height:44px; border-radius:14px; background:#FEE2E2; display:flex; align-items:center; justify-content:center; flex-shrink:0; font-family:'Switzer',sans-serif; font-size:17px; font-weight:700; color:#EF4444;">LC</div>
+        <div style="display:flex; flex-direction:column; gap:2px;">
+          <div style="font-family:'Switzer',sans-serif; font-size:14.5px; font-weight:700; color:#111827;">Activate Errif By M-PESA</div>
+          <div style="font-family:'Switzer',sans-serif; font-size:12.5px; color:#6B7280;">Errif OD Balance: <b style="color:#111827;">3,000.00 Br</b></div>
+        </div>
+      </div>
+
+      <div class="pin-prompt" style="display:flex; align-items:center; justify-content:center; gap:7px; margin-top:32px;">
+        <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" style="width:15px; height:15px; stroke:var(--On-Surface); stroke-width:2; fill:none;"><rect x="5" y="10.5" width="14" height="10" rx="2.5"/><path d="M8.5 10.5V7.5a3.5 3.5 0 0 1 7 0v3"/></svg>
+        <span style="font-family:'Switzer',sans-serif; font-size:14px; font-weight:600; color:var(--On-Surface);">Enter Your M-PESA PIN</span>
+      </div>
+
+      <div class="pin-container" id="actPinContainer" style="display:flex; justify-content:space-between; gap:12px; margin-top:16px;">
+        <div class="pin-box active" id="actPinBox0"><span class="caret"></span><span class="dot"></span></div>
+        <div class="pin-box" id="actPinBox1"><span class="caret"></span><span class="dot"></span></div>
+        <div class="pin-box" id="actPinBox2"><span class="caret"></span><span class="dot"></span></div>
+        <div class="pin-box" id="actPinBox3"><span class="caret"></span><span class="dot"></span></div>
+      </div>
+
+      <div class="keypad" style="background:#FFF; border-radius:20px; padding:14px 10px; margin-top:auto; display:grid; grid-template-columns:repeat(3,1fr); box-shadow:0 2px 8px rgba(0,0,0,0.04);">
+        <button class="key" onclick="pressActPin('1')">1</button>
+        <button class="key" onclick="pressActPin('2')">2</button>
+        <button class="key" onclick="pressActPin('3')">3</button>
+        <button class="key" onclick="pressActPin('4')">4</button>
+        <button class="key" onclick="pressActPin('5')">5</button>
+        <button class="key" onclick="pressActPin('6')">6</button>
+        <button class="key" onclick="pressActPin('7')">7</button>
+        <button class="key" onclick="pressActPin('8')">8</button>
+        <button class="key" onclick="pressActPin('9')">9</button>
+        <button class="key empty"></button>
+        <button class="key" onclick="pressActPin('0')">0</button>
+        <button class="key" onclick="pressActPinBack()" aria-label="Delete">
+          <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M20 5H9L3 12l6 7h11a1.5 1.5 0 0 0 1.5-1.5v-11A1.5 1.5 0 0 0 20 5z"/><path d="M12 9.5l5 5M17 9.5l-5 5"/></svg>
+        </button>
+      </div>
+
+      <button class="pay-btn-standard blue" id="actPinSubmitBtn" onclick="confirmErrifActivation()">Activate</button>
+    </div>
+  </div>
+
+  <!-- Screen 3: Errif Activated! -->
+  <div class="activated-screen" id="errifSuccessScreen">
+    <div class="status-bar">
+      <span class="time">10:00</span>
+      <div class="status-icons">
+        <svg viewBox="0 0 24 24" fill="none"><path d="M1 9l2 2c4.97-4.97 13.03-4.97 18 0l2-2C16.93 2.93 7.08 2.93 1 9z" fill="#111827"/><path d="M5 13l2 2c2.76-2.76 7.24-2.76 10 0l2-2C15.14 9.14 8.87 9.14 5 13z" fill="#111827"/><path d="M9 17l2 2c1.1-1.1 2.9-1.1 4 0l2-2c-2.21-2.21-5.79-2.21-8 0z" fill="#111827"/></svg>
+        <svg viewBox="0 0 24 24" fill="none"><rect x="2" y="6" width="4" height="12" rx="1" fill="#111827"/><rect x="8" y="4" width="4" height="14" rx="1" fill="#111827"/><rect x="14" y="2" width="4" height="16" rx="1" fill="#111827"/><rect x="20" y="0" width="4" height="18" rx="1" fill="#111827" opacity="0.3"/></svg>
+        <svg viewBox="0 0 28 14" fill="none"><rect x="0" y="1" width="22" height="12" rx="2.5" stroke="#111827" stroke-width="1.5"/><rect x="2" y="3" width="16" height="8" rx="1" fill="#111827"/><rect x="24" y="4" width="2" height="6" rx="1" fill="#111827"/></svg>
+      </div>
+    </div>
+
+    <div class="activated-header">
+      <button class="back-btn" onclick="closeErrifSuccess()">
+        <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+      </button>
+      <span class="header-title">Activate Errif</span>
+    </div>
+
+    <div class="activated-scroll">
+      <div class="hero-badge-wrap">
+        <div class="success-squircle">
+          <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+        </div>
+        <div class="activated-title">Errif Activated!</div>
+        <div class="activated-subtitle" style="white-space: nowrap;">You can now complete transaction and repay later.</div>
+      </div>
+
+      <div class="od-summary-card">
+        <div class="od-bal-header">
+          <div class="od-bal-left">
+            <svg viewBox="0 0 24 24"><path d="M21 12V7H5a2 2 0 0 1 0-4h14v4"/><path d="M3 5v14a2 2 0 0 0 2 2h16v-5"/><path d="M18 12a2 2 0 0 0 0 4h4v-4Z"/></svg>
+            <span class="od-bal-label">Errif OD Balance</span>
+          </div>
+          <span class="od-bal-amount" style="font-weight:800;">3,000 Br</span>
+        </div>
+
+        <div class="od-grid">
+          <div class="od-grid-row">
+            <div class="od-grid-item">
+              <div class="od-item-icon">
+                <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+              </div>
+              <div class="od-item-data">
+                <span class="od-item-lbl">Maintenance Fee</span>
+                <span class="od-item-val">0.1%</span>
+              </div>
+            </div>
+
+            <div class="od-grid-item">
+              <div class="od-item-icon">
+                <svg viewBox="0 0 24 24"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg>
+              </div>
+              <div class="od-item-data">
+                <span class="od-item-lbl">Access Fee</span>
+                <span class="od-item-val">3.00%</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="od-grid-row">
+            <div class="od-grid-item">
+              <div class="od-item-icon">
+                <svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+              </div>
+              <div class="od-item-data">
+                <span class="od-item-lbl">Tenor</span>
+                <span class="od-item-val">30 days</span>
+              </div>
+            </div>
+
+            <div class="od-grid-item">
+              <div class="od-item-icon">
+                <svg viewBox="0 0 24 24"><line x1="19" y1="5" x2="5" y2="19"/><circle cx="6.5" cy="6.5" r="2.5"/><circle cx="17.5" cy="17.5" r="2.5"/></svg>
+              </div>
+              <div class="od-item-data">
+                <span class="od-item-lbl">Penalty Fee</span>
+                <span class="od-item-val">8.00%</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="services-card">
+        <div class="service-row">
+          <div class="service-icon-wrap">
+            <svg viewBox="0 0 24 24"><rect x="5" y="2" width="14" height="20" rx="2" ry="2"/><line x1="12" y1="18" x2="12.01" y2="18"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="10" y1="10" x2="14" y2="10"/></svg>
+          </div>
+          <div class="service-info">
+            <div class="service-title">Airtime Top-Up</div>
+            <div class="service-desc">Buy airtime instantly without worry</div>
+          </div>
+        </div>
+
+        <div class="service-row">
+          <div class="service-icon-wrap">
+            <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+          </div>
+          <div class="service-info">
+            <div class="service-title">Bill Payment</div>
+            <div class="service-desc">Bill your bills on time, no stress</div>
+          </div>
+        </div>
+
+        <div class="service-row">
+          <div class="service-icon-wrap">
+            <svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+          </div>
+          <div class="service-info">
+            <div class="service-title">Merchant Payment</div>
+            <div class="service-desc">Pay merchants easily and quickly</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="activated-bottom-bar">
+      <button class="btn-continue-od" onclick="showOdFinalConfirm()">Continue</button>
+    </div>
+  </div>
+
+  <!-- OD Final Confirmation Modal -->
+  <!-- Normal purchase confirmation (non-overdraft) -->
+  <div class="buy-confirm-overlay" id="buyConfirmOverlay" onclick="if(event.target===this)closeBuyConfirm()">
+    <div class="buy-confirm-sheet">
+      <div class="buy-confirm-grip-bar"><div class="buy-confirm-grip"></div></div>
+
+      <div class="buy-confirm-scroll">
+        <div class="buy-confirm-party-card">
+          <span class="buy-confirm-badge">RECIPIENT</span>
+          <div class="buy-confirm-avatar" id="buyConfirmAvatar">DT</div>
+          <div class="buy-confirm-party-info">
+            <span class="buy-confirm-party-name" id="buyConfirmName">Derartu Tulu Andegna</span>
+            <span class="buy-confirm-party-sub" id="buyConfirmSub">+251712 131 415</span>
+          </div>
+        </div>
+
+        <div class="buy-confirm-summary">
+          <div class="buy-confirm-row">
+            <span class="buy-confirm-lbl">Fee:</span>
+            <span class="buy-confirm-val" id="buyConfirmFee">0.00 Br</span>
+          </div>
+          <div class="buy-confirm-divider"></div>
+          <div class="buy-confirm-row total">
+            <span class="buy-confirm-lbl">Total:</span>
+            <span class="buy-confirm-val" id="buyConfirmTotal">0.00 Br</span>
+          </div>
+        </div>
+
+        <div class="buy-confirm-actions">
+          <button class="buy-confirm-cancel-btn" onclick="closeBuyConfirm()">Cancel</button>
+          <button class="buy-confirm-pay-btn" onclick="proceedFromBuyConfirm()">Confirm</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="od-final-overlay" id="odFinalConfirmOverlay" onclick="if(event.target===this)closeOdFinalConfirm()">
+    <div class="od-final-sheet">
+      <!-- Grip handle -->
+      <div class="od-final-grip-bar"><div class="od-final-grip"></div></div>
+
+      <!-- Header -->
+      <div class="od-final-header">
+        <span class="od-final-title">Confirmation</span>
+      </div>
+
+      <!-- Scrollable content -->
+      <div class="od-final-scroll">
+        <!-- Recipient row -->
+        <div class="od-review-party-card">
+          <span class="od-review-badge">RECIPIENT</span>
+          <div class="od-review-avatar" id="odFinalAvatar">DT</div>
+          <div class="od-review-party-info">
+            <span class="od-review-party-name" id="odFinalName">Derartu Tulu Andegna</span>
+            <span class="od-review-party-sub"><b>Number:</b> <span id="odFinalNum">+251 712 131 415</span></span>
+          </div>
+        </div>
+
+        <!-- Breakdown rows -->
+        <div class="od-review-summary-card">
+          <div class="od-review-row">
+            <span class="od-review-lbl">From M-PESA Balance</span>
+            <span class="od-review-val" id="odFromMpesa">30.00 Br</span>
+          </div>
+          <div class="od-review-row">
+            <span class="od-review-lbl blue">From Errif OD Balance</span>
+            <span class="od-review-val blue" id="odFromOd">20.00 Br</span>
+          </div>
+          <div class="od-review-row">
+            <span class="od-review-lbl">Service Fee (5%)</span>
+            <span class="od-review-val" id="odServiceFee">5.00 Br</span>
+          </div>
+          <div class="od-review-row">
+            <span class="od-review-lbl">Total Errif Airtime Advance</span>
+            <span class="od-review-val" id="odTotalAdvance">25.00 Br</span>
+          </div>
+          <div class="od-review-row">
+            <span class="od-review-lbl">Daily Fee (0.1%)</span>
+            <span class="od-review-val" id="odDailyFee">0.10 Br</span>
+          </div>
+          <div class="od-review-row">
+            <span class="od-review-lbl">Penalty After Due (0.11% Daily)</span>
+            <span class="od-review-val" id="odPenalty">0.13 Br</span>
+          </div>
+          <div class="od-review-row">
+            <span class="od-review-lbl">Due Date</span>
+            <span class="od-review-val" id="odDueDate">12/12/2026</span>
+          </div>
+          <div class="od-review-divider"></div>
+          <div class="od-review-row total">
+            <span class="od-review-lbl">Airtime Amount</span>
+            <span class="od-review-val blue" id="odAirtimeAmt">50.00 Br</span>
+          </div>
+        </div>
+
+        <!-- Actions -->
+        <div class="od-review-actions">
+          <button class="od-review-cancel-btn" onclick="closeOdFinalConfirm()">Cancel</button>
+          <button class="od-review-pay-btn" onclick="showOdActivationPin()">Confirm</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- OD Activation PIN Screen -->
+  <div class="od-pin-screen" id="odActivationPinScreen">
+    <div class="status-bar">
+      <span class="time">10:00</span>
+      <div class="status-icons">
+        <svg viewBox="0 0 24 24" fill="none"><path d="M1 9l2 2c4.97-4.97 13.03-4.97 18 0l2-2C16.93 2.93 7.08 2.93 1 9z" fill="#111827"/><path d="M5 13l2 2c2.76-2.76 7.24-2.76 10 0l2-2C15.14 9.14 8.87 9.14 5 13z" fill="#111827"/><path d="M9 17l2 2c1.1-1.1 2.9-1.1 4 0l2-2c-2.21-2.21-5.79-2.21-8 0z" fill="#111827"/></svg>
+        <svg viewBox="0 0 24 24" fill="none"><rect x="2" y="6" width="4" height="12" rx="1" fill="#111827"/><rect x="8" y="4" width="4" height="14" rx="1" fill="#111827"/><rect x="14" y="2" width="4" height="16" rx="1" fill="#111827"/><rect x="20" y="0" width="4" height="18" rx="1" fill="#111827" opacity="0.3"/></svg>
+        <svg viewBox="0 0 28 14" fill="none"><rect x="0" y="1" width="22" height="12" rx="2.5" stroke="#111827" stroke-width="1.5"/><rect x="2" y="3" width="16" height="8" rx="1" fill="#111827"/><rect x="24" y="4" width="2" height="6" rx="1" fill="#111827"/></svg>
+      </div>
+    </div>
+    <div class="header-nav">
+      <button class="back-btn" onclick="closeOdActivationPin()">
+        <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+      </button>
+      <span class="header-title">Buy Airtime</span>
+      <div style="width:36px;"></div>
+    </div>
+    <div class="od-pin-body">
+      <!-- Info card -->
+      <div class="od-pin-info-card">
+        <div class="od-pin-info-avatar" id="odPinAvatar">AB</div>
+        <div class="od-pin-info-text">
+          <div class="od-pin-info-title" id="odPinName">Derartu Tulu Andegna</div>
+          <div class="od-pin-info-sub">Amount: <b id="odPinAmt">50.00 Br</b></div>
+        </div>
+      </div>
+      <!-- PIN prompt -->
+      <div class="od-pin-prompt">
+        <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="10.5" width="14" height="10" rx="2.5"/><path d="M8.5 10.5V7.5a3.5 3.5 0 0 1 7 0v3"/></svg>
+        <span>Enter Your M-PESA PIN</span>
+      </div>
+      <!-- PIN dots -->
+      <div class="od-pin-dots" id="odPinDots">
+        <div class="od-pin-dot active" id="odDot0"><span class="od-caret"></span><span class="od-dot-circle"></span></div>
+        <div class="od-pin-dot" id="odDot1"><span class="od-caret"></span><span class="od-dot-circle"></span></div>
+        <div class="od-pin-dot" id="odDot2"><span class="od-caret"></span><span class="od-dot-circle"></span></div>
+        <div class="od-pin-dot" id="odDot3"><span class="od-caret"></span><span class="od-dot-circle"></span></div>
+      </div>
+      <!-- Keypad -->
+      <div class="od-pin-keypad">
+        <button class="od-pin-key" onclick="odPinKey('1')">1</button>
+        <button class="od-pin-key" onclick="odPinKey('2')">2</button>
+        <button class="od-pin-key" onclick="odPinKey('3')">3</button>
+        <button class="od-pin-key" onclick="odPinKey('4')">4</button>
+        <button class="od-pin-key" onclick="odPinKey('5')">5</button>
+        <button class="od-pin-key" onclick="odPinKey('6')">6</button>
+        <button class="od-pin-key" onclick="odPinKey('7')">7</button>
+        <button class="od-pin-key" onclick="odPinKey('8')">8</button>
+        <button class="od-pin-key" onclick="odPinKey('9')">9</button>
+        <button class="od-pin-key empty"></button>
+        <button class="od-pin-key" onclick="odPinKey('0')">0</button>
+        <button class="od-pin-key" onclick="odPinBack()" aria-label="Delete">
+          <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M20 5H9L3 12l6 7h11a1.5 1.5 0 0 0 1.5-1.5v-11A1.5 1.5 0 0 0 20 5z"/><path d="M12 9.5l5 5M17 9.5l-5 5"/></svg>
+        </button>
+      </div>
+      <div class="od-pin-bottom">
+        <button class="od-pin-action-btn" onclick="confirmOdActivationPin()">Buy</button>
+      </div>
     </div>
   </div>
 
@@ -500,11 +2284,11 @@
   function initials(name) { return name.split(' ').map(p => p[0]).slice(0, 2).join('').toUpperCase(); }
   function formatNumber(d) {
     if (!d) return '';
-    return [d.slice(0,4), d.slice(4,7), d.slice(7,10)].filter(Boolean).join(' ');
+    return [d.slice(0,3), d.slice(3,6), d.slice(6,9)].filter(Boolean).join(' ');
   }
   function rawNumber(d) { return d.replace(/\s/g, ''); }
-  function isValid(d) { return d.length === 10 && (d.startsWith('09') || d.startsWith('07')); }
-  function isUnregistered(d) { return isValid(d) && d.endsWith('0000'); }
+  function isValid(d) { return d.length === 9 && (d.startsWith('9') || d.startsWith('7')); }
+  function isUnregistered(d) { return isValid(d) && d.endsWith('000'); }
 
   const PACKAGE_CATS = ['Data', 'Voice', 'SMS', 'Combo', 'Unlimited'];
   const PACKAGES = [
@@ -539,46 +2323,29 @@
   let customAmount = 0;
   let selectedPkg = null;
 
-  function setPurchaseType(t) {
-    purchaseType = t;
-    const tabAirtime = document.getElementById('tabAirtime');
-    const tabPackage = document.getElementById('tabPackage');
-    if (t === 'airtime') {
-      tabAirtime.className = 'service-tab active';
-      tabPackage.className = 'service-tab inactive';
-    } else {
-      tabAirtime.className = 'service-tab inactive';
-      tabPackage.className = 'service-tab active';
-    }
-    const amountSection = document.getElementById('amountGrid');
-    const amountLabel = document.getElementById('amountLabel');
-    const pkgSection = document.getElementById('pkgSection');
-    const accountSelect = document.getElementById('accountSelect');
-    if (t === 'airtime') {
-      amountLabel.style.display = '';
-      amountSection.classList.remove('hidden');
-      pkgSection.classList.remove('show');
-      accountSelect.style.display = '';
-    } else {
-      amountLabel.style.display = 'none';
-      amountSection.classList.add('hidden');
-      pkgSection.classList.add('show');
-      accountSelect.style.display = 'none';
-      renderPackageCats();
-      renderPackages();
-    }
-    updateContinue();
-  }
-
   function setRecipientType(t) {
     recipientType = t;
+    const tabSelf = document.getElementById('tabSelf');
+    const tabOthers = document.getElementById('tabOthers');
     const input = document.getElementById('numberInput');
-    if (digits === REGISTERED) {
-      digits = '';
+    const badge = document.getElementById('verifiedNameBadge');
+    
+    if (t === 'self') {
+      tabSelf.className = 'recip-tab active';
+      tabOthers.className = 'recip-tab';
+      input.value = '912 131 415';
+      digits = '912131415';
+      input.readOnly = true;
+      badge.classList.remove('show');
+    } else {
+      tabSelf.className = 'recip-tab';
+      tabOthers.className = 'recip-tab active';
       input.value = '';
+      digits = '';
+      input.readOnly = false;
+      input.focus();
+      badge.classList.add('show');
     }
-    input.readOnly = false;
-    input.focus();
     document.getElementById('fieldError').classList.remove('show');
     updateContinue();
   }
@@ -600,9 +2367,10 @@
   function renderAmounts() {
     const grid = document.getElementById('amountGrid');
     grid.innerHTML = AMOUNTS.map((a, i) => `
-      <div class="amt-card ${selectedAmount === i ? 'active' : ''}" onclick="selectAmount(${i})">
+      <div class="amt-card ${a === 50 ? 'special-offer' : ''} ${selectedAmount === i ? 'active' : ''}" onclick="selectAmount(${i})">
+        ${a === 50 ? '<span class="amt-card-badge">+15% Bonus</span>' : ''}
         <span class="amt-card-val">${a}</span>
-        <span class="amt-card-cur">Birr</span>
+        <span class="amt-card-cur">Br</span>
       </div>`).join('');
     // Add custom amount box after grid
     const customDiv = document.createElement('div');
@@ -640,78 +2408,49 @@
     document.getElementById(type === 'main' ? 'optMain' : 'optReward').classList.add('selected');
   }
 
-  function renderPackageCats() {
-    const row = document.getElementById('pkgCatScroll');
-    row.innerHTML = PACKAGE_CATS.map((c, i) => `
-      <button class="pkg-cat-tab ${i === pkgCatIndex ? 'active' : ''}" onclick="selectPackageCat(${i})">${c}</button>
-    `).join('');
-    renderPackages();
-  }
-  function selectPackageCat(i) {
-    pkgCatIndex = i;
-    document.getElementById('pkgCatScroll').querySelectorAll('.pkg-cat-tab').forEach((el, idx) => el.classList.toggle('active', idx === i));
-    renderPackages();
-  }
-  function renderPackages() {
-    const grid = document.getElementById('pkgGrid');
-    const cat = PACKAGE_CATS[pkgCatIndex];
-    let filtered = cat === 'All' ? PACKAGES : PACKAGES.filter(p => p.cat === cat);
-    // Group by subCat if present
-    const groups = {};
-    filtered.forEach(pkg => {
-      const key = pkg.subCat || '_no_group';
-      if (!groups[key]) groups[key] = [];
-      groups[key].push(pkg);
-    });
-    let html = '';
-    const groupKeys = Object.keys(groups);
-    const hasGroups = groupKeys.length > 1 || (groupKeys.length === 1 && groupKeys[0] !== '_no_group');
-    if (hasGroups) {
-      groupKeys.forEach(key => {
-        if (key === '_no_group') {
-          groups[key].forEach(pkg => html += renderPkgCard(pkg));
-        } else {
-          html += `<div class="pkg-subcat-title">${key}</div><div class="pkg-subcat-grid">`;
-          groups[key].forEach(pkg => html += renderPkgCard(pkg));
-          html += '</div>';
-        }
-      });
-    } else {
-      html = filtered.map(pkg => renderPkgCard(pkg)).join('');
-    }
-    grid.innerHTML = html;
-  }
-  function renderPkgCard(pkg) {
-    const globalIdx = PACKAGES.indexOf(pkg);
-    const isFav = favPackages.has(globalIdx);
-    return `
-      <div class="pkg-card ${selectedPkg === globalIdx ? 'active' : ''}" onclick="selectPackage(${globalIdx})">
-        ${pkg.badge ? `<span class="pkg-card-badge">${pkg.badge}</span>` : ''}
-        <span class="pkg-card-title"><span>${pkg.title}</span><span class="pkg-card-price">${pkg.price}</span></span>
-        <span class="pkg-card-desc">${pkg.desc}</span>
-        <svg class="pkg-card-fav ${isFav ? 'active' : ''}" onclick="event.stopPropagation();toggleFavPackage(${globalIdx})" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
-      </div>`;
-  }
-  function selectPackage(i) {
-    selectedPkg = i;
-    document.querySelectorAll('.pkg-card').forEach((el) => el.classList.remove('active'));
-    const cards = document.getElementById('pkgGrid').querySelectorAll('.pkg-card');
-    const cat = PACKAGE_CATS[pkgCatIndex];
-    const filtered = cat === 'All' ? PACKAGES : PACKAGES.filter(p => p.cat === cat);
-    const idxInFiltered = filtered.indexOf(PACKAGES[i]);
-    if (idxInFiltered !== -1 && cards[idxInFiltered]) {
-      cards[idxInFiltered].classList.add('active');
-    }
-    updateContinue();
+
+
+  let overdraftActive = false;
+  const NORMAL_BALANCE = '30.00 Br';
+  const MAIN_BAL = 30;
+  const REWARD_BAL = 200;
+  const REWARD_BALANCE = '200.00 Br';
+  let insufficientBoth = false;
+
+  function setMsg(kind, text) {
+    const msg = document.getElementById('msg');
+    msg.classList.toggle('warn', kind === 'warn');
+    msg.classList.toggle('err', kind === 'err');
+    msg.classList.toggle('show', !!kind);
+    if (text) msg.textContent = text;
   }
 
-  function toggleFavPackage(i) {
-    if (favPackages.has(i)) {
-      favPackages.delete(i);
-    } else {
-      favPackages.add(i);
+  // Amount currently in play, whatever the purchase type
+  function currentAmount() {
+    if (purchaseType === 'airtime') {
+      if (customAmount > 0) return customAmount;
+      return selectedAmount !== null ? AMOUNTS[selectedAmount] : 0;
     }
-    renderPackages();
+    const pkg = selectedPkg !== null ? PACKAGES[selectedPkg] : null;
+    return pkg ? parseInt(pkg.price) || 0 : 0;
+  }
+
+  // Amount vs balance, same states as the bank transfer screen. Over balance:
+  // amber field, balance hint, "Insufficient Balance" banner, no account picker.
+  function updateAccountState() {
+    const amt = currentAmount();
+    const short = !overdraftActive && amt > MAIN_BAL;
+    const custInput = document.getElementById('customAmountInput');
+    const phoneFrame = document.querySelector('.phone-frame');
+
+    if (custInput) custInput.classList.toggle('warn', short && customAmount > 0);
+    document.getElementById('accountSelect').style.display = short ? 'none' : '';
+    setMsg(short ? 'warn' : null, short ? `Insufficient Balance: ${NORMAL_BALANCE}` : '');
+
+    // Toggle orange class for insufficient-but-not-activated state
+    if (phoneFrame) phoneFrame.classList.toggle('od-insufficient', short && !overdraftActive);
+
+    return short;
   }
 
   function updateContinue() {
@@ -719,66 +2458,400 @@
     const hasAmount = selectedAmount !== null || customAmount > 0;
     const hasSelection = purchaseType === 'airtime' ? hasAmount : selectedPkg !== null;
     const btn = document.getElementById('continueBtn');
-    const enabled = ok && hasSelection;
-    btn.classList.toggle('active', enabled);
-    btn.disabled = !enabled;
+    insufficientBoth = updateAccountState();
+
+    // Reset classes
+    btn.classList.remove('active', 'overdraft', 'od-activated');
+
+    if (ok && hasSelection) {
+      btn.disabled = false;
+      if (overdraftActive) {
+        // OD already activated → blue button
+        btn.classList.add('active', 'od-activated');
+        btn.textContent = 'Continue with Errif OD';
+      } else if (insufficientBoth) {
+        // Normal flow, balance is insufficient → orange button asking activation
+        btn.classList.add('active', 'overdraft');
+        btn.textContent = 'Continue with Overdraft';
+      } else {
+        // Normal flow, balance is sufficient → standard red button
+        btn.classList.add('active');
+        btn.textContent = 'Continue';
+      }
+    } else {
+      btn.disabled = true;
+      btn.textContent = 'Continue';
+    }
+  }
+
+  function toggleOverdraft(on) {
+    overdraftActive = on;
+    // Errif is a wallet-level state, so every screen that reads this flag on
+    // load sees the same on/off -- not just this one.
+    sessionStorage.setItem('errifOdActive', on ? '1' : '0');
+    ['odToggle', 'odToggleBill', 'odToggleMerchant', 'odToggleBank', 'odToggleWallet']
+      .forEach(id => { const el = document.getElementById(id); if (el) el.checked = on; });
+    const badge = document.getElementById('odBadge');
+    const balMain = document.getElementById('balMain');
+    const balReward = document.getElementById('balReward');
+    const rewardLabel = document.getElementById('rewardLabel');
+    const fab = document.getElementById('testFab');
+    const phoneFrame = document.querySelector('.phone-frame');
+
+    if (on) {
+      // OD already activated: main = 0, reward slot → Errif Balance 3,000
+      if (balMain) balMain.textContent = '0.00 Br';
+      if (balReward) balReward.textContent = '3,000.00 Br';
+      if (rewardLabel) rewardLabel.textContent = 'Errif Balance';
+      badge.style.display = 'inline-flex';
+      if (fab) fab.classList.add('active');
+      // Blue mode — remove orange if any
+      if (phoneFrame) {
+        phoneFrame.classList.remove('od-insufficient');
+        phoneFrame.classList.add('od-active-mode');
+      }
+      // Auto-select the Errif (reward) account
+      selectPayAccount('reward');
+    } else {
+      // Restore
+      if (balMain) balMain.textContent = NORMAL_BALANCE;
+      if (balReward) balReward.textContent = REWARD_BALANCE;
+      if (rewardLabel) rewardLabel.textContent = 'Reward Account';
+      badge.style.display = 'none';
+      if (fab) fab.classList.remove('active');
+      if (phoneFrame) phoneFrame.classList.remove('od-active-mode', 'od-insufficient');
+      // Restore main account selection
+      selectPayAccount('main');
+    }
+    updateContinue();
+  }
+
+  (function restoreOverdraftState() {
+    if (sessionStorage.getItem('errifOdActive') === '1') toggleOverdraft(true);
+  })();
+
+  function toggleTestPopup() {
+    const popup = document.getElementById('testPopup');
+    if (popup) {
+      popup.classList.toggle('show');
+    }
   }
 
   document.getElementById('numberInput').addEventListener('input', function(e) {
-    let val = this.value.replace(/\D/g, '').slice(0, 10);
+    let val = this.value.replace(/\D/g, '').slice(0, 9);
     digits = val;
     this.value = val ? formatNumber(val) : '';
     const err = document.getElementById('fieldError');
-    if (val.length === 10 && !isValid(val)) {
-      err.classList.add('show');
-    } else {
+    const badge = document.getElementById('verifiedNameBadge');
+    if (val.length === 9) {
       err.classList.remove('show');
+      badge.classList.add('show');
+    } else {
+      if (val.length > 0) err.classList.add('show');
+      else err.classList.remove('show');
+      badge.classList.remove('show');
     }
     updateContinue();
   });
 
-  function openFav() {
-    const list = document.getElementById('favList');
-    const title = document.getElementById('favTitle');
-    title.textContent = 'Favourite packages';
-    if (favPackages.size === 0) {
-      list.innerHTML = '<div style="text-align:center;padding:20px;color:var(--On-Surface-Low);font-family:Switzer,sans-serif;font-size:14px;">No favourite packages yet<br><span style="font-size:12px;">Tap the star icon on any package</span></div>';
-    } else {
-      const favPkgList = PACKAGES.filter((_, i) => favPackages.has(i));
-      list.innerHTML = favPkgList.map(pkg => {
-        const idx = PACKAGES.indexOf(pkg);
-        return `
-        <div class="sheet-item" onclick="closeFav();setPurchaseType('package');selectPackage(${idx})">
-          <div class="sheet-avatar" style="background:var(--Primary);color:#FFF;border-radius:12px;">P</div>
-          <div class="sheet-item-info">
-            <div class="sheet-item-name">${pkg.title} - ${pkg.price}</div>
-            <div class="sheet-item-sub">${pkg.cat} • ${pkg.desc}</div>
-          </div>
-          <svg class="fav-star" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
-        </div>`;
-      }).join('');
-    }
-    document.getElementById('favOverlay').classList.add('show');
-  }
-  function closeFav() { document.getElementById('favOverlay').classList.remove('show'); }
 
-  function openContacts() {
-    document.getElementById('contactList').innerHTML = contacts.map((c, i) => `
-      <div class="sheet-item" onclick="pickContact(${i})">
+
+  // Favorites: first 4 contacts (in real app these would be saved)
+  const favorites = contacts.slice(0, 4);
+  let contactsPermGranted = false;
+
+  function renderContactsSheet(filter) {
+    const query = (filter || '').toLowerCase();
+    const filtered = query
+      ? contacts.filter(c => c.name.toLowerCase().includes(query) || c.number.includes(query))
+      : contacts;
+
+    document.getElementById('contactList').innerHTML = filtered.map((c, i) => `
+      <div class="sheet-item" onclick="pickContactByIndex(${contacts.indexOf(c)})">
         <div class="sheet-avatar">${initials(c.name)}</div>
         <div class="sheet-item-info">
           <div class="sheet-item-name">${c.name}</div>
-          <div class="sheet-item-sub">${formatNumber(c.number)}</div>
+          <div class="sheet-item-sub">+251${c.number.slice(1)}</div>
         </div>
       </div>`).join('');
+
+    // Favorites row — hide when searching
+    const favRow = document.getElementById('favRow');
+    const favSection = favRow.previousElementSibling; // .sheet-section-header
+    const showFav = !query;
+    favRow.style.display = showFav ? 'flex' : 'none';
+    favSection.style.display = showFav ? 'flex' : 'none';
+  }
+
+  function renderFavoritesRow() {
+    document.getElementById('favRow').innerHTML = favorites.map((c, i) => `
+      <div class="fav-item" onclick="pickContactByIndex(${contacts.indexOf(c)})">
+        <div class="fav-avatar">${initials(c.name)}</div>
+        <span class="fav-name">${c.name.split(' ')[0]}</span>
+      </div>`).join('');
+  }
+
+  function openContacts() {
+    if (!contactsPermGranted) {
+      document.getElementById('permOverlay').classList.add('show');
+    } else {
+      showContactsSheet();
+    }
+  }
+
+  function denyContacts() {
+    document.getElementById('permOverlay').classList.remove('show');
+  }
+
+  function allowContacts() {
+    contactsPermGranted = true;
+    document.getElementById('permOverlay').classList.remove('show');
+    showContactsSheet();
+  }
+
+  function showContactsSheet() {
+    const searchEl = document.getElementById('contactSearch');
+    if (searchEl) searchEl.value = '';
+    renderFavoritesRow();
+    renderContactsSheet('');
     document.getElementById('contactsOverlay').classList.add('show');
   }
-  function closeContacts() { document.getElementById('contactsOverlay').classList.remove('show'); }
-  function pickContact(i) {
+
+  function filterContacts(val) {
+    renderContactsSheet(val);
+  }
+
+  function closeContacts() {
+    document.getElementById('contactsOverlay').classList.remove('show');
+    const searchEl = document.getElementById('contactSearch');
+    if (searchEl) searchEl.value = '';
+  }
+
+  function pickContactByIndex(i) {
     const c = contacts[i];
     closeContacts();
     digits = rawNumber(c.number);
     document.getElementById('numberInput').value = formatNumber(digits);
+    const badge = document.getElementById('verifiedNameBadge');
+    const nameEl = document.getElementById('verifiedNameText');
+    if (nameEl) nameEl.textContent = c.name;
+    badge.classList.add('show');
+    updateContinue();
+  }
+
+  // legacy shim
+  function pickContact(i) { pickContactByIndex(i); }
+
+  function showOverdraftConfirm() {
+    document.getElementById('odConfirmOverlay').classList.add('show');
+  }
+
+  function closeOverdraftConfirm() {
+    document.getElementById('odConfirmOverlay').classList.remove('show');
+  }
+
+  function onConfirmActivateOverdraft() {
+    closeOverdraftConfirm();
+    showErrifActivate();
+  }
+
+  function showErrifActivate() {
+    document.getElementById('errifActivateScreen').classList.add('show');
+  }
+
+  function closeErrifActivate() {
+    document.getElementById('errifActivateScreen').classList.remove('show');
+  }
+
+  let isAgreedBuy = true;
+  function toggleAgreeBuy() {
+    isAgreedBuy = !isAgreedBuy;
+    const box = document.getElementById('agreeCheckboxBuy');
+    const btn = document.getElementById('agreeBtnBuy');
+    box.classList.toggle('unchecked', !isAgreedBuy);
+    btn.disabled = !isAgreedBuy;
+  }
+
+  function showErrifTerms() {
+    document.getElementById('errifTermsScreen').classList.add('show');
+  }
+
+  function closeErrifTerms() {
+    document.getElementById('errifTermsScreen').classList.remove('show');
+  }
+
+  /* ─── Errif Activation PIN Screen (Before Errif Activated!) ─── */
+  let actPin = '';
+  function showErrifActivationPin() {
+    if (!isAgreedBuy) return;
+    actPin = '';
+    updateActPinDisplay();
+    document.getElementById('errifActivationPinScreen').classList.add('show');
+  }
+
+  function closeErrifActivationPin() {
+    document.getElementById('errifActivationPinScreen').classList.remove('show');
+  }
+
+  function pressActPin(k) {
+    if (actPin.length < 4) {
+      actPin += k;
+      updateActPinDisplay();
+    }
+  }
+
+  function pressActPinBack() {
+    actPin = actPin.slice(0, -1);
+    updateActPinDisplay();
+  }
+
+  function updateActPinDisplay() {
+    for (let i = 0; i < 4; i++) {
+      const box = document.getElementById('actPinBox' + i);
+      if (!box) continue;
+      box.classList.remove('filled', 'active');
+      if (i < actPin.length) {
+        box.classList.add('filled');
+      } else if (i === actPin.length) {
+        box.classList.add('active');
+      }
+    }
+  }
+
+  function confirmErrifActivation() {
+    closeErrifActivationPin();
+    showErrifSuccess();
+  }
+
+  function showErrifSuccess() {
+    document.getElementById('errifSuccessScreen').classList.add('show');
+  }
+
+  function closeErrifSuccess() {
+    document.getElementById('errifSuccessScreen').classList.remove('show');
+  }
+
+  function completeErrifActivation() {
+    showOdFinalConfirm();
+  }
+
+  /* ─── OD Final Confirm Sheet ─── */
+  // The confirm sheet renders this and the receipt stores it, so both always agree.
+  function computeOdBreakdown(amt) {
+    const mpesaBal = Math.min(amt, 30);
+    const odBal = Math.max(0, amt - mpesaBal);
+    const serviceFee = odBal > 0 ? parseFloat(Math.max(5, odBal * 0.05).toFixed(2)) : 0;
+    const dailyFee = odBal > 0 ? parseFloat(Math.max(0.10, odBal * 0.001).toFixed(2)) : 0;
+    const penalty = odBal > 0 ? parseFloat(Math.max(0.13, odBal * 0.0011).toFixed(2)) : 0;
+    // Due date 30 days from today
+    const due = new Date(); due.setDate(due.getDate() + 30);
+    return {
+      mpesaBal, odBal, serviceFee,
+      totalAdvance: parseFloat((odBal + serviceFee).toFixed(2)),
+      dailyFee, penalty,
+      dueFmt: `${String(due.getDate()).padStart(2,'0')}/${String(due.getMonth()+1).padStart(2,'0')}/${due.getFullYear()}`
+    };
+  }
+
+  function showOdFinalConfirm() {
+    const amt = customAmount > 0 ? customAmount : (selectedAmount !== null ? AMOUNTS[selectedAmount] : 50);
+    const { mpesaBal, odBal, serviceFee, totalAdvance, dailyFee, penalty, dueFmt } = computeOdBreakdown(amt);
+
+    // Recipient info
+    const recipNum = recipientType === 'self' ? REGISTERED : rawNumber(digits);
+    const recipName = (() => {
+      if (recipientType === 'self') return 'Derartu Tulu Andegna';
+      const el = document.getElementById('verifiedNameText');
+      return (el && el.textContent.trim()) || 'Derartu Tulu Andegna';
+    })();
+    const recipInitials = recipName.split(' ').map(p=>p[0]).slice(0,2).join('').toUpperCase() || 'DT';
+    const fmtPhone = (d) => {
+      const r = d.replace(/\D/g,'').slice(-9);
+      return `+251${r.slice(0,3)} ${r.slice(3,6)} ${r.slice(6)}`;
+    };
+
+    document.getElementById('odFinalAvatar').textContent = recipInitials;
+    document.getElementById('odFinalName').textContent = recipName;
+    document.getElementById('odFinalNum').textContent = fmtPhone(recipNum);
+    document.getElementById('odFromMpesa').textContent = mpesaBal.toFixed(2)+' Br';
+    document.getElementById('odFromOd').textContent = odBal.toFixed(2)+' Br';
+    document.getElementById('odServiceFee').textContent = serviceFee.toFixed(2)+' Br';
+    document.getElementById('odTotalAdvance').textContent = totalAdvance.toFixed(2)+' Br';
+    document.getElementById('odDailyFee').textContent = dailyFee.toFixed(2)+' Br';
+    document.getElementById('odPenalty').textContent = penalty.toFixed(2)+' Br';
+    document.getElementById('odDueDate').textContent = dueFmt;
+    document.getElementById('odAirtimeAmt').textContent = amt.toFixed(2)+' Br';
+
+    document.getElementById('odFinalConfirmOverlay').classList.add('show');
+  }
+
+  function closeOdFinalConfirm() {
+    document.getElementById('odFinalConfirmOverlay').classList.remove('show');
+  }
+
+  /* ─── OD Activation PIN Screen ─── */
+  let odPin = '';
+
+  function showOdActivationPin() {
+    closeOdFinalConfirm();
+    odPin = '';
+    odUpdateDots();
+
+    // Populate info card
+    const recipName = document.getElementById('odFinalName').textContent;
+    const recipInitials = recipName.split(' ').map(p=>p[0]).slice(0,2).join('').toUpperCase();
+    const airtimeAmt = document.getElementById('odAirtimeAmt').textContent;
+
+    document.getElementById('odPinAvatar').textContent = recipInitials;
+    document.getElementById('odPinName').textContent = recipName;
+    document.getElementById('odPinAmt').textContent = airtimeAmt;
+
+    document.getElementById('odActivationPinScreen').classList.add('show');
+  }
+
+  function closeOdActivationPin() {
+    document.getElementById('odActivationPinScreen').classList.remove('show');
+    // Reopen confirm sheet so user can go back
+    document.getElementById('odFinalConfirmOverlay').classList.add('show');
+  }
+
+  function odPinKey(k) {
+    if (odPin.length >= 4) return;
+    odPin += k;
+    odUpdateDots();
+  }
+
+  function odPinBack() {
+    odPin = odPin.slice(0, -1);
+    odUpdateDots();
+  }
+
+  function odUpdateDots() {
+    for (let i = 0; i < 4; i++) {
+      const dot = document.getElementById('odDot'+i);
+      dot.classList.remove('filled', 'active');
+      if (i < odPin.length) {
+        dot.classList.add('filled');
+      } else if (i === odPin.length) {
+        dot.classList.add('active');
+      }
+    }
+  }
+
+  function confirmOdActivationPin() {
+    const num = recipientType === 'self' ? REGISTERED : rawNumber(digits);
+    const name = document.getElementById('odFinalName').textContent;
+    const p = PROVIDERS[providerIndex];
+    const amt = customAmount > 0 ? customAmount : (selectedAmount !== null ? AMOUNTS[selectedAmount] : 50);
+    sessionStorage.setItem('airtimeData', JSON.stringify({
+      purchaseType: purchaseType,
+      recipientType: recipientType,
+      provider: p.name, providerAbbr: p.name.slice(0,2).toUpperCase(), providerColor: '#FE353D',
+      recipient: num, recipientName: name,
+      amount: amt, payAccount: payAccount, overdraft: true,
+      odBreakdown: computeOdBreakdown(amt)
+    }));
+    window.location.href = 'Airtime Confirmation.html';
   }
 
   function persistAndGo(number, name) {
@@ -786,8 +2859,9 @@
     const amt = customAmount > 0 ? customAmount : (selectedAmount !== null ? AMOUNTS[selectedAmount] : 0);
     sessionStorage.setItem('airtimeData', JSON.stringify({
       purchaseType: purchaseType,
+      recipientType: recipientType,
       provider: p.name, providerAbbr: p.name.slice(0,2).toUpperCase(), providerColor: '#FE353D',
-      recipient: number, recipientName: name || (recipientType === 'self' ? 'My number' : ''),
+      recipient: number, recipientName: name || (recipientType === 'self' ? 'Derartu Tulu Andegna' : ''),
       amount: amt,
       payAccount: payAccount
     }));
@@ -795,43 +2869,84 @@
   }
 
   function proceed() {
-    if (purchaseType === 'airtime') {
-      if (selectedAmount === null && customAmount <= 0) return;
-      if (recipientType === 'self') { persistAndGo(REGISTERED, 'My number'); return; }
-      const num = rawNumber(digits);
-      if (!isValid(num)) return;
-      if (isUnregistered(num)) {
-        sessionStorage.setItem('airtimeEnteredNumber', formatNumber(num));
-        window.location.href = 'Airtime_Invalid Number.html';
-        return;
-      }
-      persistAndGo(num, '');
-    } else {
-      if (selectedPkg === null) return;
-      const pkg = PACKAGES[selectedPkg];
-      const priceNum = parseInt(pkg.price) || 0;
-      sessionStorage.setItem('airtimeData', JSON.stringify({
-        purchaseType: 'package',
-        provider: PROVIDERS[providerIndex].name,
-        providerAbbr: PROVIDERS[providerIndex].name.slice(0,2).toUpperCase(),
-        providerColor: '#FE353D',
-        recipient: rawNumber(digits),
-        recipientName: '',
-        packageName: pkg.title,
-        packageDesc: pkg.desc,
-        packageCat: pkg.cat,
-        amount: priceNum,
-        payAccount: payAccount
-      }));
-      window.location.href = 'Airtime_Enter PIN.html';
+    if (selectedAmount === null && customAmount <= 0) return;
+    if (overdraftActive) {
+      // OD already activated — show the "Pay with M-PESA using Overdraft?" prompt
+      showOdPrompt();
+      return;
     }
+    if (insufficientBoth) {
+      // Insufficient balance, OD not activated → ask to activate
+      showOverdraftConfirm();
+      return;
+    }
+    if (recipientType === 'self') { showBuyConfirm(REGISTERED, 'Derartu Tulu Andegna'); return; }
+    const num = rawNumber(digits);
+    if (!isValid(num)) return;
+    if (isUnregistered(num)) {
+      sessionStorage.setItem('airtimeEnteredNumber', formatNumber(num));
+      window.location.href = 'Airtime_Invalid Number.html';
+      return;
+    }
+    const nameEl = document.getElementById('verifiedNameText');
+    const verifiedName = (nameEl && nameEl.textContent.trim()) || '';
+    showBuyConfirm(num, verifiedName);
+  }
+
+  /* ─── Normal purchase confirmation sheet (no overdraft involved) ─── */
+  let pendingBuy = null; // { number, name } held while the sheet is open
+
+  function showBuyConfirm(number, name) {
+    const amt = customAmount > 0 ? customAmount : (selectedAmount !== null ? AMOUNTS[selectedAmount] : 0);
+    const initials = (name || '').split(/\s+/).slice(0, 2).map(w => w[0]).join('').toUpperCase() || 'MP';
+    const fmtPhone = d => {
+      const r = String(d).replace(/\D/g, '').slice(-9);
+      return `+251${r.slice(0, 3)} ${r.slice(3, 6)} ${r.slice(6)}`;
+    };
+
+    pendingBuy = { number, name };
+    document.getElementById('buyConfirmAvatar').textContent = initials;
+    document.getElementById('buyConfirmName').textContent = name;
+    document.getElementById('buyConfirmSub').textContent = fmtPhone(number);
+    document.getElementById('buyConfirmFee').textContent = '0.00 Br';
+    document.getElementById('buyConfirmTotal').textContent = amt.toFixed(2) + ' Br';
+    document.getElementById('buyConfirmOverlay').classList.add('show');
+  }
+
+  function closeBuyConfirm() {
+    document.getElementById('buyConfirmOverlay').classList.remove('show');
+  }
+
+  function proceedFromBuyConfirm() {
+    if (!pendingBuy) return;
+    closeBuyConfirm();
+    persistAndGo(pendingBuy.number, pendingBuy.name);
+    pendingBuy = null;
   }
 
   function goBack() { window.location.href = 'Lehulum Home.html'; }
 
+  /* ── Already-Activated OD Prompt functions ── */
+  function showOdPrompt() {
+    const amt = customAmount > 0 ? customAmount : (selectedAmount !== null ? AMOUNTS[selectedAmount] : 50);
+    const mpesaBal = 30; // standard M-PESA portion
+    const odNeed = Math.max(0, amt - mpesaBal);
+    document.getElementById('odPromptAmt').textContent = (odNeed > 0 ? odNeed : amt).toFixed(2) + ' Br';
+    document.getElementById('odPromptOverlay').classList.add('show');
+  }
+  function closeOdPrompt() {
+    document.getElementById('odPromptOverlay').classList.remove('show');
+  }
+  function onConfirmOdPrompt() {
+    closeOdPrompt();
+    showOdFinalConfirm();
+  }
+
   renderProviders();
   renderAmounts();
-  updateContinue();
+  setRecipientType('self');
+  // Hide overdraft badge initially
+  document.getElementById('odBadge').style.display = 'none';
 </script>
 
 <script src="figma-export.js"></script>
