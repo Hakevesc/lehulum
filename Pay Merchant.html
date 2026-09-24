@@ -47,9 +47,12 @@
   .toggle button.active { background: var(--Primary); color: #FFF; box-shadow: 0 4px 12px rgba(254,53,61,0.25); }
   .toggle svg { width: 18px; height: 18px; stroke: currentColor; stroke-width: 2; fill: none; flex-shrink: 0; }
 
-  .panel { display: none; flex-direction: column; gap: 16px; flex: 1; min-height: 0; }
+  .panel { display: none; flex-direction: column; gap: 16px; flex: 1; min-height: 0; overflow-y: auto; }
   .panel.active { display: flex; }
-  .frequent-section { flex: 1; min-height: 0; display: flex; flex-direction: column; gap: 12px; }
+  .panel::-webkit-scrollbar { width: 0; }
+  .frequent-section { flex: 1; min-height: 250px; display: flex; flex-direction: column; gap: 12px; }
+  /* A bit more breathing room below the frequent list so the rows don't crowd the bottom */
+  .frequent-section .panel-scroll { padding-bottom: 18px; }
   .panel-scroll { flex: 1; min-height: 0; overflow-y: auto; display: flex; flex-direction: column; gap: 16px; }
   /* Children keep their natural height instead of being squashed by the flex scroller */
   .panel-scroll > * { flex-shrink: 0; }
@@ -68,7 +71,7 @@
   .favorite-item { flex-shrink: 0; display: flex; flex-direction: column; align-items: center; gap: 6px; cursor: pointer; transition: transform 0.2s; }
   .favorite-item:hover { transform: scale(1.05); }
   .favorite-item:active { transform: scale(0.95); }
-  .favorite-avatar { width: 56px; height: 56px; border-radius: 50%; background: #FFF; border: 1px solid var(--Field-Border); display: flex; align-items: center; justify-content: center; font-family: 'Switzer', sans-serif; font-size: 16px; font-weight: 700; color: var(--Primary); box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
+  .favorite-avatar { width: 56px; height: 56px; border-radius: 50%; background: #FFE9EA; border: none; display: flex; align-items: center; justify-content: center; font-family: 'Switzer', sans-serif; font-size: 16px; font-weight: 700; color: var(--Primary); box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
   .favorite-name { font-family: 'Switzer', sans-serif; font-size: 11px; font-weight: 500; color: var(--On-Surface); text-align: center; max-width: 70px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 
   /* ── Form card ── */
@@ -110,31 +113,42 @@
   .status-chip.bad .ic svg { stroke: var(--Primary); }
   @keyframes spin { to { transform: rotate(360deg); } }
 
-  /* ── QR stage ── */
-  .qr-stage { background: #141414; border-radius: 24px; padding: 38px 20px 26px; display: flex; flex-direction: column; align-items: center; gap: 18px; cursor: pointer; }
-  .qr-window { position: relative; width: 218px; height: 218px; background: #262626; border-radius: 22px; }
+  /* ── QR stage (sized like the Withdraw agent scanner) ── */
+  .qr-stage { background: #141414; border-radius: 24px; padding: 22px 20px 20px; display: flex; flex-direction: column; align-items: center; gap: 12px; cursor: pointer; }
+  .qr-window { position: relative; width: 140px; height: 140px; background: #262626; border-radius: 18px; }
   /* Live camera feed — opens like the Scan QR page */
-  #qrCameraFeed { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; border-radius: 22px; display: none; }
+  #qrCameraFeed { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; border-radius: 18px; display: none; }
   .qr-window.live { background: transparent; }
   .qr-window.live #qrCameraFeed { display: block; }
   .qr-window.live .qr-laser { display: none; }
-  .qr-window i { position: absolute; width: 46px; height: 46px; border: 3px solid rgba(255,255,255,0.9); }
-  .qr-window i:nth-of-type(1) { top: -1px; left: -1px; border-right: none; border-bottom: none; border-radius: 22px 0 0 0; }
-  .qr-window i:nth-of-type(2) { top: -1px; right: -1px; border-left: none; border-bottom: none; border-radius: 0 22px 0 0; }
-  .qr-window i:nth-of-type(3) { bottom: -1px; left: -1px; border-right: none; border-top: none; border-radius: 0 0 0 22px; }
-  .qr-window i:nth-of-type(4) { bottom: -1px; right: -1px; border-left: none; border-top: none; border-radius: 0 0 22px 0; }
-  .qr-laser { position: absolute; left: 14px; right: 14px; height: 2px; background: var(--Primary); box-shadow: 0 0 14px rgba(254,53,61,0.9); border-radius: 2px; animation: sweep 2.6s ease-in-out infinite; }
-  @keyframes sweep { 0%, 100% { top: 16px; } 50% { top: 198px; } }
+  .qr-window i { position: absolute; width: 32px; height: 32px; border: 3px solid rgba(255,255,255,0.9); }
+  .qr-window i:nth-of-type(1) { top: -1px; left: -1px; border-right: none; border-bottom: none; border-radius: 18px 0 0 0; }
+  .qr-window i:nth-of-type(2) { top: -1px; right: -1px; border-left: none; border-bottom: none; border-radius: 0 18px 0 0; }
+  .qr-window i:nth-of-type(3) { bottom: -1px; left: -1px; border-right: none; border-top: none; border-radius: 0 0 0 18px; }
+  .qr-window i:nth-of-type(4) { bottom: -1px; right: -1px; border-left: none; border-top: none; border-radius: 0 0 18px 0; }
+  .qr-laser { position: absolute; left: 10px; right: 10px; height: 2px; background: var(--Primary); box-shadow: 0 0 14px rgba(254,53,61,0.9); border-radius: 2px; animation: sweep 2.6s ease-in-out infinite; }
+  @keyframes sweep { 0%, 100% { top: 12px; } 50% { top: 122px; } }
   .qr-copy { display: flex; flex-direction: column; align-items: center; gap: 6px; }
-  .qr-title { font-family: 'Switzer', sans-serif; font-size: 16px; font-weight: 700; color: #FFF; }
   .qr-sub { font-family: 'Switzer', sans-serif; font-size: 13px; line-height: 1.5; color: rgba(255,255,255,0.6); text-align: center; max-width: 260px; }
 
-  /* ── Merchant card (resolved) ── */
-  .merchant-card { background: #FFF; border-radius: 16px; padding: 14px; display: flex; align-items: center; gap: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.04); }
-  .merchant-avatar { width: 44px; height: 44px; border-radius: 50%; background: #FFE9EA; color: var(--Primary); display: flex; align-items: center; justify-content: center; font-family: 'Switzer', sans-serif; font-size: 14px; font-weight: 700; flex-shrink: 0; }
+  /* Once a merchant is confirmed, the square keeps showing (its own section,
+     separate from the merchant card below) but swaps to a "tap to rescan" cue. */
+  .qr-rescan { display: none; position: absolute; inset: 0; align-items: center; justify-content: center; }
+  .qr-window.confirmed .qr-laser,
+  .qr-window.confirmed #qrCameraFeed { display: none; }
+  .qr-window.confirmed .qr-rescan { display: flex; }
+  .qr-rescan svg { width: 42px; height: 42px; stroke: #fff; stroke-width: 2; fill: none; }
+
+  /* ── Merchant row (resolved): sits at the top of the amount card, same
+     tinted-row treatment as the Withdraw/Cash In name-check rows ── */
+  .merchant-card { background: var(--Field); border-radius: 14px; padding: 12px 14px; display: flex; align-items: center; gap: 12px; margin-bottom: 4px; }
+  .merchant-avatar { width: 40px; height: 40px; border-radius: 50%; background: #FFE9EA; color: var(--Primary); display: flex; align-items: center; justify-content: center; font-family: 'Switzer', sans-serif; font-size: 13px; font-weight: 700; flex-shrink: 0; }
   .merchant-info { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 3px; }
   .merchant-name { font-family: 'Switzer', sans-serif; font-size: 15px; font-weight: 700; color: var(--On-Surface); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
   .merchant-sub { font-family: 'Switzer', sans-serif; font-size: 12.5px; color: var(--On-Surface-Low); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  /* Icon-only verification badge — no "Verified" text label */
+  .merchant-check { width: 24px; height: 24px; border-radius: 50%; background: var(--Success); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+  .merchant-check svg { width: 13px; height: 13px; stroke: #FFF; stroke-width: 3; fill: none; }
 
   /* ── Frequent transactions ── */
   .frequent-card { background: #FFF; border-radius: 16px; box-shadow: 0 2px 8px rgba(0,0,0,0.04); overflow: hidden; }
@@ -197,6 +211,103 @@
     font-family: 'Switzer', sans-serif; font-size: 9.5px; font-weight: 600;
     color: #FF9800; letter-spacing: 0.2px; width: fit-content;
   }
+
+  /* ── Errif inline activation (identical to the Airtime flow) ── */
+  .errif-screen { position: absolute; inset: 0; z-index: 1200; background: #F9FAFB; display: none; flex-direction: column; overflow: hidden; }
+  .errif-screen.show { display: flex; }
+  .errif-header { display: flex; align-items: center; justify-content: space-between; padding: 6px 16px 8px; }
+  .errif-header-title { color: #111827; font-family: 'Switzer', sans-serif; font-size: 16px; font-weight: 600; flex: 1; text-align: center; margin-right: 36px; }
+  .errif-scroll { flex: 1; overflow-y: auto; display: flex; flex-direction: column; }
+  .errif-scroll::-webkit-scrollbar { width: 0; }
+  .errif-hero-wrap { position: relative; min-height: 300px; background: linear-gradient(135deg, #FEE2E2 0%, #FFF1F2 55%, #FFF 100%); display: flex; flex-direction: column; padding: 0 0 24px; }
+  .errif-hero-wrap .status-bar { background: transparent; padding: 12px 20px 4px; position: relative; z-index: 10; }
+  .errif-hero-wrap .errif-header { padding: 4px 16px 10px; background: transparent; }
+  .errif-hero-content { position: relative; z-index: 2; max-width: 72%; display: flex; flex-direction: column; gap: 4px; padding: 4px 18px 0; }
+  .errif-hero-title { font-family: 'Switzer', sans-serif; font-size: 19px; font-weight: 700; color: #111827; line-height: 1.15; }
+  .errif-hero-by { font-family: 'Switzer', sans-serif; font-size: 17px; font-weight: 700; color: #111827; }
+  .errif-hero-by span { color: #FE353D; }
+  .errif-hero-sub { font-family: 'Switzer', sans-serif; font-size: 11.5px; line-height: 1.38; color: #4B5563; margin-top: 4px; }
+  .errif-hero-icon { width: 44px; height: 44px; border-radius: 12px; background: #E52E38; display: flex; align-items: center; justify-content: center; margin-top: 6px; box-shadow: 0 4px 12px rgba(229,46,56,0.25); }
+  .errif-hero-icon svg { width: 24px; height: 24px; stroke: #FFF; fill: none; stroke-width: 1.8; }
+  .errif-card { background: #FFF; border-radius: 20px; margin: -12px 16px 16px; padding: 6px 18px; box-shadow: 0 4px 20px rgba(0,0,0,0.08); position: relative; z-index: 3; display: flex; flex-direction: column; border: 1px solid #F3F4F6; }
+  .errif-feature-row { display: flex; align-items: center; gap: 15px; padding: 18px 0; }
+  .errif-feature-row:not(:last-child) { border-bottom: 1px solid #F3F4F6; }
+  .errif-feat-icon { width: 42px; height: 42px; border-radius: 14px; background: #FEE2E2; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+  .errif-feat-icon svg { width: 21px; height: 21px; stroke: #EF4444; fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+  .errif-feat-info { display: flex; flex-direction: column; gap: 4px; }
+  .errif-feat-title { font-family: 'Switzer', sans-serif; font-size: 14px; font-weight: 700; color: #111827; }
+  .errif-feat-desc { font-family: 'Switzer', sans-serif; font-size: 12px; color: #6B7280; line-height: 1.4; }
+  .errif-bottom-bar { padding: 8px 20px 20px; display: flex; flex-direction: column; gap: 10px; background: #FFF; flex-shrink: 0; }
+  .errif-btn-activate { width: 100%; height: 48px; border-radius: 12px; background: #2563EB; color: #FFF; font-family: 'Switzer', sans-serif; font-size: 15px; font-weight: 600; border: none; cursor: pointer; transition: all 0.2s; box-shadow: 0 4px 14px rgba(37,99,235,0.28); }
+  .errif-btn-activate:hover { background: #1D4ED8; transform: translateY(-1px); }
+  .errif-btn-activate:active { transform: scale(0.98); }
+  .errif-btn-notnow { width: 100%; height: 48px; border-radius: 12px; background: #FFF; border: 1.5px solid #E5E7EB; color: #6B7280; font-family: 'Switzer', sans-serif; font-size: 15px; font-weight: 600; cursor: pointer; transition: all 0.15s; }
+  .errif-btn-notnow:hover { background: #F9FAFB; color: #374151; }
+
+  .terms-screen { position: absolute; inset: 0; z-index: 1250; background: #F9FAFB; display: none; flex-direction: column; overflow: hidden; }
+  .terms-screen.show { display: flex; }
+  .terms-header { display: flex; align-items: center; justify-content: space-between; padding: 6px 16px 10px; background: #F9FAFB; }
+  .terms-scroll { flex: 1; overflow-y: auto; padding: 6px 18px 16px; display: flex; flex-direction: column; }
+  .terms-scroll::-webkit-scrollbar { width: 0; }
+  .summary-row { display: flex; gap: 12px; margin-bottom: 20px; }
+  .summary-card { flex: 1; background: #FFF; border-radius: 16px; padding: 14px 12px; border: 1px solid #F0F1F3; box-shadow: 0 2px 8px rgba(0,0,0,0.02); display: flex; flex-direction: column; gap: 8px; }
+  .summary-head { display: flex; align-items: center; gap: 8px; }
+  .summary-head svg { width: 18px; height: 18px; stroke: var(--Primary); fill: none; stroke-width: 2; flex-shrink: 0; }
+  .summary-title { font-family: 'Switzer', sans-serif; font-size: 13.5px; font-weight: 700; color: #111827; }
+  .summary-text { font-family: 'Switzer', sans-serif; font-size: 11px; line-height: 1.45; color: #6B7280; }
+  .summary-text strong { color: #111827; font-weight: 600; }
+  .section-title { font-family: 'Switzer', sans-serif; font-size: 15px; font-weight: 700; color: #111827; margin-bottom: 12px; }
+  .terms-content-card { background: #FFF; border-radius: 16px; padding: 18px 16px; border: 1px solid #F0F1F3; box-shadow: 0 2px 10px rgba(0,0,0,0.02); display: flex; flex-direction: column; gap: 16px; }
+  .terms-p { font-family: 'Switzer', sans-serif; font-size: 12.5px; line-height: 1.55; color: #4B5563; }
+  .terms-p strong { color: #111827; font-weight: 700; }
+  .bottom-sheet-fixed { background: #FFF; border-radius: 22px 22px 0 0; padding: 18px 20px 22px; box-shadow: 0 -4px 20px rgba(0,0,0,0.04); display: flex; flex-direction: column; gap: 14px; flex-shrink: 0; }
+  .agree-row { display: flex; align-items: center; gap: 10px; cursor: pointer; user-select: none; }
+  .custom-checkbox { width: 22px; height: 22px; border-radius: 6px; background: #2563EB; display: flex; align-items: center; justify-content: center; flex-shrink: 0; transition: background 0.15s; }
+  .custom-checkbox.unchecked { background: #FFF; border: 2px solid #E5E7EB; }
+  .custom-checkbox svg { width: 13px; height: 13px; stroke: #FFF; stroke-width: 3; fill: none; }
+  .custom-checkbox.unchecked svg { display: none; }
+  .agree-label { font-family: 'Switzer', sans-serif; font-size: 12px; line-height: 1.4; color: #111827; }
+  .agree-label strong { font-weight: 700; }
+  .btn-agree { width: 100%; height: 48px; border-radius: 12px; background: #2563EB; color: #FFF; font-family: 'Switzer', sans-serif; font-size: 15px; font-weight: 600; border: none; cursor: pointer; transition: all 0.2s; box-shadow: 0 4px 14px rgba(37,99,235,0.28); }
+  .btn-agree:hover { background: #1D4ED8; transform: translateY(-1px); }
+  .btn-agree:disabled { background: #E5E7EB; color: #9CA3AF; box-shadow: none; cursor: not-allowed; transform: none; }
+
+  .activated-screen { position: absolute; inset: 0; z-index: 1300; background: #F9FAFB; display: none; flex-direction: column; overflow: hidden; }
+  .activated-screen.show { display: flex; }
+  .activated-header { display: flex; align-items: center; justify-content: space-between; padding: 6px 16px 4px; background: #F9FAFB; }
+  .activated-scroll { flex: 1; overflow-y: auto; padding: 8px 18px 14px; display: flex; flex-direction: column; }
+  .activated-scroll::-webkit-scrollbar { width: 0; }
+  .hero-badge-wrap { display: flex; flex-direction: column; align-items: center; text-align: center; margin-top: 2px; margin-bottom: 26px; }
+  .success-squircle { width: 68px; height: 68px; border-radius: 20px; background: #DCFCE7; border: 3px solid #22C55E; display: flex; align-items: center; justify-content: center; margin-bottom: 12px; animation: popIn 0.4s cubic-bezier(0.34,1.56,0.64,1); }
+  @keyframes popIn { from { transform: scale(0.7); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+  .success-squircle svg { width: 34px; height: 34px; stroke: #16A34A; stroke-width: 3.5; fill: none; stroke-linecap: round; stroke-linejoin: round; }
+  .activated-title { font-family: 'Switzer', sans-serif; font-size: 21px; font-weight: 800; color: #111827; margin-bottom: 6px; }
+  .activated-subtitle { font-family: 'Switzer', sans-serif; font-size: 12px; line-height: 1.45; color: #6B7280; max-width: 270px; }
+  .activation-info-card { background: #FFF; border-radius: 16px; padding: 14px 16px; display: flex; align-items: center; gap: 13px; margin-top: 8px; border: 1px solid #F0F1F3; box-shadow: 0 2px 8px rgba(0,0,0,0.04); }
+  .activation-info-card .ic-abbr { width: 44px; height: 44px; border-radius: 14px; background: #FEE2E2; display: flex; align-items: center; justify-content: center; flex-shrink: 0; font-family: 'Switzer', sans-serif; font-size: 17px; font-weight: 700; color: #EF4444; }
+  .activation-info-text { display: flex; flex-direction: column; gap: 2px; }
+  .activation-info-title { font-family: 'Switzer', sans-serif; font-size: 14.5px; font-weight: 700; color: #111827; }
+  .activation-info-sub { font-family: 'Switzer', sans-serif; font-size: 12.5px; color: #6B7280; }
+  .activation-info-sub b { color: #111827; font-weight: 600; }
+  .pin-prompt { display: flex; align-items: center; justify-content: center; gap: 7px; margin-top: 32px; }
+  .pin-prompt svg { width: 15px; height: 15px; stroke: var(--On-Surface); stroke-width: 2; fill: none; }
+  .pin-prompt span { font-family: 'Switzer', sans-serif; font-size: 14px; font-weight: 600; color: var(--On-Surface); }
+  .pin-container { display: flex; justify-content: space-between; gap: 12px; margin-top: 16px; }
+  .pin-box { flex: 1; height: 60px; border-radius: 14px; background: #F1F1F4; display: flex; align-items: center; justify-content: center; transition: background 0.18s, border-color 0.18s; }
+  .pin-box .dot { width: 13px; height: 13px; border-radius: 50%; background: var(--On-Surface); display: none; }
+  .pin-box .caret { width: 2px; height: 26px; background: var(--On-Surface); border-radius: 1px; display: none; animation: blink 1.05s step-end infinite; }
+  .pin-box.active { border: 2px solid var(--Primary); }
+  .pin-box.active .caret { display: block; }
+  .pin-box.filled .dot { display: block; }
+  @keyframes blink { 0%, 100% { opacity: 0; } 50% { opacity: 1; } }
+  .keypad { background: #FFF; border-radius: 20px; padding: 14px 10px; margin-top: auto; display: grid; grid-template-columns: repeat(3, 1fr); box-shadow: 0 2px 8px rgba(0,0,0,0.04); }
+  .key { height: 54px; border: none; background: transparent; cursor: pointer; border-radius: 12px; font-family: 'Switzer', sans-serif; font-size: 24px; font-weight: 500; color: #55555E; display: flex; align-items: center; justify-content: center; transition: background 0.12s, transform 0.1s; }
+  .key:hover { background: #F7F7F8; }
+  .key:active { background: #EFEFF2; transform: scale(0.95); }
+  .key.empty { pointer-events: none; }
+  .key svg { width: 26px; height: 26px; stroke: #55555E; stroke-width: 1.7; fill: none; }
+  .pin-action-btn { margin-top: 14px; height: 52px; border-radius: 14px; border: none; background: #2563EB; color: #FFF; font-family: 'Poppins', sans-serif; font-size: 15px; font-weight: 500; cursor: pointer; box-shadow: 0 4px 16px rgba(37,99,235,0.28); transition: all 0.2s; flex-shrink: 0; width: 100%; }
+  .pin-action-btn:hover { background: #1D4ED8; box-shadow: 0 6px 20px rgba(37,99,235,0.35); }
 </style>
 </head>
 <body>
@@ -235,34 +346,39 @@
 
       <!-- ── Scan QR ── -->
       <div class="panel active" id="panelQr">
-        <div class="qr-stage pinned" id="qrStage" onclick="simulateScan()">
+        <div class="qr-stage pinned" id="qrStage" onclick="onQrStageClick()">
           <div class="qr-window" id="qrWindow">
             <video id="qrCameraFeed" autoplay playsinline muted></video>
             <i></i><i></i><i></i><i></i>
             <div class="qr-laser"></div>
+            <div class="qr-rescan" id="qrRescanIcon">
+              <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 1 1-3-6.7"/><polyline points="21 3 21 9 15 9"/></svg>
+            </div>
           </div>
           <div class="qr-copy">
-            <span class="qr-title">Scan To Pay Any Merchant</span>
-            <span class="qr-sub">Open the camera and align the merchant's QR code within the frame.</span>
+            <span class="qr-sub" id="qrStageSub">Open the camera and align the merchant's QR code within the frame.</span>
           </div>
         </div>
 
-        <!-- Replaces the stage once a merchant is scanned -->
-        <div class="merchant-card" id="qrMerchantCard" style="display:none;">
-          <span class="merchant-avatar" id="qrMerchantAbbr"></span>
-          <span class="merchant-info">
-            <span class="merchant-name" id="qrMerchantName"></span>
-            <span class="merchant-sub" id="qrMerchantCode"></span>
-          </span>
-        </div>
-
+        <!-- Amount card: the resolved merchant row sits at its top -->
         <div class="form-card" id="qrAmountCard" style="display:none;">
+          <div class="merchant-card" id="qrMerchantCard">
+            <span class="merchant-avatar" id="qrMerchantAbbr"></span>
+            <span class="merchant-info">
+              <span class="merchant-name" id="qrMerchantName"></span>
+              <span class="merchant-sub" id="qrMerchantCode"></span>
+            </span>
+            <span class="merchant-check" aria-label="Verified merchant">
+              <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
+            </span>
+          </div>
+
           <span class="field-label">Amount</span>
           <div class="field" id="qrAmtField">
-            <input id="qrAmtInput" type="text" inputmode="decimal" placeholder="e.g. 120 Br" autocomplete="off"
+            <input id="qrAmtInput" type="text" inputmode="decimal" placeholder="e.g. 120 ETB" autocomplete="off"
                    oninput="onAmountInput()" onfocus="unformatAmount()" onblur="formatAmount()">
           </div>
-          <div class="balance-hint"><b>Balance:</b> 12,580.00 Br <span class="od-badge" style="display:none;">Errif Overdraft Active</span></div>
+          <div class="balance-hint"><span id="qrBalanceText"><b>Balance:</b> 12,580.00 ETB</span> <span class="od-badge" style="display:none;">Errif Overdraft Active</span></div>
           <div class="msg" id="qrAmtMsg"></div>
         </div>
 
@@ -308,11 +424,20 @@
 
           <span class="field-label">Amount</span>
           <div class="field" id="codeAmtField">
-            <input id="codeAmtInput" type="text" inputmode="decimal" placeholder="e.g. 120 Br" autocomplete="off"
+            <input id="codeAmtInput" type="text" inputmode="decimal" placeholder="e.g. 120 ETB" autocomplete="off"
                    oninput="onAmountInput()" onfocus="unformatAmount()" onblur="formatAmount()">
           </div>
-          <div class="balance-hint"><b>Balance:</b> 12,580.00 Br <span class="od-badge" style="display:none;">Errif Overdraft Active</span></div>
+          <div class="balance-hint"><span id="codeBalanceText"><b>Balance:</b> 12,580.00 ETB</span> <span class="od-badge" style="display:none;">Errif Overdraft Active</span></div>
           <div class="msg" id="codeAmtMsg"></div>
+        </div>
+
+        <div class="frequent-section" id="codeFrequentSection" style="flex: none; min-height: auto;">
+          <div class="section-header">
+            <span class="section-title">Frequent Transactions</span>
+          </div>
+          <div class="panel-scroll" style="flex: none; overflow: visible;">
+            <div class="frequent-card" id="codeFrequentList"></div>
+          </div>
         </div>
         </div>
       </div>
@@ -353,6 +478,13 @@
         <span class="sum-val" id="cfTotal"></span>
       </div>
 
+      <div id="cfOdBlock" style="display:none;">
+        <div class="sum-row"><span class="sum-key">From M-PESA Balance:</span><span class="sum-val" id="cfOdMpesa"></span></div>
+        <div class="sum-row"><span class="sum-key">From Errif Overdraft:</span><span class="sum-val" id="cfOdOd"></span></div>
+        <div class="sum-row"><span class="sum-key">Service Fee:</span><span class="sum-val" id="cfOdFeeVal"></span></div>
+        <div class="sum-row total"><span class="sum-key">Total Advance:</span><span class="sum-val" id="cfOdAdvance"></span></div>
+      </div>
+
       <div class="sheet-actions">
         <button class="sheet-btn cancel" onclick="closeConfirm()">Cancel</button>
         <button class="sheet-btn confirm" onclick="confirmPayment()">Confirm</button>
@@ -377,6 +509,210 @@
       </div>
     </div>
   </div>
+
+  <!-- Errif activation · screen 1 — Activate hero (identical to Airtime) -->
+  <div class="errif-screen" id="errifActivateScreen">
+    <div class="errif-scroll">
+      <div class="errif-hero-wrap">
+        <div class="status-bar">
+          <span class="time">10:00</span>
+          <div class="status-icons">
+            <svg viewBox="0 0 24 24" fill="none"><path d="M1 9l2 2c4.97-4.97 13.03-4.97 18 0l2-2C16.93 2.93 7.08 2.93 1 9z" fill="#1C1C21"/><path d="M5 13l2 2c2.76-2.76 7.24-2.76 10 0l2-2C15.14 9.14 8.87 9.14 5 13z" fill="#1C1C21"/><path d="M9 17l2 2c1.1-1.1 2.9-1.1 4 0l2-2c-2.21-2.21-5.79-2.21-8 0z" fill="#1C1C21"/></svg>
+            <svg viewBox="0 0 24 24" fill="none"><rect x="2" y="6" width="4" height="12" rx="1" fill="#1C1C21"/><rect x="8" y="4" width="4" height="14" rx="1" fill="#1C1C21"/><rect x="14" y="2" width="4" height="16" rx="1" fill="#1C1C21"/><rect x="20" y="0" width="4" height="18" rx="1" fill="#1C1C21" opacity="0.3"/></svg>
+            <svg viewBox="0 0 28 14" fill="none"><rect x="0" y="1" width="22" height="12" rx="2.5" stroke="#1C1C21" stroke-width="1.5"/><rect x="2" y="3" width="16" height="8" rx="1" fill="#1C1C21"/><rect x="24" y="4" width="2" height="6" rx="1" fill="#1C1C21"/></svg>
+          </div>
+        </div>
+        <div class="errif-header">
+          <button class="back-btn" onclick="closeErrifActivate()">
+            <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+          </button>
+          <span class="errif-header-title">Activate Errif</span>
+        </div>
+        <div class="errif-hero-content">
+          <div class="errif-hero-title">Activate Errif</div>
+          <div class="errif-hero-by">By <span>M-PESA</span></div>
+          <p class="errif-hero-sub">Get instant credit to pay merchants when your balance is low, and repay conveniently later.</p>
+          <div class="errif-hero-icon">
+            <svg viewBox="0 0 24 24"><path d="M21 12V7H5a2 2 0 0 1 0-4h14v4"/><path d="M3 5v14a2 2 0 0 0 2 2h16v-5"/><path d="M18 12a2 2 0 0 0 0 4h4v-4Z"/></svg>
+          </div>
+        </div>
+      </div>
+
+      <div class="errif-card">
+        <div class="errif-feature-row">
+          <div class="errif-feat-icon"><svg viewBox="0 0 24 24"><polyline points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg></div>
+          <div class="errif-feat-info">
+            <div class="errif-feat-title">Pay Instantly</div>
+            <div class="errif-feat-desc">Complete this merchant payment right away</div>
+          </div>
+        </div>
+        <div class="errif-feature-row">
+          <div class="errif-feat-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></div>
+          <div class="errif-feat-info">
+            <div class="errif-feat-title">Flexible Repayment</div>
+            <div class="errif-feat-desc">Repay within 30 days, interest free for the first 7</div>
+          </div>
+        </div>
+        <div class="errif-feature-row">
+          <div class="errif-feat-icon"><svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div>
+          <div class="errif-feat-info">
+            <div class="errif-feat-title">Safe &amp; in your control</div>
+            <div class="errif-feat-desc">Use only what you need, when you need it</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="errif-bottom-bar">
+      <button class="errif-btn-activate" onclick="showErrifTerms()">Activate</button>
+      <button class="errif-btn-notnow" onclick="closeErrifActivate()">Not Now</button>
+    </div>
+  </div>
+
+  <!-- Errif activation · screen 2 — Terms & Conditions (identical to Airtime) -->
+  <div class="terms-screen" id="errifTermsScreen">
+    <div class="status-bar">
+      <span class="time">10:00</span>
+      <div class="status-icons">
+        <svg viewBox="0 0 24 24" fill="none"><path d="M1 9l2 2c4.97-4.97 13.03-4.97 18 0l2-2C16.93 2.93 7.08 2.93 1 9z" fill="#1C1C21"/><path d="M5 13l2 2c2.76-2.76 7.24-2.76 10 0l2-2C15.14 9.14 8.87 9.14 5 13z" fill="#1C1C21"/><path d="M9 17l2 2c1.1-1.1 2.9-1.1 4 0l2-2c-2.21-2.21-5.79-2.21-8 0z" fill="#1C1C21"/></svg>
+        <svg viewBox="0 0 24 24" fill="none"><rect x="2" y="6" width="4" height="12" rx="1" fill="#1C1C21"/><rect x="8" y="4" width="4" height="14" rx="1" fill="#1C1C21"/><rect x="14" y="2" width="4" height="16" rx="1" fill="#1C1C21"/><rect x="20" y="0" width="4" height="18" rx="1" fill="#1C1C21" opacity="0.3"/></svg>
+        <svg viewBox="0 0 28 14" fill="none"><rect x="0" y="1" width="22" height="12" rx="2.5" stroke="#1C1C21" stroke-width="1.5"/><rect x="2" y="3" width="16" height="8" rx="1" fill="#1C1C21"/><rect x="24" y="4" width="2" height="6" rx="1" fill="#1C1C21"/></svg>
+      </div>
+    </div>
+    <div class="terms-header">
+      <button class="back-btn" onclick="closeErrifTerms()">
+        <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+      </button>
+      <span class="header-title">Activate Errif</span>
+      <div style="width:36px;"></div>
+    </div>
+    <div class="terms-scroll">
+      <div class="summary-row">
+        <div class="summary-card">
+          <div class="summary-head"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg><span class="summary-title">Limit</span></div>
+          <p class="summary-text"><strong>3,000.00 ETB</strong> dynamic limit based on usage &amp; standing.</p>
+        </div>
+        <div class="summary-card">
+          <div class="summary-head"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg><span class="summary-title">Repayment</span></div>
+          <p class="summary-text">Due Date in <strong>30 days.</strong><br>Auto-deducted from incoming funds.</p>
+        </div>
+        <div class="summary-card">
+          <div class="summary-head"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l-.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg><span class="summary-title">Fees</span></div>
+          <p class="summary-text"><strong>0% Interest</strong> for first 7 days. Daily fee after.</p>
+        </div>
+      </div>
+
+      <div class="section-title">Terms &amp; Conditions</div>
+      <div class="terms-content-card">
+        <p class="terms-p">Your approved Errif overdraft limit is 3,000.00 ETB. This limit is dynamic and may change based on your usage, repayment history, and overall account standing.</p>
+        <p class="terms-p">Outstanding amounts are due within 30 days of activation. Amounts may be recovered automatically from incoming funds until the balance is cleared.</p>
+        <p class="terms-p">Enjoy <strong>0% interest for the first 7 days.</strong> A daily service fee applies thereafter as published in the official Tariffs &amp; Fees schedule.</p>
+      </div>
+    </div>
+
+    <div class="bottom-sheet-fixed">
+      <div class="agree-row" onclick="toggleAgreeBuy()">
+        <div class="custom-checkbox" id="agreeCheckboxBuy"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></div>
+        <span class="agree-label">I have read and agree to the <strong>Errif Overdraft Terms &amp; Conditions</strong> and Tariffs.</span>
+      </div>
+      <button class="btn-agree" id="agreeBtnBuy" onclick="showErrifActivationPin()">Agree &amp; Activate</button>
+    </div>
+  </div>
+
+  <!-- Errif activation · screen 2.5 — M-PESA PIN (identical to Airtime) -->
+  <div class="terms-screen" id="errifActivationPinScreen" style="background: var(--Background);">
+    <div class="status-bar">
+      <span class="time">10:00</span>
+      <div class="status-icons">
+        <svg viewBox="0 0 24 24" fill="none"><path d="M1 9l2 2c4.97-4.97 13.03-4.97 18 0l2-2C16.93 2.93 7.08 2.93 1 9z" fill="#1C1C21"/><path d="M5 13l2 2c2.76-2.76 7.24-2.76 10 0l2-2C15.14 9.14 8.87 9.14 5 13z" fill="#1C1C21"/><path d="M9 17l2 2c1.1-1.1 2.9-1.1 4 0l2-2c-2.21-2.21-5.79-2.21-8 0z" fill="#1C1C21"/></svg>
+        <svg viewBox="0 0 24 24" fill="none"><rect x="2" y="6" width="4" height="12" rx="1" fill="#1C1C21"/><rect x="8" y="4" width="4" height="14" rx="1" fill="#1C1C21"/><rect x="14" y="2" width="4" height="16" rx="1" fill="#1C1C21"/><rect x="20" y="0" width="4" height="18" rx="1" fill="#1C1C21" opacity="0.3"/></svg>
+        <svg viewBox="0 0 28 14" fill="none"><rect x="0" y="1" width="22" height="12" rx="2.5" stroke="#1C1C21" stroke-width="1.5"/><rect x="2" y="3" width="16" height="8" rx="1" fill="#1C1C21"/><rect x="24" y="4" width="2" height="6" rx="1" fill="#1C1C21"/></svg>
+      </div>
+    </div>
+    <div class="terms-header">
+      <button class="back-btn" onclick="closeErrifActivationPin()">
+        <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+      </button>
+      <span class="header-title">Activate Errif</span>
+      <div style="width:36px;"></div>
+    </div>
+    <div class="errif-scroll">
+      <div class="activation-info-card">
+        <div class="ic-abbr" id="actInfoAbbr">LC</div>
+        <div class="activation-info-text">
+          <div class="activation-info-title">Activate Errif By M-PESA</div>
+          <div class="activation-info-sub">Errif OD Balance: <b>3,000.00 ETB</b></div>
+        </div>
+      </div>
+
+      <div class="pin-prompt">
+        <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="10.5" width="14" height="10" rx="2.5"/><path d="M8.5 10.5V7.5a3.5 3.5 0 0 1 7 0v3"/></svg>
+        <span>Enter Your M-PESA PIN</span>
+      </div>
+
+      <div class="pin-container" id="actPinContainer">
+        <div class="pin-box active" id="actPinBox0"><span class="caret"></span><span class="dot"></span></div>
+        <div class="pin-box" id="actPinBox1"><span class="caret"></span><span class="dot"></span></div>
+        <div class="pin-box" id="actPinBox2"><span class="caret"></span><span class="dot"></span></div>
+        <div class="pin-box" id="actPinBox3"><span class="caret"></span><span class="dot"></span></div>
+      </div>
+
+      <div class="keypad">
+        <button class="key" onclick="pressActPin('1')">1</button>
+        <button class="key" onclick="pressActPin('2')">2</button>
+        <button class="key" onclick="pressActPin('3')">3</button>
+        <button class="key" onclick="pressActPin('4')">4</button>
+        <button class="key" onclick="pressActPin('5')">5</button>
+        <button class="key" onclick="pressActPin('6')">6</button>
+        <button class="key" onclick="pressActPin('7')">7</button>
+        <button class="key" onclick="pressActPin('8')">8</button>
+        <button class="key" onclick="pressActPin('9')">9</button>
+        <button class="key empty"></button>
+        <button class="key" onclick="pressActPin('0')">0</button>
+        <button class="key" onclick="pressActPinBack()" aria-label="Delete">
+          <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M20 5H9L3 12l6 7h11a1.5 1.5 0 0 0 1.5-1.5v-11A1.5 1.5 0 0 0 20 5z"/><path d="M12 9.5l5 5M17 9.5l-5 5"/></svg>
+        </button>
+      </div>
+
+      <button class="pin-action-btn" id="actPinSubmitBtn" onclick="confirmErrifActivation()">Activate</button>
+    </div>
+  </div>
+
+  <!-- Errif activation · screen 3 — Errif Activated! (identical to Airtime) -->
+  <div class="activated-screen" id="errifSuccessScreen">
+    <div class="status-bar">
+      <span class="time">10:00</span>
+      <div class="status-icons">
+        <svg viewBox="0 0 24 24" fill="none"><path d="M1 9l2 2c4.97-4.97 13.03-4.97 18 0l2-2C16.93 2.93 7.08 2.93 1 9z" fill="#111827"/><path d="M5 13l2 2c2.76-2.76 7.24-2.76 10 0l2-2C15.14 9.14 8.87 9.14 5 13z" fill="#111827"/><path d="M9 17l2 2c1.1-1.1 2.9-1.1 4 0l2-2c-2.21-2.21-5.79-2.21-8 0z" fill="#111827"/></svg>
+        <svg viewBox="0 0 24 24" fill="none"><rect x="2" y="6" width="4" height="12" rx="1" fill="#111827"/><rect x="8" y="4" width="4" height="14" rx="1" fill="#111827"/><rect x="14" y="2" width="4" height="16" rx="1" fill="#111827"/><rect x="20" y="0" width="4" height="18" rx="1" fill="#111827" opacity="0.3"/></svg>
+        <svg viewBox="0 0 28 14" fill="none"><rect x="0" y="1" width="22" height="12" rx="2.5" stroke="#111827" stroke-width="1.5"/><rect x="2" y="3" width="16" height="8" rx="1" fill="#111827"/><rect x="24" y="4" width="2" height="6" rx="1" fill="#111827"/></svg>
+      </div>
+    </div>
+    <div class="activated-header">
+      <button class="back-btn" onclick="closeErrifSuccess()">
+        <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+      </button>
+      <span class="header-title">Activate Errif</span>
+    </div>
+    <div class="activated-scroll">
+      <div class="hero-badge-wrap">
+        <div class="success-squircle"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></div>
+        <div class="activated-title">Errif Activated!</div>
+        <div class="activated-subtitle">You can now complete this merchant payment and repay later.</div>
+      </div>
+
+      <div class="activation-info-card">
+        <div class="ic-abbr">LC</div>
+        <div class="activation-info-text">
+          <div class="activation-info-title">Errif OD Balance</div>
+          <div class="activation-info-sub"><b>3,000.00 ETB</b> available for this payment</div>
+        </div>
+      </div>
+    </div>
+    <div class="bottom-sheet-fixed">
+      <button class="errif-btn-activate" onclick="completeErrifActivation()">Continue to Payment</button>
+    </div>
+  </div>
 </div>
 
 <script>
@@ -387,11 +723,13 @@
     { code: '662140',     name: 'AM Juice',          short: 'AM Juice',    abbr: 'AJ', cat: 'Juice Bar' },
     { code: '247810',     name: 'Shoa Supermarket',  abbr: 'SH', cat: 'Retail' },
     { code: '183920',     name: "Kaldi's Coffee",    abbr: 'KC', cat: 'F&B' },
-    { code: '391047',     name: 'Yordanos Pharmacy', abbr: 'YP', cat: 'Health' }
+    { code: '391047',     name: 'Yordanos Pharmacy', abbr: 'YP', cat: 'Health' },
+    { code: '732215',     name: 'ZemZem Restaurant',  short: 'ZemZem',    abbr: 'ZR', cat: 'F&B' },
+    { code: '554812',     name: 'Metro Supermarket',  short: 'Metro',     abbr: 'MS', cat: 'Retail' }
   ];
 
   const FAVORITES = ['452929', '4529292178', '318204', '662140'];
-  const FREQUENT  = ['247810', '183920', '391047'];
+  const FREQUENT  = ['247810', '183920', '391047', '732215', '554812'];
 
   // The scanner always lands on the merchant the design shows.
   const SCAN_RESULT = '4529292178';
@@ -405,7 +743,7 @@
   // Errif OD is toggled from the Airtime screen's test panel and persists in
   // sessionStorage, so this screen reflects the same on/off without its own switch.
   const ERIFF_OD_LIMIT = 3000;
-  const errifOdActive = sessionStorage.getItem('errifOdActive') === '1';
+  let errifOdActive = sessionStorage.getItem('errifOdActive') === '1';
   if (errifOdActive) {
     // Show the orange Errif badge under the amount — exactly like Airtime.
     document.querySelectorAll('.od-badge').forEach(el => { el.style.display = 'inline-flex'; });
@@ -484,7 +822,8 @@
     setMerchant(find(SCAN_RESULT));
   }
 
-  // A resolved merchant replaces the scan stage with its card plus an amount field.
+  // A resolved merchant keeps the QR section visible above (as its own
+  // separate block) and adds its card plus an amount field below it.
   function setMerchant(m) {
     if (!m) return;
     merchant = m;
@@ -494,12 +833,26 @@
     $('qrMerchantName').textContent = m.name;
     $('qrMerchantCode').textContent = m.code;
     stopQrCamera();
-    $('qrStage').style.display = 'none';
-    $('frequentSection').style.display = 'none';
-    $('qrMerchantCard').style.display = '';
+    $('qrWindow').classList.add('confirmed');
+    $('qrStageSub').textContent = 'Tap the square to scan a different merchant.';
     $('qrAmountCard').style.display = '';
     $('qrAmtInput').focus();
     updateBtn();
+  }
+
+  // Tapping the square once confirmed starts over; otherwise it scans now.
+  function onQrStageClick() {
+    if ($('qrWindow').classList.contains('confirmed')) rescanMerchant();
+    else simulateScan();
+  }
+
+  function rescanMerchant() {
+    merchant = null;
+    $('qrWindow').classList.remove('confirmed');
+    $('qrStageSub').textContent = "Open the camera and align the merchant's QR code within the frame.";
+    $('qrAmountCard').style.display = 'none';
+    updateBtn();
+    if (tab === 'qr') armScanner();
   }
 
   /* ── Enter code ── */
@@ -556,10 +909,10 @@
       '</div>';
     }).join('');
 
-    $('frequentList').innerHTML = FREQUENT.map(code => {
+    const freqHtml = FREQUENT.map(code => {
       const m = find(code);
       if (!m) return '';
-      return '<div class="frequent-item" onclick="setMerchant(find(\'' + m.code + '\'))">' +
+      return '<div class="frequent-item" onclick="useFrequent(\'' + m.code + '\')">' +
         '<span class="merchant-avatar">' + m.abbr + '</span>' +
         '<span class="merchant-info">' +
           '<span class="merchant-name">' + m.name + '</span>' +
@@ -567,13 +920,27 @@
         '</span>' +
       '</div>';
     }).join('');
+    $('frequentList').innerHTML = freqHtml;
+    const codeFreq = $('codeFrequentList');
+    if (codeFreq) codeFreq.innerHTML = freqHtml;
   })();
+
+  /* Clicking a frequent merchant jumps to the Short Code tab and pre-fills
+     the code so the usual lookup runs there. */
+  function useFrequent(code) {
+    if (tab !== 'code') switchTab('code');
+    const el = $('codeInput');
+    el.value = code;
+    onCodeInput();
+    el.focus();
+  }
 
   /* ── Amount ── */
   // Each tab owns its own amount field, so every read routes through the active one.
   const amtInput = () => tab === 'qr' ? $('qrAmtInput') : $('codeAmtInput');
   const amtField = () => tab === 'qr' ? $('qrAmtField') : $('codeAmtField');
   const amtMsg   = () => tab === 'qr' ? $('qrAmtMsg')   : $('codeAmtMsg');
+  const amtBalanceText = () => tab === 'qr' ? $('qrBalanceText') : $('codeBalanceText');
 
   const amountValue = () => {
     const raw = amtInput().value.replace(/[^\d.]/g, '');
@@ -594,7 +961,7 @@
 
   function formatAmount() {
     const n = amountValue();
-    if (n !== null && !isNaN(n)) amtInput().value = fmt(n) + ' Br';
+    if (n !== null && !isNaN(n)) amtInput().value = fmt(n) + ' ETB';
   }
 
   function setAmountState(state, text) {
@@ -604,6 +971,7 @@
     msg.classList.toggle('warn', state === 'warn');
     msg.classList.toggle('err', state === 'err');
     msg.classList.toggle('show', !!state);
+    amtBalanceText().style.display = state ? 'none' : '';
     if (text) msg.textContent = text;
   }
 
@@ -611,8 +979,8 @@
     const n = amountValue();
     if (n === null) { setAmountState(null); return null; }
     if (isNaN(n) || n <= 0) { setAmountState('err', 'Enter a valid amount'); return null; }
-    if (n < MIN_AMT) { setAmountState('err', 'Minimum Amount: ' + fmt(MIN_AMT) + ' Br'); return null; }
-    if (n > MAX_AMT) { setAmountState('err', 'Maximum Amount: ' + fmt(MAX_AMT) + ' Br'); return null; }
+    if (n < MIN_AMT) { setAmountState('err', 'Minimum Amount: ' + fmt(MIN_AMT) + ' ETB'); return null; }
+    if (n > MAX_AMT) { setAmountState('err', 'Maximum Amount: ' + fmt(MAX_AMT) + ' ETB'); return null; }
     if (n > MAIN && !errifOdActive) {
       // Over the main balance and Errif isn't active yet → offer activation at confirm.
       setAmountState('warn', 'Low balance — continue with Errif overdraft');
@@ -640,15 +1008,15 @@
     $('cfAvatar').textContent = m.abbr;
     $('cfName').textContent = m.name;
     $('cfCode').textContent = 'Merchant Short Code: ' + m.code;
-    $('cfAmount').textContent = fmt(amount) + ' Br';
-    $('cfFee').textContent = FEE > 0 ? fmt(FEE) + ' Br' : 'Free';
-    $('cfTotal').textContent = fmt(amount + FEE) + ' Br';
+    $('cfAmount').textContent = fmt(amount) + ' ETB';
+    $('cfFee').textContent = FEE > 0 ? fmt(FEE) + ' ETB' : 'Free';
+    $('cfTotal').textContent = fmt(amount + FEE) + ' ETB';
     $('confirmOverlay').classList.add('show');
   }
 
-  function closeConfirm() { $('confirmOverlay').classList.remove('show'); }
+  function closeConfirm() { odFinalPending = false; $('confirmOverlay').classList.remove('show'); }
 
-  // Same split as Airtime: first 30 Br from M-PESA, the rest from Errif.
+  // Same split as Airtime: first 30 ETB from M-PESA, the rest from Errif.
   function computeOdBreakdown(amt) {
     const mpesaBal = Math.min(amt, 30);
     const odBal = Math.max(0, amt - mpesaBal);
@@ -665,19 +1033,25 @@
   }
 
   function confirmPayment() {
-    const m = activeMerchant(), amount = validateAmount();
+    // After Errif activation the OD final confirm sheet completes straight from
+    // the stored amount — it was already validated, so no re-validation that
+    // could silently abort an over-limit demo amount.
+    let m = activeMerchant(), amount = validateAmount();
+    if (odFinalPending) { m = pendingMerchant; amount = pendingAmount; }
     if (!m || amount === null) return;
+    odFinalPending = false;
 
-    // Errif not activated and the main balance can't cover it → activation journey
+    // Errif not activated and the main balance can't cover it → inline activation
     if (amount > MAIN && !errifOdActive) {
+      pendingMerchant = m;
+      pendingAmount = amount;
       sessionStorage.setItem('merchantData', JSON.stringify({
         name: m.name, abbr: m.abbr, code: m.code, category: m.cat,
         sub: m.cat + ' • Merchant No. ' + m.code,
         payAmount: amount.toFixed(2), fee: FEE.toFixed(2),
         total: (amount + FEE).toFixed(2)
       }));
-      if (!sessionStorage.getItem('odStatus')) sessionStorage.setItem('odStatus', 'eligible');
-      window.location.href = 'Merchant Payment_Overdraft Offer.html';
+      showErrifActivate();
       return;
     }
 
@@ -707,6 +1081,86 @@
     sessionStorage.removeItem('merchantResolved');
     setMerchant(find(SCAN_RESULT));
   })();
+
+  /* ── Errif inline activation — identical to the Airtime flow ── */
+  let actPin = '';
+  let isAgreedBuy = true;
+  let pendingMerchant = null;
+  let pendingAmount = 0;
+  let odFinalPending = false;   // the OD final confirm completes straight from pendingAmount
+
+  function showErrifActivate() { document.getElementById('errifActivateScreen').classList.add('show'); }
+  function closeErrifActivate() { document.getElementById('errifActivateScreen').classList.remove('show'); }
+  function showErrifTerms() { document.getElementById('errifTermsScreen').classList.add('show'); }
+  function closeErrifTerms() { document.getElementById('errifTermsScreen').classList.remove('show'); }
+
+  function toggleAgreeBuy() {
+    isAgreedBuy = !isAgreedBuy;
+    document.getElementById('agreeCheckboxBuy').classList.toggle('unchecked', !isAgreedBuy);
+    document.getElementById('agreeBtnBuy').disabled = !isAgreedBuy;
+  }
+
+  function showErrifActivationPin() {
+    if (!isAgreedBuy) return;
+    actPin = '';
+    updateActPinDisplay();
+    document.getElementById('errifActivationPinScreen').classList.add('show');
+  }
+  function closeErrifActivationPin() { document.getElementById('errifActivationPinScreen').classList.remove('show'); }
+  function pressActPin(k) { if (actPin.length < 4) { actPin += k; updateActPinDisplay(); } }
+  function pressActPinBack() { actPin = actPin.slice(0, -1); updateActPinDisplay(); }
+  function updateActPinDisplay() {
+    for (let i = 0; i < 4; i++) {
+      const box = document.getElementById('actPinBox' + i);
+      if (!box) continue;
+      box.classList.remove('filled', 'active');
+      if (i < actPin.length) box.classList.add('filled');
+      else if (i === actPin.length) box.classList.add('active');
+    }
+  }
+  function confirmErrifActivation() {
+    if (actPin.length !== 4) return;
+    closeErrifActivationPin();
+    showErrifSuccess();
+  }
+  function showErrifSuccess() { document.getElementById('errifSuccessScreen').classList.add('show'); }
+  function closeErrifSuccess() { document.getElementById('errifSuccessScreen').classList.remove('show'); }
+
+  // Activation done → Errif is live wallet-wide (same flag Airtime uses), and this
+  // payment is funded by the overdraft. Re-open the confirm sheet as the
+  // "Pay with Errif Overdraft" final confirm, exactly like the Airtime OD confirm.
+  function completeErrifActivation() {
+    sessionStorage.setItem('errifOdActive', '1');
+    errifOdActive = true;
+    document.querySelectorAll('.od-badge').forEach(el => { el.style.display = 'inline-flex'; });
+    // Hide every activation screen so the OD final confirm sheet is visible on top.
+    closeErrifActivate();
+    closeErrifTerms();
+    closeErrifActivationPin();
+    closeErrifSuccess();
+    showOdFinalConfirm();
+  }
+
+  function showOdFinalConfirm() {
+    const m = pendingMerchant, amt = pendingAmount;
+    if (!m) return;
+    odFinalPending = true;
+    closeErrifSuccess();
+    document.querySelector('.sheet-title').textContent = 'Pay with Errif Overdraft';
+    document.getElementById('cfAvatar').textContent = m.abbr;
+    document.getElementById('cfName').textContent = m.name;
+    document.getElementById('cfCode').textContent = 'Merchant Short Code: ' + m.code;
+    document.getElementById('cfAmount').textContent = fmt(amt) + ' ETB';
+    document.getElementById('cfFee').textContent = 'Free';
+    document.getElementById('cfTotal').textContent = fmt(amt) + ' ETB';
+    const od = computeOdBreakdown(amt);
+    document.getElementById('cfOdMpesa').textContent = fmt(od.mpesaBal) + ' ETB';
+    document.getElementById('cfOdOd').textContent = fmt(od.odBal) + ' ETB';
+    document.getElementById('cfOdFeeVal').textContent = fmt(od.serviceFee) + ' ETB';
+    document.getElementById('cfOdAdvance').textContent = fmt(od.totalAdvance) + ' ETB';
+    document.getElementById('cfOdBlock').style.display = '';
+    document.getElementById('confirmOverlay').classList.add('show');
+  }
 
   armScanner();
 </script>

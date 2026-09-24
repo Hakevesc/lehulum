@@ -106,7 +106,7 @@
         <div class="party-avatar" id="sumIcon">CI</div>
         <div class="party-info">
           <span class="party-name" id="sumName">Agent Cash-In</span>
-          <span class="party-sub"><b>Amount:</b> <span id="sumTotal">—</span> Br</span>
+          <span class="party-sub"><b>Amount:</b> <span id="sumTotal">—</span> ETB</span>
         </div>
       </div>
 
@@ -189,7 +189,7 @@
 
   function goBack() {
     // The short-code screen captures code and amount together, so it owns the back step.
-    if (data.method === 'code') window.location.href = 'Cash In - Agent Short Code.html';
+    if (data.method === 'code') window.location.href = 'Cash In - Merchant Short Code.html';
     else if (data.method === 'nearby') window.location.href = 'Cash In - Agent Details.html';
     else window.location.href = 'Cash In - Agent Nearby.html';
   }

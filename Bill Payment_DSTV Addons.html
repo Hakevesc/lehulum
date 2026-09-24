@@ -157,7 +157,7 @@
   try { change = JSON.parse(sessionStorage.getItem('dstvChange') || 'null'); } catch (e) { /* ignore */ }
 
   $('currentName').textContent = ACTIVE_ADDON.name;
-  $('currentSub').textContent = fmt(ACTIVE_ADDON.price).replace('.00', '') + ' Br/month';
+  $('currentSub').textContent = fmt(ACTIVE_ADDON.price).replace('.00', '') + ' ETB/month';
 
   let period = PERIODS[0];
   let picked = [];
@@ -183,7 +183,7 @@
         '<span class="logo"><img src="' + LOGO + '" alt=""></span>' +
         '<span class="item-info">' +
           '<span class="item-name">' + a.name + '</span>' +
-          '<span class="item-sub">' + fmt(a.price) + ' Br/Month</span>' +
+          '<span class="item-sub">' + fmt(a.price) + ' ETB/Month</span>' +
         '</span>' +
         '<span class="option-action">Add</span>' +
         '<span class="option-check"><svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></span>' +
@@ -238,7 +238,7 @@
         { key: "Payer's Name",           value: 'Abebeb Bikila Maraton' },
         { key: "Payer's M-PESA Number",  value: '0712131415' },
         { key: 'Smart Card Number',      value: sub.account },
-        { key: 'Fee',                    value: fmt(FEE) + ' Br' }
+        { key: 'Fee',                    value: fmt(FEE) + ' ETB' }
       ],
       dateLabel: 'Date and time',
       txType: 'DSTV Payment',

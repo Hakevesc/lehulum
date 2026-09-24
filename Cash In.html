@@ -48,7 +48,7 @@
   .see-all { color: var(--Primary); font-family: 'Switzer', sans-serif; font-size: 12px; font-weight: 500; cursor: pointer; transition: opacity 0.2s; }
   .see-all:hover { opacity: 0.7; }
 
-  /* ── Favorite agents (horizontal avatars, no card) ── */
+  /* ── Favorites (horizontal avatars, no card) ── */
   .favorites-section { display: flex; flex-direction: column; gap: 12px; padding: 0 4px; }
   .favorites-scroll { display: flex; gap: 16px; overflow-x: auto; padding-bottom: 4px; scrollbar-width: none; -ms-overflow-style: none; }
   .favorites-scroll::-webkit-scrollbar { display: none; }
@@ -108,10 +108,10 @@
         </div>
       </div>
 
-      <!-- Favorite agents -->
+      <!-- Favorites -->
       <div class="favorites-section">
         <div class="section-header">
-          <span class="section-title">Favorite Agents</span>
+          <span class="section-title">Favorites</span>
           <span class="see-all" onclick="window.location.href='Manage Favourites.html'">See All</span>
         </div>
         <div class="favorites-scroll">
@@ -156,6 +156,30 @@
             </div>
             <svg class="chev" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
           </div>
+          <div class="frequent-item" onclick="pickAgent('778901')">
+            <div class="frequent-avatar"><img src="assets/avatars/avatar-5.png" alt="Meskerem Agent Services"></div>
+            <div class="frequent-info">
+              <span class="frequent-name">Meskerem Agent Services</span>
+              <span class="frequent-sub">Short Code: 778901 &bull; 2.1 km</span>
+            </div>
+            <svg class="chev" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+          </div>
+          <div class="frequent-item" onclick="pickAgent('204411')">
+            <div class="frequent-avatar"><img src="assets/avatars/avatar-4.png" alt="Bole Mini-Mart"></div>
+            <div class="frequent-info">
+              <span class="frequent-name">Bole Mini-Mart</span>
+              <span class="frequent-sub">Short Code: 204411 &bull; 2.6 km</span>
+            </div>
+            <svg class="chev" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+          </div>
+          <div class="frequent-item" onclick="pickAgent('798210')">
+            <div class="frequent-avatar"><img src="assets/avatars/avatar-2.png" alt="Lemlem Traders"></div>
+            <div class="frequent-info">
+              <span class="frequent-name">Lemlem Traders</span>
+              <span class="frequent-sub">Short Code: 798210 &bull; 3.1 km</span>
+            </div>
+            <svg class="chev" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+          </div>
         </div>
       </div>
 
@@ -169,16 +193,17 @@
     '323217': { abbr: 'BM', name: 'Betty Merhat Agency', code: '323217', dist: '0.8 km', eta: '9 min walk', addr: 'Bole Medhanialem, Addis Ababa', open: true },
     '562394': { abbr: 'KR', name: 'Kebede Retails', code: '562394', dist: '1.2 km', eta: '14 min walk', addr: 'Bole Airport Road, Addis Ababa', open: true },
     '778901': { abbr: 'MS', name: 'Meskerem Agent Services', code: '778901', dist: '2.1 km', eta: '6 min drive', addr: 'Mekanisa, Addis Ababa', open: false },
-    '204411': { abbr: 'BM', name: 'Bole Mini-Mart', code: '204411', dist: '2.6 km', eta: '8 min drive', addr: 'Dembel City Center', open: true }
+    '204411': { abbr: 'BM', name: 'Bole Mini-Mart', code: '204411', dist: '2.6 km', eta: '8 min drive', addr: 'Dembel City Center', open: true },
+    '798210': { abbr: 'LM', name: 'Lemlem Traders', code: '798210', dist: '3.1 km', eta: '10 min drive', addr: 'Kazanchis, Addis Ababa', open: true }
   };
 
   const stamp = () => new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
 
   function selectMethod(m) {
     sessionStorage.setItem('cashInData', JSON.stringify({
-      method: m, methodLabel: m === 'code' ? 'Agent Short Code' : 'Agent Locator', time: stamp()
+      method: m, methodLabel: m === 'code' ? 'Merchant Short Code' : 'Agent Locator', time: stamp()
     }));
-    window.location.href = 'Cash In - Agent Short Code.html';
+    window.location.href = 'Cash In - Merchant Short Code.html';
   }
 
   // A saved favourite/frequent agent opens the Short Code screen with its code already filled in.
@@ -186,9 +211,9 @@
     const a = AGENTS[code];
     if (!a) return selectMethod('code');
     sessionStorage.setItem('cashInData', JSON.stringify({
-      method: 'code', methodLabel: 'Agent Short Code', agentCode: a.code, time: stamp()
+      method: 'code', methodLabel: 'Merchant Short Code', agentCode: a.code, time: stamp()
     }));
-    window.location.href = 'Cash In - Agent Short Code.html';
+    window.location.href = 'Cash In - Merchant Short Code.html';
   }
 </script>
 <script src="test-scenarios-data.js"></script>

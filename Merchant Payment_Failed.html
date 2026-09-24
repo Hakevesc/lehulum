@@ -113,11 +113,11 @@
         </div>
         <div class="sum-row">
           <span class="sum-key">Fee:</span>
-          <span class="sum-val" id="fee">0.00 Br</span>
+          <span class="sum-val" id="fee">0.00 ETB</span>
         </div>
         <div class="sum-row total">
           <span class="sum-key">Total:</span>
-          <span class="sum-val" id="total">0.00 Br</span>
+          <span class="sum-val" id="total">0.00 ETB</span>
         </div>
       </div>
 
@@ -145,8 +145,8 @@
     $('initials').textContent = m.abbr || initials(name);
     $('account').textContent = m.sub || m.code || '—';
     $('bank').textContent = m.code || '—';
-    $('fee').textContent = parseFloat(m.fee || 0) > 0 ? money(m.fee) + ' Br' : 'Free';
-    $('total').textContent = money(m.total || m.payAmount) + ' Br';
+    $('fee').textContent = parseFloat(m.fee || 0) > 0 ? money(m.fee) + ' ETB' : 'Free';
+    $('total').textContent = money(m.total || m.payAmount) + ' ETB';
   })();
 
   // The entry screen still holds the merchant and amount, so retry lands there.

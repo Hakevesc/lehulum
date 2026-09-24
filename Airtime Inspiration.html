@@ -640,12 +640,12 @@
   ];
   
   const PACKAGES = [
-    { title: '500 MB', desc: 'Valid 30 days', price: '50 Birr' },
-    { title: '1 GB', desc: 'Valid 30 days', price: '100 Birr' },
-    { title: '2 GB', desc: 'Valid 30 days', price: '200 Birr' },
-    { title: '5 GB', desc: 'Valid 30 days', price: '350 Birr' },
-    { title: '100 Min', desc: 'On-net calls', price: '30 Birr' },
-    { title: '300 Min', desc: 'All network', price: '80 Birr' }
+    { title: '500 MB', desc: 'Valid 30 days', price: '50 ETB' },
+    { title: '1 GB', desc: 'Valid 30 days', price: '100 ETB' },
+    { title: '2 GB', desc: 'Valid 30 days', price: '200 ETB' },
+    { title: '5 GB', desc: 'Valid 30 days', price: '350 ETB' },
+    { title: '100 Min', desc: 'On-net calls', price: '30 ETB' },
+    { title: '300 Min', desc: 'All network', price: '80 ETB' }
   ];
 
   let purchaseType = 'airtime';
@@ -733,7 +733,7 @@
     grid.innerHTML = AMOUNTS.map((amt, i) => `
       <div class="amount-card ${selectedAmount === i ? 'active' : ''}" onclick="selectAmount(${i})">
         <span class="amount-value">${amt}</span>
-        <span class="amount-currency">Birr</span>
+        <span class="amount-currency">ETB</span>
       </div>`).join('');
   }
   

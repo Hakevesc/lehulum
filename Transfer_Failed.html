@@ -113,11 +113,11 @@
         </div>
         <div class="sum-row">
           <span class="sum-key">Fee:</span>
-          <span class="sum-val" id="fee">0.00 Br</span>
+          <span class="sum-val" id="fee">0.00 ETB</span>
         </div>
         <div class="sum-row total">
           <span class="sum-key">Total:</span>
-          <span class="sum-val" id="total">0.00 Br</span>
+          <span class="sum-val" id="total">0.00 ETB</span>
         </div>
       </div>
 
@@ -144,8 +144,8 @@
     $('initials').textContent = initials(name);
     $('account').textContent = target.fullAccount || target.account || target.phone || '—';
     $('bank').textContent = target.name || (target.type === 'bank' ? 'Bank' : 'M-PESA');
-    $('fee').textContent = (sessionStorage.getItem('sendFee') || '0.00') + ' Br';
-    $('total').textContent = (sessionStorage.getItem('sendTotal') || sessionStorage.getItem('sendAmount') || '0.00') + ' Br';
+    $('fee').textContent = (sessionStorage.getItem('sendFee') || '0.00') + ' ETB';
+    $('total').textContent = (sessionStorage.getItem('sendTotal') || sessionStorage.getItem('sendAmount') || '0.00') + ' ETB';
   })();
 
   // The entry screen still holds the recipient and amount, so retry lands there.

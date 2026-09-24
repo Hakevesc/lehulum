@@ -82,9 +82,12 @@
   .sum-key2 { font-family: 'Switzer', sans-serif; font-size: 13px; font-weight: 400; color: var(--On-Surface-Low); }
   .sum-val2 { font-family: 'Switzer', sans-serif; font-size: 13.5px; font-weight: 700; color: var(--On-Surface); }
   .sum-row2.total .sum-val2 { color: var(--Primary); font-size: 15px; }
-  .sheet .cf-note { display: flex; align-items: flex-start; gap: 8px; background: #FFF4E5; border-radius: 10px; padding: 10px 12px; margin-top: 4px; }
-  .sheet .cf-note svg { width: 15px; height: 15px; stroke: #B4880B; stroke-width: 2; fill: none; flex-shrink: 0; margin-top: 1px; }
-  .sheet .cf-note span { font-family: 'Switzer', sans-serif; font-size: 11.5px; line-height: 1.45; color: #8A6A08; }
+  /* Same red warning treatment as the "voucher != money deposited" note
+     elsewhere in the Cash-In flow, instead of a one-off yellow variant. */
+  .sheet .cf-note { display: flex; align-items: flex-start; gap: 8px; background: #FFF1F2; border: 1px solid #FFD6D9; border-radius: 10px; padding: 10px 12px; margin-top: 4px; }
+  .sheet .cf-note svg { width: 15px; height: 15px; stroke: var(--Primary); stroke-width: 2; fill: none; flex-shrink: 0; margin-top: 1px; }
+  .sheet .cf-note span { font-family: 'Switzer', sans-serif; font-size: 11.5px; line-height: 1.45; color: #8E232C; }
+  .sheet .cf-note span b { color: var(--Primary); }
   .sheet-actions { display: flex; gap: 12px; margin-top: 20px; }
   .sheet-btn { flex: 1; height: 50px; border-radius: 12px; background: #FFF; cursor: pointer; font-family: 'Switzer', sans-serif; font-size: 14.5px; font-weight: 500; transition: background 0.15s, transform 0.12s; }
   .sheet-btn:active { transform: scale(0.98); }
@@ -169,8 +172,8 @@
             <svg style="width: 16px; height: 16px; stroke: var(--Primary); stroke-width: 1.9; fill: none;" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16.9v2.5a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 1.1 3.7 2 2 0 0 1 3.1 1.5h2.5a2 2 0 0 1 2 1.7c.1 1 .4 1.9.7 2.8a2 2 0 0 1-.5 2.1L6.7 9.3a16 16 0 0 0 6 6l1.2-1.1a2 2 0 0 1 2.1-.5c.9.3 1.8.6 2.8.7a2 2 0 0 1 1.7 2z"/></svg>
             Call
           </button>
-          <button id="directionsBtn" onclick="directions()" style="flex: 1; height: 48px; border: 2px solid var(--Primary); background: transparent; color: var(--Primary); border-radius: 12px; cursor: pointer; font-family: 'Switzer', sans-serif; font-size: 12.5px; font-weight: 600; transition: all 0.2s; display: flex; align-items: center; justify-content: center; gap: 8px;">
-            <svg style="width: 16px; height: 16px; stroke: var(--Primary); stroke-width: 1.9; fill: none;" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s7-5.7 7-11a7 7 0 1 0-14 0c0 5.3 7 11 7 11z"/><circle cx="12" cy="10" r="2.4"/></svg>
+          <button id="directionsBtn" onclick="directions()" style="flex: 1; height: 48px; border: none; background: var(--Primary); color: #FFF; border-radius: 12px; cursor: pointer; font-family: 'Switzer', sans-serif; font-size: 13px; font-weight: 700; transition: all 0.2s; display: flex; align-items: center; justify-content: center; gap: 7px; box-shadow: 0 4px 14px rgba(254,53,61,0.32); letter-spacing: 0.2px;">
+            <svg style="width: 15px; height: 15px; fill: #FFFFFF;" viewBox="0 0 24 24"><path d="M12 2L4.5 20.29l.71.71L12 18l6.79 3 .71-.71z"/></svg>
             Directions
           </button>
         </div>
@@ -186,9 +189,9 @@
           <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 8v5M12 16h.01"/></svg>
           <span id="amtMsgTxt"></span>
         </div>
-        <div style="display:flex;align-items:flex-start;gap:7px;background:#FFF8E5;border-radius:10px;padding:10px 12px;">
+        <div style="display:flex;align-items:flex-start;gap:7px;background:#FFF;box-shadow:0 2px 8px rgba(0,0,0,0.04);border-radius:10px;padding:10px 12px;">
           <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" style="width:15px;height:15px;stroke:#B4880B;stroke-width:2;fill:none;flex-shrink:0;margin-top:1px;"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
-          <span style="font-family:'Switzer',sans-serif;font-size:11.5px;line-height:1.45;color:#8A6A08;">Cash-In is <b>free</b>. Minimum 10 ETB, maximum 100,000 ETB per transaction.</span>
+          <span style="font-family:'Switzer',sans-serif;font-size:11.5px;line-height:1.45;color:var(--On-Surface-Low);">Cash-In is <b style="color:var(--On-Surface);">free</b>. Minimum 10 ETB, maximum 100,000 ETB per transaction.</span>
         </div>
       </div>
 
@@ -233,8 +236,8 @@
       </div>
 
       <div class="cf-note">
-        <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
-        <span>A Cash-In voucher will be generated. Your wallet is <b>not credited at this point</b> — credit happens after the agent validates the voucher and processes your cash.</span>
+        <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+        <span><b>Voucher Generated &ne; Money Deposited.</b> Your wallet is credited only after the agent validates it and processes your cash.</span>
       </div>
 
       <div class="sheet-actions">
@@ -274,8 +277,8 @@
     const n = parseFloat(raw);
     let err = '';
     if (isNaN(n) || n <= 0) err = 'Enter a valid amount.';
-    else if (n < MIN_AMT) err = 'Minimum deposit is ' + MIN_AMT + ' Br.';
-    else if (n > MAX_AMT) err = 'Maximum deposit is ' + MAX_AMT.toLocaleString() + ' Br per transaction.';
+    else if (n < MIN_AMT) err = 'Minimum deposit is ' + MIN_AMT + ' ETB.';
+    else if (n > MAX_AMT) err = 'Maximum deposit is ' + MAX_AMT.toLocaleString() + ' ETB per transaction.';
     if (err) { $('amtMsgTxt').textContent = err; msg.classList.add('show'); return null; }
     msg.classList.remove('show');
     return n;
@@ -296,8 +299,8 @@
     $('cfAvatar').textContent = a.abbr || 'AG';
     $('cfName').textContent = a.name || 'Agent';
     $('cfSub').textContent = 'Short Code: ' + (a.code || '—');
-    $('cfAmount').textContent = fmt(amount) + ' Br';
-    $('cfTotal').textContent = fmt(amount) + ' Br';
+    $('cfAmount').textContent = fmt(amount) + ' ETB';
+    $('cfTotal').textContent = fmt(amount) + ' ETB';
     $('sheetOverlay').classList.add('show');
   }
 

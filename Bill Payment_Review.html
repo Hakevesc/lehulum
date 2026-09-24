@@ -200,7 +200,7 @@
 
   // An entry screen can hand over its own rows; otherwise the utility set is
   // built here — a post-paid bill belongs to a month, prepaid bought by reading
-  // shows the kilowatt hours instead, and prepaid bought by birr shows neither.
+  // shows the kilowatt hours instead, and prepaid bought by ETB shows neither.
   const rows = data.rows || [
     { key: 'Business Name', value: biller.fullName || biller.name || 'Biller' }
   ].concat(
@@ -215,10 +215,10 @@
     '</div>').join('');
 
   const feeNum = parseFloat(data.fee || 0);
-  $('fee').textContent = feeNum > 0 ? fmt(feeNum) + ' Br' : 'Free';
-  $('total').textContent = fmt(data.total || data.payAmount) + ' Br';
-  $('mainBal').textContent = fmt(MAIN_BALANCE) + ' Br';
-  $('rewardBal').textContent = fmt(REWARD_BALANCE) + ' Br';
+  $('fee').textContent = feeNum > 0 ? fmt(feeNum) + ' ETB' : 'Free';
+  $('total').textContent = fmt(data.total || data.payAmount) + ' ETB';
+  $('mainBal').textContent = fmt(MAIN_BALANCE) + ' ETB';
+  $('rewardBal').textContent = fmt(REWARD_BALANCE) + ' ETB';
   if (errifOdActive) {
     const rewardName = document.querySelector('#optReward .fo-name');
     if (rewardName) rewardName.textContent = 'Errif Balance';

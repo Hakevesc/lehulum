@@ -72,9 +72,9 @@ window.MPESA_ANNOUNCEMENTS = [
     homePopup: true,
     title: '50% Cashback on Bill Payments',
     popupTitleHtml: '<span class="ann-modal-title-red">50%</span> CASHBACK<br>ON BILL PAYMENTS',
-    desc: 'Pay any utility bill with M-PESA and get 50% back, up to 200 Birr per month.',
+    desc: 'Pay any utility bill with M-PESA and get 50% back, up to 200 ETB per month.',
     popupDesc: 'Get 50% of your bill payment back as instant cashback. Worry less when you pay your electricity, water or internet bill through M-Pesa.',
-    short: 'Get 50% back, up to 200 Birr this month',
+    short: 'Get 50% back, up to 200 ETB this month',
     publishedDaysAgo: 1,
     expiresInDays: 3,
     badge: 'Cashback',
@@ -87,7 +87,7 @@ window.MPESA_ANNOUNCEMENTS = [
     ghostCta: { label: 'Maybe Later' },
     body: 'Get 50% of your bill payment back as instant cashback, every time you pay an electricity, water or internet bill through M-PESA.\n\nCashback is credited to your M-PESA wallet within 24 hours of a successful payment. No registration needed — just pay your bill as usual.',
     terms: [
-      'Maximum cashback of 200 Birr per customer per month',
+      'Maximum cashback of 200 ETB per customer per month',
       'Valid on Ethiopian Electric Utility, Addis Water and internet billers',
       'Cashback is credited within 24 hours of a successful payment',
       'Reversed or failed payments do not qualify'
@@ -102,7 +102,7 @@ window.MPESA_ANNOUNCEMENTS = [
       headline: '50% Cashback',
       kicker: 'on every bill you pay',
       stats: [
-        { icon: 'wallet', label: 'Up to',   value: '200 Br' },
+        { icon: 'wallet', label: 'Up to',   value: '200 ETB' },
         { icon: 'clock',  label: 'Ends in', value: '3 days' }
       ],
       introTitle: 'How it works',
@@ -112,7 +112,7 @@ window.MPESA_ANNOUNCEMENTS = [
         { icon: 'gift',         title: 'Get 50% back', desc: 'Credited within 24 hours.' }
       ],
       reassure: { title: 'No registration needed', text: 'Cashback is applied automatically — just pay your bill as you normally would.' },
-      tip: { title: 'Tip', text: 'Spread your bills across the month to make the most of the 200 Br monthly cap.' },
+      tip: { title: 'Tip', text: 'Spread your bills across the month to make the most of the 200 ETB monthly cap.' },
       support: true,
       ctaLabel: 'Pay a Bill Now'
     }
@@ -148,7 +148,7 @@ window.MPESA_ANNOUNCEMENTS = [
       headline: 'Pay now, settle later',
       kicker: 'Errif covers the gap when your balance runs short.',
       stats: [
-        { icon: 'wallet',      label: 'Limit',  value: 'Up to 5,000 Br' },
+        { icon: 'wallet',      label: 'Limit',  value: 'Up to 5,000 ETB' },
         { icon: 'refresh-ccw', label: 'Repay',  value: 'Automatic' }
       ],
       introTitle: 'How it works',
@@ -194,7 +194,7 @@ window.MPESA_ANNOUNCEMENTS = [
       headline: 'Send money for free',
       kicker: 'Zero fees on every wallet-to-wallet transfer.',
       stats: [
-        { icon: 'percent', label: 'Fee',     value: '0 Br' },
+        { icon: 'percent', label: 'Fee',     value: '0 ETB' },
         { icon: 'clock',   label: 'Ends in', value: '5 days' }
       ],
       introTitle: 'How it works',
@@ -203,7 +203,7 @@ window.MPESA_ANNOUNCEMENTS = [
         { icon: 'users',    title: 'Any M-PESA wallet', desc: 'Friends, family, anyone.' },
         { icon: 'infinity', title: 'No send limit',     desc: 'As many transfers as you like.' }
       ],
-      reassure: { title: 'Nothing to claim', text: 'The fee is removed at confirmation — you will see 0 Br before you approve.' },
+      reassure: { title: 'Nothing to claim', text: 'The fee is removed at confirmation — you will see 0 ETB before you approve.' },
       tip: { title: 'Tip', text: 'Bank transfers are not included in this offer, only M-PESA wallets.' },
       support: true,
       ctaLabel: 'Send Money Now'
@@ -215,8 +215,8 @@ window.MPESA_ANNOUNCEMENTS = [
     priority: 1,
     featured: true,
     title: '10% Bonus Airtime',
-    desc: 'Top up 100 Birr or more and receive 10% extra airtime instantly.',
-    short: '10% extra on top-ups over 100 Birr',
+    desc: 'Top up 100 ETB or more and receive 10% extra airtime instantly.',
+    short: '10% extra on top-ups over 100 ETB',
     publishedDaysAgo: 5,
     expiresInDays: 12,
     badge: 'Promo',
@@ -224,9 +224,9 @@ window.MPESA_ANNOUNCEMENTS = [
     iconBg: '#E8F0FF',
     gradient: 'linear-gradient(135deg, #0F62FE 0%, #0A3D9E 100%)',
     cta: { label: 'Buy Airtime', href: 'Airtime_Buy.html' },
-    body: 'Buy airtime worth 100 Birr or more through M-PESA and we will add 10% on top, credited to the same number instantly.\n\nWorks for your own number and for anyone you top up.',
+    body: 'Buy airtime worth 100 ETB or more through M-PESA and we will add 10% on top, credited to the same number instantly.\n\nWorks for your own number and for anyone you top up.',
     terms: [
-      'Minimum top-up of 100 Birr per transaction',
+      'Minimum top-up of 100 ETB per transaction',
       'Bonus airtime is credited instantly to the recipient number',
       'Valid on Safaricom and Ethiotelecom top-ups',
       'Bonus airtime cannot be transferred or converted to cash'
@@ -238,19 +238,19 @@ window.MPESA_ANNOUNCEMENTS = [
       badgeBg: '#CFDEFB',
       icon: 'smartphone',
       headline: '10% bonus airtime',
-      kicker: 'Every time you top up 100 Birr or more.',
+      kicker: 'Every time you top up 100 ETB or more.',
       stats: [
         { icon: 'arrow-up', label: 'Bonus',   value: '10%' },
         { icon: 'clock',    label: 'Ends in', value: '12 days' }
       ],
       introTitle: 'How it works',
-      intro: 'Top up 100 Birr or more and we add 10% on top, credited instantly to the same number.',
+      intro: 'Top up 100 ETB or more and we add 10% on top, credited instantly to the same number.',
       highlights: [
         { icon: 'smartphone', title: 'Any number', desc: 'Yours or someone else’s.' },
         { icon: 'zap',        title: 'Instant',    desc: 'Bonus lands with the top-up.' }
       ],
       reassure: { title: 'Works on both networks', text: 'Valid for Safaricom and Ethiotelecom top-ups.' },
-      tip: { title: 'Tip', text: 'One 200 Br top-up earns more bonus than two 100 Br top-ups spread out.' },
+      tip: { title: 'Tip', text: 'One 200 ETB top-up earns more bonus than two 100 ETB top-ups spread out.' },
       support: true,
       ctaLabel: 'Buy Airtime Now'
     }
@@ -452,8 +452,8 @@ window.MPESA_ANNOUNCEMENTS = [
     priority: 2,
     featured: false,
     title: 'July Merchant Payment Draw',
-    desc: 'Pay any merchant for a chance to win 50,000 Birr.',
-    short: 'Win 50,000 Birr',
+    desc: 'Pay any merchant for a chance to win 50,000 ETB.',
+    short: 'Win 50,000 ETB',
     publishedDaysAgo: 45,
     expiresInDays: -11,
     glyph: '🏆',

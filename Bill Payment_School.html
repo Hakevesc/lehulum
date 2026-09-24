@@ -40,6 +40,11 @@
   .scroll::-webkit-scrollbar { width: 0; }
 
   /* ── Accordion ── */
+  .provider-strip { display: flex; align-items: center; justify-content: center; gap: 6px; padding: 0 16px 8px; flex-shrink: 0; }
+  .provider-strip .logo { width: 16px; height: 16px; border-radius: 50%; overflow: hidden; flex-shrink: 0; }
+  .provider-strip .logo img { width: 100%; height: 100%; object-fit: contain; }
+  .provider-strip .nm { font-family: 'Switzer', sans-serif; font-size: 12px; font-weight: 600; color: var(--On-Surface-Low); }
+
   .accordion { background: #FFF; border-radius: 16px; box-shadow: 0 2px 8px rgba(0,0,0,0.04); overflow: hidden; flex-shrink: 0; }
   .acc-head { padding: 16px; display: flex; align-items: center; gap: 14px; cursor: pointer; }
   .acc-head .badge { width: 44px; height: 44px; border-radius: 50%; background: var(--Primary); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
@@ -146,6 +151,11 @@
       </button>
       <span class="header-title">Bill Payment</span>
       <div style="width:36px;"></div>
+    </div>
+
+    <div class="provider-strip">
+      <span class="logo"><img src="assets/bill pay logos/Awash_International_Bank.png" alt=""></span>
+      <span class="nm">School Payment Via Awash Bank</span>
     </div>
 
     <div class="scroll">
@@ -476,7 +486,7 @@
                 '<span class="fee-sub">' + f.sub + '</span>' +
               '</span>' +
               '<span class="fee-money">' +
-                '<span class="fee-amount">' + fmt(f.amount) + ' Br</span>' +
+                '<span class="fee-amount">' + fmt(f.amount) + ' ETB</span>' +
                 '<span class="fee-due">' + f.due + '</span>' +
               '</span>' +
             '</div>').join('') +

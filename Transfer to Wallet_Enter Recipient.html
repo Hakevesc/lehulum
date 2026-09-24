@@ -237,10 +237,10 @@
 
         <span class="field-label">Amount</span>
         <div class="field" id="amtField">
-          <input id="amtInput" type="text" inputmode="decimal" placeholder="e.g. 120 Br" autocomplete="off"
+          <input id="amtInput" type="text" inputmode="decimal" placeholder="e.g. 120 ETB" autocomplete="off"
                  oninput="onAmountInput()" onfocus="unformatAmount()" onblur="formatAmount()">
         </div>
-        <div class="balance-hint"><b>Balance:</b> 20,000.00 Br</div>
+        <div class="balance-hint" id="balanceHint"><b>Balance:</b> 20,000.00 ETB</div>
         <div class="msg" id="amtMsg"></div>
 
         <span class="field-label">Payment Reason (Optional)</span>
@@ -477,7 +477,7 @@
   }
 
   /* ── Amount ── */
-  // The field carries a grouped "1,200.00 Br" value at rest and a bare number
+  // The field carries a grouped "1,200.00 ETB" value at rest and a bare number
   // while it has focus, so every read goes through amountValue().
   const amountValue = () => {
     const raw = $('amtInput').value.replace(/[^\d.]/g, '');
@@ -498,7 +498,7 @@
 
   function formatAmount() {
     const n = amountValue();
-    if (n !== null && !isNaN(n)) $('amtInput').value = fmt(n) + ' Br';
+    if (n !== null && !isNaN(n)) $('amtInput').value = fmt(n) + ' ETB';
   }
 
   function setAmountState(state, text) {
@@ -508,6 +508,7 @@
     msg.classList.toggle('warn', state === 'warn');
     msg.classList.toggle('err', state === 'err');
     msg.classList.toggle('show', !!state);
+    $('balanceHint').style.display = state ? 'none' : '';
     if (text) msg.textContent = text;
   }
 
@@ -515,8 +516,8 @@
     const n = amountValue();
     if (n === null) { setAmountState(null); return null; }
     if (isNaN(n) || n <= 0) { setAmountState('err', 'Enter a valid amount'); return null; }
-    if (n < MIN_AMT)   { setAmountState('err', 'Minimum Amount: ' + fmt(MIN_AMT) + ' Br'); return null; }
-    if (n > MAX_AMT)   { setAmountState('err', 'Maximum Amount: ' + fmt(MAX_AMT) + ' Br'); return null; }
+    if (n < MIN_AMT)   { setAmountState('err', 'Minimum Amount: ' + fmt(MIN_AMT) + ' ETB'); return null; }
+    if (n > MAX_AMT)   { setAmountState('err', 'Maximum Amount: ' + fmt(MAX_AMT) + ' ETB'); return null; }
     if (n + FEE > BALANCE) { setAmountState('warn', 'Insufficient Balance'); return null; }
     setAmountState(null);
     return n;
@@ -553,8 +554,8 @@
     $('cfName').textContent = holder.name;
     $('cfPhone').textContent = '+251 ' + holder.number;
     $('cfWallet').textContent = wallet.name;
-    $('cfFee').textContent = fmt(FEE) + ' Br';
-    $('cfTotal').textContent = fmt(amount + FEE) + ' Br';
+    $('cfFee').textContent = fmt(FEE) + ' ETB';
+    $('cfTotal').textContent = fmt(amount + FEE) + ' ETB';
     $('confirmOverlay').classList.add('show');
   }
 

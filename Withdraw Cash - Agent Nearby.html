@@ -3,172 +3,897 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Withdraw Cash - Find Nearby Agent</title>
+<title>Withdraw Cash - Find an Agent</title>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@400;500;600&display=swap');
   @import url('https://api.fontshare.com/v2/css?f[]=switzer@400,500,600,700&display=swap');
 
   :root {
     --Primary: #FE353D;
-    --On-Surface: #1C1C21;
-    --On-Surface-Low: #7C7C87;
+    --Primary-Light: #FFF1F2;
+    --Primary-Border: #FFD4D7;
+    --On-Surface: #0F172A;
+    --On-Surface-Low: #64748B;
     --Border: #E8E8EC;
-    --Background: #F5F5F5;
+    --Background: #F8F9FA;
+    --Success: #16A34A;
+    --Success-Light: #E8F9EE;
   }
   * { margin: 0; padding: 0; box-sizing: border-box; }
-  body { font-family: 'Inter', sans-serif; background: transparent; display: flex; justify-content: center; align-items: center; min-height: 100vh; padding: 20px; }
-  .phone-frame { width: 360px; height: 780px; background: var(--Background); border-radius: 30px; overflow: hidden; position: relative; box-shadow: 0 20px 60px rgba(0,0,0,0.15); display: flex; flex-direction: column; }
-  .app-content { height: 100%; overflow-y: auto; display: flex; flex-direction: column; }
+  body {
+    font-family: 'Inter', sans-serif;
+    background: transparent;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    padding: 20px;
+  }
+  .phone-frame {
+    width: 360px;
+    height: 780px;
+    background: var(--Background);
+    border-radius: 30px;
+    overflow: hidden;
+    position: relative;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.15);
+    display: flex;
+    flex-direction: column;
+  }
+  .app-content {
+    height: 100%;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+  }
   .app-content::-webkit-scrollbar { width: 0; }
 
-  .status-bar { display: flex; justify-content: space-between; align-items: center; padding: 14px 24px 8px; background: var(--Background); flex-shrink: 0; }
-  .status-bar .time { font-size: 14px; font-weight: 600; color: var(--On-Surface); }
-  .status-icons { display: flex; align-items: center; gap: 6px; }
+  /* ── Status Bar ── */
+  .status-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 14px 24px 8px;
+    background: var(--Background);
+    flex-shrink: 0;
+  }
+  .status-bar .time {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--On-Surface);
+  }
+  .status-icons {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
   .status-icons svg { width: 18px; height: 18px; }
-  .header-nav { display: flex; align-items: center; justify-content: space-between; padding: 8px 16px 12px; background: var(--Background); flex-shrink: 0; }
-  .back-btn { width: 36px; height: 36px; border-radius: 50%; background: transparent; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.2s; }
-  .back-btn:hover { background: rgba(0,0,0,0.05); }
-  .back-btn svg { width: 22px; height: 22px; stroke: var(--On-Surface); stroke-width: 1.8px; fill: none; }
-  .header-title { color: var(--On-Surface); font-family: 'Switzer', sans-serif; font-size: 17px; font-weight: 500; letter-spacing: 0.3px; flex: 1; text-align: center; }
 
-  .scroll { flex: 1; overflow-y: auto; padding: 4px 16px 20px; display: flex; flex-direction: column; gap: 14px; }
+  /* ── Header ── */
+  .header-nav {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 6px 16px 10px;
+    background: var(--Background);
+    flex-shrink: 0;
+  }
+  .back-btn {
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.15s;
+    margin-left: -4px;
+  }
+  .back-btn:hover { background: rgba(0,0,0,0.06); }
+  .back-btn svg {
+    width: 22px;
+    height: 22px;
+    stroke: var(--On-Surface);
+    stroke-width: 2.2px;
+    fill: none;
+  }
+  .header-title {
+    color: var(--On-Surface);
+    font-family: 'Switzer', sans-serif;
+    font-size: 21px;
+    font-weight: 700;
+    letter-spacing: -0.3px;
+  }
+
+  /* ── Scrollable Body ── */
+  .scroll {
+    flex: 1;
+    overflow-y: auto;
+    padding: 2px 16px 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
   .scroll::-webkit-scrollbar { width: 0; }
 
-  /* Locate bar */
-  .locate-bar { display: flex; align-items: center; gap: 10px; background: #FFF; border: 1.5px solid var(--Border); border-radius: 12px; padding: 9px 8px 9px 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.04); }
-  .locate-bar .pin-ico { width: 19px; height: 19px; stroke: var(--Primary); stroke-width: 1.9; fill: none; flex-shrink: 0; }
-  .loc-wrap { flex: 1; min-width: 0; }
-  .locate-bar .loc { font-family: 'Switzer', sans-serif; font-size: 13px; font-weight: 600; color: var(--On-Surface); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-  .locate-bar .sub { font-family: 'Switzer', sans-serif; font-size: 11px; color: var(--On-Surface-Low); }
-  .loc-input { display: none; flex: 1; min-width: 0; border: none; outline: none; background: transparent; font-family: 'Switzer', sans-serif; font-size: 13.5px; font-weight: 500; color: var(--On-Surface); }
-  .loc-input::placeholder { color: var(--On-Surface-Low); font-weight: 400; }
-  .locate-bar.searching .loc-wrap { display: none; }
-  .locate-bar.searching .loc-input { display: block; }
-  .loc-btn { width: 36px; height: 36px; border-radius: 10px; border: none; background: #FFF1F2; cursor: pointer; display: flex; align-items: center; justify-content: center; flex-shrink: 0; transition: background 0.15s; }
-  .loc-btn:hover { background: #FFE0E2; }
-  .loc-btn svg { width: 17px; height: 17px; stroke: var(--Primary); stroke-width: 2; fill: none; }
+  /* ── Location / Search Card ── */
+  .loc-card-container {
+    position: relative;
+  }
+  .loc-card {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    background: #FFFFFF;
+    border: 1px solid #ECECF0;
+    border-radius: 16px;
+    padding: 8px 10px 8px 14px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03);
+    transition: all 0.2s;
+  }
+  .loc-card:focus-within {
+    border-color: var(--Primary);
+    box-shadow: 0 4px 14px rgba(254, 53, 61, 0.12);
+  }
+  .loc-card-left {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex: 1;
+    min-width: 0;
+  }
+  .loc-pin-icon {
+    width: 21px;
+    height: 21px;
+    stroke: #0F172A;
+    stroke-width: 1.9px;
+    fill: none;
+    flex-shrink: 0;
+  }
+  .loc-text-wrap {
+    flex: 1;
+    min-width: 0;
+    cursor: pointer;
+  }
+  .loc-title {
+    font-family: 'Switzer', sans-serif;
+    font-size: 14.5px;
+    font-weight: 700;
+    color: #0F172A;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .loc-subtitle {
+    font-family: 'Switzer', sans-serif;
+    font-size: 11.5px;
+    color: #8C8C99;
+    margin-top: 1px;
+  }
+  .loc-input {
+    display: none;
+    flex: 1;
+    min-width: 0;
+    border: none;
+    outline: none;
+    background: transparent;
+    font-family: 'Switzer', sans-serif;
+    font-size: 13.5px;
+    font-weight: 500;
+    color: #0F172A;
+  }
+  .loc-input::placeholder {
+    color: #94A3B8;
+    font-weight: 400;
+  }
+  .loc-card.searching .loc-text-wrap { display: none; }
+  .loc-card.searching .loc-input { display: block; }
+  .loc-search-btn {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: var(--Primary);
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    box-shadow: 0 3px 10px rgba(254, 53, 61, 0.32);
+    transition: transform 0.15s;
+  }
+  .loc-search-btn:active { transform: scale(0.94); }
+  .loc-search-btn svg { width: 18px; height: 18px; }
 
-  .loc-suggest { display: none; flex-direction: column; background: #FFF; border: 1.5px solid var(--Border); border-radius: 12px; overflow: hidden; margin-top: -8px; }
+  /* ── Search Suggestions ── */
+  .loc-suggest {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: calc(100% + 6px);
+    display: none;
+    flex-direction: column;
+    background: #FFF;
+    border: 1.5px solid var(--Border);
+    border-radius: 14px;
+    overflow: hidden;
+    box-shadow: 0 14px 30px rgba(0,0,0,0.14);
+    z-index: 35;
+  }
   .loc-suggest.show { display: flex; }
-  .loc-opt { display: flex; align-items: center; gap: 10px; padding: 11px 13px; cursor: pointer; border-bottom: 1px solid #F2F2F5; transition: background 0.15s; }
+  .loc-opt {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 11px 14px;
+    cursor: pointer;
+    border-bottom: 1px solid #F2F2F5;
+    transition: background 0.15s;
+  }
   .loc-opt:last-child { border-bottom: none; }
   .loc-opt:hover { background: #FAFAFA; }
-  .loc-opt svg { width: 15px; height: 15px; stroke: var(--On-Surface-Low); stroke-width: 2; fill: none; flex-shrink: 0; }
-  .loc-opt span { font-family: 'Switzer', sans-serif; font-size: 13px; color: var(--On-Surface); }
-  .loc-empty { font-family: 'Switzer', sans-serif; font-size: 12.5px; color: var(--On-Surface-Low); padding: 12px 13px; }
+  .loc-opt svg { width: 16px; height: 16px; stroke: #64748B; stroke-width: 2; fill: none; flex-shrink: 0; }
+  .loc-opt span { font-family: 'Switzer', sans-serif; font-size: 13px; color: #0F172A; font-weight: 500; }
+  .loc-empty { font-family: 'Switzer', sans-serif; font-size: 12.5px; color: #64748B; padding: 12px 14px; }
 
-  /* Tabs */
-  .tabs { display: flex; background: #FFF; border-radius: 12px; padding: 4px; gap: 4px; box-shadow: 0 2px 8px rgba(0,0,0,0.04); }
-  .tab { flex: 1; height: 38px; border-radius: 9px; border: none; background: transparent; font-family: 'Switzer', sans-serif; font-size: 13px; font-weight: 600; color: var(--On-Surface-Low); cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px; transition: all 0.2s; }
-  .tab svg { width: 16px; height: 16px; stroke: currentColor; fill: none; stroke-width: 2; }
-  .tab.active { background: var(--Primary); color: #FFF; box-shadow: 0 2px 8px rgba(254,53,61,0.25); }
+  /* ── Filter Chips ── */
+  .filter-chips-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    overflow-x: auto;
+    padding: 8px 2px 6px;
+    -webkit-overflow-scrolling: touch;
+  }
+  .filter-chips-row::-webkit-scrollbar { display: none; }
+  .filter-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 7px 14px;
+    border-radius: 20px;
+    background: #FFFFFF;
+    border: 1.2px solid #E2E8F0;
+    font-family: 'Switzer', sans-serif;
+    font-size: 12.5px;
+    font-weight: 500;
+    color: #334155;
+    cursor: pointer;
+    white-space: nowrap;
+    flex-shrink: 0;
+    transition: all 0.2s;
+  }
+  .filter-chip svg { width: 14px; height: 14px; flex-shrink: 0; }
+  .filter-chip:hover { background: #F8FAFC; }
+  .filter-chip.active {
+    background: #FFF1F2;
+    border-color: #FFD4D7;
+    color: var(--Primary);
+    font-weight: 600;
+  }
+  .filter-chip.active svg { stroke: var(--Primary); }
+  .chip-dot-green {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #10B981;
+    display: inline-block;
+    flex-shrink: 0;
+  }
 
-  /* Map view */
-  .map-view { position: relative; background: #EDEBE6; border-radius: 16px; height: 250px; overflow: hidden; border: 1px solid var(--Border); }
-  .map-roads { position: absolute; inset: 0; background-image: repeating-linear-gradient(20deg, rgba(255,255,255,0.9) 0 2px, transparent 0 26px), repeating-linear-gradient(-20deg, rgba(255,255,255,0.85) 0 2px, transparent 0 34px); opacity: 0.55; }
-  .map-block-a { position: absolute; left: 14px; top: 30px; width: 96px; height: 72px; background: #E3DFD7; border-radius: 6px; }
-  .map-block-b { position: absolute; right: 22px; top: 96px; width: 110px; height: 84px; background: #E3DFD7; border-radius: 6px; }
-  .map-block-c { position: absolute; left: 40px; bottom: 18px; width: 88px; height: 60px; background: #E3DFD7; border-radius: 6px; }
-  .map-label { position: absolute; font-family: 'Switzer', sans-serif; font-size: 9px; color: #B9B4AA; }
-  .map-label.a { left: 22px; top: 40px; }
-  .map-label.b { right: 32px; top: 110px; }
-  .map-label.c { left: 48px; bottom: 34px; }
-  .map-pin { position: absolute; width: 32px; height: 32px; border-radius: 50%; background: var(--Primary); border: 2.5px solid #FFF; box-shadow: 0 2px 10px rgba(254,53,61,0.4); display: flex; align-items: center; justify-content: center; cursor: pointer; transform: translate(-50%, -50%); transition: transform 0.15s; }
-  .map-pin:hover { transform: translate(-50%, -50%) scale(1.12); }
-  .map-pin svg { width: 16px; height: 16px; stroke: #FFF; stroke-width: 2; fill: none; }
-  .map-pin .dist { position: absolute; top: calc(100% + 4px); left: 50%; transform: translateX(-50%); background: #FFF; border-radius: 5px; padding: 1px 5px; font-family: 'Switzer', sans-serif; font-size: 9.5px; font-weight: 700; color: var(--Primary); white-space: nowrap; box-shadow: 0 1px 4px rgba(0,0,0,0.18); }
-  .map-you { position: absolute; left: 52%; top: 46%; width: 16px; height: 16px; border-radius: 50%; background: #2B6BFF; border: 2.5px solid #FFF; box-shadow: 0 1px 6px rgba(0,0,0,0.25); transform: translate(-50%, -50%); }
-  .map-you::after { content: ''; position: absolute; left: -6px; bottom: -10px; width: 4px; height: 4px; border-radius: 50%; background: #2B6BFF; box-shadow: 0 4px 0 2px #2B6BFF; opacity: 0.55; }
+  /* ── Modern Vector Map View ── */
+  .map-view {
+    position: relative;
+    background: #E8EEEC;
+    border-radius: 18px;
+    height: 228px;
+    overflow: hidden;
+    border: 1px solid #E2E8F0;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+  }
+  .map-svg-bg {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+  }
 
-  /* ── Agent list ── */
-  .agent-item { display: flex; align-items: center; gap: 12px; background: #FFF; border-radius: 16px; padding: 13px 8px 13px 14px; box-shadow: 0 2px 8px rgba(0,0,0,0.04); cursor: pointer; transition: box-shadow 0.2s, transform 0.15s; }
-  .agent-item:hover { box-shadow: 0 4px 14px rgba(0,0,0,0.08); transform: translateY(-1px); }
-  .agent-item:active { transform: scale(0.98); }
-  .agent-item .avatar { width: 46px; height: 46px; border-radius: 13px; background: #FFF1F2; color: var(--Primary); font-family: 'Switzer', sans-serif; font-size: 14px; font-weight: 700; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
-  .agent-item .info { flex: 1; min-width: 0; }
-  .agent-item .nm { font-family: 'Switzer', sans-serif; font-size: 13.5px; font-weight: 600; color: var(--On-Surface); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-  .agent-item .sub { font-family: 'Switzer', sans-serif; font-size: 11.5px; color: var(--On-Surface-Low); margin-top: 2px; }
-  .agent-item .right { text-align: right; flex-shrink: 0; }
-  .agent-item .dist { font-family: 'Switzer', sans-serif; font-size: 12px; font-weight: 600; color: var(--On-Surface); }
-  .agent-item .eta { font-family: 'Switzer', sans-serif; font-size: 10.5px; color: var(--On-Surface-Low); margin-top: 1px; }
-  .agent-item .arrow { width: 18px; height: 18px; stroke: var(--On-Surface-Low); stroke-width: 2; fill: none; flex-shrink: 0; }
+  /* Map Labels */
+  .map-text-label {
+    position: absolute;
+    font-family: 'Switzer', sans-serif;
+    pointer-events: none;
+  }
+  .map-text-label.bole {
+    left: 28px;
+    top: 22px;
+    font-size: 12px;
+    font-weight: 600;
+    color: #475569;
+  }
+  .map-text-label.swords {
+    left: 54px;
+    bottom: 30px;
+    font-size: 10px;
+    font-weight: 500;
+    color: #64748B;
+  }
+  .map-airport-tag {
+    position: absolute;
+    right: 18px;
+    top: 48px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 3px;
+    pointer-events: none;
+    text-align: center;
+  }
+  .map-airport-tag svg {
+    width: 15px;
+    height: 15px;
+    fill: #475569;
+  }
+  .map-airport-tag span {
+    font-family: 'Switzer', sans-serif;
+    font-size: 9.5px;
+    font-weight: 500;
+    line-height: 1.25;
+    color: #475569;
+  }
 
-  .agent-list { display: flex; flex-direction: column; gap: 10px; }
-  .list-hint { font-family: 'Switzer', sans-serif; font-size: 12px; color: var(--On-Surface-Low); }
-  .list-hint b { color: var(--On-Surface); font-weight: 600; }
+  /* Map Markers */
+  .map-marker {
+    position: absolute;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    transform: translate(-50%, -85%);
+    cursor: pointer;
+    transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+    z-index: 10;
+  }
+  .map-marker:hover {
+    transform: translate(-50%, -95%) scale(1.1);
+    z-index: 20;
+  }
+  .pin-bubble {
+    position: relative;
+    width: 28px;
+    height: 34px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    filter: drop-shadow(0 4px 6px rgba(225, 29, 37, 0.35));
+  }
+  .pin-bubble svg {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+  }
+  .pin-num {
+    position: relative;
+    font-family: 'Switzer', sans-serif;
+    font-size: 11px;
+    font-weight: 700;
+    color: #FFFFFF;
+    margin-top: -6px;
+  }
+  .pin-dist-badge {
+    margin-top: 2px;
+    background: #FFFFFF;
+    border-radius: 8px;
+    padding: 1.5px 6px;
+    font-family: 'Switzer', sans-serif;
+    font-size: 9px;
+    font-weight: 600;
+    color: #0F172A;
+    white-space: nowrap;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.15);
+  }
 
-  /* ── Location permission modal ── */
-  .perm-overlay { position: absolute; inset: 0; background: rgba(0,0,0,0.45); display: none; align-items: center; justify-content: center; padding: 24px; z-index: 40; }
+  /* "You" Location Marker */
+  .map-you-marker {
+    position: absolute;
+    transform: translate(-50%, -50%);
+    width: 52px;
+    height: 52px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    pointer-events: none;
+    z-index: 5;
+  }
+  .you-pulse-outer {
+    position: absolute;
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    background: rgba(37, 99, 235, 0.14);
+    animation: pulseRing 2.4s infinite ease-out;
+  }
+  .you-pulse-inner {
+    position: absolute;
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    background: rgba(37, 99, 235, 0.24);
+  }
+  .you-dot {
+    position: relative;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    background: #1D6AE5;
+    border: 2px solid #FFFFFF;
+    box-shadow: 0 2px 6px rgba(29, 106, 229, 0.4);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #FFFFFF;
+    font-family: 'Switzer', sans-serif;
+    font-size: 8.5px;
+    font-weight: 700;
+  }
+  @keyframes pulseRing {
+    0% { transform: scale(0.85); opacity: 0.8; }
+    50% { transform: scale(1.15); opacity: 0.3; }
+    100% { transform: scale(0.85); opacity: 0.8; }
+  }
+
+  /* Floating Re-center / Crosshair Button */
+  .map-recenter-btn {
+    position: absolute;
+    right: 12px;
+    bottom: 12px;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: #FFFFFF;
+    border: none;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.18);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    z-index: 15;
+    transition: transform 0.15s, background 0.15s;
+  }
+  .map-recenter-btn:active { transform: scale(0.92); }
+  .map-recenter-btn svg {
+    width: 20px;
+    height: 20px;
+    stroke: #0F172A;
+    stroke-width: 2;
+    fill: none;
+  }
+
+  /* ── Section Title ── */
+  .section-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 4px;
+  }
+  .section-header .count-title {
+    font-family: 'Switzer', sans-serif;
+    font-size: 15.5px;
+    font-weight: 700;
+    color: #0F172A;
+  }
+  .section-header .divider {
+    color: #CBD5E1;
+    font-weight: 300;
+    font-size: 13px;
+  }
+  .section-header .sub-hint {
+    font-family: 'Switzer', sans-serif;
+    font-size: 12.5px;
+    color: #64748B;
+    font-weight: 400;
+  }
+
+  /* ── Agent Cards List ── */
+  .agent-card-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  .agent-card {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: #FFFFFF;
+    border-radius: 16px;
+    padding: 12px 10px 12px 12px;
+    border: 1px solid #ECECF0;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.02);
+    cursor: pointer;
+    transition: transform 0.15s, box-shadow 0.15s, border-color 0.15s;
+  }
+  .agent-card:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.06);
+    border-color: #E2E8F0;
+  }
+  .agent-card:active { transform: scale(0.985); }
+
+  .agent-avatar {
+    width: 42px;
+    height: 42px;
+    border-radius: 12px;
+    background: #FFF1F2;
+    color: var(--Primary);
+    font-family: 'Switzer', sans-serif;
+    font-size: 14px;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+  .agent-main-info {
+    flex: 1;
+    min-width: 0;
+  }
+  .agent-name {
+    font-family: 'Switzer', sans-serif;
+    font-size: 12.8px;
+    font-weight: 700;
+    color: #0F172A;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .agent-code {
+    font-family: 'Switzer', sans-serif;
+    font-size: 11px;
+    color: #64748B;
+    margin-top: 2px;
+  }
+
+  .agent-right-col {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 4px;
+    flex-shrink: 0;
+  }
+  .agent-metrics-row {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .metric-item {
+    display: inline-flex;
+    align-items: center;
+    gap: 2.5px;
+    font-family: 'Switzer', sans-serif;
+  }
+  .metric-item.distance {
+    font-size: 11px;
+    font-weight: 700;
+    color: #0F172A;
+  }
+  .metric-item.distance svg {
+    width: 11px;
+    height: 11px;
+    fill: var(--Primary);
+  }
+  .metric-item.walk {
+    font-size: 10px;
+    font-weight: 400;
+    color: #64748B;
+  }
+  .metric-item.walk svg {
+    width: 12px;
+    height: 12px;
+    stroke: #64748B;
+    stroke-width: 2;
+    fill: none;
+  }
+
+  /* Status Badge Pill */
+  .status-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 2.5px 8px;
+    border-radius: 12px;
+    font-family: 'Switzer', sans-serif;
+    font-size: 10.5px;
+    font-weight: 600;
+  }
+  .status-badge.open {
+    background: #E8F9EE;
+    color: #16A34A;
+  }
+  .status-badge.closed {
+    background: #F1F5F9;
+    color: #64748B;
+  }
+  .status-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    display: inline-block;
+  }
+  .status-badge.open .status-dot { background: #16A34A; }
+  .status-badge.closed .status-dot { background: #94A3B8; }
+
+  /* Red Chevron Arrow */
+  .card-chevron {
+    width: 15px;
+    height: 15px;
+    stroke: var(--Primary);
+    stroke-width: 2.5;
+    fill: none;
+    flex-shrink: 0;
+    margin-left: 2px;
+  }
+
+  /* ── Location Permission Modal ── */
+  .perm-overlay {
+    position: absolute;
+    inset: 0;
+    background: rgba(0,0,0,0.45);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+    z-index: 50;
+  }
   .perm-overlay.show { display: flex; }
-  .perm-modal { width: 100%; background: #FFF; border-radius: 22px; padding: 26px 22px 22px; display: flex; flex-direction: column; align-items: center; gap: 6px; box-shadow: 0 20px 50px rgba(0,0,0,0.25); }
-  .perm-icon { width: 56px; height: 56px; border-radius: 50%; background: #FFF1F2; display: flex; align-items: center; justify-content: center; margin-bottom: 8px; }
+  .perm-modal {
+    width: 100%;
+    background: #FFF;
+    border-radius: 22px;
+    padding: 26px 22px 22px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    box-shadow: 0 20px 50px rgba(0,0,0,0.25);
+  }
+  .perm-icon {
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    background: #FFF1F2;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 8px;
+  }
   .perm-icon svg { width: 28px; height: 28px; stroke: var(--Primary); stroke-width: 1.8; fill: none; }
-  .perm-title { font-family: 'Switzer', sans-serif; font-size: 16.5px; font-weight: 700; color: var(--On-Surface); text-align: center; }
-  .perm-body { font-family: 'Switzer', sans-serif; font-size: 12.5px; line-height: 1.5; color: var(--On-Surface-Low); text-align: center; margin-top: 4px; margin-bottom: 14px; }
+  .perm-title {
+    font-family: 'Switzer', sans-serif;
+    font-size: 16.5px;
+    font-weight: 700;
+    color: var(--On-Surface);
+    text-align: center;
+  }
+  .perm-body {
+    font-family: 'Switzer', sans-serif;
+    font-size: 12.5px;
+    line-height: 1.5;
+    color: var(--On-Surface-Low);
+    text-align: center;
+    margin-top: 4px;
+    margin-bottom: 14px;
+  }
   .perm-actions { width: 100%; display: flex; flex-direction: column; gap: 10px; }
-  .perm-btn { width: 100%; height: 48px; border-radius: 13px; font-family: 'Switzer', sans-serif; font-size: 14.5px; font-weight: 600; cursor: pointer; transition: opacity 0.2s; }
+  .perm-btn {
+    width: 100%;
+    height: 48px;
+    border-radius: 13px;
+    font-family: 'Switzer', sans-serif;
+    font-size: 14.5px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: opacity 0.2s;
+  }
   .perm-btn:active { opacity: 0.85; }
-  .perm-btn.primary { border: none; background: var(--Primary); color: #FFF; box-shadow: 0 4px 12px rgba(254,53,61,0.25); }
-  .perm-btn.ghost { border: none; background: transparent; color: var(--On-Surface-Low); }
+  .perm-btn.primary {
+    border: none;
+    background: var(--Primary);
+    color: #FFF;
+    box-shadow: 0 4px 12px rgba(254,53,61,0.25);
+  }
+  .perm-btn.ghost {
+    border: none;
+    background: transparent;
+    color: var(--On-Surface-Low);
+  }
 </style>
 </head>
 <body>
 <div class="phone-frame">
   <div class="app-content">
 
+    <!-- Status Bar -->
     <div class="status-bar">
       <span class="time">10:00</span>
       <div class="status-icons">
-        <svg viewBox="0 0 24 24" fill="none"><path d="M1 9l2 2c4.97-4.97 13.03-4.97 18 0l2-2C16.93 2.93 7.08 2.93 1 9z" fill="#1C1C21"/><path d="M5 13l2 2c2.76-2.76 7.24-2.76 10 0l2-2C15.14 9.14 8.87 9.14 5 13z" fill="#1C1C21"/><path d="M9 17l2 2c1.1-1.1 2.9-1.1 4 0l2-2c-2.21-2.21-5.79-2.21-8 0z" fill="#1C1C21"/></svg>
-        <svg viewBox="0 0 24 24" fill="none"><rect x="2" y="6" width="4" height="12" rx="1" fill="#1C1C21"/><rect x="8" y="4" width="4" height="14" rx="1" fill="#1C1C21"/><rect x="14" y="2" width="4" height="16" rx="1" fill="#1C1C21"/><rect x="20" y="0" width="4" height="18" rx="1" fill="#1C1C21" opacity="0.3"/></svg>
-        <svg viewBox="0 0 28 14" fill="none"><rect x="0" y="1" width="22" height="12" rx="2.5" stroke="#1C1C21" stroke-width="1.5"/><rect x="2" y="3" width="16" height="8" rx="1" fill="#1C1C21"/><rect x="24" y="4" width="2" height="6" rx="1" fill="#1C1C21"/></svg>
+        <svg viewBox="0 0 24 24" fill="none"><path d="M1 9l2 2c4.97-4.97 13.03-4.97 18 0l2-2C16.93 2.93 7.08 2.93 1 9z" fill="#0F172A"/><path d="M5 13l2 2c2.76-2.76 7.24-2.76 10 0l2-2C15.14 9.14 8.87 9.14 5 13z" fill="#0F172A"/><path d="M9 17l2 2c1.1-1.1 2.9-1.1 4 0l2-2c-2.21-2.21-5.79-2.21-8 0z" fill="#0F172A"/></svg>
+        <svg viewBox="0 0 24 24" fill="none"><rect x="2" y="6" width="4" height="12" rx="1" fill="#0F172A"/><rect x="8" y="4" width="4" height="14" rx="1" fill="#0F172A"/><rect x="14" y="2" width="4" height="16" rx="1" fill="#0F172A"/><rect x="20" y="0" width="4" height="18" rx="1" fill="#0F172A" opacity="0.3"/></svg>
+        <svg viewBox="0 0 28 14" fill="none"><rect x="0" y="1" width="22" height="12" rx="2.5" stroke="#0F172A" stroke-width="1.5"/><rect x="2" y="3" width="16" height="8" rx="1" fill="#0F172A"/><rect x="24" y="4" width="2" height="6" rx="1" fill="#0F172A"/></svg>
       </div>
     </div>
 
+    <!-- Header Navigation -->
     <div class="header-nav">
-      <button class="back-btn" onclick="window.location.href='Withdraw Cash.html'">
-        <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+      <button class="back-btn" onclick="window.location.href='Withdraw Cash.html'" title="Back">
+        <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M19 12H5M12 19l-7-7 7-7"/>
+        </svg>
       </button>
-      <span class="header-title">Find Nearby Agent</span>
-      <div style="width:36px;"></div>
+      <h1 class="header-title">Find an Agent</h1>
     </div>
 
     <div class="scroll">
 
-      <div class="locate-bar">
-        <svg class="pin-ico" viewBox="0 0 24 24" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s7-5.7 7-11a7 7 0 1 0-14 0c0 5.3 7 11 7 11z"/><circle cx="12" cy="10" r="2.5"/></svg>
-        <div class="loc-wrap" id="locDisplay">
-          <div class="loc" id="locName">Bole, Addis Ababa</div>
-          <div class="sub" id="locSub">Using your current location</div>
+      <!-- Location / Search Card -->
+      <div class="loc-card-container">
+        <div class="loc-card" id="locCard">
+          <div class="loc-card-left">
+            <svg class="loc-pin-icon" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
+              <circle cx="12" cy="10" r="3"/>
+            </svg>
+            <div class="loc-text-wrap" id="locDisplay" onclick="openSearch()">
+              <div class="loc-title" id="locName">Bole, Addis Ababa</div>
+              <div class="loc-subtitle" id="locSub">Using your location</div>
+            </div>
+            <input class="loc-input" id="locInput" type="text" placeholder="Search area in Addis Ababa..."
+                   onkeydown="if(event.key==='Enter')applySearch()" oninput="renderSuggestions(this.value)">
+          </div>
+          <button class="loc-search-btn" id="locBtn" onclick="toggleSearch()" title="Search location">
+            <svg id="locBtnIcon" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="11" cy="11" r="7"/>
+              <line x1="16.5" y1="16.5" x2="21" y2="21"/>
+            </svg>
+          </button>
         </div>
-        <input class="loc-input" id="locInput" type="text" placeholder="Search another location"
-               onkeydown="if(event.key==='Enter')applySearch()" oninput="renderSuggestions(this.value)">
-        <button class="loc-btn" id="locBtn" onclick="toggleSearch()" title="Search location">
-          <svg id="locBtnIcon" viewBox="0 0 24 24" fill="none" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><line x1="16" y1="16" x2="21" y2="21"/></svg>
+        <div class="loc-suggest" id="locSuggest"></div>
+      </div>
+
+      <!-- Filter Chips Row -->
+      <div class="filter-chips-row">
+        <button class="filter-chip active" id="chipNearby" onclick="filterBy('nearby')">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/>
+          </svg>
+          <span>Nearby</span>
+        </button>
+        <button class="filter-chip" id="chipOpen" onclick="filterBy('open')">
+          <span class="chip-dot-green"></span>
+          <span>Open Now</span>
+        </button>
+        <button class="filter-chip" id="chipCashIn" onclick="filterBy('cashin')">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M7 3v18m0 0l-4-4m4 4l4-4M17 21V3m0 0l-4 4m4-4l4 4"/>
+          </svg>
+          <span>Cash In</span>
+        </button>
+        <button class="filter-chip" id="chipCashOut" onclick="filterBy('cashout')">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="12" y1="5" x2="12" y2="19"/><polyline points="19 12 12 19 5 12"/>
+          </svg>
+          <span>Cash Out</span>
+        </button>
+        <button class="filter-chip" id="chipBillPay" onclick="filterBy('billpay')">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/>
+          </svg>
+          <span>Bill Pay</span>
         </button>
       </div>
-      <div class="loc-suggest" id="locSuggest"></div>
 
-      <div class="map-view">
-        <div class="map-roads"></div>
-        <div class="map-block-a"></div><span class="map-label a">Bole</span>
-        <div class="map-block-b"></div><span class="map-label b">Airport Rd</span>
-        <div class="map-block-c"></div><span class="map-label c">Swords Bldg</span>
+      <!-- Map View -->
+      <div class="map-view" id="mapContainer">
+        <!-- SVG Styled Map Graphic -->
+        <svg class="map-svg-bg" viewBox="0 0 328 228" preserveAspectRatio="none">
+          <defs>
+            <linearGradient id="roadGold" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stop-color="#FDE68A"/>
+              <stop offset="100%" stop-color="#FCD34D"/>
+            </linearGradient>
+          </defs>
+
+          <!-- Base Ground -->
+          <rect width="100%" height="100%" fill="#E9EFE9"/>
+
+          <!-- Green Park / Garden Zones -->
+          <rect x="18" y="16" width="76" height="34" rx="6" fill="#D8EBD9"/>
+          <rect x="8" y="142" width="74" height="48" rx="8" fill="#D8EBD9"/>
+          <rect x="110" y="68" width="62" height="46" rx="8" fill="#E0F0E2"/>
+          <rect x="18" y="86" width="38" height="32" rx="5" fill="#DFEFE1"/>
+
+          <!-- Airport Zone polygon on the right -->
+          <path d="M 215,0 L 328,0 L 328,175 L 255,175 L 215,90 Z" fill="#E2EAF4"/>
+          <!-- Runway lines -->
+          <line x1="262" y1="32" x2="320" y2="118" stroke="#FFFFFF" stroke-width="5" stroke-linecap="round"/>
+          <line x1="262" y1="32" x2="320" y2="118" stroke="#CBD5E1" stroke-width="1.5" stroke-dasharray="3,3"/>
+
+          <!-- Secondary White Roads -->
+          <path d="M 64,0 L 64,228" stroke="#FFFFFF" stroke-width="7" fill="none"/>
+          <path d="M 162,0 L 162,228" stroke="#FFFFFF" stroke-width="6" fill="none"/>
+          <path d="M 0,82 L 328,82" stroke="#FFFFFF" stroke-width="5" fill="none"/>
+          <path d="M 0,166 L 250,166" stroke="#FFFFFF" stroke-width="5" fill="none"/>
+          <path d="M 224,80 L 310,228" stroke="#FFFFFF" stroke-width="6" fill="none"/>
+
+          <!-- Minor road grids -->
+          <line x1="112" y1="0" x2="112" y2="228" stroke="#F1F5F9" stroke-width="2.5"/>
+          <line x1="0" y1="126" x2="215" y2="126" stroke="#F1F5F9" stroke-width="2.5"/>
+          <line x1="0" y1="42" x2="162" y2="42" stroke="#F1F5F9" stroke-width="2.5"/>
+
+          <!-- Main Arterial Diagonal Road (Gold / Yellow) -->
+          <path d="M -10,218 L 140,146 L 240,86 L 338,40" stroke="#F59E0B" stroke-width="8" stroke-linecap="round" fill="none" opacity="0.3"/>
+          <path d="M -10,218 L 140,146 L 240,86 L 338,40" stroke="url(#roadGold)" stroke-width="6.5" stroke-linecap="round" fill="none"/>
+          <path d="M -10,218 L 140,146 L 240,86 L 338,40" stroke="#FFFBEB" stroke-width="3.5" stroke-linecap="round" fill="none"/>
+        </svg>
+
+        <!-- Static Text Labels -->
+        <span class="map-text-label bole">Bole</span>
+        <span class="map-text-label swords">Swords Bldg</span>
+
+        <div class="map-airport-tag">
+          <svg viewBox="0 0 24 24">
+            <path d="M21 16v-2l-8-5V3.5c0-.83-.67-1.5-1.5-1.5S10 2.67 10 3.5V9l-8 5v2l8-2.5V19l-2 1.5V22l3.5-1 3.5 1v-1.5L13 19v-5.5l8 2.5z"/>
+          </svg>
+          <span>Bole International<br>Airport</span>
+        </div>
+
+        <!-- Dynamic Map Pins -->
         <div id="mapPins"></div>
-        <div class="map-you"></div>
-        <div class="map-label" style="left:47%;top:58%;font-weight:700;color:#2B6BFF;">You</div>
+
+        <!-- Center "You" Location Marker -->
+        <div class="map-you-marker" style="left: 49%; top: 46%;">
+          <div class="you-pulse-outer"></div>
+          <div class="you-pulse-inner"></div>
+          <div class="you-dot">You</div>
+        </div>
+
+        <!-- Re-center / GPS target button -->
+        <button class="map-recenter-btn" onclick="recenterMap()" title="Re-center map">
+          <svg viewBox="0 0 24 24">
+            <circle cx="12" cy="12" r="7"/>
+            <line x1="12" y1="2" x2="12" y2="5"/>
+            <line x1="12" y1="19" x2="12" y2="22"/>
+            <line x1="2" y1="12" x2="5" y2="12"/>
+            <line x1="19" y1="12" x2="22" y2="12"/>
+            <circle cx="12" cy="12" r="2.2" fill="#0F172A"/>
+          </svg>
+        </button>
       </div>
 
-      <div class="list-hint"><b id="agentCount"></b> authorized agents near <span id="areaName">Bole, Addis Ababa</span></div>
-      <div id="agentList" class="agent-list"></div>
+      <!-- Section Title Header -->
+      <div class="section-header">
+        <span class="count-title"><span id="agentCount">4</span> agents nearby</span>
+        <span class="divider">|</span>
+        <span class="sub-hint">Closest to you</span>
+      </div>
+
+      <!-- Agent Cards List -->
+      <div id="agentList" class="agent-card-list"></div>
 
     </div>
   </div>
 
-  <!-- Location permission modal: shown first, before the map/list -->
+  <!-- Location Permission Modal -->
   <div class="perm-overlay show" id="permOverlay">
     <div class="perm-modal">
-      <div class="perm-icon"><svg viewBox="0 0 24 24" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s7-5.7 7-11a7 7 0 1 0-14 0c0 5.3 7 11 7 11z"/><circle cx="12" cy="10" r="2.5"/></svg></div>
+      <div class="perm-icon">
+        <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M12 21s7-5.7 7-11a7 7 0 1 0-14 0c0 5.3 7 11 7 11z"/>
+          <circle cx="12" cy="10" r="2.5"/>
+        </svg>
+      </div>
       <div class="perm-title">Allow Location Access</div>
       <div class="perm-body">Lehulum uses your location to find M-PESA agents near you and show accurate distances. Your location is only used while the app is open.</div>
       <div class="perm-actions">
@@ -181,73 +906,225 @@
 
 <script>
   const AGENTS = [
-    { abbr: 'BM', name: 'Betty Merhat Agency', code: '323217', dist: '0.8 km', eta: '9 min walk', addr: 'Bole Medhanialem, Addis Ababa', open: true, x: '29%', y: '41%' },
-    { abbr: 'KR', name: 'Kebede Retails', code: '562394', dist: '1.2 km', eta: '14 min walk', addr: 'Bole Airport Road, Addis Ababa', open: true, x: '63%', y: '29%' },
-    { abbr: 'MS', name: 'Meskerem Agent Services', code: '778901', dist: '2.1 km', eta: '6 min drive', addr: 'Mekanisa, Addis Ababa', open: false, x: '57%', y: '67%' },
-    { abbr: 'BM', name: 'Bole Mini-Mart', code: '204411', dist: '2.6 km', eta: '8 min drive', addr: 'Dembel City Center', open: true, x: null, y: null }
+    {
+      id: 1,
+      abbr: 'BM',
+      name: 'Betty Merhat Agency',
+      code: '323217',
+      dist: '0.8 km',
+      walk: '9 min walk',
+      addr: 'Bole Medhanialem, Addis Ababa',
+      open: true,
+      x: '38%',
+      y: '22%'
+    },
+    {
+      id: 2,
+      abbr: 'KR',
+      name: 'Kebede Retails',
+      code: '562394',
+      dist: '1.2 km',
+      walk: '14 min walk',
+      addr: 'Bole Airport Road, Addis Ababa',
+      open: true,
+      x: '61%',
+      y: '22%'
+    },
+    {
+      id: 3,
+      abbr: 'MS',
+      name: 'Meskerem Agent Services',
+      code: '778901',
+      dist: '2.1 km',
+      walk: '26 min walk',
+      addr: 'Mekanisa, Addis Ababa',
+      open: false,
+      x: '65%',
+      y: '63%'
+    },
+    {
+      id: 4,
+      abbr: 'BM',
+      name: 'Bole Mini-Mart',
+      code: '204411',
+      dist: '2.6 km',
+      walk: '32 min walk',
+      addr: 'Dembel City Center',
+      open: true,
+      x: '22%',
+      y: '40%'
+    }
   ];
 
-  function pinIcon() {
-    return '<svg viewBox="0 0 24 24" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s7-5.7 7-11a7 7 0 1 0-14 0c0 5.3 7 11 7 11z"/><circle cx="12" cy="10" r="2.4"/></svg>';
+  let currentFilter = 'nearby';
+
+  function pinSvg() {
+    return `<svg viewBox="0 0 28 34" fill="none">
+      <defs>
+        <linearGradient id="pinGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+          <stop offset="0%" stop-color="#FF434B"/>
+          <stop offset="100%" stop-color="#E11D25"/>
+        </linearGradient>
+      </defs>
+      <path d="M14 0C6.268 0 0 6.268 0 14c0 9.8 14 20 14 20s14-10.2 14-20c0-7.732-6.268-14-14-14z" fill="url(#pinGrad)"/>
+    </svg>`;
   }
 
-  document.getElementById('mapPins').innerHTML = AGENTS
-    .filter(a => a.x)
-    .map(a =>
-      '<div class="map-pin" style="left:' + a.x + ';top:' + a.y + '" title="' + a.name + '" onclick="pickAgent(\'' + a.code + '\')">' +
-        pinIcon() +
-        '<span class="dist">' + a.dist + '</span>' +
-      '</div>'
-    ).join('');
+  function renderMapPins(agents) {
+    const container = document.getElementById('mapPins');
+    container.innerHTML = agents
+      .filter(a => a.x && a.y)
+      .map(a => `
+        <div class="map-marker" style="left: ${a.x}; top: ${a.y};" title="${a.name}" onclick="pickAgent('${a.code}')">
+          <div class="pin-bubble">
+            ${pinSvg()}
+            <span class="pin-num">${a.id}</span>
+          </div>
+          <div class="pin-dist-badge">${a.dist}</div>
+        </div>
+      `).join('');
+  }
 
-  document.getElementById('agentList').innerHTML = AGENTS.map(a =>
-    '<div class="agent-item" onclick="pickAgent(\'' + a.code + '\')">' +
-      '<div class="avatar">' + a.abbr + '</div>' +
-      '<div class="info">' +
-        '<div class="nm">' + a.name + '</div>' +
-        '<div class="sub">Short Code: ' + a.code + ' • ' + (a.open ? 'Open' : 'Closed') + '</div>' +
-      '</div>' +
-      '<div class="right">' +
-        '<div class="dist">' + a.dist + '</div>' +
-        '<div class="eta">' + a.eta + '</div>' +
-      '</div>' +
-      '<svg class="arrow" viewBox="0 0 24 24" fill="none" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>' +
-    '</div>'
-  ).join('');
+  function renderAgentList(agents) {
+    const list = document.getElementById('agentList');
+    document.getElementById('agentCount').textContent = agents.length;
 
-  document.getElementById('agentCount').textContent = AGENTS.length;
+    list.innerHTML = agents.map(a => `
+      <div class="agent-card" onclick="pickAgent('${a.code}')">
+        <div class="agent-avatar">${a.abbr}</div>
+        <div class="agent-main-info">
+          <div class="agent-name">${a.name}</div>
+          <div class="agent-code">${a.code}</div>
+        </div>
+        <div class="agent-right-col">
+          <div class="agent-metrics-row">
+            <span class="metric-item distance">
+              <svg viewBox="0 0 24 24">
+                <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5a2.5 2.5 0 0 1 0-5 2.5 2.5 0 0 1 0 5z"/>
+              </svg>
+              ${a.dist}
+            </span>
+          </div>
+          <span class="status-badge ${a.open ? 'open' : 'closed'}">
+            <span class="status-dot"></span>${a.open ? 'Open' : 'Closed'}
+          </span>
+        </div>
+        <svg class="card-chevron" viewBox="0 0 24 24">
+          <polyline points="9 18 15 12 9 6"/>
+        </svg>
+      </div>
+    `).join('');
+  }
 
-  /* ── Location search ── */
+  /* ── Filter Handler ── */
+  function filterBy(type) {
+    currentFilter = type;
+
+    // Update active chip classes
+    const chipMap = {
+      nearby: 'chipNearby',
+      open: 'chipOpen',
+      cashin: 'chipCashIn',
+      cashout: 'chipCashOut',
+      billpay: 'chipBillPay'
+    };
+
+    Object.keys(chipMap).forEach(key => {
+      const el = document.getElementById(chipMap[key]);
+      if (el) {
+        if (key === type) {
+          el.classList.add('active');
+        } else {
+          el.classList.remove('active');
+        }
+      }
+    });
+
+    let filtered = AGENTS;
+    if (type === 'open') {
+      filtered = AGENTS.filter(a => a.open);
+    }
+
+    renderMapPins(filtered);
+    renderAgentList(filtered);
+  }
+
+  /* ── Agent Selection ── */
+  function pickAgent(code) {
+    const a = AGENTS.find(x => x.code === code);
+    if (!a) return;
+    const data = {
+      method: 'nearby',
+      methodLabel: 'Nearby Agent',
+      agent: {
+        abbr: a.abbr,
+        name: a.name,
+        code: a.code,
+        dist: a.dist,
+        eta: a.walk,
+        addr: a.addr,
+        open: a.open
+      }
+    };
+    sessionStorage.setItem('withdrawData', JSON.stringify(data));
+    window.location.href = 'Withdraw Cash - Agent Details.html';
+  }
+
+  /* ── Map Re-center Animation ── */
+  function recenterMap() {
+    const you = document.querySelector('.map-you-marker');
+    if (!you) return;
+    you.style.transition = 'transform 0.4s ease';
+    you.style.transform = 'translate(-50%, -50%) scale(1.35)';
+    setTimeout(() => {
+      you.style.transform = 'translate(-50%, -50%) scale(1)';
+    }, 400);
+  }
+
+  /* ── Location Search ── */
   const AREAS = [
     'Bole, Addis Ababa', 'Piassa, Addis Ababa', 'Megenagna, Addis Ababa',
     'Mekanisa, Addis Ababa', 'Kazanchis, Addis Ababa', 'CMC, Addis Ababa',
     'Sarbet, Addis Ababa', 'Gerji, Addis Ababa'
   ];
 
-  const bar = document.querySelector('.locate-bar');
+  const card = document.getElementById('locCard');
+
+  function openSearch() {
+    card.classList.add('searching');
+    const input = document.getElementById('locInput');
+    input.value = '';
+    renderSuggestions('');
+    input.focus();
+  }
 
   function toggleSearch() {
-    // The button doubles as submit once the field is open.
-    if (bar.classList.contains('searching')) { applySearch(); return; }
-    bar.classList.add('searching');
-    const el = document.getElementById('locInput');
-    el.value = '';
-    renderSuggestions('');
-    el.focus();
+    if (card.classList.contains('searching')) {
+      applySearch();
+    } else {
+      openSearch();
+    }
   }
 
   function renderSuggestions(q) {
     const box = document.getElementById('locSuggest');
     const term = (q || '').trim().toLowerCase();
     const hits = AREAS.filter(a => a.toLowerCase().includes(term)).slice(0, 5);
-    if (!bar.classList.contains('searching')) { box.classList.remove('show'); return; }
+    if (!card.classList.contains('searching')) {
+      box.classList.remove('show');
+      return;
+    }
     box.innerHTML = hits.length
-      ? hits.map(a =>
-          '<div class="loc-opt" onclick="setLocation(\'' + a.replace(/'/g, "\\'") + '\')">' +
-            '<svg viewBox="0 0 24 24" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s7-5.7 7-11a7 7 0 1 0-14 0c0 5.3 7 11 7 11z"/><circle cx="12" cy="10" r="2.5"/></svg>' +
-            '<span>' + a + '</span>' +
-          '</div>').join('')
-      : '<div class="loc-empty">No area matches &ldquo;' + (q || '') + '&rdquo;</div>';
+      ? hits.map(a => `
+          <div class="loc-opt" onclick="setLocation('${a.replace(/'/g, "\\'")}')">
+            <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M12 21s7-5.7 7-11a7 7 0 1 0-14 0c0 5.3 7 11 7 11z"/>
+              <circle cx="12" cy="10" r="2.5"/>
+            </svg>
+            <span>${a}</span>
+          </div>
+        `).join('')
+      : `<div class="loc-empty">No area matches &ldquo;${(q || '')}&rdquo;</div>`;
     box.classList.add('show');
   }
 
@@ -262,31 +1139,18 @@
     document.getElementById('locName').textContent = name;
     document.getElementById('locSub').textContent = 'Showing agents near this area';
     closeSearch();
-    document.getElementById('areaName').textContent = name;
   }
 
   function closeSearch() {
-    bar.classList.remove('searching');
+    card.classList.remove('searching');
     document.getElementById('locSuggest').classList.remove('show');
   }
 
-  function pickAgent(code) {
-    const a = AGENTS.find(x => x.code === code);
-    if (!a) return;
-    const data = {
-      method: 'nearby',
-      methodLabel: 'Nearby Agent',
-      agent: { abbr: a.abbr, name: a.name, code: a.code, dist: a.dist, eta: a.eta, addr: a.addr, open: a.open }
-    };
-    sessionStorage.setItem('withdrawData', JSON.stringify(data));
-    window.location.href = 'Withdraw Cash - Agent Details.html';
-  }
-
-  /* ── Location permission modal ── */
+  /* ── Location Permission Modal ── */
   function allowLocation() {
     document.getElementById('permOverlay').classList.remove('show');
     document.getElementById('locName').textContent = 'Bole, Addis Ababa';
-    document.getElementById('locSub').textContent = 'Using your current location';
+    document.getElementById('locSub').textContent = 'Using your location';
   }
 
   function denyLocation() {
@@ -294,6 +1158,10 @@
     document.getElementById('locName').textContent = 'Addis Ababa';
     document.getElementById('locSub').textContent = 'Turn on location for more accurate results';
   }
+
+  // Initial render
+  renderMapPins(AGENTS);
+  renderAgentList(AGENTS);
 </script>
 <script src="test-scenarios-data.js"></script>
 <script src="test-scenarios.js"></script>

@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Cash In - Agent Short Code</title>
+<title>Cash In - Merchant Short Code</title>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@400;500;600&display=swap');
   @import url('https://api.fontshare.com/v2/css?f[]=switzer@400,500,600,700&display=swap');
@@ -48,12 +48,15 @@
 
   /* ── My QR card (Cash-In: agent scans the customer's own code) ── */
   .myqr-card { background: #FFF; border-radius: 16px; padding: 20px 16px; box-shadow: 0 2px 8px rgba(0,0,0,0.04); display: flex; flex-direction: column; align-items: center; gap: 14px; }
-  .myqr-profile { display: flex; flex-direction: column; align-items: center; gap: 8px; }
-  .myqr-avatar { width: 52px; height: 52px; border-radius: 50%; overflow: hidden; background: #FFE9EA; border: 2px solid #FFF1F2; }
+  /* A distinct row within the QR card, not a plain centered stack */
+  .myqr-profile { display: flex; align-items: center; gap: 12px; width: 100%; background: var(--Field); border-radius: 14px; padding: 12px 14px; }
+  .myqr-profile .chev { width: 18px; height: 18px; stroke: var(--On-Surface-Low); stroke-width: 2; fill: none; flex-shrink: 0; margin-left: auto; }
+  .myqr-avatar { width: 48px; height: 48px; border-radius: 50%; overflow: hidden; background: #FFE9EA; border: 2px solid #FFF1F2; flex-shrink: 0; }
   .myqr-avatar img { width: 100%; height: 100%; object-fit: cover; }
+  .myqr-profile-text { display: flex; flex-direction: column; gap: 2px; align-items: flex-start; min-width: 0; }
   .myqr-name { font-family: 'Switzer', sans-serif; font-size: 15.5px; font-weight: 700; color: var(--On-Surface); }
   .myqr-number { font-family: 'Switzer', sans-serif; font-size: 12px; color: var(--On-Surface-Low); }
-  .myqr-code-wrap { width: 180px; height: 180px; padding: 12px; border-radius: 18px; background: #FFF; border: 1.5px solid var(--Border); position: relative; }
+  .myqr-code-wrap { width: 224px; height: 224px; padding: 12px; border-radius: 18px; background: #FFF; border: 1.5px solid var(--Border); position: relative; }
   #myQrCanvas { width: 100%; height: 100%; display: block; }
   .myqr-logo-chip { position: absolute; top: 50%; left: 50%; width: 38px; height: 38px; transform: translate(-50%, -50%); background: #FFF; border-radius: 10px; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 8px rgba(0,0,0,0.12); }
   .myqr-logo-chip .m { width: 28px; height: 28px; border-radius: 8px; background: var(--Primary); color: #FFF; display: flex; align-items: center; justify-content: center; font-family: 'Switzer', sans-serif; font-weight: 700; font-size: 15px; }
@@ -81,9 +84,12 @@
   .field input::placeholder { color: #B9B9C2; font-weight: 400; }
   .field .unit { font-family: 'Switzer', sans-serif; font-size: 13.5px; font-weight: 600; color: var(--On-Surface-Low); flex-shrink: 0; }
 
-  .note-hint { display: flex; align-items: flex-start; gap: 7px; background: #FFF8E5; border-radius: 10px; padding: 10px 12px; }
+  /* Same white-card treatment as the app's other info cards — only the
+     icon stays amber, instead of a solid yellow-tinted box. */
+  .note-hint { display: flex; align-items: flex-start; gap: 7px; background: #FFF; box-shadow: 0 2px 8px rgba(0,0,0,0.04); border-radius: 10px; padding: 10px 12px; }
   .note-hint svg { width: 15px; height: 15px; stroke: #B4880B; stroke-width: 2; fill: none; flex-shrink: 0; margin-top: 1px; }
-  .note-hint span { font-family: 'Switzer', sans-serif; font-size: 11.5px; line-height: 1.45; color: #8A6A08; }
+  .note-hint span { font-family: 'Switzer', sans-serif; font-size: 11.5px; line-height: 1.45; color: var(--On-Surface-Low); }
+  .note-hint span b { color: var(--On-Surface); }
 
   .msg { display: none; align-items: flex-start; gap: 7px; font-family: 'Switzer', sans-serif; font-size: 12.5px; line-height: 1.45; color: var(--Primary); }
   .msg.show { display: flex; }
@@ -119,8 +125,8 @@
 
   /* ── Continue button ── */
   .bottom-area { position: absolute; left: 16px; right: 16px; bottom: 18px; background: var(--Background); padding-top: 10px; }
-  .continue-btn { width: 100%; height: 54px; border: none; border-radius: 16px; background: #E2E2E6; color: #FFF; font-family: 'Switzer', sans-serif; font-size: 16px; font-weight: 600; cursor: pointer; transition: background 0.25s, opacity 0.2s; }
-  .continue-btn.active { background: var(--Primary); }
+  .continue-btn { width: 100%; height: 54px; border: none; border-radius: 16px; background: #E2E2E6; color: var(--On-Surface-Low); font-family: 'Switzer', sans-serif; font-size: 16px; font-weight: 600; cursor: not-allowed; transition: background 0.25s, opacity 0.2s; }
+  .continue-btn.active { background: var(--Primary); color: #FFF; cursor: pointer; }
   .continue-btn:active { opacity: 0.85; }
 
   /* ── Confirmation sheet ── */
@@ -142,9 +148,12 @@
   .cf-row .v { font-family: 'Switzer', sans-serif; font-size: 13.5px; font-weight: 600; color: var(--On-Surface); }
   .cf-row.total { border-top: 1px solid var(--Border); border-bottom: none; padding-top: 12px; }
   .cf-row.total .v { color: var(--Primary); font-weight: 700; font-size: 15px; }
-  .cf-note { display: flex; align-items: flex-start; gap: 8px; background: #FFF4E5; border-radius: 10px; padding: 10px 12px; }
-  .cf-note svg { width: 15px; height: 15px; stroke: #B4880B; stroke-width: 2; fill: none; flex-shrink: 0; margin-top: 1px; }
-  .cf-note span { font-family: 'Switzer', sans-serif; font-size: 11.5px; line-height: 1.45; color: #8A6A08; }
+  /* Same red warning treatment as the "voucher != money deposited" note
+     elsewhere in the Cash-In flow, instead of a one-off yellow variant. */
+  .cf-note { display: flex; align-items: flex-start; gap: 8px; background: #FFF1F2; border: 1px solid #FFD6D9; border-radius: 10px; padding: 10px 12px; }
+  .cf-note svg { width: 15px; height: 15px; stroke: var(--Primary); stroke-width: 2; fill: none; flex-shrink: 0; margin-top: 1px; }
+  .cf-note span { font-family: 'Switzer', sans-serif; font-size: 11.5px; line-height: 1.45; color: #8E232C; }
+  .cf-note span b { color: var(--Primary); }
   .sheet-btns { display: flex; flex-direction: column; gap: 10px; }
   .btn { height: 52px; border-radius: 14px; border: none; font-family: 'Switzer', sans-serif; font-size: 15px; font-weight: 600; cursor: pointer; transition: opacity 0.2s; }
   .btn-primary { background: var(--Primary); color: #FFF; }
@@ -196,15 +205,23 @@
         <div class="myqr-card">
           <div class="myqr-profile">
             <div class="myqr-avatar"><img src="assets/avatars/avatar-2.png" alt="Aster" onerror="this.style.display='none'"></div>
-            <div class="myqr-name">Aster Mequanent</div>
-            <div class="myqr-number">+251 712 *** *78</div>
+            <div class="myqr-profile-text">
+              <div class="myqr-name">Aster Mequanent</div>
+              <div class="myqr-number">+251 712 *** *78</div>
+            </div>
+            <svg class="chev" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>
           </div>
 
           <div class="myqr-code-wrap">
-            <canvas id="myQrCanvas" width="160" height="160"></canvas>
+            <canvas id="myQrCanvas" width="200" height="200"></canvas>
             <div class="myqr-logo-chip"><div class="m">M</div></div>
           </div>
 
+          <div class="myqr-hint">Show this code to the agent to receive<br>your Cash-In deposit.</div>
+        </div>
+
+        <!-- ── Separate section: the deposit amount, set on top of the QR above ── -->
+        <div class="myqr-card">
           <div class="myqr-amount">
             <div class="field-label">Amount</div>
             <div class="field">
@@ -218,30 +235,26 @@
           </div>
 
           <div class="myqr-actions">
-            <button class="myqr-btn secondary" onclick="saveQr()">
-              <svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-              Save
+            <button class="myqr-btn primary" id="qrAmtBtn" onclick="confirmQrAmount()">
+              Done
             </button>
-            <button class="myqr-btn primary" id="qrAmtBtn" onclick="toggleQrAmount()">
-              <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>
-              <span id="qrAmtBtnTxt">Set Amount</span>
+            <button class="myqr-btn secondary" onclick="updateQrAmount()">
+              Update Amount
             </button>
           </div>
-
-          <div class="myqr-hint">Show this code to the agent to receive<br>your Cash-In deposit.</div>
         </div>
       </div>
 
       <!-- ── Short Code panel ── -->
       <div class="panel" id="panelCode">
       <div class="form-card">
-        <div class="field-label">Agent Short Code</div>
+        <div class="field-label">Merchant Short Code</div>
         <div class="field">
-          <input id="codeInput" type="tel" inputmode="numeric" placeholder="Enter 6-digit agent code" maxlength="6" oninput="onCodeInput(this)">
+          <input id="codeInput" type="tel" inputmode="numeric" placeholder="Enter 6-digit merchant code" maxlength="6" oninput="onCodeInput(this)">
         </div>
         <div class="loading-chip" id="codeLoading">
           <div class="loading-spinner"></div>
-          <span class="loading-text">Validating agent&hellip;</span>
+          <span class="loading-text">Validating merchant&hellip;</span>
         </div>
         <div class="agent-chip" id="codeChip">
           <div class="tick"><svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></div>
@@ -249,7 +262,7 @@
         </div>
         <div class="msg" id="codeMsg">
           <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
-          <span id="codeMsgTxt">Agent not found.</span>
+          <span id="codeMsgTxt">Merchant not found.</span>
         </div>
 
         <div class="field-label">Deposit Amount (ETB)</div>
@@ -307,8 +320,8 @@
           <div class="cf-row total"><span class="l">Total Amount</span><span class="v" id="cfTotal">&mdash;</span></div>
         </div>
         <div class="cf-note">
-          <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
-          <span>A Cash-In voucher will be generated. Your wallet is <b>not credited at this point</b> &mdash; credit happens after the agent validates the voucher and processes your cash.</span>
+          <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+          <span><b>Voucher Generated &ne; Money Deposited.</b> Your wallet is credited only after the agent validates it and processes your cash.</span>
         </div>
         <div class="sheet-btns">
           <button class="btn btn-primary" onclick="confirmDeposit()">Confirm</button>
@@ -399,28 +412,28 @@
     const n = parseFloat(raw);
     let err = '';
     if (isNaN(n) || n <= 0) err = 'Enter a valid amount.';
-    else if (n < MIN_AMT) err = 'Minimum deposit is ' + MIN_AMT + ' Br.';
-    else if (n > MAX_AMT) err = 'Maximum deposit is ' + MAX_AMT.toLocaleString() + ' Br per transaction.';
+    else if (n < MIN_AMT) err = 'Minimum deposit is ' + MIN_AMT + ' ETB.';
+    else if (n > MAX_AMT) err = 'Maximum deposit is ' + MAX_AMT.toLocaleString() + ' ETB per transaction.';
     if (err) { $('qrAmtMsgTxt').textContent = err; msg.classList.add('show'); return null; }
     msg.classList.remove('show');
     return n;
   }
 
-  function toggleQrAmount() {
-    if (qrAmountSet) {
-      // Edit Amount: unlock the field so it can be changed again.
-      qrAmountSet = false;
-      $('qrAmt').disabled = false;
-      $('qrAmt').focus();
-      $('qrAmtBtnTxt').textContent = 'Set Amount';
-      drawMyQR();
-      return;
-    }
+  // "Update Amount": push the typed value into the QR, but keep the field
+  // editable so it can be adjusted again without unlocking anything first.
+  function updateQrAmount() {
+    const amount = validateQrAmount();
+    if (amount === null) return;
+    qrAmountSet = true;
+    drawMyQR();
+  }
+
+  // "Done": validate, push the value into the QR, and lock the field.
+  function confirmQrAmount() {
     const amount = validateQrAmount();
     if (amount === null) return;
     qrAmountSet = true;
     $('qrAmt').disabled = true;
-    $('qrAmtBtnTxt').textContent = 'Edit Amount';
     drawMyQR();
   }
 
@@ -432,8 +445,6 @@
     clearTimeout(toastTimer);
     toastTimer = setTimeout(() => t.classList.remove('show'), 2200);
   }
-
-  function saveQr() { showToast('Saved to gallery'); }
 
   function onCodeInput(el) {
     el.value = el.value.replace(/\D/g, '').slice(0, 6);
@@ -460,7 +471,7 @@
       } else {
         loading.classList.remove('show');
         chip.classList.remove('show');
-        $('codeMsgTxt').textContent = 'Invalid agent. Please check the agent details and try again.';
+        $('codeMsgTxt').textContent = 'Invalid merchant. Please check the merchant details and try again.';
         msg.classList.add('show');
       }
       updateBtn();
@@ -480,8 +491,8 @@
     const n = parseFloat(raw);
     let err = '';
     if (isNaN(n) || n <= 0) err = 'Enter a valid amount.';
-    else if (n < MIN_AMT) err = 'Minimum deposit is ' + MIN_AMT + ' Br.';
-    else if (n > MAX_AMT) err = 'Maximum deposit is ' + MAX_AMT.toLocaleString() + ' Br per transaction.';
+    else if (n < MIN_AMT) err = 'Minimum deposit is ' + MIN_AMT + ' ETB.';
+    else if (n > MAX_AMT) err = 'Maximum deposit is ' + MAX_AMT.toLocaleString() + ' ETB per transaction.';
     if (err) { $('amtMsgTxt').textContent = err; msg.classList.add('show'); return null; }
     msg.classList.remove('show');
     return n;
@@ -501,8 +512,8 @@
     $('cfAvatar').textContent = agent.abbr;
     $('cfName').textContent = agent.name;
     $('cfSub').textContent = 'Short Code: ' + agent.code;
-    $('cfAmount').textContent = fmt(amount) + ' Br';
-    $('cfTotal').textContent = fmt(amount) + ' Br';
+    $('cfAmount').textContent = fmt(amount) + ' ETB';
+    $('cfTotal').textContent = fmt(amount) + ' ETB';
     $('sheetOverlay').classList.add('show');
   }
 
@@ -513,7 +524,7 @@
     if (!agent || amount === null) return;
     sessionStorage.setItem('cashInData', JSON.stringify({
       method: 'code',
-      methodLabel: 'Agent Short Code',
+      methodLabel: 'Merchant Short Code',
       agent: agent,
       agentName: agent.name,
       agentCode: agent.code,
@@ -537,11 +548,13 @@
 
   drawMyQR();
 
-  // Prefill from a saved favourite/frequent agent on the entry screen.
+  // Prefill from a saved favourite/frequent agent, or when editing an
+  // already-generated voucher's details from the Cash-In Voucher screen.
   try {
     const data = JSON.parse(sessionStorage.getItem('cashInData') || '{}');
     const code = String(data.agentCode || (data.agent && data.agent.code) || '');
     if (/^\d{6}$/.test(code)) useRecent(code);
+    if (data.amount) { $('amt').value = data.amount; onAmountInput($('amt')); }
   } catch (e) { /* ignore corrupt state */ }
 </script>
 <script src="test-scenarios-data.js"></script>

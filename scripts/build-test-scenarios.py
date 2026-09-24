@@ -9,6 +9,10 @@ SKIP = {"index.html", "404.html", "Component Library 2.html", "component-library
 FLOWS = [
     ("Airtime Top-up",        ["Airtime"]),
     ("Data Package",          ["Package"]),
+    # DSTV is its own multi-screen sub-flow (card, entry, package, add-ons,
+    # custom amount); listed before the generic Bill Payment bucket so its five
+    # screens don't spill into every other biller's scenario popup.
+    ("DSTV",                  ["Bill Payment_DSTV"]),
     ("Bill Payment",          ["Bill Payment", "Pay Bill", "Pay Utility"]),
     ("Merchant Payment",      ["Merchant Payment", "Pay Merchant", "Scan QR", "My QR Code"]),
     ("Send Money & Transfer", ["Send Money", "Transfer", "Transaction Confirmation"]),
@@ -20,8 +24,7 @@ FLOWS = [
     ("Sign Up & Onboarding",  ["Signup", "SignUp", "Fayda", "Confirm Profile", "App Walkthrough",
                                "first-visit"]),
     ("Account & Statements",  ["Account", "Manage Statement", "Statement PDF", "Transaction History",
-                               "Transaction Statment", "Verify Receipt", "Tariffs",
-                               "Merchant Draw Statement"]),
+                               "Transaction Statment", "Verify Receipt", "Tariffs"]),
     ("Home & Services",       ["Lehulum Home", "More Services", "All Services", "Buy Ticket",
                                "Announcement", "Notification Center", "Update Notice",
                                "Update Request", "Toast Message", "Feedback Tool", "Date Picker",

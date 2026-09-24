@@ -14,6 +14,7 @@
     --On-Surface-Low: #7C7C87;
     --Border: #E8E8EC;
     --Background: #F5F5F5;
+    --Field: #F7F7F8;
     --Success: #1FC83B;
     --Success-Light: #E8F9EC;
   }
@@ -36,23 +37,43 @@
   .scroll { flex: 1; overflow-y: auto; padding: 4px 16px 20px; display: flex; flex-direction: column; gap: 14px; }
   .scroll::-webkit-scrollbar { width: 0; }
 /* ── Status ribbon: AWAITING AGENT (voucher ≠ credit) ── */
-  .status-ribbon { display: flex; align-items: center; gap: 10px; background: #FFF4E5; border: 1px solid #F5DCA8; border-radius: 14px; padding: 12px 14px; }
+  .status-ribbon { display: flex; align-items: center; gap: 10px; background: #FFF; box-shadow: 0 2px 8px rgba(0,0,0,0.04); border-radius: 14px; padding: 12px 14px; }
   .status-ribbon .ico { width: 34px; height: 34px; border-radius: 10px; background: #FFE3A8; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
   .status-ribbon .ico svg { width: 19px; height: 19px; stroke: #8A5A00; stroke-width: 2; fill: none; }
   .status-ribbon .txt { flex: 1; min-width: 0; }
-  .status-ribbon .t1 { font-family: 'Switzer', sans-serif; font-size: 13.5px; font-weight: 700; color: #6B4A00; }
-  .status-ribbon .t2 { font-family: 'Switzer', sans-serif; font-size: 11.5px; color: #8A6A08; line-height: 1.4; margin-top: 1px; }
+  .status-ribbon .t1 { font-family: 'Switzer', sans-serif; font-size: 13.5px; font-weight: 700; color: var(--On-Surface); }
+  .status-ribbon .t2 { font-family: 'Switzer', sans-serif; font-size: 11.5px; color: var(--On-Surface-Low); line-height: 1.4; margin-top: 1px; }
 
   /* ── Voucher card ── */
-  .voucher-card { position: relative; background: #FFF; border-radius: 18px; padding: 22px 18px 18px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); display: flex; flex-direction: column; align-items: center; gap: 12px; overflow: hidden; }
-  .voucher-card::before, .voucher-card::after { content: ''; position: absolute; top: 50%; width: 22px; height: 22px; border-radius: 50%; background: var(--Background); }
-  .voucher-card::before { left: -11px; }
-  .voucher-card::after { right: -11px; }
+  /* flex-shrink: 0 matters here — overflow: hidden disables a flex item's
+     content-based minimum size, so without it the column flexbox above was
+     free to shrink this card below its own content and clip the meta row. */
+  .voucher-card { position: relative; flex-shrink: 0; background: #FFF; border-radius: 18px; padding: 22px 18px 18px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); display: flex; flex-direction: column; align-items: center; gap: 12px; overflow: hidden; }
   .voucher-type { font-family: 'Switzer', sans-serif; font-size: 11px; font-weight: 700; letter-spacing: 1.2px; text-transform: uppercase; color: var(--On-Surface-Low); }
-  .voucher-code { display: flex; align-items: center; gap: 8px; font-family: 'Poppins', sans-serif; font-size: 20px; font-weight: 600; letter-spacing: 2px; color: var(--On-Surface); padding: 8px 14px; background: #F8F8FA; border: 1.5px dashed var(--Border); border-radius: 12px; }
-  .voucher-code .copy { width: 30px; height: 30px; border: none; border-radius: 9px; background: #FFF1F2; cursor: pointer; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
-  .voucher-code .copy:hover { background: #FFE0E2; }
-  .voucher-code .copy svg { width: 15px; height: 15px; stroke: var(--Primary); stroke-width: 2; fill: none; }
+  /* Ticket-stub punch holes sit on the divider between the code and the meta
+     row, not across the whole card — otherwise they land wherever the card's
+     midpoint happens to fall and can cut through the label text above. */
+  .voucher-divider { position: relative; width: 100%; height: 0; border-top: 1.5px dashed var(--Border); margin: 2px 0; }
+  .voucher-divider::before, .voucher-divider::after { content: ''; position: absolute; top: 50%; width: 22px; height: 22px; border-radius: 50%; background: var(--Background); transform: translateY(-50%); }
+  .voucher-divider::before { left: -29px; }
+  .voucher-divider::after { right: -29px; }
+  /* The code no longer stretches to fill leftover flex space (which just
+     centered it inside an oversized box and looked like padding on both
+     sides) — it hugs its own content, and the reclaimed room goes to
+     bigger copy/share buttons instead. */
+  .voucher-code { display: flex; align-items: center; justify-content: center; gap: 10px; width: 100%; font-family: 'Poppins', sans-serif; font-size: 28px; font-weight: 700; letter-spacing: 0.3px; color: var(--On-Surface); padding: 12px 14px; background: #F8F8FA; border: 1.5px dashed var(--Border); border-radius: 12px; }
+  .voucher-code > span { flex: 0 0 auto; white-space: nowrap; }
+  .voucher-code-actions { display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
+  .voucher-code .copy, .voucher-code .qr-share { width: 32px; height: 32px; border: none; border-radius: 9px; background: #FFF1F2; cursor: pointer; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+  .voucher-code .copy:hover, .voucher-code .qr-share:hover { background: #FFE0E2; }
+  .voucher-code .copy svg, .voucher-code .qr-share svg { width: 16px; height: 16px; stroke: var(--Primary); stroke-width: 2; fill: none; }
+
+  /* ── Share QR modal: agent scans this to pull in the deposit details ── */
+  .share-qr-wrap { align-self: center; padding: 14px; border-radius: 18px; background: #FFF; border: 1.5px solid var(--Border); position: relative; }
+  .share-qr-wrap img { display: block; width: 200px; height: 200px; }
+  .share-qr-logo { position: absolute; top: 50%; left: 50%; width: 38px; height: 38px; transform: translate(-50%, -50%); background: #FFF; border-radius: 10px; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 8px rgba(0,0,0,0.12); }
+  .share-qr-logo .m { width: 28px; height: 28px; border-radius: 8px; background: var(--Primary); color: #FFF; display: flex; align-items: center; justify-content: center; font-family: 'Switzer', sans-serif; font-weight: 700; font-size: 15px; }
+  .share-qr-hint { font-family: 'Switzer', sans-serif; font-size: 12px; color: var(--On-Surface-Low); text-align: center; line-height: 1.5; }
 
   .voucher-meta { display: flex; width: 100%; justify-content: space-around; gap: 8px; margin-top: 4px; }
   .v-meta-item { display: flex; flex-direction: column; align-items: center; gap: 3px; flex: 1; text-align: center; padding: 0 4px; }
@@ -63,37 +84,64 @@
   .v-meta-item .vl.red { color: var(--Primary); }
 
   /* ── Timer ── */
-  .countdown-wrap { display: flex; align-items: center; justify-content: center; gap: 8px; }
-  .countdown { display: flex; align-items: center; gap: 4px; font-family: 'Switzer', sans-serif; font-size: 12px; color: var(--On-Surface-Low); background: #FFF; border-radius: 20px; padding: 7px 14px; box-shadow: 0 2px 8px rgba(0,0,0,0.04); }
-  .countdown svg { width: 14px; height: 14px; stroke: var(--Primary); stroke-width: 2; fill: none; }
-  .countdown b { color: var(--Primary); font-size: 13px; }
 
   /* ── Agent card ── */
-  .agent-card { background: #FFF; border-radius: 16px; padding: 14px; display: flex; align-items: center; gap: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.04); }
+  /* Agent row: a tinted row at the top of the amount card, same treatment
+     as the Withdraw/Cash In name-check rows ── */
+  .agent-card { background: var(--Field); border-radius: 14px; padding: 12px 14px; display: flex; align-items: center; gap: 12px; margin-bottom: 4px; }
   .agent-avatar { width: 44px; height: 44px; border-radius: 50%; background: #FFE9EA; color: var(--Primary); display: flex; align-items: center; justify-content: center; font-family: 'Switzer', sans-serif; font-size: 14px; font-weight: 700; flex-shrink: 0; }
   .agent-info { flex: 1; min-width: 0; }
   .agent-name { font-family: 'Switzer', sans-serif; font-size: 14.5px; font-weight: 700; color: var(--On-Surface); }
   .agent-sub { font-family: 'Switzer', sans-serif; font-size: 12px; color: var(--On-Surface-Low); margin-top: 2px; }
+  .agent-chev { width: 18px; height: 18px; stroke: var(--On-Surface-Low); stroke-width: 2; fill: none; flex-shrink: 0; }
 
   /* ── Amount summary ── */
-  .amount-card { background: #FFF; border-radius: 16px; padding: 14px 16px; box-shadow: 0 2px 8px rgba(0,0,0,0.04); display: flex; flex-direction: column; gap: 10px; }
-  .amount-row { display: flex; justify-content: space-between; align-items: center; }
+  .amount-card { background: #FFF; border-radius: 16px; padding: 14px 16px; box-shadow: 0 2px 8px rgba(0,0,0,0.04); display: flex; flex-direction: column; }
+  /* Same row-divider convention as the app's other confirmation-page lists */
+  .amount-row { display: flex; justify-content: space-between; align-items: center; padding: 13px 0; border-bottom: 1px solid #F0F0F3; }
   .amount-row .l { font-family: 'Switzer', sans-serif; font-size: 13px; color: var(--On-Surface-Low); }
   .amount-row .v { font-family: 'Switzer', sans-serif; font-size: 13.5px; font-weight: 600; color: var(--On-Surface); }
-  .amount-row.total { border-top: 1px dashed var(--Border); padding-top: 10px; }
+  .amount-row.total { border-bottom: none; }
   .amount-row.total .l { font-weight: 600; color: var(--On-Surface); }
   .amount-row.total .v { color: var(--Primary); font-weight: 700; font-size: 15px; }
 
   /* ── Steps card ── */
-  .steps-card { background: #FFF; border-radius: 16px; padding: 16px; box-shadow: 0 2px 8px rgba(0,0,0,0.04); display: flex; flex-direction: column; }
-  .steps-title { display: flex; align-items: center; justify-content: space-between; gap: 8px; font-family: 'Switzer', sans-serif; font-size: 14px; font-weight: 700; color: var(--On-Surface); cursor: pointer; }
-  .steps-chevron { width: 18px; height: 18px; stroke: var(--On-Surface-Low); stroke-width: 2; fill: none; flex-shrink: 0; transition: transform 0.2s ease; }
-  .steps-chevron.open { transform: rotate(180deg); }
-  .steps-body { display: none; flex-direction: column; gap: 12px; margin-top: 14px; }
-  .steps-body.open { display: flex; }
-  .step { display: flex; gap: 11px; }
-  .step-num { width: 24px; height: 24px; border-radius: 50%; background: #FFF1F2; color: var(--Primary); font-family: 'Switzer', sans-serif; font-size: 12px; font-weight: 700; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
-  .step-txt { font-family: 'Switzer', sans-serif; font-size: 12.5px; line-height: 1.5; color: var(--On-Surface-Low); }
+  /* Help icon on the status ribbon opens the how-to-complete steps in a
+     bottom modal instead of an inline accordion. */
+  .help-btn { width: 26px; height: 26px; border-radius: 50%; background: var(--On-Surface-Low); border: none; display: flex; align-items: center; justify-content: center; cursor: pointer; flex-shrink: 0; padding: 0; }
+  .help-btn svg { width: 14px; height: 14px; stroke: #FFF; stroke-width: 2.4; fill: none; }
+
+  .sheet-overlay { position: absolute; inset: 0; background: rgba(0,0,0,0.45); display: flex; align-items: flex-end; opacity: 0; pointer-events: none; transition: opacity 0.25s; z-index: 50; }
+  .sheet-overlay.show { opacity: 1; pointer-events: auto; }
+  .sheet { position: relative; width: 100%; max-height: 82%; overflow-y: auto; background: #FFF; border-radius: 24px 24px 0 0; padding: 12px 20px 22px; display: flex; flex-direction: column; gap: 14px; transform: translateY(100%); transition: transform 0.3s cubic-bezier(0.2, 0.8, 0.3, 1); }
+  .sheet-overlay.show .sheet { transform: translateY(0); }
+  .sheet-grip { width: 44px; height: 4px; border-radius: 2px; background: #D8D8DE; margin: 0 auto 4px; }
+  .sheet-close { position: absolute; top: 12px; right: 16px; width: 28px; height: 28px; border-radius: 50%; background: var(--Field, #F5F5F5); border: none; display: flex; align-items: center; justify-content: center; cursor: pointer; }
+  .sheet-close svg { width: 15px; height: 15px; stroke: var(--On-Surface-Low); stroke-width: 2; fill: none; }
+
+  /* ── Share via — app grid, same pattern as the receipt's share sheet ── */
+  .share-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px 8px; padding: 4px 0 6px; }
+  .share-item { display: flex; flex-direction: column; align-items: center; gap: 7px; background: none; border: none; padding: 0; cursor: pointer; }
+  .share-item .ico { width: 50px; height: 50px; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0; box-shadow: inset 0 0 0 1px rgba(0,0,0,0.06); }
+  .share-item .ico svg { width: 22px; height: 22px; }
+  .share-item span { font-family: 'Switzer', sans-serif; font-size: 11px; color: var(--On-Surface-Low); text-align: center; }
+  .sheet-title { font-family: 'Switzer', sans-serif; font-size: 17px; font-weight: 700; color: var(--On-Surface); text-align: center; }
+
+  /* ── Help modal header: big "?" badge + left-aligned title/subtitle ── */
+  .help-header { display: flex; align-items: flex-start; gap: 14px; padding-right: 30px; }
+  .help-icon-badge { width: 52px; height: 52px; border-radius: 16px; background: var(--Primary); color: #FFF; display: flex; align-items: center; justify-content: center; font-family: 'Switzer', sans-serif; font-size: 26px; font-weight: 700; flex-shrink: 0; }
+  .help-header-text { flex: 1; min-width: 0; padding-top: 2px; }
+  .help-title { font-family: 'Switzer', sans-serif; font-size: 17px; font-weight: 700; color: var(--On-Surface); }
+  .help-subtitle { font-family: 'Switzer', sans-serif; font-size: 12px; color: var(--On-Surface-Low); line-height: 1.5; margin-top: 4px; }
+  .help-divider { height: 1px; background: var(--Border); margin: 4px 0; }
+
+  .step-list { display: flex; flex-direction: column; }
+  .step { display: flex; gap: 12px; align-items: flex-start; padding: 11px 0; border-bottom: 1px solid #F2F2F5; }
+  .step:last-of-type { border-bottom: none; }
+  .step-num { width: 26px; height: 26px; border-radius: 50%; background: #FFF1F2; color: var(--Primary); font-family: 'Switzer', sans-serif; font-size: 12px; font-weight: 700; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+  .step-body { flex: 1; min-width: 0; }
+  .step-title { font-family: 'Switzer', sans-serif; font-size: 13.5px; font-weight: 700; color: var(--On-Surface); }
+  .step-txt { font-family: 'Switzer', sans-serif; font-size: 12px; line-height: 1.5; color: var(--On-Surface-Low); margin-top: 2px; }
   .step-txt b { color: var(--On-Surface); }
 
   /* ── Warning box (key UX rule) ── */
@@ -104,16 +152,23 @@
   .warn-box .txt b { color: var(--Primary); }
 
   /* ── Bottom buttons ── */
-  .bottom-actions { display: flex; flex-direction: column; gap: 10px; padding-top: 2px; }
-  .btn { height: 52px; border-radius: 14px; border: none; font-family: 'Switzer', sans-serif; font-size: 15px; font-weight: 600; cursor: pointer; transition: opacity 0.2s; }
+  /* Fixed bottom bar, same convention as the app's other confirmation
+     screens — actions sit side by side and stay bottom-aligned regardless
+     of scroll position. */
+  .bottom-actions { display: flex; flex-direction: row; gap: 10px; flex-shrink: 0; padding: 10px 16px 18px; background: var(--Background); }
+  .btn { height: 52px; border-radius: 14px; border: none; display: flex; align-items: center; justify-content: center; gap: 7px; font-family: 'Switzer', sans-serif; font-size: 15px; font-weight: 600; cursor: pointer; transition: opacity 0.2s; }
   .btn:active { opacity: 0.85; }
-  .btn-primary { background: var(--Primary); color: #FFF; }
-  .btn-secondary { background: #FFF; color: var(--Primary); border: 1.5px solid var(--Primary); }
+  .btn svg { width: 16px; height: 16px; stroke-width: 2; fill: none; }
+  .btn-primary { flex: 1.3; background: var(--Primary); color: #FFF; }
+  .btn-secondary { flex: 1; background: #FFF; color: var(--Primary); border: 1.5px solid var(--Primary); }
+  .btn-secondary svg { stroke: var(--Primary); }
 
   /* ── Toast ── */
   .toast { position: absolute; left: 50%; bottom: 26px; transform: translateX(-50%) translateY(20px); background: #1C1C21; color: #FFF; font-family: 'Switzer', sans-serif; font-size: 12.5px; font-weight: 500; padding: 11px 18px; border-radius: 30px; opacity: 0; transition: all 0.3s ease; pointer-events: none; z-index: 60; white-space: nowrap; }
   .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
 </style>
+<script src="assets/qrcode.min.js"></script>
+<script src="assets/qr.js"></script>
 </head>
 <body>
 <div class="phone-frame">
@@ -145,6 +200,9 @@
           <div class="t1">Voucher Generated</div>
           <div class="t2">Status: Awaiting Agent Validation</div>
         </div>
+        <button class="help-btn" onclick="openHelpModal()" aria-label="How to complete your deposit">
+          <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M9.5 9a2.5 2.5 0 0 1 4.9.8c0 1.7-2.4 2-2.4 3.7"/><path d="M12 17h.01"/></svg>
+        </button>
       </div>
 
       <!-- Voucher kicker card -->
@@ -152,10 +210,16 @@
         <span class="voucher-type">Cash-In Voucher</span>
         <div class="voucher-code">
           <span id="voucherCode">000000000</span>
-          <button class="copy" onclick="copyVoucher()" title="Copy code">
-            <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="12" height="12" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h10"/></svg>
-          </button>
+          <div class="voucher-code-actions">
+            <button class="copy" onclick="copyVoucher()" title="Copy code">
+              <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="12" height="12" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h10"/></svg>
+            </button>
+            <button class="qr-share" onclick="openShareSheetModal()" title="Share via">
+              <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
+            </button>
+          </div>
         </div>
+        <div class="voucher-divider"></div>
         <div class="voucher-meta">
           <div class="v-meta-item"><span class="lb">Valid For</span><span class="vl">24 Hours</span></div>
           <div class="v-meta-item"><span class="lb">Redemption</span><span class="vl green">Single Use</span></div>
@@ -163,54 +227,124 @@
         </div>
       </div>
 
-      <div class="countdown-wrap">
-        <div class="countdown">
-          <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-          <span>Voucher expires in</span> <b id="countdown">23:59:59</b>
-        </div>
-      </div>
-
-      <!-- Agent -->
-      <div class="agent-card">
-        <div class="agent-avatar" id="agAvatar">AG</div>
-        <div class="agent-info">
-          <div class="agent-name" id="agName">Agent</div>
-          <div class="agent-sub" id="agSub">Short Code: &mdash;</div>
-        </div>
-      </div>
-
-      <!-- Amount -->
+      <!-- Amount card: the agent row sits at its top -->
       <div class="amount-card">
-        <div class="amount-row"><span class="l">Deposit Amount</span><span class="v" id="amt">0.00 Br</span></div>
+        <div class="agent-card">
+          <div class="agent-avatar" id="agAvatar">AG</div>
+          <div class="agent-info">
+            <div class="agent-name" id="agName">Agent</div>
+            <div class="agent-sub" id="agSub">Short Code: &mdash;</div>
+          </div>
+          <svg class="agent-chev" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" style="cursor:pointer;" onclick="editDeposit()" role="button" aria-label="Edit merchant and amount"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>
+        </div>
+
+        <div class="amount-row"><span class="l">Deposit Amount</span><span class="v" id="amt">0.00 ETB</span></div>
         <div class="amount-row"><span class="l">Cash-In Fee</span><span class="v">Free</span></div>
-        <div class="amount-row total"><span class="l">Total</span><span class="v" id="total">0.00 Br</span></div>
+        <div class="amount-row total"><span class="l">Total</span><span class="v" id="total">0.00 ETB</span></div>
       </div>
 
-      <!-- Redemption steps -->
-      <div class="steps-card">
-        <div class="steps-title" onclick="toggleSteps()">
-          <span>How to Complete Your Deposit</span>
-          <svg class="steps-chevron" id="stepsChevron" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+    </div>
+
+    <div class="bottom-actions">
+      <button class="btn btn-primary" onclick="goReceipt()">Done</button>
+      <button class="btn btn-secondary" onclick="openShareQrModal()">
+        <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
+        Share QR
+      </button>
+    </div>
+  </div>
+
+  <!-- How to Complete Your Deposit — opened from the help icon on the status ribbon -->
+  <div class="sheet-overlay" id="helpOverlay" onclick="if(event.target===this)closeHelpModal()">
+    <div class="sheet">
+      <div class="sheet-grip"></div>
+      <button class="sheet-close" onclick="closeHelpModal()" aria-label="Close">
+        <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+      <div class="help-header">
+        <div class="help-icon-badge">?</div>
+        <div class="help-header-text">
+          <div class="help-title">How to Complete Your Deposit</div>
+          <div class="help-subtitle">Follow these simple steps to add cash to your account using the agent.</div>
         </div>
-        <div class="steps-body" id="stepsBody">
-          <div class="step"><div class="step-num">1</div><div class="step-txt">Visit the agent with the <b>cash amount</b> and this <b>Cash-In voucher</b>.</div></div>
-          <div class="step"><div class="step-num">2</div><div class="step-txt">The agent enters or scans your voucher code.</div></div>
-          <div class="step"><div class="step-num">3</div><div class="step-txt">The system validates the voucher and confirms it is <b>valid &amp; unused</b>.</div></div>
-          <div class="step"><div class="step-num">4</div><div class="step-txt">Only then is your wallet credited and the deposit marked <b>Successful</b>.</div></div>
-        </div>
+      </div>
+      <div class="help-divider"></div>
+
+      <div class="step-list">
+        <div class="step"><div class="step-num">1</div><div class="step-body"><div class="step-title">Visit the Agent</div><div class="step-txt">Go to the agent with the <b>cash amount</b> and this <b>Cash-In voucher</b>.</div></div></div>
+        <div class="step"><div class="step-num">2</div><div class="step-body"><div class="step-title">Scan or Enter Code</div><div class="step-txt">The agent enters or scans your voucher code.</div></div></div>
+        <div class="step"><div class="step-num">3</div><div class="step-body"><div class="step-title">Validate &amp; Confirm</div><div class="step-txt">The system validates the voucher and confirms it is <b>valid &amp; unused</b>.</div></div></div>
+        <div class="step"><div class="step-num">4</div><div class="step-body"><div class="step-title">Complete Deposit</div><div class="step-txt">Only then is your wallet credited and the deposit marked <b>Successful</b>.</div></div></div>
       </div>
 
       <!-- Key UX rule: voucher != money deposited -->
       <div class="warn-box">
         <div class="ico"><svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg></div>
-        <div class="txt"><b>Voucher Generated &ne; Money Deposited.</b> Your wallet is <b>not yet credited</b>. The voucher only pre-authorizes the Cash-In. Credit happens only after the agent validates the voucher and processes your cash.</div>
+        <div class="txt"><b>Voucher Generated &ne; Money Deposited.</b> Your wallet is credited only after the agent validates it and processes your cash.</div>
       </div>
+    </div>
+  </div>
 
-      <div class="bottom-actions">
-        <button class="btn btn-primary" onclick="goReceipt()">I've Completed the Deposit</button>
-        <button class="btn btn-secondary" onclick="shareVoucher()">Share Voucher</button>
+  <!-- Share QR — the agent scans this to pull in the voucher, amount and short
+       code at once and confirm the Cash-In, instead of typing the code in. -->
+  <div class="sheet-overlay" id="shareQrOverlay" onclick="if(event.target===this)closeShareQrModal()">
+    <div class="sheet" style="align-items:center;">
+      <div class="sheet-grip"></div>
+      <button class="sheet-close" onclick="closeShareQrModal()" aria-label="Close">
+        <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+      <div class="sheet-title">Share QR</div>
+      <div class="share-qr-wrap">
+        <img id="shareQrImg" alt="Share QR">
+        <div class="share-qr-logo"><div class="m">M</div></div>
       </div>
+      <div class="share-qr-hint">Agent scans this to confirm your Cash-In.</div>
+    </div>
+  </div>
 
+  <!-- Share via — the small share icon next to the copy button on the
+       voucher code opens this, separate from the "Share QR" modal above -->
+  <div class="sheet-overlay" id="shareSheetOverlay" onclick="if(event.target===this)closeShareSheetModal()">
+    <div class="sheet">
+      <div class="sheet-grip"></div>
+      <button class="sheet-close" onclick="closeShareSheetModal()" aria-label="Close">
+        <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+      <div class="sheet-title">Share via</div>
+      <div class="share-grid">
+        <button class="share-item" onclick="shareVoucherVia('Drive')">
+          <div class="ico" style="background:#FFF;"><svg viewBox="0 0 24 24"><path d="M8.5 3h7L22 14h-7z" fill="#FFC107"/><path d="M8.5 3L2 14l3.5 6h7L9 14z" fill="#4CAF50"/><path d="M5.5 20h13l3.5-6h-7l-3.5 6z" fill="#2196F3"/></svg></div>
+          <span>Drive</span>
+        </button>
+        <button class="share-item" onclick="shareVoucherVia('Gmail')">
+          <div class="ico" style="background:#FFF;"><svg viewBox="0 0 24 24" fill="none" stroke="#EA4335" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 6 9-6"/></svg></div>
+          <span>Gmail</span>
+        </button>
+        <button class="share-item" onclick="shareVoucherVia('Messages')">
+          <div class="ico" style="background:#1774E9;"><svg viewBox="0 0 24 24" fill="#FFF"><path d="M12 3C6.5 3 2 6.8 2 11.5c0 2.6 1.4 4.9 3.6 6.5-.1 1-.5 2.3-1.4 3.5 1.6-.2 3.1-.8 4.3-1.6 1.1.4 2.3.6 3.5.6 5.5 0 10-3.8 10-8.5S17.5 3 12 3z"/></svg></div>
+          <span>Messages</span>
+        </button>
+        <button class="share-item" onclick="shareVoucherVia('WhatsApp')">
+          <div class="ico" style="background:#25D366;"><svg viewBox="0 0 24 24" fill="#FFF"><path d="M12 2a10 10 0 00-8.6 15L2 22l5.2-1.4A10 10 0 1012 2zm5.5 14.3c-.2.6-1.3 1.2-1.8 1.2-.5.1-1 .1-3.2-.7-2.7-1.1-4.4-3.8-4.6-4-.1-.2-1.1-1.4-1.1-2.7 0-1.3.7-2 1-2.2.2-.2.5-.3.7-.3h.5c.2 0 .4 0 .5.4l.7 1.7c.1.2.1.4 0 .6l-.4.5c-.1.2-.2.3 0 .5.2.3.7 1.2 1.5 1.9 1 .9 1.9 1.2 2.2 1.3.3.1.4.1.6-.1l.6-.7c.2-.2.4-.2.6-.1l1.6.8c.2.1.4.2.4.4.1.2.1.7-.1 1.3z"/></svg></div>
+          <span>WhatsApp</span>
+        </button>
+        <button class="share-item" onclick="shareVoucherVia('Messenger')">
+          <div class="ico" style="background:linear-gradient(135deg,#00B2FF,#A033FF);"><svg viewBox="0 0 24 24" fill="#FFF"><path d="M13 2L4 14h6l-1 8 9-12h-6z"/></svg></div>
+          <span>Messenger</span>
+        </button>
+        <button class="share-item" onclick="shareVoucherVia('Facebook')">
+          <div class="ico" style="background:#1877F2;"><svg viewBox="0 0 24 24" fill="#FFF"><path d="M14 9.6V9h2.5V6H14c-2 0-3.5 1.5-3.5 3.5V11H8v3h2.5v7h3v-7H16l.5-3h-3V9.6z"/></svg></div>
+          <span>Facebook</span>
+        </button>
+        <button class="share-item" onclick="shareVoucherVia('X')">
+          <div class="ico" style="background:#000;"><svg viewBox="0 0 24 24" fill="none" stroke="#FFF" stroke-width="2.2" stroke-linecap="round"><line x1="6" y1="6" x2="18" y2="18"/><line x1="18" y1="6" x2="6" y2="18"/></svg></div>
+          <span>X</span>
+        </button>
+        <button class="share-item" onclick="shareVoucherVia('Copy')">
+          <div class="ico" style="background:var(--Field, #F0F0F3);"><svg viewBox="0 0 24 24" fill="none" stroke="var(--On-Surface-Low)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg></div>
+          <span>Copy</span>
+        </button>
+      </div>
     </div>
   </div>
 
@@ -229,36 +363,34 @@
   $('agAvatar').textContent = agent.abbr || 'AG';
   $('agName').textContent = data.agentName || agent.name || 'Agent';
   $('agSub').textContent = 'Short Code: ' + (data.agentCode || agent.code || '—');
-  $('amt').textContent = fmt(data.amount || 0) + ' Br';
-  $('total').textContent = fmt(data.total || data.amount || 0) + ' Br';
+  $('amt').textContent = fmt(data.amount || 0) + ' ETB';
+  $('total').textContent = fmt(data.total || data.amount || 0) + ' ETB';
 
   // ── Countdown: voucher valid 24h from generation ──
   const expiry = data.expiry ? new Date(data.expiry).getTime() : (Date.now() + 24 * 3600 * 1000);
   const pad = n => String(n).padStart(2, '0');
 
+  // Live countdown lives in the voucher card's own "Expires" field —
+  // no need for a second, separate expiry readout further down the page.
   function refreshCountdown() {
     const diff = expiry - Date.now();
-    if (diff <= 0) {
-      $('countdown').textContent = 'EXPIRED';
-      $('countdown').style.color = 'var(--Primary)';
-      return;
-    }
+    if (diff <= 0) { $('expiryTxt').textContent = 'EXPIRED'; return; }
     const h = Math.floor(diff / 3600000);
     const m = Math.floor((diff % 3600000) / 60000);
     const s = Math.floor((diff % 60000) / 1000);
-    $('countdown').textContent = pad(h) + ':' + pad(m) + ':' + pad(s);
+    $('expiryTxt').textContent = pad(h) + ':' + pad(m) + ':' + pad(s);
   }
 
-  const expD = new Date(expiry);
-  $('expiryTxt').textContent = pad(expD.getHours()) + ':' + pad(expD.getMinutes());
   refreshCountdown();
   setInterval(refreshCountdown, 1000);
 
   // ── Actions ──
-  function toggleSteps() {
-    const open = $('stepsBody').classList.toggle('open');
-    $('stepsChevron').classList.toggle('open', open);
-  }
+  // Back to the entry screen with the merchant code and deposit amount
+  // already filled in, so they can be adjusted before a new voucher is set.
+  function editDeposit() { window.location.href = 'Cash In - Merchant Short Code.html'; }
+
+  function openHelpModal() { $('helpOverlay').classList.add('show'); }
+  function closeHelpModal() { $('helpOverlay').classList.remove('show'); }
 
   function showToast(msg) {
     const t = $('toast');
@@ -280,7 +412,33 @@
     showToast('Voucher code copied to clipboard');
   }
 
-  function shareVoucher() { showToast('Voucher code shared!'); }
+  // Encodes everything the agent needs to pull up and confirm this
+  // Cash-In in one scan, instead of typing the voucher code in by hand.
+  let shareQrRendered = false;
+  function openShareQrModal() {
+    if (!shareQrRendered) {
+      const payload = JSON.stringify({
+        type: 'cashin-voucher',
+        voucher: data.voucherCode || $('voucherCode').textContent,
+        agentCode: data.agentCode || agent.code || '',
+        amount: data.amount || 0,
+        expiry: new Date(expiry).toISOString()
+      });
+      renderQR($('shareQrImg'), payload, 240);
+      shareQrRendered = true;
+    }
+    $('shareQrOverlay').classList.add('show');
+  }
+  function closeShareQrModal() { $('shareQrOverlay').classList.remove('show'); }
+
+  function openShareSheetModal() { $('shareSheetOverlay').classList.add('show'); }
+  function closeShareSheetModal() { $('shareSheetOverlay').classList.remove('show'); }
+
+  function shareVoucherVia(app) {
+    closeShareSheetModal();
+    if (app === 'Copy' || app === 'Copy Link') { copyVoucher(); return; }
+    showToast('Voucher code shared via ' + app + '!');
+  }
 
   function goHome() { window.location.href = 'Lehulum Home.html'; }
 

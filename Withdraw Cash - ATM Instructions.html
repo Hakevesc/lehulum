@@ -137,7 +137,7 @@
     </div>
 
     <div class="bottom-bar">
-      <button class="done-btn" onclick="window.location.href='Lehulum Home.html'">Done</button>
+      <button class="done-btn" onclick="window.location.href='Withdraw Cash - Receipt.html'">View Confirmation Receipt</button>
     </div>
 
     <div class="toast" id="toast"></div>
@@ -151,7 +151,7 @@
   const fmt = n => parseFloat(n || 0).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
 
   $('vcode').textContent = data.voucherCode || '—';
-  $('amountLine').textContent = fmt(data.total || data.amount || 0) + ' Br';
+  $('amountLine').textContent = fmt(data.total || data.amount || 0) + ' ETB';
   if (data.atmBank) $('bankLine').textContent = data.atmBank + ' ATM';
 
   if (data.expiry) {

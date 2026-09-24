@@ -130,10 +130,10 @@
       <div class="form-card">
         <span class="field-label">Enter Amount</span>
         <div class="field" id="amtField">
-          <input id="amtInput" type="text" inputmode="decimal" placeholder="e.g. 300 Br" autocomplete="off"
+          <input id="amtInput" type="text" inputmode="decimal" placeholder="e.g. 300 ETB" autocomplete="off"
                  oninput="onAmountInput()" onfocus="unformatAmount()" onblur="formatAmount()">
         </div>
-        <div class="balance-hint"><b>Balance:</b> <span id="balanceHint">—</span></div>
+        <div class="balance-hint" id="balanceHintRow"><b>Balance:</b> <span id="balanceHint">—</span></div>
         <div class="msg" id="amtMsg"></div>
       </div>
 
@@ -164,7 +164,7 @@
   $('holderName').textContent = sub.name;
   $('holderAccount').textContent = sub.account;
   $('currentPackage').textContent = packageLabel;
-  $('balanceHint').textContent = fmt(BALANCE) + ' Br';
+  $('balanceHint').textContent = fmt(BALANCE) + ' ETB';
 
   const amountValue = () => {
     const raw = $('amtInput').value.replace(/[^\d.]/g, '');
@@ -185,7 +185,7 @@
 
   function formatAmount() {
     const n = amountValue();
-    if (n !== null && !isNaN(n)) $('amtInput').value = fmt(n) + ' Br';
+    if (n !== null && !isNaN(n)) $('amtInput').value = fmt(n) + ' ETB';
   }
 
   function setAmountState(state, text) {
@@ -195,6 +195,7 @@
     msg.classList.toggle('warn', state === 'warn');
     msg.classList.toggle('err', state === 'err');
     msg.classList.toggle('show', !!state);
+    $('balanceHintRow').style.display = state ? 'none' : '';
     if (text) msg.textContent = text;
   }
 
@@ -202,8 +203,8 @@
     const n = amountValue();
     if (n === null) { setAmountState(null); return null; }
     if (isNaN(n) || n <= 0) { setAmountState('err', 'Enter a valid amount'); return null; }
-    if (n < MIN_AMT) { setAmountState('err', 'Minimum Amount: ' + fmt(MIN_AMT) + ' Br'); return null; }
-    if (n > MAX_AMT) { setAmountState('err', 'Maximum Amount: ' + fmt(MAX_AMT) + ' Br'); return null; }
+    if (n < MIN_AMT) { setAmountState('err', 'Minimum Amount: ' + fmt(MIN_AMT) + ' ETB'); return null; }
+    if (n > MAX_AMT) { setAmountState('err', 'Maximum Amount: ' + fmt(MAX_AMT) + ' ETB'); return null; }
     if (n + FEE > BALANCE) { setAmountState('warn', 'Insufficient Balance'); return null; }
     setAmountState(null);
     return n;
@@ -240,7 +241,7 @@
         { key: "Payer's Name",           value: 'Abebeb Bikila Maraton' },
         { key: "Payer's M-PESA Number",  value: '0712131415' },
         { key: 'Smart Card Number',      value: sub.account },
-        { key: 'Fee',                    value: fmt(FEE) + ' Br' }
+        { key: 'Fee',                    value: fmt(FEE) + ' ETB' }
       ],
       dateLabel: 'Date and time',
       txType: 'DSTV Payment',

@@ -73,9 +73,9 @@
   .favorite-item { flex-shrink: 0; display: flex; flex-direction: column; align-items: center; gap: 6px; cursor: pointer; transition: transform 0.2s; }
   .favorite-item:hover { transform: scale(1.05); }
   .favorite-item:active { transform: scale(0.95); }
-  .favorite-item .logo { width: 56px; height: 56px; box-shadow: 0 2px 8px rgba(0,0,0,0.12); }
-  .favorite-item .logo.initials { font-size: 15px; }
-  .favorite-item .logo.glyph svg { width: 26px; height: 26px; }
+  .favorite-item .logo { width: 44px; height: 44px; box-shadow: 0 2px 8px rgba(0,0,0,0.12); }
+  .favorite-item .logo.initials { font-size: 13px; }
+  .favorite-item .logo.glyph svg { width: 20px; height: 20px; }
   .favorite-name { font-family: 'Switzer', sans-serif; font-size: 11px; font-weight: 500; color: var(--On-Surface); text-align: center; max-width: 70px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 
   /* ── Frequent transactions ── */
@@ -162,23 +162,13 @@
     </div>
   </div>
 
-  <!-- School fees run through more than one provider -->
-  <div class="sheet-overlay" id="providerOverlay" onclick="if(event.target===this)closeProviders()">
-    <div class="sheet">
-      <div class="sheet-grip"></div>
-      <div class="provider-item" onclick="pickProvider('awash')">
-        <span class="logo"><img src="assets/bill pay logos/Awash_International_Bank.png" alt=""></span>
-        <span class="nm">School Payment Via Awash Bank</span>
-      </div>
-      <div class="provider-item" onclick="pickProvider('webirr')">
-        <span class="logo"><img src="assets/bill pay logos/webirr.png" alt=""></span>
-        <span class="nm">School Payment Via WeBirr</span>
-      </div>
-    </div>
-  </div>
 </div>
 
 <script>
+  // School fees are always settled through Awash Bank; the screen itself
+  // shows that, so there is nothing to pick here.
+  const SCHOOL_PROVIDER = { name: 'Awash Bank', logo: 'assets/bill pay logos/Awash_International_Bank.png' };
+
   // A biller carries either a logo image or a tinted glyph badge — the glyph
   // covers the entries that stand for a whole category rather than one company.
   const GLYPHS = {
@@ -204,14 +194,16 @@
     { label: 'Mom EEU',  biller: 'eeu',      account: '1172711212' },
     { label: 'Home WB',  biller: 'water',    account: '7112124567' },
     { label: 'SMU',      biller: 'airlines', account: '5521140098' },
-    { label: 'AAU',      biller: 'school',   account: 'AAU-884210', logo: 'assets/bill pay logos/webirr.png' },
+    { label: 'AAU',      biller: 'school',   account: 'AAU-884210' },
     { label: 'BDWU',     biller: 'water',    account: '7112998410' }
   ];
 
   const FREQUENT = [
-    { biller: 'eeu',   account: '1172711212' },
-    { biller: 'water', account: '7112124567' },
-    { biller: 'water', account: '7112124567' }
+    { biller: 'eeu',      account: '1172711212' },
+    { biller: 'water',    account: '7112124567' },
+    { biller: 'dstv',     account: '7043928115' },
+    { biller: 'airlines', account: '88120' },
+    { biller: 'school',   account: 'AAU-884210' }
   ];
 
   const $ = id => document.getElementById(id);
@@ -267,26 +259,6 @@
   })();
 
   /* ── Selection ── */
-  const PROVIDERS = {
-    awash:  { name: 'Awash Bank', logo: 'assets/bill pay logos/Awash_International_Bank.png' },
-    webirr: { name: 'WeBirr',     logo: 'assets/bill pay logos/webirr.png' }
-  };
-
-  function openProviders() { $('providerOverlay').classList.add('show'); }
-  function closeProviders() { $('providerOverlay').classList.remove('show'); }
-
-  function pickProvider(key) {
-    const p = PROVIDERS[key], b = find('school');
-    if (!p || !b) return;
-    closeProviders();
-    store(Object.assign({}, b, {
-      full: 'School Payment Via ' + p.name,
-      logo: p.logo,
-      glyph: undefined,
-      provider: p.name
-    }));
-  }
-
   function store(b, account) {
     // EEU splits into post-paid and prepaid, so it has a screen of its own.
     if (b.id === 'eeu') { window.location.href = 'Bill Payment_EEU.html'; return; }
@@ -296,17 +268,15 @@
     if (b.id === 'dstv') { window.location.href = 'Bill Payment_DSTV Card.html'; return; }
     // Insurance is collected by several companies; the list picks one first.
     if (b.id === 'insurance') { window.location.href = 'Bill Payment_Insurance Company.html'; return; }
-    // A provider has been chosen, so the school screen takes it from here.
-    if (b.id === 'school' && b.provider) {
+    // School fees always run through Awash Bank.
+    if (b.id === 'school') {
       sessionStorage.setItem('selectedBiller', JSON.stringify({
-        name: b.name, fullName: b.full, category: b.category,
-        abbr: b.abbr, logo: b.logo || '', provider: b.provider, account: account || ''
+        name: b.name, fullName: 'School Payment Via ' + SCHOOL_PROVIDER.name, category: b.category,
+        abbr: b.abbr, logo: SCHOOL_PROVIDER.logo, provider: SCHOOL_PROVIDER.name, account: account || ''
       }));
       window.location.href = 'Bill Payment_School.html';
       return;
     }
-    // School fees are collected by several providers; the sheet picks one first.
-    if (b.id === 'school' && !b.provider) { openProviders(); return; }
     sessionStorage.setItem('selectedBiller', JSON.stringify({
       name: b.name,
       fullName: b.full,

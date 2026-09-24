@@ -192,7 +192,7 @@
   $('holderName').textContent = SUBSCRIBER.name;
   $('holderAccount').textContent = SUBSCRIBER.account;
   $('currentPackage').textContent = packageLabel;
-  $('currentDue').textContent = 'Due: ' + SUBSCRIBER.package.replace(/\s+/g, ' ') + ' (' + fmt(SUBSCRIBER.due) + ' Br)';
+  $('currentDue').textContent = 'Due: ' + SUBSCRIBER.package.replace(/\s+/g, ' ') + ' (' + fmt(SUBSCRIBER.due) + ' ETB)';
 
   // Every route out of here pays the same subscriber, so the payload is shared.
   function payload(amount, rows, receiptRows) {
@@ -212,7 +212,7 @@
         { key: "Payer's Name",           value: 'Abebeb Bikila Maraton' },
         { key: "Payer's M-PESA Number",  value: '0712131415' },
         { key: 'Smart Card Number',      value: SUBSCRIBER.account },
-        { key: 'Fee',                    value: fmt(FEE) + ' Br' }
+        { key: 'Fee',                    value: fmt(FEE) + ' ETB' }
       ],
       dateLabel: 'Date and time',
       txType: 'DSTV Payment',

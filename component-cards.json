@@ -495,7 +495,7 @@
     },
     "behavior": {
       "states": ["default", "focus", "disabled", "insufficient(red)"],
-      "interactions": "Tap focuses; numeric keyboard; value right-aligned; currency prefix (ETB/Birr)",
+      "interactions": "Tap focuses; numeric keyboard; value right-aligned; currency prefix (ETB)",
       "animations": "transition all 0.2s"
     },
     "usage_rules": {
@@ -5361,7 +5361,7 @@
     },
     "accessibility": {
       "min_touch_target": "48px",
-      "screen_reader_label": "Airtime amount [value] Birr, selected or not",
+      "screen_reader_label": "Airtime amount [value] ETB, selected or not",
       "color_contrast_ratio": "4.5:1"
     },
     "localization": {

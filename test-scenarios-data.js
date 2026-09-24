@@ -20,10 +20,6 @@ window.TEST_SCENARIOS_DATA = {
      "Manage Statement"
     ],
     [
-     "Merchant Draw Statement PDF.html",
-     "Merchant Draw Statement PDF"
-    ],
-    [
      "Statement PDF.html",
      "Statement PDF"
     ],
@@ -144,12 +140,12 @@ window.TEST_SCENARIOS_DATA = {
      "Agent Nearby"
     ],
     [
-     "Cash In - Agent Short Code.html",
-     "Agent Short Code"
-    ],
-    [
      "Cash In - Enter PIN.html",
      "Enter PIN"
+    ],
+    [
+     "Cash In - Merchant Short Code.html",
+     "Merchant Short Code"
     ],
     [
      "Cash In - Receipt.html",
@@ -375,22 +371,6 @@ window.TEST_SCENARIOS_DATA = {
      "Airlines"
     ],
     [
-     "Bill Payment_DSTV Addons.html",
-     "DSTV Addons"
-    ],
-    [
-     "Bill Payment_DSTV Amount.html",
-     "DSTV Amount"
-    ],
-    [
-     "Bill Payment_DSTV Card.html",
-     "DSTV Card"
-    ],
-    [
-     "Bill Payment_DSTV.html",
-     "DSTV"
-    ],
-    [
      "Bill Payment_EEU.html",
      "EEU"
     ],
@@ -505,6 +485,27 @@ window.TEST_SCENARIOS_DATA = {
      "Timeout"
     ]
    ]
+  },
+  "DSTV": {
+   "steps": [
+    [
+     "Bill Payment_DSTV Addons.html",
+     "DSTV Addons"
+    ],
+    [
+     "Bill Payment_DSTV Amount.html",
+     "DSTV Amount"
+    ],
+    [
+     "Bill Payment_DSTV Card.html",
+     "DSTV Card"
+    ],
+    [
+     "Bill Payment_DSTV.html",
+     "DSTV"
+    ]
+   ],
+   "errors": []
   },
   "Data Package": {
    "steps": [
@@ -681,22 +682,6 @@ window.TEST_SCENARIOS_DATA = {
      "Bill Payment · Overdraft Terms"
     ],
     [
-     "Merchant Payment_Overdraft Activate.html",
-     "Merchant Payment · Overdraft Activate"
-    ],
-    [
-     "Merchant Payment_Overdraft Activated.html",
-     "Merchant Payment · Overdraft Activated"
-    ],
-    [
-     "Merchant Payment_Overdraft Offer.html",
-     "Merchant Payment · Overdraft Offer"
-    ],
-    [
-     "Merchant Payment_Overdraft Terms.html",
-     "Merchant Payment · Overdraft Terms"
-    ],
-    [
      "Package_Overdraft Activate.html",
      "Package · Overdraft Activate"
     ],
@@ -728,22 +713,6 @@ window.TEST_SCENARIOS_DATA = {
     [
      "Merchant Payment_Enter PIN.html",
      "Enter PIN"
-    ],
-    [
-     "Merchant Payment_Overdraft Activate.html",
-     "Overdraft Activate"
-    ],
-    [
-     "Merchant Payment_Overdraft Activated.html",
-     "Overdraft Activated"
-    ],
-    [
-     "Merchant Payment_Overdraft Offer.html",
-     "Overdraft Offer"
-    ],
-    [
-     "Merchant Payment_Overdraft Terms.html",
-     "Overdraft Terms"
     ],
     [
      "My QR Code.html",
@@ -852,11 +821,11 @@ window.TEST_SCENARIOS_DATA = {
   "App Walkthrough.html": "Sign Up & Onboarding",
   "Bill Payment Confirmation.html": "Bill Payment",
   "Bill Payment_Airlines.html": "Bill Payment",
-  "Bill Payment_DSTV Addons.html": "Bill Payment",
-  "Bill Payment_DSTV Amount.html": "Bill Payment",
-  "Bill Payment_DSTV Card.html": "Bill Payment",
+  "Bill Payment_DSTV Addons.html": "DSTV",
+  "Bill Payment_DSTV Amount.html": "DSTV",
+  "Bill Payment_DSTV Card.html": "DSTV",
   "Bill Payment_DSTV Package.html": "Data Package",
-  "Bill Payment_DSTV.html": "Bill Payment",
+  "Bill Payment_DSTV.html": "DSTV",
   "Bill Payment_EEU.html": "Bill Payment",
   "Bill Payment_Enter Account.html": "Bill Payment",
   "Bill Payment_Enter Amount.html": "Bill Payment",
@@ -882,12 +851,12 @@ window.TEST_SCENARIOS_DATA = {
   "Buy Ticket.html": "Home & Services",
   "Cash In - Agent Details.html": "Cash In",
   "Cash In - Agent Nearby.html": "Cash In",
-  "Cash In - Agent Short Code.html": "Cash In",
   "Cash In - Agent Unavailable.html": "Cash In",
   "Cash In - Enter PIN.html": "Cash In",
   "Cash In - Invalid Agent.html": "Cash In",
   "Cash In - Invalid Voucher.html": "Cash In",
   "Cash In - Location Denied.html": "Cash In",
+  "Cash In - Merchant Short Code.html": "Cash In",
   "Cash In - No Agents Found.html": "Cash In",
   "Cash In - Receipt.html": "Cash In",
   "Cash In - Service Unavailable.html": "Cash In",
@@ -926,14 +895,9 @@ window.TEST_SCENARIOS_DATA = {
   "Manage Favourites.html": "Home & Services",
   "Manage Statement Empty.html": "Account & Statements",
   "Manage Statement.html": "Account & Statements",
-  "Merchant Draw Statement PDF.html": "Account & Statements",
   "Merchant Payment Confirmation.html": "Merchant Payment",
   "Merchant Payment_Enter PIN.html": "Merchant Payment",
   "Merchant Payment_Failed.html": "Merchant Payment",
-  "Merchant Payment_Overdraft Activate.html": "Merchant Payment",
-  "Merchant Payment_Overdraft Activated.html": "Merchant Payment",
-  "Merchant Payment_Overdraft Offer.html": "Merchant Payment",
-  "Merchant Payment_Overdraft Terms.html": "Merchant Payment",
   "Merchant Payment_Service Unavailable.html": "Merchant Payment",
   "Merchant Payment_Timeout.html": "Merchant Payment",
   "More Services.html": "Home & Services",

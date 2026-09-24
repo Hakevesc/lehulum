@@ -394,7 +394,7 @@
 
     // ── Cash In / Cash Out journey (P1) ──
     { group: 'Cash In', label: 'Cash In (Menu)',                  file: 'Cash In.html',                           icon: 'download' },
-    { group: 'Cash In', label: 'Cash In · Agent Short Code',      file: 'Cash In - Agent Short Code.html',         icon: 'money' },
+    { group: 'Cash In', label: 'Cash In · Merchant Short Code',      file: 'Cash In - Merchant Short Code.html',         icon: 'money' },
     { group: 'Cash In', label: 'Cash In · Agent Nearby Locator',  file: 'Cash In - Agent Nearby.html',             icon: 'map' },
     { group: 'Cash In', label: 'Cash In · Agent Details',         file: 'Cash In - Agent Details.html',            icon: 'bank' },
     { group: 'Cash In', label: 'Cash In · Enter PIN',             file: 'Cash In - Enter PIN.html',                icon: 'lock' },
@@ -411,7 +411,7 @@
 
     // Cash Out (Withdraw)
     { group: 'Withdraw', label: 'Withdraw Cash (Menu)',             file: 'Withdraw Cash.html',                     icon: 'withdraw' },
-    { group: 'Withdraw', label: 'Withdraw · Agent Short Code / QR', file: 'Withdraw Cash - Agent Locator.html',     icon: 'money' },
+    { group: 'Withdraw', label: 'Withdraw · Merchant Short Code / QR', file: 'Withdraw Cash - Agent Locator.html',     icon: 'money' },
     { group: 'Withdraw', label: 'Withdraw · Agent Nearby Locator',  file: 'Withdraw Cash - Agent Nearby.html',      icon: 'map' },
     { group: 'Withdraw', label: 'Withdraw · Agent Details',         file: 'Withdraw Cash - Agent Details.html',     icon: 'bank' },
     { group: 'Withdraw', label: 'Withdraw · ATM Select Bank',       file: 'Withdraw Cash - ATM Locator.html',        icon: 'atm' },
@@ -420,7 +420,6 @@
     { group: 'Withdraw', label: 'Withdraw · ATM Instructions',      file: 'Withdraw Cash - ATM Instructions.html',   icon: 'atm' },
                 { group: 'Transactions', label: 'Transaction Receipt', file: 'Send Money Recipet PDF.html', icon: 'receipt' },
         { group: 'Transactions', label: 'Transaction Statment', file: 'Transaction Statment PDF.html', icon: 'receipt' },
-    { group: 'Transactions', label: 'Merchant Draw Statement', file: 'Merchant Draw Statement PDF.html', icon: 'pdf' },
     { group: 'Transactions', label: 'Transaction History',   file: 'Transaction History.html',      icon: 'history' },
     { group: 'Transactions', label: 'Manage Statement',      file: 'Manage Statement.html',         icon: 'statement' },
     { group: 'Transactions', label: 'Manage Statement (Empty)', file: 'Manage Statement Empty.html', icon: 'statement' },
@@ -814,7 +813,7 @@
             <button class="test-popup-close" onclick="this.closest('.test-popup-overlay').remove()">&times;</button>
             <div style="width:64px;height:64px;margin:0 auto 16px;background:#E8F9EC;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:30px;color:#1FC83B">✓</div>
             <h2 class="test-popup-title" style="font-size:20px">Transaction Successful</h2>
-            <p class="test-popup-sub">You've sent <strong style="color:#1C1C21">1,000.00 Birr</strong> to Mom M-PESA</p>
+            <p class="test-popup-sub">You've sent <strong style="color:#1C1C21">1,000.00 ETB</strong> to Mom M-PESA</p>
             <div style="background:#FAFAFA;border-radius:10px;padding:12px;width:100%;margin:10px 0 18px;text-align:left">
               <div style="display:flex;justify-content:space-between;margin-bottom:4px"><span style="color:#7C7C87;font-size:11px">Reference</span><span style="color:#1C1C21;font-size:11px;font-weight:600">UH52FKISV0</span></div>
               <div style="display:flex;justify-content:space-between"><span style="color:#7C7C87;font-size:11px">Date</span><span style="color:#1C1C21;font-size:11px;font-weight:600">13 Aug 2026</span></div>
@@ -885,19 +884,19 @@
       title: 'EEU',
       groups: [
         { label: 'Post Paid — contract number', rows: [
-          ['45292921', 'Resolves. Bill 400.00 Br — pays through'],
+          ['45292921', 'Resolves. Bill 400.00 ETB — pays through'],
           ['45292922', 'There is no open invoice'],
-          ['45292923', 'Resolves. Bill 21,000.00 Br → Insufficient Balance on the confirmation'],
+          ['45292923', 'Resolves. Bill 21,000.00 ETB → Insufficient Balance on the confirmation'],
           ['4529292178', 'Invalid Contract Number (too long)']
         ]},
         { label: 'Prepaid — serial number', rows: [
-          ['45292921', 'Resolves, then asks for an Amount in Br'],
-          ['45292922', 'Resolves, then asks for Kilo Watt (billed at 3.00 Br/kWh)'],
+          ['45292921', 'Resolves, then asks for an Amount in ETB'],
+          ['45292922', 'Resolves, then asks for Kilo Watt (billed at 3.00 ETB/kWh)'],
           ['55211400', 'Resolves for a second customer'],
           ['4529292178', 'Invalid Serial Number (too long)']
         ]}
       ],
-      note: 'Amount limits: 5.00 – 75,000.00 Br. Anything above the paying account shows Insufficient Balance.'
+      note: 'Amount limits: 5.00 – 75,000.00 ETB. Anything above the paying account shows Insufficient Balance.'
     },
 
     'Bill Payment_School.html': {
@@ -911,7 +910,7 @@
         { label: 'Student ID (with code 452929)', rows: [
           ['SMU01214', 'Two fees listed — School Fee 30,000 and Supplementary 3,000'],
           ['SMU01215', 'There is no open invoice'],
-          ['SMU01216', 'One fee of 30,000 Br → Insufficient Balance on the confirmation'],
+          ['SMU01216', 'One fee of 30,000 ETB → Insufficient Balance on the confirmation'],
           ['SMU01245', 'Liya Kebede Deresa'],
           ['FG01214', 'Invalid school code or student ID']
         ]},
@@ -928,10 +927,10 @@
       title: 'Water',
       groups: [
         { label: 'Customer key', rows: [
-          ['ECB/12343/2021', 'Resolves. Bill 100.00 Br + 1.00 fee'],
+          ['ECB/12343/2021', 'Resolves. Bill 100.00 ETB + 1.00 fee'],
           ['ECB/12343/2022', 'There is no open invoice'],
-          ['ECB/12343/2023', 'Bill 4,500.00 Br → Insufficient Balance on the confirmation'],
-          ['ECB/88120/2019', 'Second customer, with a 25.00 Br penalty'],
+          ['ECB/12343/2023', 'Bill 4,500.00 ETB → Insufficient Balance on the confirmation'],
+          ['ECB/88120/2019', 'Second customer, with a 25.00 ETB penalty'],
           ['ECB/99999/9999', 'Invalid customer key']
         ]}
       ],
@@ -942,10 +941,10 @@
       title: 'Ethiopian Airlines',
       groups: [
         { label: 'PRN code', rows: [
-          ['23455', 'Resolves. 400.00 Br — pays through'],
+          ['23455', 'Resolves. 400.00 ETB — pays through'],
           ['23456', 'Expired PNR'],
           ['23454', 'This PNR was already paid'],
-          ['23457', '12,000.00 Br → Insufficient Balance on the confirmation'],
+          ['23457', '12,000.00 ETB → Insufficient Balance on the confirmation'],
           ['88120', 'Second booking — Sheba Economy'],
           ['234557', 'Invalid PNR (too long)']
         ]}
@@ -968,7 +967,7 @@
       title: 'DSTV',
       groups: [
         { label: 'Smart card number', rows: [
-          ['7043928115', 'Alemayehu Tadesse — Meda Plus, 300.00 Br due'],
+          ['7043928115', 'Alemayehu Tadesse — Meda Plus, 300.00 ETB due'],
           ['7043928116', 'Hanna Bekele Tadesse — Compact'],
           ['7043928117', 'Alemu Girma Bekele — Premium'],
           ['4529292178', 'Invalid smart card number (too long)']
@@ -988,9 +987,9 @@
           ['anything else', 'Invalid account number']
         ]},
         { label: 'Amount', rows: [
-          ['21000', 'Insufficient Balance (amber) — balance is 20,000.00 Br'],
-          ['80000', 'Maximum Amount: 75,000.00 Br'],
-          ['1', 'Minimum Amount: 5.00 Br']
+          ['21000', 'Insufficient Balance (amber) — balance is 20,000.00 ETB'],
+          ['80000', 'Maximum Amount: 75,000.00 ETB'],
+          ['1', 'Minimum Amount: 5.00 ETB']
         ]}
       ],
       note: 'Typing a name instead of a number searches the same list — try "Ab".'
@@ -1006,9 +1005,9 @@
           ['anything else', 'Invalid phone number']
         ]},
         { label: 'Amount', rows: [
-          ['21000', 'Insufficient Balance — balance is 20,000.00 Br'],
-          ['80000', 'Maximum Amount: 75,000.00 Br'],
-          ['1', 'Minimum Amount: 5.00 Br']
+          ['21000', 'Insufficient Balance — balance is 20,000.00 ETB'],
+          ['80000', 'Maximum Amount: 75,000.00 ETB'],
+          ['1', 'Minimum Amount: 5.00 ETB']
         ]}
       ],
       note: 'A name also searches the list, and the red button opens the contact sheet.'

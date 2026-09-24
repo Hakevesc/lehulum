@@ -220,7 +220,7 @@ ${[1,2,3,4,5,6,7,8,9].map(n => `<button class="key">${n}</button>`).join('')}
     return `<div class="balance-card-wrapper" data-component="BalanceCard">
 <div class="balance-card">
 <div class="balance-card-top">
-<div class="main-balance"><span class="label">Main Balance (Birr)</span><span class="amount">${props.mainBalance || '*** ***'}</span></div>
+<div class="main-balance"><span class="label">Main Balance (ETB)</span><span class="amount">${props.mainBalance || '*** ***'}</span></div>
 <button class="add-money-btn"><span>Add Money</span></button>
 </div>
 </div>

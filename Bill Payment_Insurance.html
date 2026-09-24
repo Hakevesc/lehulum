@@ -134,10 +134,10 @@
 
         <span class="field-label">Enter Amount</span>
         <div class="field" id="amtField">
-          <input id="amtInput" type="text" inputmode="decimal" placeholder="e.g. 1,000 Br" autocomplete="off"
+          <input id="amtInput" type="text" inputmode="decimal" placeholder="e.g. 1,000 ETB" autocomplete="off"
                  oninput="onAmountInput()" onfocus="unformatAmount()" onblur="formatAmount()">
         </div>
-        <div class="balance-hint"><b>Balance:</b> <span id="balanceHint">—</span></div>
+        <div class="balance-hint" id="balanceHintRow"><b>Balance:</b> <span id="balanceHint">—</span></div>
         <div class="msg" id="amtMsg"></div>
       </div>
 
@@ -173,7 +173,7 @@
 
   $('companyName').textContent = company.name;
   $('companyLogo').src = company.logo;
-  $('balanceHint').textContent = fmt(BALANCE) + ' Br';
+  $('balanceHint').textContent = fmt(BALANCE) + ' ETB';
 
   let policy = null;
   let lookupTimer = null;
@@ -237,7 +237,7 @@
 
   function formatAmount() {
     const n = amountValue();
-    if (n !== null && !isNaN(n)) $('amtInput').value = fmt(n) + ' Br';
+    if (n !== null && !isNaN(n)) $('amtInput').value = fmt(n) + ' ETB';
   }
 
   function setAmountState(state, text) {
@@ -247,6 +247,7 @@
     msg.classList.toggle('warn', state === 'warn');
     msg.classList.toggle('err', state === 'err');
     msg.classList.toggle('show', !!state);
+    $('balanceHintRow').style.display = state ? 'none' : '';
     if (text) msg.textContent = text;
   }
 
@@ -254,8 +255,8 @@
     const n = amountValue();
     if (n === null) { setAmountState(null); return null; }
     if (isNaN(n) || n <= 0) { setAmountState('err', 'Enter a valid amount'); return null; }
-    if (n < MIN_AMT) { setAmountState('err', 'Minimum Amount: ' + fmt(MIN_AMT) + ' Br'); return null; }
-    if (n > MAX_AMT) { setAmountState('err', 'Maximum Amount: ' + fmt(MAX_AMT) + ' Br'); return null; }
+    if (n < MIN_AMT) { setAmountState('err', 'Minimum Amount: ' + fmt(MIN_AMT) + ' ETB'); return null; }
+    if (n > MAX_AMT) { setAmountState('err', 'Maximum Amount: ' + fmt(MAX_AMT) + ' ETB'); return null; }
     if (n + FEE > BALANCE) { setAmountState('warn', 'Insufficient Balance'); return null; }
     setAmountState(null);
     return n;

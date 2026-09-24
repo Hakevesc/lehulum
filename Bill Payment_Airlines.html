@@ -221,14 +221,11 @@
       account: booking.prn,
       customerName: booking.name,
       rows: [
-        { key: 'Business Name',    value: 'Airlines' },
-        { key: 'Current Package',  value: booking.package },
-        { key: 'Add-Ons',          value: booking.addons }
+        { key: 'Business Name', value: 'Ethiopian Airlines' },
+        { key: 'PNR Code',      value: booking.prn }
       ],
       receiptRows: [
-        { key: 'PRN Code',        value: booking.prn },
-        { key: 'Current Package', value: booking.package },
-        { key: 'Add-Ons',         value: booking.addons }
+        { key: 'PRN Code', value: booking.prn }
       ],
       txType: 'Airline Payment',
       payAmount: booking.amount.toFixed(2),

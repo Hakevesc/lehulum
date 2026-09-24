@@ -187,11 +187,11 @@
           <div class="amount-group" id="amountGroup" style="display:none; flex-direction:column;">
             <span class="field-label" id="amtLabel">Enter Amount</span>
             <div class="field" id="amtField">
-              <input id="amtInput" type="text" inputmode="decimal" placeholder="e.g. 120 Br" autocomplete="off"
+              <input id="amtInput" type="text" inputmode="decimal" placeholder="e.g. 120 ETB" autocomplete="off"
                      oninput="onAmountInput()" onfocus="unformatAmount()" onblur="formatAmount()">
             </div>
             <div class="hint-group">
-              <div class="balance-hint"><b>Balance:</b> <span id="balanceHint">—</span></div>
+              <div class="balance-hint" id="balanceHintRow"><b>Balance:</b> <span id="balanceHint">—</span></div>
               <div class="cost-hint" id="costHint" style="display:none;"></div>
             </div>
             <div class="msg" id="amtMsg"></div>
@@ -221,7 +221,7 @@
     '71121245': { customer: 'Hiwot Tesfaye Alemu',  month: 'Jul - 2026', amount: 862.75 }
   };
 
-  // A prepaid meter is topped up either by birr or by kilowatt hours, and the
+  // A prepaid meter is topped up either by ETB or by kilowatt hours, and the
   // serial decides which — the second field follows from the lookup.
   const SERIALS = {
     '45292921': { customer: 'Derartu Tulu Andegna', mode: 'amount' },
@@ -233,7 +233,7 @@
   // can be reported rather than silently trimmed into a different account.
   const CODE_LEN = 8, MAX_TYPED = 12;
   const MIN_AMT = 5, MAX_AMT = 75000, BALANCE = 3000, FEE = 5;
-  const RATE = 3.00;   // Br per kilowatt hour
+  const RATE = 3.00;   // ETB per kilowatt hour
   // The receipt breaks the charge out as a service fee plus VAT.
   const SERVICE_FEE = 2, VAT = 5;
 
@@ -249,7 +249,7 @@
   const fmt = n => parseFloat(n || 0).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
 
   let open = null;        // 'post' | 'pre' | null
-  let mode = 'amount';    // prepaid input unit: 'amount' (Br) or 'kwh'
+  let mode = 'amount';    // prepaid input unit: 'amount' (ETB) or 'kwh'
   let contract = null;    // resolved post-paid bill
   let serial = null;      // resolved prepaid meter
   let contractTimer = null, serialTimer = null;
@@ -332,9 +332,9 @@
     if (!show) return;
     const isKwh = mode === 'kwh';
     $('amtLabel').textContent = isKwh ? 'Enter Kilo Watt' : 'Enter Amount';
-    $('amtInput').placeholder = isKwh ? 'e.g. 50 kWh' : 'e.g. 120 Br';
+    $('amtInput').placeholder = isKwh ? 'e.g. 50 kWh' : 'e.g. 120 ETB';
     $('amtInput').value = '';
-    $('balanceHint').textContent = fmt(BALANCE) + ' Br';
+    $('balanceHint').textContent = fmt(BALANCE) + ' ETB';
     setAmountState(null);
   }
 
@@ -358,10 +358,10 @@
 
   function formatAmount() {
     const n = amountValue();
-    if (n !== null && !isNaN(n)) $('amtInput').value = fmt(n) + (mode === 'kwh' ? ' kWh' : ' Br');
+    if (n !== null && !isNaN(n)) $('amtInput').value = fmt(n) + (mode === 'kwh' ? ' kWh' : ' ETB');
   }
 
-  // Kilowatt hours are billed at a flat rate, so every check still runs on birr.
+  // Kilowatt hours are billed at a flat rate, so every check still runs on ETB.
   const costOf = n => mode === 'kwh' ? n * RATE : n;
 
   function setAmountState(state, text) {
@@ -371,6 +371,7 @@
     msg.classList.toggle('warn', state === 'warn');
     msg.classList.toggle('err', state === 'err');
     msg.classList.toggle('show', !!state);
+    $('balanceHintRow').style.display = state ? 'none' : '';
     if (text) msg.textContent = text;
   }
 
@@ -380,16 +381,16 @@
     hint.style.display = 'none';
     if (n === null) { setAmountState(null); return null; }
 
-    const unit = mode === 'kwh' ? ' kWh' : ' Br';
+    const unit = mode === 'kwh' ? ' kWh' : ' ETB';
     const cost = costOf(n);
     if (isNaN(n) || n <= 0) { setAmountState('err', 'Enter a valid ' + (mode === 'kwh' ? 'reading' : 'amount')); return null; }
     if (cost < MIN_AMT) { setAmountState('err', 'Minimum ' + (mode === 'kwh' ? 'Kilo Watt: ' + fmt(MIN_AMT / RATE) + unit : 'Amount: ' + fmt(MIN_AMT) + unit)); return null; }
     if (cost > MAX_AMT) { setAmountState('err', 'Maximum ' + (mode === 'kwh' ? 'Kilo Watt: ' + fmt(MAX_AMT / RATE) + unit : 'Amount: ' + fmt(MAX_AMT) + unit)); return null; }
     if (cost + FEE > BALANCE) { setAmountState('warn', 'Insufficient Balance'); return null; }
 
-    // In kilowatt mode the birr cost is not obvious, so spell it out.
+    // In kilowatt mode the ETB cost is not obvious, so spell it out.
     if (mode === 'kwh') {
-      hint.textContent = fmt(n) + ' kWh = ' + fmt(cost) + ' Br';
+      hint.textContent = fmt(n) + ' kWh = ' + fmt(cost) + ' ETB';
       hint.style.display = '';
     }
     setAmountState(null);

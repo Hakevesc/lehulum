@@ -114,7 +114,7 @@
       <div class="promo-hero" onclick="showToast('Featured events loading')">
         <span class="promo-tag">This Weekend</span>
         <div class="promo-title">Big Live Music<br>Festival 2026</div>
-        <div class="promo-sub">Millennium Hall &middot; Sat 10 PM &middot; From 250 Br</div>
+        <div class="promo-sub">Millennium Hall &middot; Sat 10 PM &middot; From 250 ETB</div>
         <button class="promo-cta">Get Tickets <svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg></button>
       </div>
 
@@ -185,8 +185,8 @@
   };
 
   function ticketCard(x) {
-    const amt = x.p === '—' ? x.p : x.p + ' Br';
-    return '<div class="ticket-card" onclick="showToast(\'' + x.t + ' \u2013 starts at ' + x.p + ' Br\')">' +
+    const amt = x.p === '—' ? x.p : x.p + ' ETB';
+    return '<div class="ticket-card" onclick="showToast(\'' + x.t + ' \u2013 starts at ' + x.p + ' ETB\')">' +
       '<div class="tkt-thumb" style="background:' + x.bg + '">' + TKT_ICONS[x.kind] + '</div>' +
       '<div class="tkt-info">' +
         '<span class="tkt-title">' + x.t + '</span>' +

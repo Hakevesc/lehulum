@@ -48,7 +48,7 @@
   .see-all { color: var(--Primary); font-family: 'Switzer', sans-serif; font-size: 12px; font-weight: 500; cursor: pointer; transition: opacity 0.2s; }
   .see-all:hover { opacity: 0.7; }
 
-  /* ── Favorite agents (horizontal avatars, no card) ── */
+  /* ── Favorites (horizontal avatars, no card) ── */
   .favorites-section { display: flex; flex-direction: column; gap: 12px; padding: 0 4px; }
   .favorites-scroll { display: flex; gap: 16px; overflow-x: auto; padding-bottom: 4px; scrollbar-width: none; -ms-overflow-style: none; }
   .favorites-scroll::-webkit-scrollbar { display: none; }
@@ -58,6 +58,8 @@
   .favorite-avatar { width: 56px; height: 56px; border-radius: 50%; overflow: hidden; border: 2px solid #FFF; background: #FFF; box-shadow: 0 2px 8px rgba(0,0,0,0.05); display: flex; align-items: center; justify-content: center; }
   .favorite-avatar img { width: 100%; height: 100%; object-fit: cover; }
   .favorite-avatar img[src*="banks logo"] { object-fit: contain; padding: 6px; }
+  /* Agents get a name-initial avatar instead of a stock photo icon */
+  .favorite-avatar.initials { background: #FFE9EA; color: var(--Primary); font-family: 'Switzer', sans-serif; font-size: 16px; font-weight: 700; }
   .favorite-name { color: var(--On-Surface); font-family: 'Switzer', sans-serif; font-size: 11px; font-weight: 500; text-align: center; max-width: 70px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; letter-spacing: 0.1px; }
 
   /* ── Frequent withdrawals card ── */
@@ -69,6 +71,7 @@
   .frequent-avatar { width: 44px; height: 44px; border-radius: 50%; overflow: hidden; flex-shrink: 0; background: #FFF; border: 1px solid #ECECEC; display: flex; align-items: center; justify-content: center; }
   .frequent-avatar img { width: 100%; height: 100%; object-fit: cover; }
   .frequent-avatar img[src*="banks logo"] { object-fit: contain; padding: 5px; }
+  .frequent-avatar.initials { background: #FFE9EA; color: var(--Primary); font-family: 'Switzer', sans-serif; font-size: 14px; font-weight: 700; border: none; }
   .frequent-info { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px; }
   .frequent-name { color: var(--On-Surface); font-family: 'Switzer', sans-serif; font-size: 14px; font-weight: 600; letter-spacing: 0.2px; }
   .frequent-sub { color: var(--On-Surface-Low); font-family: 'Switzer', sans-serif; font-size: 12px; font-weight: 400; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
@@ -113,27 +116,27 @@
         </div>
       </div>
 
-      <!-- Favorite agents -->
+      <!-- Favorites -->
       <div class="favorites-section">
         <div class="section-header">
-          <span class="section-title">Favorite Agents</span>
+          <span class="section-title">Favorites</span>
           <span class="see-all" onclick="window.location.href='Manage Favourites.html'">See All</span>
         </div>
         <div class="favorites-scroll">
           <div class="favorite-item" onclick="pickAgent('323217')">
-            <div class="favorite-avatar"><img src="assets/avatars/avatar-3.png" alt="Betty"></div>
+            <div class="favorite-avatar initials">BM</div>
             <span class="favorite-name">Betty</span>
           </div>
           <div class="favorite-item" onclick="pickAgent('562394')">
-            <div class="favorite-avatar"><img src="assets/avatars/avatar-1.png" alt="Kebede"></div>
+            <div class="favorite-avatar initials">KR</div>
             <span class="favorite-name">Kebede</span>
           </div>
           <div class="favorite-item" onclick="pickAgent('778901')">
-            <div class="favorite-avatar"><img src="assets/avatars/avatar-5.png" alt="Meskerem"></div>
+            <div class="favorite-avatar initials">MS</div>
             <span class="favorite-name">Meskerem</span>
           </div>
           <div class="favorite-item" onclick="pickAgent('204411')">
-            <div class="favorite-avatar"><img src="assets/avatars/avatar-4.png" alt="Bole Mart"></div>
+            <div class="favorite-avatar initials">BM</div>
             <span class="favorite-name">Bole Mart</span>
           </div>
           <div class="favorite-item" onclick="selectMethod('atm')">
@@ -150,7 +153,7 @@
         </div>
         <div class="frequent-list">
           <div class="frequent-item" onclick="pickAgent('323217')">
-            <div class="frequent-avatar"><img src="assets/avatars/avatar-3.png" alt="Betty Merhat Agency"></div>
+            <div class="frequent-avatar initials">BM</div>
             <div class="frequent-info">
               <span class="frequent-name">Betty Merhat Agency</span>
               <span class="frequent-sub">Short Code: 323217 &bull; 0.8 km</span>
@@ -158,7 +161,7 @@
             <svg class="chev" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
           </div>
           <div class="frequent-item" onclick="pickAgent('562394')">
-            <div class="frequent-avatar"><img src="assets/avatars/avatar-1.png" alt="Kebede Retails"></div>
+            <div class="frequent-avatar initials">KR</div>
             <div class="frequent-info">
               <span class="frequent-name">Kebede Retails</span>
               <span class="frequent-sub">Short Code: 562394 &bull; 1.2 km</span>
@@ -174,7 +177,7 @@
             <svg class="chev" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
           </div>
           <div class="frequent-item" onclick="pickAgent('778901')">
-            <div class="frequent-avatar"><img src="assets/avatars/avatar-5.png" alt="Meskerem Agent Services"></div>
+            <div class="frequent-avatar initials">MS</div>
             <div class="frequent-info">
               <span class="frequent-name">Meskerem Agent Services</span>
               <span class="frequent-sub">Short Code: 778901 &bull; 2.1 km</span>
@@ -182,7 +185,7 @@
             <svg class="chev" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
           </div>
           <div class="frequent-item" onclick="pickAgent('204411')">
-            <div class="frequent-avatar"><img src="assets/avatars/avatar-4.png" alt="Bole Mini-Mart"></div>
+            <div class="frequent-avatar initials">BM</div>
             <div class="frequent-info">
               <span class="frequent-name">Bole Mini-Mart</span>
               <span class="frequent-sub">Short Code: 204411 &bull; 2.6 km</span>
@@ -208,7 +211,7 @@
   const stamp = () => new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
 
   function selectMethod(m) {
-    const labels = { agent: 'Agent Short Code', atm: 'ATM Cardless' };
+    const labels = { agent: 'Merchant Short Code', atm: 'ATM Cardless' };
     sessionStorage.setItem('withdrawData', JSON.stringify({
       method: m, methodLabel: labels[m], time: stamp()
     }));
@@ -223,7 +226,7 @@
     const a = AGENTS[code];
     if (!a) return selectMethod('agent');
     sessionStorage.setItem('withdrawData', JSON.stringify({
-      method: 'agent', methodLabel: 'Agent Short Code', agentCode: a.code, time: stamp()
+      method: 'agent', methodLabel: 'Merchant Short Code', agentCode: a.code, time: stamp()
     }));
     window.location.href = 'Withdraw Cash - Agent Locator.html';
   }
