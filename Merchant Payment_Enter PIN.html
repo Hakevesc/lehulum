@@ -33,6 +33,10 @@
 
   .body-wrap { flex: 1; display: flex; flex-direction: column; padding: 4px 16px 18px; overflow-y: auto; }
   .body-wrap::-webkit-scrollbar { width: 0; }
+  /* Keep every block at its own height (the column scrolls instead of squashing
+     the PIN boxes under the keypad), and tighten spacing on short phone screens
+     so the keypad and button fit without scrolling. */
+  .body-wrap > * { flex-shrink: 0; }
 
   /* ── Recipient summary ── */
   .party-card { background: #FFF; border-radius: 16px; padding: 14px; display: flex; align-items: center; gap: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.04); }
@@ -84,6 +88,15 @@
   .overdraft-mode .party-avatar { background: #EAF2FF; color: #2563EB; }
   .overdraft-mode .pay-btn { background: #2563EB; box-shadow: 0 4px 16px rgba(37,99,235,0.25); }
   .overdraft-mode .pay-btn:hover { background: #1D4ED8; box-shadow: 0 6px 20px rgba(37,99,235,0.35); }
+  /* Short phone screens: tighter PIN area so keypad and button fit */
+  @media (max-height: 720px) {
+    .pin-prompt { margin-top: 20px; }
+    .pin-container { margin-top: 12px; }
+    .pin-box { height: 52px; }
+    .keypad { padding: 8px 10px; }
+    .key { height: 46px; }
+    .pay-btn { margin-top: 12px; }
+  }
 </style>
 <link rel="stylesheet" href="styles/device.css">
 </head>

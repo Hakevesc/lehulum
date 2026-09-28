@@ -33,6 +33,10 @@
 
   .body-wrap { flex: 1; display: flex; flex-direction: column; padding: 4px 16px 18px; overflow-y: auto; }
   .body-wrap::-webkit-scrollbar { width: 0; }
+  /* Keep every block at its own height (the column scrolls instead of squashing
+     the PIN boxes under the keypad), and tighten spacing on short phone screens
+     so the keypad and button fit without scrolling. */
+  .body-wrap > * { flex-shrink: 0; }
 
   /* ── Activation heading ── */
   .act-head { display: flex; flex-direction: column; align-items: center; text-align: center; gap: 8px; }
@@ -76,6 +80,15 @@
   .pay-btn { margin-top: 14px; height: 52px; border-radius: 14px; border: none; background: var(--Primary); color: #FFF; font-family: 'Poppins', sans-serif; font-size: 15px; font-weight: 500; cursor: pointer; box-shadow: 0 4px 16px rgba(254,53,61,0.25); transition: all 0.2s; flex-shrink: 0; }
   .pay-btn:hover { background: #E5303A; box-shadow: 0 6px 20px rgba(254,53,61,0.35); transform: translateY(-1px); }
   .pay-btn:active { transform: scale(0.98) translateY(0); }
+  /* Short phone screens: tighter PIN area so keypad and button fit */
+  @media (max-height: 720px) {
+    .pin-prompt { margin-top: 20px; }
+    .pin-container { margin-top: 12px; }
+    .pin-box { height: 52px; }
+    .keypad { padding: 8px 10px; }
+    .key { height: 46px; }
+    .pay-btn { margin-top: 12px; }
+  }
 </style>
 <link rel="stylesheet" href="styles/device.css">
 </head>
