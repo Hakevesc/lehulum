@@ -475,9 +475,9 @@
   .ap-label { font-family: 'Switzer', sans-serif; font-size: 12.5px; font-weight: 600; color: var(--On-Surface); margin: 14px 0 8px; }
   .ap-code { display: flex; align-items: center; gap: 8px; height: 52px; border: 1.5px solid var(--Border); border-radius: 14px; padding: 0 6px; background: #FFF; transition: border-color 0.2s; }
   .ap-code:focus-within, .ap-code.error { border-color: var(--Primary); }
-  .ap-qr { width: 38px; height: 38px; border: none; border-radius: 10px; background: var(--Primary); color: #FFF; box-shadow: 0 3px 10px rgba(254,53,61,0.28); display: flex; align-items: center; justify-content: center; cursor: pointer; flex-shrink: 0; }
+  .ap-qr { width: 38px; height: 38px; border: none; border-radius: 10px; background: transparent; color: #111; display: flex; align-items: center; justify-content: center; cursor: pointer; flex-shrink: 0; }
   .ap-qr:active { transform: scale(0.94); }
-  .ap-qr svg { width: 19px; height: 19px; stroke: currentColor; stroke-width: 1.9; fill: none; }
+  .ap-qr svg { width: 20px; height: 20px; stroke: currentColor; stroke-width: 2; fill: none; }
   .ap-code input { flex: 1; min-width: 0; border: none; outline: none; background: transparent; font-family: 'Switzer', sans-serif; font-size: 14px; color: var(--On-Surface); letter-spacing: 0.3px; }
   .ap-code input::placeholder { color: #A0A0AA; letter-spacing: 0; }
   /* Continue sits under the short-code field, full width like the app's other main buttons */
@@ -997,10 +997,10 @@
     <div class="ap-entry" id="apEntry">
     <div class="ap-label">Merchant Short Code</div>
     <div class="ap-code" id="apCodeBox">
+      <input id="apCode" type="text" inputmode="numeric" maxlength="6" placeholder="Enter short code" autocomplete="off" oninput="onCodeInput(this)" onkeydown="if(event.key==='Enter')submitCode()">
       <button class="ap-qr" onclick="entryQr()" aria-label="Show my QR code to the agent">
         <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7V5a2 2 0 0 1 2-2h2"/><path d="M17 3h2a2 2 0 0 1 2 2v2"/><path d="M21 17v2a2 2 0 0 1-2 2h-2"/><path d="M7 21H5a2 2 0 0 1-2-2v-2"/><rect x="7" y="7" width="4" height="4"/><rect x="13" y="13" width="4" height="4"/><path d="M13 7h4v2M7 15v2h2"/></svg>
       </button>
-      <input id="apCode" type="text" inputmode="numeric" maxlength="6" placeholder="Enter short code" autocomplete="off" oninput="onCodeInput(this)" onkeydown="if(event.key==='Enter')submitCode()">
     </div>
     <div class="field-error" id="apMsg"><span class="fe-ic"><svg viewBox="0 0 24 24"><path d="M17 7 7 17M7 7l10 10"/></svg></span><span class="fe-txt">Short code must be 6 digits.</span></div>
     <button class="ap-continue" id="apEnter" onclick="submitCode()" disabled>Continue</button>
