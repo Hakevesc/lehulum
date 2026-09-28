@@ -525,8 +525,6 @@
   .drop-peek .peek-row { display: flex; align-items: center; gap: 8px; width: 150px; opacity: 0.45; }
   .drop-peek .peek-row i { width: 22px; height: 22px; border-radius: 50%; background: rgba(255,255,255,0.35); flex-shrink: 0; }
   .drop-peek .peek-row b { height: 7px; border-radius: 4px; background: rgba(255,255,255,0.35); flex: 1; }
-  .agent-panel { touch-action: none; }
-  .agent-panel.grabbing { cursor: grabbing; }
 
   /* The blob grows out of the island while dragging, then fills the screen */
   .wd-blob { position: absolute; z-index: 70; overflow: hidden; background: var(--Primary); color: #FFF; opacity: 0; pointer-events: none; transition: left 0.45s cubic-bezier(.2,.8,.2,1), top 0.45s cubic-bezier(.2,.8,.2,1), width 0.45s cubic-bezier(.2,.8,.2,1), height 0.45s cubic-bezier(.2,.8,.2,1), border-radius 0.45s, background-color 0.3s, opacity 0.2s; }
@@ -829,7 +827,7 @@
       <h1 class="header-title">Find an Agent</h1>
     </div>
 
-    <!-- Favorites & Frequents island: tap it, or drag the agent card up into it -->
+    <!-- Favorites & Frequents island: tap it, or hold and pull it down -->
     <div class="island-row">
       <div class="island" id="island" role="button" tabindex="0" aria-label="Open favourite and frequent agents" onclick="tapIsland()" onkeydown="if(event.key==='Enter'||event.key===' ')tapIsland()">
         <span class="island-lbl">Favorites <b>&amp; Frequents</b></span>
@@ -1320,7 +1318,6 @@
 
   const frame = document.querySelector('.phone-frame');
   const blob = $('wdBlob');
-  const panel = $('agentPanel');
   const ARM = 0.6;               // drag progress needed to open on release
   const BLACK = '#1C1C21';
   let pickerOpen = false;
@@ -1383,7 +1380,7 @@
   function retractDrop(from) {
     const t0 = performance.now();
     (function step(now) {
-      if (drag || pull) return;
+      if (pull) return;
       const k = Math.min(1, (now - t0) / 260);
       drawDrop(from * (1 - k) * (1 - k));
       if (k < 1) requestAnimationFrame(step);
@@ -1409,7 +1406,7 @@
   // Tap: play the same droplet the drag makes, then open
   let tapping = false;
   function tapIsland() {
-    if (pickerOpen || drag || tapping) return;
+    if (pickerOpen || pull || tapping) return;
     tapping = true;
     const t0 = performance.now(), END = 0.8;
     (function step(now) {
@@ -1465,54 +1462,8 @@
     window.location.href = 'Withdraw Cash - Agent Locator.html';
   }
 
-  // Drag the card up: a small drag shows the hint, further drops the droplet
-  // out of the island, and releasing past ARM opens the picker. A drag can
-  // start anywhere on the card, even on the short-code field or a button:
-  // it only becomes a drag once the finger moves up, so taps still type or
-  // press as usual, and a finished drag swallows the click it would cause.
-  let drag = null;
+  // Only the Favorites & Frequents bar drags; the short-code card stays put.
   let swallowClick = false;
-  panel.addEventListener('pointerdown', e => {
-    if (pickerOpen || e.button > 0) return;
-    const pill = $('island').getBoundingClientRect();
-    drag = { y0: e.clientY, p: 0, moved: false, id: e.pointerId, max: Math.max(80, panel.getBoundingClientRect().top - pill.bottom - 24) };
-  });
-  panel.addEventListener('pointermove', e => {
-    if (!drag || e.pointerId !== drag.id) return;
-    const dy = Math.min(0, e.clientY - drag.y0);
-    if (!drag.moved && dy > -8) return;
-    if (!drag.moved) {
-      drag.moved = true;
-      try { panel.setPointerCapture(e.pointerId); } catch (_) {}
-      if (document.activeElement && panel.contains(document.activeElement)) document.activeElement.blur();
-      panel.style.transition = 'none';
-      panel.classList.add('grabbing');
-      $('dropHint').classList.add('show');
-    }
-    drag.p = Math.min(1, -dy / drag.max);
-    panel.style.transform = `translateY(${dy}px)`;
-    $('dropHint').textContent = drag.p >= ARM ? 'Release to withdraw' : 'Drag to withdraw';
-    drawDrop(drag.p);
-  });
-  function endDrag() {
-    if (!drag) return;
-    const { p, moved } = drag;
-    drag = null;
-    if (!moved) return;
-    swallowClick = true;
-    setTimeout(() => { swallowClick = false; }, 350);
-    panel.classList.remove('grabbing');
-    panel.style.transition = 'transform 0.35s cubic-bezier(.2,.8,.2,1)';
-    panel.style.transform = '';
-    $('dropHint').classList.remove('show');
-    if (p >= ARM) openPicker();
-    else retractDrop(p);
-  }
-  panel.addEventListener('pointerup', endDrag);
-  panel.addEventListener('pointercancel', endDrag);
-  panel.addEventListener('click', e => {
-    if (swallowClick) { e.stopPropagation(); e.preventDefault(); swallowClick = false; }
-  }, true);
 
   // Hold the Favorites & Frequents bar and pull down: the droplet follows the
   // finger out of the bar; letting go past ARM opens the picker, earlier
