@@ -66,9 +66,13 @@
   .myqr-logo-chip .m { width: 28px; height: 28px; border-radius: 8px; background: var(--Primary); color: #FFF; display: flex; align-items: center; justify-content: center; font-family: 'Switzer', sans-serif; font-weight: 700; font-size: 15px; }
   .myqr-hint { font-family: 'Switzer', sans-serif; font-size: 12px; color: var(--On-Surface-Low); text-align: center; line-height: 1.5; }
 
-  .myqr-amount { width: 100%; display: flex; flex-direction: column; gap: 6px; }
-  .myqr-amount .field { height: 48px; }
-  .myqr-amount .field input:disabled { color: var(--On-Surface); -webkit-text-fill-color: var(--On-Surface); opacity: 1; }
+  /* Deposit amount printed on the code itself. It only appears once the amount
+     has been applied with "Update Amount" / "Done", so a half-typed value is
+     never shown as if it were the amount on the code. */
+  .myqr-amount { display: flex; align-items: baseline; gap: 4px; }
+  .myqr-amount[hidden] { display: none; }
+  .myqr-amount .val { font-family: 'Switzer', sans-serif; font-size: 24px; font-weight: 700; color: var(--On-Surface); letter-spacing: 0.2px; }
+  .myqr-amount .cur { font-family: 'Switzer', sans-serif; font-size: 13px; font-weight: 600; color: var(--On-Surface-Low); }
   .myqr-actions { width: 100%; display: flex; gap: 10px; }
   .myqr-btn { flex: 1; height: 46px; border-radius: 12px; font-family: 'Switzer', sans-serif; font-size: 13.5px; font-weight: 600; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 7px; transition: all 0.2s; }
   .myqr-btn svg { width: 16px; height: 16px; stroke-width: 2; fill: none; }
@@ -204,6 +208,12 @@
             <div class="myqr-logo-chip"><div class="m">M</div></div>
           </div>
 
+          <!-- The amount the code carries; filled in by renderQrCardAmount(). -->
+          <div class="myqr-amount" id="qrCardAmt" hidden>
+            <span class="val" id="qrCardAmtVal">0.00</span>
+            <span class="cur">ETB</span>
+          </div>
+
           <div class="myqr-hint">Show this code to the agent to receive<br>your Cash-In deposit.</div>
         </div>
 
@@ -244,11 +254,11 @@
           </div>
 
           <div class="myqr-actions">
-            <button class="myqr-btn primary" id="qrAmtBtn" onclick="confirmQrAmount()">
-              Done
-            </button>
             <button class="myqr-btn secondary" onclick="updateQrAmount()">
               Update Amount
+            </button>
+            <button class="myqr-btn primary" id="qrAmtBtn" onclick="confirmQrAmount()">
+              Done
             </button>
           </div>
         </div>
@@ -437,6 +447,16 @@
     finder(0, 0); finder(0, modules - 7); finder(modules - 7, 0);
   }
 
+  // The amount line under the code. It follows the *applied* amount
+  // (qrAmountSet), never raw keystrokes, so the code and its amount agree.
+  function renderQrCardAmount() {
+    const raw = $('qrAmt').value.trim();
+    const n = parseFloat(raw);
+    if (!qrAmountSet || raw === '' || isNaN(n)) { $('qrCardAmt').hidden = true; return; }
+    $('qrCardAmtVal').textContent = n.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    $('qrCardAmt').hidden = false;
+  }
+
   function onQrAmountInput(el) {
     el.value = el.value.replace(/[^\d.]/g, '').replace(/(\..*)\./g, '$1');
   }
@@ -455,12 +475,22 @@
     return n;
   }
 
-  // "Update Amount": push the typed value into the QR, but keep the field
-  // editable so it can be adjusted again without unlocking anything first.
+  // "Update Amount": push the typed value onto the code and its amount line, and
+  // re-open the field so it can be adjusted again — including after "Done",
+  // which locks it. Clearing the field takes the amount off the code entirely.
   function updateQrAmount() {
+    if ($('qrAmt').value.trim() === '') {
+      qrAmountSet = false;
+      $('qrAmtMsg').classList.remove('show');
+      renderQrCardAmount();
+      drawMyQR();
+      return;
+    }
     const amount = validateQrAmount();
     if (amount === null) return;
     qrAmountSet = true;
+    $('qrAmt').disabled = false;
+    renderQrCardAmount();
     drawMyQR();
   }
 
@@ -504,17 +534,20 @@
     $('qrAmt').value = amount;
     onQrAmountInput($('qrAmt'));
     qrAmountSet = true;
+    renderQrCardAmount();
     drawMyQR();
     showToast('Deposit details filled from history');
   }
 
-  // "Done": validate, push the values into the QR, and lock the amount field.
+  // "Done": validate, push the values onto the code, lock the amount field and
+  // print the amount on the code card.
   function confirmQrAmount() {
     if (!validateQrCode()) return;
     const amount = validateQrAmount();
     if (amount === null) return;
     qrAmountSet = true;
     $('qrAmt').disabled = true;
+    renderQrCardAmount();
     drawMyQR();
   }
 
