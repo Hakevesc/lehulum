@@ -495,37 +495,42 @@
   .as-action-btn.call { flex: 0 0 48px; border: none; background: var(--Success); box-shadow: 0 4px 14px rgba(22,163,74,0.3); }
   .as-action-btn.call svg { width: 20px; height: 20px; fill: #FFF; stroke: none; }
 
-  /* ── Withdraw-at island: red pill at the top with favourite agents. Dragging
-     the agent card up into it (or tapping it) opens the Withdraw At picker. ── */
+  /* ── Favorites & Frequents island: black bar under the title. Dragging the
+     agent card up drops a blob out of it, then opens the Withdraw At picker. ── */
   .island-row { display: flex; justify-content: center; padding: 0 16px 10px; background: var(--Background); flex-shrink: 0; position: relative; z-index: 60; }
-  .island { width: 100%; height: 44px; border: none; border-radius: 16px; background: #1C1C21; color: #FFF; display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 0 7px 0 16px; cursor: pointer; box-shadow: 0 4px 14px rgba(15,15,20,0.25); font-family: 'Switzer', sans-serif; font-size: 14px; transition: transform 0.15s; }
-  .island:active { transform: scale(0.97); }
+  .island { width: 100%; height: 56px; border: none; border-radius: 16px; background: #1C1C21; color: #FFF; display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 0 10px 0 18px; box-shadow: 0 4px 14px rgba(15,15,20,0.25); font-family: 'Switzer', sans-serif; font-size: 15px; }
   .island-lbl { font-weight: 400; letter-spacing: 0.1px; }
   .island-lbl b { font-weight: 700; }
   .island-avs { display: flex; padding-left: 8px; }
-  .island-avs .av { width: 30px; height: 30px; margin-left: -9px; border: 2px solid #1C1C21; font-size: 10px; }
+  .island-avs .av { width: 36px; height: 36px; margin-left: -10px; border: 2px solid #1C1C21; font-size: 10px; }
 
   .av { border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0; font-family: 'Switzer', sans-serif; font-weight: 700; background: var(--Primary-Light); color: var(--Primary); }
 
-  /* Hint over the card while it is held */
-  .ap-hint { position: absolute; top: -42px; left: 50%; transform: translate(-50%, 6px); display: flex; align-items: center; gap: 6px; padding: 7px 14px; border-radius: 999px; background: rgba(15,23,42,0.86); color: #FFF; font-family: 'Switzer', sans-serif; font-size: 12.5px; font-weight: 600; white-space: nowrap; opacity: 0; pointer-events: none; transition: opacity 0.2s, transform 0.2s; }
-  .ap-hint.show { opacity: 1; transform: translate(-50%, 0); }
-  .ap-hint svg { width: 14px; height: 14px; stroke: currentColor; stroke-width: 2.4; fill: none; }
+  /* "Drag to withdraw" shows just under the island once the card moves */
+  .drop-hint { position: absolute; z-index: 45; left: 50%; transform: translate(-50%, -6px); padding: 6px 14px; border-radius: 999px; background: #FFF; color: var(--On-Surface); box-shadow: 0 4px 14px rgba(15,23,42,0.14); font-family: 'Switzer', sans-serif; font-size: 13px; font-weight: 500; white-space: nowrap; opacity: 0; pointer-events: none; transition: opacity 0.2s, transform 0.2s; }
+  .drop-hint.show { opacity: 1; transform: translate(-50%, 0); }
+
+  /* The droplet: bar + ball merged by a goo filter, drawn under the island */
+  .drop { position: absolute; left: 0; top: 0; width: 100%; height: 100%; z-index: 50; pointer-events: none; opacity: 0; overflow: visible; }
+  .drop.show { opacity: 1; }
+  .drop-peek { position: absolute; z-index: 51; border-radius: 50%; overflow: hidden; pointer-events: none; opacity: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px; color: #FFF; font-family: 'Switzer', sans-serif; }
+  .drop-peek > svg { width: 22px; height: 22px; stroke: #FFF; stroke-width: 2.2; fill: none; }
+  .drop-peek .peek-title { font-size: 11px; font-weight: 600; color: rgba(255,255,255,0.6); letter-spacing: 0.4px; }
+  .drop-peek .peek-avs { display: flex; gap: 8px; }
+  .drop-peek .peek-avs .av { width: 34px; height: 34px; font-size: 11px; }
+  .drop-peek .peek-row { display: flex; align-items: center; gap: 8px; width: 150px; opacity: 0.45; }
+  .drop-peek .peek-row i { width: 22px; height: 22px; border-radius: 50%; background: rgba(255,255,255,0.35); flex-shrink: 0; }
+  .drop-peek .peek-row b { height: 7px; border-radius: 4px; background: rgba(255,255,255,0.35); flex: 1; }
   .agent-panel { touch-action: none; }
   .agent-panel.grabbing { cursor: grabbing; }
 
   /* The blob grows out of the island while dragging, then fills the screen */
   .wd-blob { position: absolute; z-index: 70; overflow: hidden; background: var(--Primary); color: #FFF; opacity: 0; pointer-events: none; transition: left 0.45s cubic-bezier(.2,.8,.2,1), top 0.45s cubic-bezier(.2,.8,.2,1), width 0.45s cubic-bezier(.2,.8,.2,1), height 0.45s cubic-bezier(.2,.8,.2,1), border-radius 0.45s, background-color 0.3s, opacity 0.2s; }
-  .wd-blob.dragging { transition: opacity 0.15s; }
-  /* Same red gradient as the Home popup ad */
-  .wd-blob.open { background-image: linear-gradient(175deg, #DE2B35 0%, #B31922 100%); }
+  .wd-blob.dragging { transition: none; }
   .wd-blob.open { pointer-events: auto; }
-  .blob-peek { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px; opacity: 0; font-family: 'Switzer', sans-serif; }
-  .blob-peek .peek-title { font-size: 12px; font-weight: 600; color: rgba(255,255,255,0.8); letter-spacing: 0.3px; }
-  .blob-peek .peek-avs { display: flex; gap: 8px; }
-  .blob-peek .av { width: 38px; height: 38px; font-size: 12px; }
-  .blob-peek svg { width: 18px; height: 18px; stroke: #FFF; stroke-width: 2.2; fill: none; }
-  .wd-blob.open .blob-peek { opacity: 0 !important; transition: opacity 0.15s; }
+  /* Red to black-red gradient fades in over the black droplet as it opens */
+  .wd-blob::before { content: ''; position: absolute; inset: 0; background: linear-gradient(170deg, #E3242E 0%, #A3121B 45%, #3A070B 80%, #1C0305 100%); opacity: 0; transition: opacity 0.4s; }
+  .wd-blob.open::before { opacity: 1; }
 
   .blob-full { position: absolute; left: 0; top: 0; display: flex; flex-direction: column; padding: 26px 20px 20px; opacity: 0; transition: opacity 0.2s; font-family: 'Switzer', sans-serif; }
   .wd-blob.open .blob-full { opacity: 1; transition: opacity 0.25s 0.2s; }
@@ -538,8 +543,8 @@
   .wd-favs { display: flex; gap: 14px; overflow-x: auto; padding: 2px 2px 4px; margin: 0 -2px; }
   .wd-favs::-webkit-scrollbar { height: 0; }
   .wd-fav { display: flex; flex-direction: column; align-items: center; gap: 7px; width: 62px; flex-shrink: 0; background: none; border: none; color: #FFF; cursor: pointer; font-family: inherit; }
-  .wd-fav .av { width: 52px; height: 52px; font-size: 15px; box-shadow: 0 0 0 2px #C9202B, 0 0 0 2px transparent; transition: box-shadow 0.2s; }
-  .wd-fav.sel .av { box-shadow: 0 0 0 2px #C9202B, 0 0 0 4px #FFF; }
+  .wd-fav .av { width: 52px; height: 52px; font-size: 15px; box-shadow: 0 0 0 2px #B51720, 0 0 0 2px transparent; transition: box-shadow 0.2s; }
+  .wd-fav.sel .av { box-shadow: 0 0 0 2px #B51720, 0 0 0 4px #FFF; }
   .wd-fav span { font-size: 11.5px; font-weight: 500; max-width: 62px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
   .wd-fav .add { width: 52px; height: 52px; border-radius: 50%; border: 1.5px solid rgba(255,255,255,0.7); display: flex; align-items: center; justify-content: center; }
   .wd-fav .add svg { width: 20px; height: 20px; stroke: #FFF; stroke-width: 2; fill: none; }
@@ -827,12 +832,12 @@
       <h1 class="header-title">Find an Agent</h1>
     </div>
 
-    <!-- Withdraw-at island: drag the agent card up into it, or tap it -->
+    <!-- Favorites & Frequents island: drag the agent card up into it -->
     <div class="island-row">
-      <button class="island" id="island" onclick="openPicker()" aria-label="Withdraw at a favourite agent">
-        <span class="island-lbl">Withdraw <b>at</b></span>
+      <div class="island" id="island">
+        <span class="island-lbl">Favorites <b>&amp; Frequents</b></span>
         <span class="island-avs" id="islandAvs"></span>
-      </button>
+      </div>
     </div>
 
     <div class="scroll">
@@ -947,10 +952,6 @@
 
   <!-- Agent panel — static over the map: selected agent, short code, call / directions -->
   <div class="agent-panel" id="agentPanel">
-    <div class="ap-hint" id="apHint">
-      <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19V5M5 12l7-7 7 7"/></svg>
-      <span id="apHintTxt">Drag to withdraw</span>
-    </div>
     <div class="sheet-grip"></div>
 
     <!-- Selected merchant — only shown after a pin is tapped; Back returns to
@@ -998,13 +999,32 @@
     </div>
   </div>
 
-  <!-- Withdraw At picker: grows out of the island -->
+  <!-- Drag feedback: hint under the island, then a droplet falling out of it -->
+  <div class="drop-hint" id="dropHint">Drag to withdraw</div>
+  <svg class="drop" id="drop" aria-hidden="true">
+    <defs>
+      <filter id="goo" x="-50%" y="-50%" width="200%" height="200%">
+        <feGaussianBlur in="SourceGraphic" stdDeviation="9" result="b"/>
+        <feColorMatrix in="b" mode="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 24 -11"/>
+      </filter>
+    </defs>
+    <g filter="url(#goo)" fill="#1C1C21">
+      <rect id="dropBar"/>
+      <circle id="dropBall"/>
+    </g>
+  </svg>
+  <div class="drop-peek" id="dropPeek">
+    <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M17 7L7 17M7 7h10v10"/></svg>
+    <div class="peek-title">FAVORITES</div>
+    <div class="peek-avs" id="peekAvs"></div>
+    <div class="peek-title">FREQUENTS</div>
+    <div class="peek-row"><i></i><b></b></div>
+    <div class="peek-row"><i></i><b></b></div>
+    <div class="peek-row"><i></i><b></b></div>
+  </div>
+
+  <!-- Withdraw At picker: grows out of the droplet -->
   <div class="wd-blob" id="wdBlob" role="dialog" aria-modal="true" aria-label="Withdraw at">
-    <div class="blob-peek" id="blobPeek">
-      <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19V5M5 12l7-7 7 7"/></svg>
-      <div class="peek-avs" id="peekAvs"></div>
-      <div class="peek-title">FAVOURITES</div>
-    </div>
     <div class="blob-full" id="blobFull">
       <button class="wd-close" onclick="closePicker()" aria-label="Close">
         <svg viewBox="0 0 24 24" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg>
@@ -1093,7 +1113,7 @@
   ];
 
   // Saved favourite agents, and the agents withdrawn at most often
-  const FAVOURITES = ['323217', '562394', '615208'];
+  const FAVOURITES = ['323217', '562394', '615208', '778901'];
   const FREQUENTS = [
     { code: '323217', times: 12 },
     { code: '615208', times: 8 },
@@ -1308,42 +1328,61 @@
   const agentBy = code => AGENTS.find(a => a.code === code);
   const avHtml = (a, cls) => `<span class="av ${cls || ''}">${a.abbr}</span>`;
 
-  $('islandAvs').innerHTML = FAVOURITES.map(c => avHtml(agentBy(c))).join('');
-  $('peekAvs').innerHTML = FAVOURITES.map(c => avHtml(agentBy(c))).join('');
+  $('islandAvs').innerHTML = FAVOURITES.slice(0, 3).map(c => avHtml(agentBy(c))).join('');
+  $('peekAvs').innerHTML = FAVOURITES.slice(0, 3).map(c => avHtml(agentBy(c))).join('');
 
   const frame = document.querySelector('.phone-frame');
   const blob = $('wdBlob');
   const panel = $('agentPanel');
   const ARM = 0.6;               // drag progress needed to open on release
-  // Blob starts as the black island and turns into the popup-ad red
-  const RED = [28, 28, 33], DARK = [222, 43, 53];
+  const BLACK = '#1C1C21';
   let pickerOpen = false;
   let pickCode = null, pickSrc = null;
+  let ball = null;               // last drawn droplet ball {cx, cy, r}
 
   function relRect(el) {
     const f = frame.getBoundingClientRect(), r = el.getBoundingClientRect();
     return { left: r.left - f.left, top: r.top - f.top, width: r.width, height: r.height };
   }
-  function setGeom(g, radius, rgb) {
+  function setGeom(g, radius) {
     blob.style.left = g.left + 'px';
     blob.style.top = g.top + 'px';
     blob.style.width = g.width + 'px';
     blob.style.height = g.height + 'px';
     blob.style.borderRadius = radius + 'px';
-    blob.style.backgroundColor = `rgb(${rgb.join(',')})`;
+    blob.style.backgroundColor = BLACK;
   }
-  const mix = t => RED.map((c, i) => Math.round(c + (DARK[i] - c) * t));
+  const attrs = (el, o) => Object.keys(o).forEach(k => el.setAttribute(k, o[k]));
 
-  // Blob grows out of the island as the card is dragged up (p: 0..1)
-  function peek(p) {
-    const pill = relRect($('island'));
-    if (p < 0.03) { blob.style.opacity = 0; return; }
-    const w = pill.width;
-    const h = pill.height + (190 - pill.height) * p;
-    blob.classList.add('dragging');
-    setGeom({ left: pill.left + pill.width / 2 - w / 2, top: pill.top, width: w, height: h }, 16 + 24 * p, mix(Math.min(1, p * 2.5)));
-    blob.style.opacity = 1;
-    $('blobPeek').style.opacity = Math.max(0, (p - 0.35) / 0.65);
+  // Droplet for drag progress p (0..1): a ball swells out of the bar and hangs
+  // under it, joined by a gooey neck, with a faint preview of the lists inside.
+  function drawDrop(p) {
+    const isl = relRect($('island'));
+    attrs($('dropBar'), { x: isl.left, y: isl.top, width: isl.width, height: isl.height, rx: 16 });
+    const r = 16 + 134 * p;
+    const cx = isl.left + isl.width / 2;
+    const cy = isl.top + isl.height / 2 + (isl.height / 2 + r - 8) * Math.min(1, p * 1.4);
+    attrs($('dropBall'), { cx, cy, r });
+    ball = { cx, cy, r };
+    $('drop').classList.toggle('show', p > 0.02);
+    const pk = $('dropPeek');
+    pk.style.left = (cx - r) + 'px';
+    pk.style.top = (cy - r) + 'px';
+    pk.style.width = pk.style.height = (r * 2) + 'px';
+    pk.style.opacity = Math.max(0, Math.min(1, (p - 0.3) / 0.5));
+    $('dropHint').style.top = (isl.top + isl.height + 12) + 'px';
+  }
+
+  // Released too early: the ball sinks back into the bar
+  function retractDrop(from) {
+    const t0 = performance.now();
+    (function step(now) {
+      if (drag) return;
+      const k = Math.min(1, (now - t0) / 260);
+      drawDrop(from * (1 - k) * (1 - k));
+      if (k < 1) requestAnimationFrame(step);
+      else $('drop').classList.remove('show');
+    })(t0);
   }
 
   function renderPicker() {
@@ -1374,6 +1413,7 @@
     $('wdNext').disabled = !code;
   }
 
+  // Opens from the droplet's ball, which swells to fill the screen
   function openPicker() {
     if (pickerOpen) return;
     pickerOpen = true;
@@ -1381,23 +1421,23 @@
     const fr = frame.getBoundingClientRect();
     $('blobFull').style.width = fr.width + 'px';
     $('blobFull').style.height = fr.height + 'px';
-    if (blob.style.opacity !== '1') {           // opened by tap: start from the pill
-      blob.classList.add('dragging');
-      peek(0.04);
-    }
+    const b = ball || { cx: fr.width / 2, cy: 80, r: 30 };
+    blob.classList.add('dragging');
+    setGeom({ left: b.cx - b.r, top: b.cy - b.r, width: b.r * 2, height: b.r * 2 }, b.r);
+    blob.style.opacity = 1;
     void blob.offsetWidth;
     blob.classList.remove('dragging');
     blob.classList.add('open');
-    setGeom({ left: 0, top: 0, width: fr.width, height: fr.height }, parseFloat(getComputedStyle(frame).borderTopLeftRadius) || 0, DARK);
+    setGeom({ left: 0, top: 0, width: fr.width, height: fr.height }, parseFloat(getComputedStyle(frame).borderTopLeftRadius) || 0);
+    setTimeout(() => { $('drop').classList.remove('show'); $('dropPeek').style.opacity = 0; }, 60);
   }
 
+  // Closes back into the island
   function closePicker() {
     if (!pickerOpen) return;
     pickerOpen = false;
     blob.classList.remove('open');
-    $('blobPeek').style.opacity = 0;
-    const pill = relRect($('island'));
-    setGeom(pill, 16, RED);
+    setGeom(relRect($('island')), 16);
     setTimeout(() => { if (!pickerOpen) blob.style.opacity = 0; }, 420);
   }
 
@@ -1418,43 +1458,37 @@
     window.location.href = 'Withdraw Cash - Agent Locator.html';
   }
 
-  // Hold the card to see the hint; drag it up into the island to open the picker
+  // Drag the card up: a small drag shows the hint, further drops the droplet
+  // out of the island, and releasing past ARM opens the picker.
   let drag = null;
   panel.addEventListener('pointerdown', e => {
     if (pickerOpen || e.button > 0 || e.target.closest('button, input')) return;
     const pill = $('island').getBoundingClientRect();
-    drag = { y0: e.clientY, p: 0, max: Math.max(80, panel.getBoundingClientRect().top - pill.bottom - 24) };
+    drag = { y0: e.clientY, p: 0, moved: false, max: Math.max(80, panel.getBoundingClientRect().top - pill.bottom - 24) };
     panel.setPointerCapture(e.pointerId);
     panel.style.transition = 'none';
-    panel.classList.add('grabbing');
-    $('apHintTxt').textContent = 'Drag to withdraw';
-    $('apHint').classList.add('show');
   });
   panel.addEventListener('pointermove', e => {
     if (!drag) return;
     const dy = Math.min(0, e.clientY - drag.y0);
+    if (!drag.moved && dy > -6) return;
+    if (!drag.moved) { drag.moved = true; panel.classList.add('grabbing'); $('dropHint').classList.add('show'); }
     drag.p = Math.min(1, -dy / drag.max);
     panel.style.transform = `translateY(${dy}px)`;
-    $('apHintTxt').textContent = drag.p >= ARM ? 'Release to withdraw' : 'Drag to withdraw';
-    peek(drag.p);
+    $('dropHint').textContent = drag.p >= ARM ? 'Release to withdraw' : 'Drag to withdraw';
+    drawDrop(drag.p);
   });
   function endDrag() {
     if (!drag) return;
-    const armed = drag.p >= ARM;
+    const { p, moved } = drag;
     drag = null;
     panel.classList.remove('grabbing');
     panel.style.transition = 'transform 0.35s cubic-bezier(.2,.8,.2,1)';
     panel.style.transform = '';
-    $('apHint').classList.remove('show');
-    if (armed) openPicker();
-    else { blob.classList.remove('dragging'); closePickerPeek(); }
-  }
-  // Released too early: shrink the blob back into the island
-  function closePickerPeek() {
-    $('blobPeek').style.opacity = 0;
-    const pill = relRect($('island'));
-    setGeom(pill, 16, RED);
-    setTimeout(() => { if (!pickerOpen && !drag) blob.style.opacity = 0; }, 420);
+    $('dropHint').classList.remove('show');
+    if (!moved) return;
+    if (p >= ARM) openPicker();
+    else retractDrop(p);
   }
   panel.addEventListener('pointerup', endDrag);
   panel.addEventListener('pointercancel', endDrag);
