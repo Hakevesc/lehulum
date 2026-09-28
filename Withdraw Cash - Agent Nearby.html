@@ -515,11 +515,11 @@
   .agent-panel.grabbing { cursor: grabbing; }
 
   /* The blob grows out of the island while dragging, then fills the screen */
-  .wd-blob { position: absolute; z-index: 70; overflow: hidden; background: #111114; color: #FFF; opacity: 0; pointer-events: none; transition: left 0.45s cubic-bezier(.2,.8,.2,1), top 0.45s cubic-bezier(.2,.8,.2,1), width 0.45s cubic-bezier(.2,.8,.2,1), height 0.45s cubic-bezier(.2,.8,.2,1), border-radius 0.45s, background-color 0.3s, opacity 0.2s; }
+  .wd-blob { position: absolute; z-index: 70; overflow: hidden; background: var(--Primary); color: #FFF; opacity: 0; pointer-events: none; transition: left 0.45s cubic-bezier(.2,.8,.2,1), top 0.45s cubic-bezier(.2,.8,.2,1), width 0.45s cubic-bezier(.2,.8,.2,1), height 0.45s cubic-bezier(.2,.8,.2,1), border-radius 0.45s, background-color 0.3s, opacity 0.2s; }
   .wd-blob.dragging { transition: opacity 0.15s; }
   .wd-blob.open { pointer-events: auto; }
   .blob-peek { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px; opacity: 0; font-family: 'Switzer', sans-serif; }
-  .blob-peek .peek-title { font-size: 12px; font-weight: 600; color: #A1A1AA; letter-spacing: 0.3px; }
+  .blob-peek .peek-title { font-size: 12px; font-weight: 600; color: rgba(255,255,255,0.8); letter-spacing: 0.3px; }
   .blob-peek .peek-avs { display: flex; gap: 8px; }
   .blob-peek .av { width: 38px; height: 38px; font-size: 12px; }
   .blob-peek svg { width: 18px; height: 18px; stroke: #FFF; stroke-width: 2.2; fill: none; }
@@ -527,35 +527,35 @@
 
   .blob-full { position: absolute; left: 0; top: 0; display: flex; flex-direction: column; padding: 26px 20px 20px; opacity: 0; transition: opacity 0.2s; font-family: 'Switzer', sans-serif; }
   .wd-blob.open .blob-full { opacity: 1; transition: opacity 0.25s 0.2s; }
-  .wd-close { position: absolute; top: 24px; right: 18px; width: 36px; height: 36px; border: none; border-radius: 50%; background: rgba(255,255,255,0.08); color: #FFF; display: flex; align-items: center; justify-content: center; cursor: pointer; }
+  .wd-close { position: absolute; top: 24px; right: 18px; width: 36px; height: 36px; border: none; border-radius: 50%; background: rgba(255,255,255,0.2); color: #FFF; display: flex; align-items: center; justify-content: center; cursor: pointer; }
   .wd-close svg { width: 18px; height: 18px; stroke: currentColor; stroke-width: 2.2; fill: none; }
-  .wd-title { font-size: 34px; line-height: 1.08; letter-spacing: -0.6px; font-weight: 500; color: #9A9AA5; }
+  .wd-title { font-size: 34px; line-height: 1.08; letter-spacing: -0.6px; font-weight: 500; color: rgba(255,255,255,0.72); }
   .wd-title b { display: block; font-weight: 700; color: #FFF; }
-  .wd-sec { font-size: 22px; line-height: 1.1; letter-spacing: -0.3px; font-weight: 500; color: #9A9AA5; margin: 26px 0 14px; }
+  .wd-sec { font-size: 22px; line-height: 1.1; letter-spacing: -0.3px; font-weight: 500; color: rgba(255,255,255,0.72); margin: 26px 0 14px; }
   .wd-sec b { display: block; font-weight: 700; color: #FFF; }
   .wd-favs { display: flex; gap: 14px; overflow-x: auto; padding: 2px 2px 4px; margin: 0 -2px; }
   .wd-favs::-webkit-scrollbar { height: 0; }
   .wd-fav { display: flex; flex-direction: column; align-items: center; gap: 7px; width: 62px; flex-shrink: 0; background: none; border: none; color: #FFF; cursor: pointer; font-family: inherit; }
-  .wd-fav .av { width: 52px; height: 52px; font-size: 15px; box-shadow: 0 0 0 2px #111114, 0 0 0 2px transparent; transition: box-shadow 0.2s; }
-  .wd-fav.sel .av { box-shadow: 0 0 0 2px #111114, 0 0 0 4px var(--Primary); }
+  .wd-fav .av { width: 52px; height: 52px; font-size: 15px; box-shadow: 0 0 0 2px var(--Primary), 0 0 0 2px transparent; transition: box-shadow 0.2s; }
+  .wd-fav.sel .av { box-shadow: 0 0 0 2px var(--Primary), 0 0 0 4px #FFF; }
   .wd-fav span { font-size: 11.5px; font-weight: 500; max-width: 62px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-  .wd-fav .add { width: 52px; height: 52px; border-radius: 50%; border: 1.5px solid rgba(255,255,255,0.5); display: flex; align-items: center; justify-content: center; }
+  .wd-fav .add { width: 52px; height: 52px; border-radius: 50%; border: 1.5px solid rgba(255,255,255,0.7); display: flex; align-items: center; justify-content: center; }
   .wd-fav .add svg { width: 20px; height: 20px; stroke: #FFF; stroke-width: 2; fill: none; }
   .wd-list { flex: 1; min-height: 0; overflow-y: auto; display: flex; flex-direction: column; gap: 4px; margin: 0 -8px; }
   .wd-list::-webkit-scrollbar { width: 0; }
   .wd-row { display: flex; align-items: center; gap: 12px; padding: 9px 8px; border-radius: 14px; background: none; border: none; color: #FFF; text-align: left; cursor: pointer; font-family: inherit; transition: background 0.15s; }
-  .wd-row:hover { background: rgba(255,255,255,0.04); }
-  .wd-row.sel { background: rgba(254,53,61,0.12); }
+  .wd-row:hover { background: rgba(255,255,255,0.08); }
+  .wd-row.sel { background: rgba(255,255,255,0.16); }
   .wd-row .av { width: 42px; height: 42px; font-size: 13px; }
   .wd-row-main { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 3px; }
   .wd-row-name { font-size: 14.5px; font-weight: 600; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-  .wd-row-sub { font-size: 11.5px; color: #8E8E99; }
-  .wd-radio { width: 22px; height: 22px; border-radius: 50%; border: 1.5px solid #4A4A55; flex-shrink: 0; display: flex; align-items: center; justify-content: center; transition: all 0.15s; }
-  .wd-row.sel .wd-radio { border-color: var(--Primary); background: var(--Primary); }
-  .wd-radio svg { width: 12px; height: 12px; stroke: #FFF; stroke-width: 3; fill: none; opacity: 0; }
+  .wd-row-sub { font-size: 11.5px; color: rgba(255,255,255,0.75); }
+  .wd-radio { width: 22px; height: 22px; border-radius: 50%; border: 1.5px solid rgba(255,255,255,0.55); flex-shrink: 0; display: flex; align-items: center; justify-content: center; transition: all 0.15s; }
+  .wd-row.sel .wd-radio { border-color: #FFF; background: #FFF; }
+  .wd-radio svg { width: 12px; height: 12px; stroke: var(--Primary); stroke-width: 3; fill: none; opacity: 0; }
   .wd-row.sel .wd-radio svg { opacity: 1; }
-  .wd-next { height: 52px; margin-top: 14px; border: none; border-radius: 16px; background: var(--Primary); color: #FFF; font-family: inherit; font-size: 15px; font-weight: 600; cursor: pointer; box-shadow: 0 6px 18px rgba(254,53,61,0.35); flex-shrink: 0; transition: opacity 0.2s; }
-  .wd-next:disabled { opacity: 0.35; box-shadow: none; cursor: default; }
+  .wd-next { height: 52px; margin-top: 14px; border: none; border-radius: 16px; background: #FFF; color: var(--Primary); font-family: inherit; font-size: 15px; font-weight: 700; cursor: pointer; box-shadow: 0 6px 18px rgba(120,0,6,0.25); flex-shrink: 0; transition: opacity 0.2s; }
+  .wd-next:disabled { opacity: 0.5; box-shadow: none; cursor: default; }
 
   /* Selected pin lifts above the others. */
   .map-marker.active { z-index: 25; }
@@ -1313,7 +1313,7 @@
   const blob = $('wdBlob');
   const panel = $('agentPanel');
   const ARM = 0.6;               // drag progress needed to open on release
-  const RED = [254, 53, 61], DARK = [17, 17, 20];
+  const RED = [254, 53, 61], DARK = RED;   // picker stays M-PESA red
   let pickerOpen = false;
   let pickCode = null, pickSrc = null;
 
@@ -1344,10 +1344,10 @@
   }
 
   function renderPicker() {
-    $('wdFavs').innerHTML = FAVOURITES.map(c => {
+    $('wdFavs').innerHTML = `<button class="wd-fav" onclick="addFavourite()"><span class="add"><svg viewBox="0 0 24 24" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg></span><span>Add New</span></button>` + FAVOURITES.map(c => {
       const a = agentBy(c);
       return `<button class="wd-fav" data-code="${c}" data-src="fav" onclick="choose('${c}','fav')">${avHtml(a)}<span>${a.name.split(' ')[0]}</span></button>`;
-    }).join('') + `<button class="wd-fav" onclick="addFavourite()"><span class="add"><svg viewBox="0 0 24 24" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg></span><span>Add New</span></button>`;
+    }).join('');
     $('wdFreq').innerHTML = FREQUENTS.map(f => {
       const a = agentBy(f.code);
       return `<button class="wd-row" data-code="${f.code}" data-src="freq" onclick="choose('${f.code}','freq')">

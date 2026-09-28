@@ -14,6 +14,9 @@
   flex-direction: column;
   align-items: flex-end;
   gap: 10px;
+  /* The wrapper's box spans the hidden menu above the button; let taps fall
+     through it so it never blocks the tiles underneath (e.g. More Services). */
+  pointer-events: none;
 }
 
 /* ── Backdrop overlay ── */
@@ -124,6 +127,7 @@
   transition: transform 0.2s ease, box-shadow 0.2s ease;
   z-index: 1;
   flex-shrink: 0;
+  pointer-events: auto;
 }
 .qr-popup:hover {
   transform: scale(1.07);
