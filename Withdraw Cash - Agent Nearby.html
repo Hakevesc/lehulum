@@ -498,12 +498,12 @@
   /* ── Withdraw-at island: red pill at the top with favourite agents. Dragging
      the agent card up into it (or tapping it) opens the Withdraw At picker. ── */
   .island-row { display: flex; justify-content: center; padding: 0 16px 10px; background: var(--Background); flex-shrink: 0; position: relative; z-index: 60; }
-  .island { width: 100%; height: 44px; border: none; border-radius: 16px; background: var(--Primary); color: #FFF; display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 0 7px 0 16px; cursor: pointer; box-shadow: 0 4px 14px rgba(254,53,61,0.3); font-family: 'Switzer', sans-serif; font-size: 14px; transition: transform 0.15s; }
+  .island { width: 100%; height: 44px; border: none; border-radius: 16px; background: #1C1C21; color: #FFF; display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 0 7px 0 16px; cursor: pointer; box-shadow: 0 4px 14px rgba(15,15,20,0.25); font-family: 'Switzer', sans-serif; font-size: 14px; transition: transform 0.15s; }
   .island:active { transform: scale(0.97); }
   .island-lbl { font-weight: 400; letter-spacing: 0.1px; }
   .island-lbl b { font-weight: 700; }
   .island-avs { display: flex; padding-left: 8px; }
-  .island-avs .av { width: 30px; height: 30px; margin-left: -9px; border: 2px solid var(--Primary); font-size: 10px; }
+  .island-avs .av { width: 30px; height: 30px; margin-left: -9px; border: 2px solid #1C1C21; font-size: 10px; }
 
   .av { border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0; font-family: 'Switzer', sans-serif; font-weight: 700; background: var(--Primary-Light); color: var(--Primary); }
 
@@ -517,6 +517,8 @@
   /* The blob grows out of the island while dragging, then fills the screen */
   .wd-blob { position: absolute; z-index: 70; overflow: hidden; background: var(--Primary); color: #FFF; opacity: 0; pointer-events: none; transition: left 0.45s cubic-bezier(.2,.8,.2,1), top 0.45s cubic-bezier(.2,.8,.2,1), width 0.45s cubic-bezier(.2,.8,.2,1), height 0.45s cubic-bezier(.2,.8,.2,1), border-radius 0.45s, background-color 0.3s, opacity 0.2s; }
   .wd-blob.dragging { transition: opacity 0.15s; }
+  /* Same red gradient as the Home popup ad */
+  .wd-blob.open { background-image: linear-gradient(175deg, #DE2B35 0%, #B31922 100%); }
   .wd-blob.open { pointer-events: auto; }
   .blob-peek { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px; opacity: 0; font-family: 'Switzer', sans-serif; }
   .blob-peek .peek-title { font-size: 12px; font-weight: 600; color: rgba(255,255,255,0.8); letter-spacing: 0.3px; }
@@ -536,8 +538,8 @@
   .wd-favs { display: flex; gap: 14px; overflow-x: auto; padding: 2px 2px 4px; margin: 0 -2px; }
   .wd-favs::-webkit-scrollbar { height: 0; }
   .wd-fav { display: flex; flex-direction: column; align-items: center; gap: 7px; width: 62px; flex-shrink: 0; background: none; border: none; color: #FFF; cursor: pointer; font-family: inherit; }
-  .wd-fav .av { width: 52px; height: 52px; font-size: 15px; box-shadow: 0 0 0 2px var(--Primary), 0 0 0 2px transparent; transition: box-shadow 0.2s; }
-  .wd-fav.sel .av { box-shadow: 0 0 0 2px var(--Primary), 0 0 0 4px #FFF; }
+  .wd-fav .av { width: 52px; height: 52px; font-size: 15px; box-shadow: 0 0 0 2px #C9202B, 0 0 0 2px transparent; transition: box-shadow 0.2s; }
+  .wd-fav.sel .av { box-shadow: 0 0 0 2px #C9202B, 0 0 0 4px #FFF; }
   .wd-fav span { font-size: 11.5px; font-weight: 500; max-width: 62px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
   .wd-fav .add { width: 52px; height: 52px; border-radius: 50%; border: 1.5px solid rgba(255,255,255,0.7); display: flex; align-items: center; justify-content: center; }
   .wd-fav .add svg { width: 20px; height: 20px; stroke: #FFF; stroke-width: 2; fill: none; }
@@ -1313,7 +1315,8 @@
   const blob = $('wdBlob');
   const panel = $('agentPanel');
   const ARM = 0.6;               // drag progress needed to open on release
-  const RED = [254, 53, 61], DARK = RED;   // picker stays M-PESA red
+  // Blob starts as the black island and turns into the popup-ad red
+  const RED = [28, 28, 33], DARK = [222, 43, 53];
   let pickerOpen = false;
   let pickCode = null, pickSrc = null;
 
