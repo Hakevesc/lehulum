@@ -301,6 +301,13 @@
     .mobile-toggle { display: flex; }
     .main-toolbar { padding-left: 52px; }
   }
+
+  /* Phone: show only the app screen, full bleed — no sidebar, toolbar or test buttons */
+  @media (max-width: 480px) {
+    body { height: 100dvh; background: #FFF; }
+    .sidebar, .sidebar-overlay, .mobile-toggle, .main-toolbar,
+    .fab-stack, .info-fab-global, .test-panel-overlay { display: none !important; }
+  }
 </style>
 </head>
 <body>

@@ -31,7 +31,7 @@
   .back-btn svg { width: 22px; height: 22px; stroke: var(--On-Surface); stroke-width: 1.8px; fill: none; }
   .header-title { color: var(--On-Surface); font-family: 'Switzer', sans-serif; font-size: 17px; font-weight: 500; letter-spacing: 0.3px; flex: 1; text-align: center; }
 
-  .scroll { flex: 1; overflow-y: auto; padding: 4px 16px 24px; display: flex; flex-direction: column; gap: 16px; }
+  .scroll { flex: 1; overflow-y: auto; padding: 4px 16px 96px; display: flex; flex-direction: column; gap: 16px; }
   .scroll::-webkit-scrollbar { width: 0; }
 
   /* ── Method rows (clean full-width buttons) ── */
@@ -76,6 +76,8 @@
   .frequent-name { color: var(--On-Surface); font-family: 'Switzer', sans-serif; font-size: 14px; font-weight: 600; letter-spacing: 0.2px; }
   .frequent-sub { color: var(--On-Surface-Low); font-family: 'Switzer', sans-serif; font-size: 12px; font-weight: 400; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 </style>
+<link rel="stylesheet" href="styles/component-qr-popup.css">
+<link rel="stylesheet" href="styles/device.css">
 </head>
 <body>
 <div class="phone-frame">
@@ -102,12 +104,8 @@
 
       <!-- Withdrawal channels -->
       <div class="method-list">
-        <div class="method-row" onclick="selectMethod('agent')">
-          <span class="method-name">Agent</span>
-          <svg class="chev" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
-        </div>
         <div class="method-row" onclick="window.location.href='Withdraw Cash - Agent Nearby.html'">
-          <span class="method-name">Agent Locator</span>
+          <span class="method-name">Agent</span>
           <svg class="chev" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
         </div>
         <div class="method-row" onclick="selectMethod('atm')">
@@ -197,6 +195,15 @@
 
     </div>
   </div>
+
+  <!-- Scan QR FAB — same button as the home screen; jumps straight to the agent QR scanner -->
+  <div class="qr-fab-wrapper">
+    <button class="qr-popup" onclick="scanAgentQr()" title="Scan QR Code" aria-label="Scan agent QR code">
+      <div class="frame-2061">
+        <svg viewBox="0 0 24 24" fill="none" stroke="#FFF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7V5a2 2 0 0 1 2-2h2"/><path d="M17 3h2a2 2 0 0 1 2 2v2"/><path d="M21 17v2a2 2 0 0 1-2 2h-2"/><path d="M7 21H5a2 2 0 0 1-2-2v-2"/><line x1="7" y1="12" x2="17" y2="12"/></svg>
+      </div>
+    </button>
+  </div>
 </div>
 
 <script>
@@ -219,6 +226,14 @@
     window.location.href = m === 'agent'
       ? 'Withdraw Cash - Agent Locator.html'
       : 'Withdraw Cash - ATM Locator.html';
+  }
+
+  // Scan QR FAB: open the Agent Locator on its default Scan QR tab, no agent preselected.
+  function scanAgentQr() {
+    sessionStorage.setItem('withdrawData', JSON.stringify({
+      method: 'agent', methodLabel: 'Scan Agent QR', entry: 'qr', time: stamp()
+    }));
+    window.location.href = 'Withdraw Cash - Agent Locator.html';
   }
 
   // A saved favourite/frequent agent opens the Short Code screen with its code already filled in.

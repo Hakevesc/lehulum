@@ -1,0 +1,42 @@
+/* Shared device rules, linked from every screen.
+   - The mock status bar (fake clock / network / battery) is emptied: the real
+     device draws its own. It stays as a slim spacer so headers keep their
+     breathing room (and any coloured strip) at the top of the screen.
+   - On a phone-sized viewport the screen fills the display edge to edge —
+     no mock phone frame, rounded corners, shadow or page padding around it,
+     and the prototype's test buttons are hidden so only the app shows. */
+
+.status-bar {
+  height: 16px !important;
+  min-height: 0 !important;
+  padding: 0 !important;
+  flex-shrink: 0;
+}
+.status-bar > * { display: none !important; }
+
+@media (max-width: 480px) {
+  html, body {
+    margin: 0 !important;
+    padding: 0 !important;
+    min-height: 100dvh;
+  }
+  body {
+    display: block !important;
+    overflow: hidden;
+  }
+  .phone-frame {
+    width: 100vw !important;
+    max-width: none !important;
+    height: 100dvh !important;
+    max-height: none !important;
+    border: none !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+    margin: 0 !important;
+    padding-top: env(safe-area-inset-top);
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+
+  /* Prototype-only controls */
+  .test-fab, .test-popup, .figma-export-wrap { display: none !important; }
+}

@@ -16,6 +16,7 @@
     --On-Surface-Low: #64748B;
     --Border: #E8E8EC;
     --Background: #F8F9FA;
+    --Field: #F7F7F8;
     --Success: #16A34A;
     --Success-Light: #E8F9EE;
   }
@@ -111,7 +112,7 @@
   .scroll {
     flex: 1;
     overflow-y: auto;
-    padding: 2px 16px 20px;
+    padding: 2px 16px 16px;
     display: flex;
     flex-direction: column;
     gap: 12px;
@@ -239,57 +240,13 @@
   .loc-opt span { font-family: 'Switzer', sans-serif; font-size: 13px; color: #0F172A; font-weight: 500; }
   .loc-empty { font-family: 'Switzer', sans-serif; font-size: 12.5px; color: #64748B; padding: 12px 14px; }
 
-  /* ── Filter Chips ── */
-  .filter-chips-row {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    overflow-x: auto;
-    padding: 8px 2px 6px;
-    -webkit-overflow-scrolling: touch;
-  }
-  .filter-chips-row::-webkit-scrollbar { display: none; }
-  .filter-chip {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    padding: 7px 14px;
-    border-radius: 20px;
-    background: #FFFFFF;
-    border: 1.2px solid #E2E8F0;
-    font-family: 'Switzer', sans-serif;
-    font-size: 12.5px;
-    font-weight: 500;
-    color: #334155;
-    cursor: pointer;
-    white-space: nowrap;
-    flex-shrink: 0;
-    transition: all 0.2s;
-  }
-  .filter-chip svg { width: 14px; height: 14px; flex-shrink: 0; }
-  .filter-chip:hover { background: #F8FAFC; }
-  .filter-chip.active {
-    background: #FFF1F2;
-    border-color: #FFD4D7;
-    color: var(--Primary);
-    font-weight: 600;
-  }
-  .filter-chip.active svg { stroke: var(--Primary); }
-  .chip-dot-green {
-    width: 8px;
-    height: 8px;
-    border-radius: 50%;
-    background: #10B981;
-    display: inline-block;
-    flex-shrink: 0;
-  }
-
   /* ── Modern Vector Map View ── */
   .map-view {
     position: relative;
     background: #E8EEEC;
     border-radius: 18px;
-    height: 228px;
+    flex: 1;
+    min-height: 200px;
     overflow: hidden;
     border: 1px solid #E2E8F0;
     box-shadow: 0 2px 8px rgba(0,0,0,0.04);
@@ -362,8 +319,8 @@
   }
   .pin-bubble {
     position: relative;
-    width: 28px;
-    height: 34px;
+    width: 40px;
+    height: 48px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -378,22 +335,38 @@
   .pin-num {
     position: relative;
     font-family: 'Switzer', sans-serif;
-    font-size: 11px;
+    font-size: 15px;
     font-weight: 700;
     color: #FFFFFF;
-    margin-top: -6px;
+    margin-top: -8px;
   }
-  .pin-dist-badge {
-    margin-top: 2px;
+  /* Name + distance label under the pin, so the pin carries the info the
+     removed list used to — tapping the pin is now the primary interaction. */
+  .pin-label {
+    margin-top: 3px;
     background: #FFFFFF;
-    border-radius: 8px;
-    padding: 1.5px 6px;
+    border-radius: 9px;
+    padding: 4px 9px;
     font-family: 'Switzer', sans-serif;
-    font-size: 9px;
-    font-weight: 600;
-    color: #0F172A;
+    text-align: center;
     white-space: nowrap;
-    box-shadow: 0 1px 4px rgba(0,0,0,0.15);
+    max-width: 108px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.18);
+  }
+  .pin-label .pin-label-name {
+    font-size: 10.5px;
+    font-weight: 700;
+    color: #0F172A;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    max-width: 100px;
+  }
+  .pin-label .pin-label-dist {
+    font-size: 9px;
+    font-weight: 500;
+    color: #64748B;
+    margin-top: 1px;
   }
 
   /* "You" Location Marker */
@@ -445,6 +418,8 @@
     100% { transform: scale(0.85); opacity: 0.8; }
   }
 
+  .map-safe { position: absolute; left: 0; right: 0; top: 0; bottom: var(--card-safe, 0px); transition: bottom 0.25s ease; }
+
   /* Floating Re-center / Crosshair Button */
   .map-recenter-btn {
     position: absolute;
@@ -471,6 +446,58 @@
     stroke-width: 2;
     fill: none;
   }
+
+  /* ── Agent panel: floating card over the bottom of the map. Shows the tapped
+     agent (only once a pin is picked), a Merchant Short Code field with a QR shortcut,
+     with Call / Directions above it. Tapping a pin swaps the agent shown here. ── */
+  .agent-panel { position: absolute; left: 16px; right: 16px; bottom: 16px; z-index: 40; background: #FFF; border-radius: 22px; padding: 10px 16px 16px; box-shadow: 0 10px 30px rgba(15,23,42,0.18), 0 2px 6px rgba(15,23,42,0.08); display: flex; flex-direction: column; }
+  .sheet-grip { width: 44px; height: 4px; border-radius: 2px; background: #D8D8DE; margin: 0 auto 12px; }
+  .ap-agent { display: flex; align-items: center; gap: 12px; padding-bottom: 14px; }
+  .ap-avatar { width: 52px; height: 52px; border-radius: 50%; background: var(--Primary-Light); color: var(--Primary); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+  .ap-avatar svg { width: 24px; height: 24px; stroke: currentColor; stroke-width: 1.9; fill: none; }
+  .ap-info { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 4px; }
+  .ap-name { font-family: 'Switzer', sans-serif; font-size: 16px; font-weight: 700; color: var(--On-Surface); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .ap-sc { font-family: 'Switzer', sans-serif; font-size: 12px; color: var(--On-Surface-Low); margin-top: -2px; }
+  .ap-sc b { font-weight: 600; color: var(--On-Surface); letter-spacing: 0.3px; }
+  .ap-meta { display: flex; align-items: center; gap: 8px; font-family: 'Switzer', sans-serif; font-size: 12px; color: var(--On-Surface-Low); }
+  .ap-meta svg { width: 13px; height: 13px; stroke: currentColor; stroke-width: 2; fill: none; margin-right: -4px; }
+  .ap-status { display: inline-flex; align-items: center; gap: 5px; padding: 3px 9px; border-radius: 999px; font-size: 11px; font-weight: 600; background: var(--Success-Light); color: #167C2A; }
+  .ap-status::before { content: ''; width: 6px; height: 6px; border-radius: 50%; background: currentColor; }
+  .ap-status.closed { background: #F1F1F4; color: var(--On-Surface-Low); }
+
+  .ap-selected[hidden] { display: none; }
+  .ap-entry[hidden] { display: none; }
+  .ap-entry .ap-label { margin-top: 2px; }
+  /* Back floats over the map, just above the card's top-left corner. */
+  .ap-back { position: absolute; top: -50px; left: 0; width: 40px; height: 40px; border: none; border-radius: 50%; background: #FFF; color: var(--On-Surface); display: flex; align-items: center; justify-content: center; cursor: pointer; box-shadow: 0 4px 14px rgba(15,23,42,0.18); }
+  .ap-back:active { transform: scale(0.94); }
+  .ap-back svg { width: 18px; height: 18px; stroke: currentColor; stroke-width: 2; fill: none; }
+  .ap-label { font-family: 'Switzer', sans-serif; font-size: 12.5px; font-weight: 600; color: var(--On-Surface); margin: 14px 0 8px; }
+  .ap-code { display: flex; align-items: center; gap: 8px; height: 52px; border: 1.5px solid var(--Border); border-radius: 14px; padding: 0 6px; background: #FFF; transition: border-color 0.2s; }
+  .ap-code:focus-within, .ap-code.error { border-color: var(--Primary); }
+  .ap-qr { width: 38px; height: 38px; border: none; border-radius: 10px; background: var(--Primary); color: #FFF; box-shadow: 0 3px 10px rgba(254,53,61,0.28); display: flex; align-items: center; justify-content: center; cursor: pointer; flex-shrink: 0; }
+  .ap-qr:active { transform: scale(0.94); }
+  .ap-qr svg { width: 19px; height: 19px; stroke: currentColor; stroke-width: 1.9; fill: none; }
+  .ap-code input { flex: 1; min-width: 0; border: none; outline: none; background: transparent; font-family: 'Switzer', sans-serif; font-size: 14px; color: var(--On-Surface); letter-spacing: 0.3px; }
+  .ap-code input::placeholder { color: #A0A0AA; letter-spacing: 0; }
+  .ap-enter { height: 40px; padding: 0 16px; border: none; border-radius: 10px; background: var(--Primary); color: #FFF; font-family: 'Switzer', sans-serif; font-size: 13.5px; font-weight: 600; cursor: pointer; flex-shrink: 0; transition: background 0.2s, color 0.2s; }
+  .ap-enter:disabled { background: var(--Primary-Light); color: var(--Primary); opacity: 0.6; cursor: default; }
+  .ap-msg { display: none; font-family: 'Switzer', sans-serif; font-size: 11.5px; color: var(--Primary); margin-top: 6px; }
+  .ap-msg.show { display: block; }
+
+  .ap-actions { display: flex; gap: 10px; }
+  .as-action-btn { flex: 1; height: 48px; border-radius: 12px; cursor: pointer; font-family: 'Switzer', sans-serif; font-size: 13.5px; font-weight: 600; display: flex; align-items: center; justify-content: center; gap: 8px; transition: all 0.2s; }
+  .as-action-btn svg { width: 16px; height: 16px; stroke-width: 1.9; fill: none; }
+  .as-action-btn.outline { border: 1.5px solid var(--Border); background: #FFF; color: var(--Primary); }
+  .as-action-btn.outline svg { stroke: var(--Primary); }
+  /* Call is an icon-only green square; Directions and Continue share the rest. */
+  .as-action-btn.solid { border: none; background: var(--Primary); color: #FFF; box-shadow: 0 4px 14px rgba(254,53,61,0.3); }
+  .as-action-btn.call { flex: 0 0 48px; border: none; background: var(--Success); box-shadow: 0 4px 14px rgba(22,163,74,0.3); }
+  .as-action-btn.call svg { width: 20px; height: 20px; fill: #FFF; stroke: none; }
+
+  /* Selected pin lifts above the others. */
+  .map-marker.active { z-index: 25; }
+  .map-marker.active .pin-bubble { transform: scale(1.18); }
 
   /* ── Section Title ── */
   .section-header {
@@ -710,6 +737,7 @@
     color: var(--On-Surface-Low);
   }
 </style>
+<link rel="stylesheet" href="styles/device.css">
 </head>
 <body>
 <div class="phone-frame">
@@ -762,40 +790,8 @@
         <div class="loc-suggest" id="locSuggest"></div>
       </div>
 
-      <!-- Filter Chips Row -->
-      <div class="filter-chips-row">
-        <button class="filter-chip active" id="chipNearby" onclick="filterBy('nearby')">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/>
-          </svg>
-          <span>Nearby</span>
-        </button>
-        <button class="filter-chip" id="chipOpen" onclick="filterBy('open')">
-          <span class="chip-dot-green"></span>
-          <span>Open Now</span>
-        </button>
-        <button class="filter-chip" id="chipCashIn" onclick="filterBy('cashin')">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M7 3v18m0 0l-4-4m4 4l4-4M17 21V3m0 0l-4 4m4-4l4 4"/>
-          </svg>
-          <span>Cash In</span>
-        </button>
-        <button class="filter-chip" id="chipCashOut" onclick="filterBy('cashout')">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <line x1="12" y1="5" x2="12" y2="19"/><polyline points="19 12 12 19 5 12"/>
-          </svg>
-          <span>Cash Out</span>
-        </button>
-        <button class="filter-chip" id="chipBillPay" onclick="filterBy('billpay')">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/>
-          </svg>
-          <span>Bill Pay</span>
-        </button>
-      </div>
-
       <!-- Map View -->
-      <div class="map-view" id="mapContainer">
+      <div class="map-view" id="mapContainer" onclick="if(!event.target.closest('.map-marker, .map-recenter-btn'))clearAgent()">
         <!-- SVG Styled Map Graphic -->
         <svg class="map-svg-bg" viewBox="0 0 328 228" preserveAspectRatio="none">
           <defs>
@@ -849,7 +845,8 @@
           <span>Bole International<br>Airport</span>
         </div>
 
-        <!-- Dynamic Map Pins -->
+        <!-- Visible map area above the floating card: pins, you, re-center -->
+        <div class="map-safe" id="mapSafe">
         <div id="mapPins"></div>
 
         <!-- Center "You" Location Marker -->
@@ -870,23 +867,64 @@
             <circle cx="12" cy="12" r="2.2" fill="#0F172A"/>
           </svg>
         </button>
+        </div>
       </div>
-
-      <!-- Section Title Header -->
-      <div class="section-header">
-        <span class="count-title"><span id="agentCount">4</span> agents nearby</span>
-        <span class="divider">|</span>
-        <span class="sub-hint">Closest to you</span>
-      </div>
-
-      <!-- Agent Cards List -->
-      <div id="agentList" class="agent-card-list"></div>
 
     </div>
   </div>
 
+  <!-- Agent panel — static over the map: selected agent, short code, call / directions -->
+  <div class="agent-panel" id="agentPanel">
+    <div class="sheet-grip"></div>
+
+    <!-- Selected merchant — only shown after a pin is tapped; Back returns to
+         the short-code entry -->
+    <div class="ap-selected" id="apSelected" hidden>
+    <button class="ap-back" onclick="clearAgent()" aria-label="Back to merchant short code">
+      <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+    </button>
+    <div class="ap-agent">
+      <div class="ap-avatar">
+        <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l1.5-5h15L21 9"/><path d="M3 9h18v1a3 3 0 0 1-6 0 3 3 0 0 1-6 0 3 3 0 0 1-6 0z"/><path d="M5 12.5V20h14v-7.5"/><path d="M10 20v-4h4v4"/></svg>
+      </div>
+      <div class="ap-info">
+        <div class="ap-name" id="apName">Agent</div>
+        <div class="ap-sc">Merchant Short Code: <b id="apSc">&mdash;</b></div>
+        <div class="ap-meta">
+          <span class="ap-status" id="apStatus">Open</span>
+          <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s7-5.7 7-11a7 7 0 1 0-14 0c0 5.3 7 11 7 11z"/><circle cx="12" cy="10" r="2.5"/></svg>
+          <span id="apDist"></span>
+        </div>
+      </div>
+    </div>
+
+    <div class="ap-actions">
+      <button class="as-action-btn call" onclick="callAgent()" aria-label="Call agent" title="Call">
+        <svg viewBox="0 0 24 24"><path d="M21 16.9v2.5a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 1.1 3.7 2 2 0 0 1 3.1 1.5h2.5a2 2 0 0 1 2 1.7c.1 1 .4 1.9.7 2.8a2 2 0 0 1-.5 2.1L6.7 9.3a16 16 0 0 0 6 6l1.2-1.1a2 2 0 0 1 2.1-.5c.9.3 1.8.6 2.8.7a2 2 0 0 1 1.7 2z"/></svg>
+      </button>
+      <button class="as-action-btn outline" onclick="directions()">
+        <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><polygon points="3 11 22 2 13 21 11 13 3 11"/></svg>
+        Directions
+      </button>
+      <button class="as-action-btn solid" onclick="continueWithAgent()">Continue</button>
+    </div>
+    </div>
+
+    <div class="ap-entry" id="apEntry">
+    <div class="ap-label">Merchant Short Code</div>
+    <div class="ap-code" id="apCodeBox">
+      <button class="ap-qr" onclick="entryQr()" aria-label="Scan agent QR code">
+        <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7V5a2 2 0 0 1 2-2h2"/><path d="M17 3h2a2 2 0 0 1 2 2v2"/><path d="M21 17v2a2 2 0 0 1-2 2h-2"/><path d="M7 21H5a2 2 0 0 1-2-2v-2"/><rect x="7" y="7" width="4" height="4"/><rect x="13" y="13" width="4" height="4"/><path d="M13 7h4v2M7 15v2h2"/></svg>
+      </button>
+      <input id="apCode" type="text" inputmode="numeric" maxlength="6" placeholder="Enter short code" autocomplete="off" oninput="onCodeInput(this)" onkeydown="if(event.key==='Enter')submitCode()">
+      <button class="ap-enter" id="apEnter" onclick="submitCode()" disabled>Enter</button>
+    </div>
+    <div class="ap-msg" id="apMsg">Short code must be 6 digits.</div>
+    </div>
+  </div>
+
   <!-- Location Permission Modal -->
-  <div class="perm-overlay show" id="permOverlay">
+  <div class="perm-overlay" id="permOverlay">
     <div class="perm-modal">
       <div class="perm-icon">
         <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round">
@@ -915,8 +953,8 @@
       walk: '9 min walk',
       addr: 'Bole Medhanialem, Addis Ababa',
       open: true,
-      x: '38%',
-      y: '22%'
+      x: '36%',
+      y: '34%'
     },
     {
       id: 2,
@@ -927,8 +965,8 @@
       walk: '14 min walk',
       addr: 'Bole Airport Road, Addis Ababa',
       open: true,
-      x: '61%',
-      y: '22%'
+      x: '74%',
+      y: '36%'
     },
     {
       id: 3,
@@ -939,8 +977,8 @@
       walk: '26 min walk',
       addr: 'Mekanisa, Addis Ababa',
       open: false,
-      x: '65%',
-      y: '63%'
+      x: '70%',
+      y: '74%'
     },
     {
       id: 4,
@@ -951,12 +989,10 @@
       walk: '32 min walk',
       addr: 'Dembel City Center',
       open: true,
-      x: '22%',
-      y: '40%'
+      x: '20%',
+      y: '58%'
     }
   ];
-
-  let currentFilter = 'nearby';
 
   function pinSvg() {
     return `<svg viewBox="0 0 28 34" fill="none">
@@ -970,108 +1006,69 @@
     </svg>`;
   }
 
+  // Pins now carry the agent's name and distance directly (the list they
+  // used to be paired with is gone — tapping a pin is the only way in).
   function renderMapPins(agents) {
     const container = document.getElementById('mapPins');
     container.innerHTML = agents
       .filter(a => a.x && a.y)
       .map(a => `
-        <div class="map-marker" style="left: ${a.x}; top: ${a.y};" title="${a.name}" onclick="pickAgent('${a.code}')">
+        <div class="map-marker" data-code="${a.code}" style="left: ${a.x}; top: ${a.y};" title="${a.name}" onclick="pickAgent('${a.code}')">
           <div class="pin-bubble">
             ${pinSvg()}
             <span class="pin-num">${a.id}</span>
           </div>
-          <div class="pin-dist-badge">${a.dist}</div>
+          <div class="pin-label">
+            <div class="pin-label-name">${a.name}</div>
+            <div class="pin-label-dist">${a.dist}</div>
+          </div>
         </div>
       `).join('');
   }
 
-  function renderAgentList(agents) {
-    const list = document.getElementById('agentList');
-    document.getElementById('agentCount').textContent = agents.length;
-
-    list.innerHTML = agents.map(a => `
-      <div class="agent-card" onclick="pickAgent('${a.code}')">
-        <div class="agent-avatar">${a.abbr}</div>
-        <div class="agent-main-info">
-          <div class="agent-name">${a.name}</div>
-          <div class="agent-code">${a.code}</div>
-        </div>
-        <div class="agent-right-col">
-          <div class="agent-metrics-row">
-            <span class="metric-item distance">
-              <svg viewBox="0 0 24 24">
-                <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5a2.5 2.5 0 0 1 0-5 2.5 2.5 0 0 1 0 5z"/>
-              </svg>
-              ${a.dist}
-            </span>
-          </div>
-          <span class="status-badge ${a.open ? 'open' : 'closed'}">
-            <span class="status-dot"></span>${a.open ? 'Open' : 'Closed'}
-          </span>
-        </div>
-        <svg class="card-chevron" viewBox="0 0 24 24">
-          <polyline points="9 18 15 12 9 6"/>
-        </svg>
-      </div>
-    `).join('');
-  }
-
-  /* ── Filter Handler ── */
-  function filterBy(type) {
-    currentFilter = type;
-
-    // Update active chip classes
-    const chipMap = {
-      nearby: 'chipNearby',
-      open: 'chipOpen',
-      cashin: 'chipCashIn',
-      cashout: 'chipCashOut',
-      billpay: 'chipBillPay'
-    };
-
-    Object.keys(chipMap).forEach(key => {
-      const el = document.getElementById(chipMap[key]);
-      if (el) {
-        if (key === type) {
-          el.classList.add('active');
-        } else {
-          el.classList.remove('active');
-        }
-      }
-    });
-
-    let filtered = AGENTS;
-    if (type === 'open') {
-      filtered = AGENTS.filter(a => a.open);
-    }
-
-    renderMapPins(filtered);
-    renderAgentList(filtered);
-  }
-
   /* ── Agent Selection ── */
+  const $ = id => document.getElementById(id);
+  let selectedAgent = null;
+
+  // Tapping a pin swaps the short-code entry for that merchant's card.
   function pickAgent(code) {
     const a = AGENTS.find(x => x.code === code);
     if (!a) return;
-    const data = {
-      method: 'nearby',
-      methodLabel: 'Nearby Agent',
-      agent: {
-        abbr: a.abbr,
-        name: a.name,
-        code: a.code,
-        dist: a.dist,
-        eta: a.walk,
-        addr: a.addr,
-        open: a.open
-      }
-    };
-    sessionStorage.setItem('withdrawData', JSON.stringify(data));
-    window.location.href = 'Withdraw Cash - Agent Details.html';
+    selectAgent(a);
+  }
+
+  function selectAgent(a) {
+    selectedAgent = a;
+    $('apName').textContent = a.name;
+    $('apStatus').textContent = a.open ? 'Open' : 'Closed';
+    $('apStatus').classList.toggle('closed', !a.open);
+    $('apSc').textContent = a.code;
+    $('apDist').textContent = a.dist || 'Distance unavailable';
+    $('apSelected').hidden = false;
+    $('apEntry').hidden = true;
+    document.querySelectorAll('.map-marker').forEach(m => m.classList.toggle('active', m.dataset.code === a.code));
+  }
+
+  // Back (or tapping empty map) clears the pick, back to the short-code field.
+  function clearAgent() {
+    selectedAgent = null;
+    $('apSelected').hidden = true;
+    $('apEntry').hidden = false;
+    document.querySelectorAll('.map-marker.active').forEach(m => m.classList.remove('active'));
+  }
+
+  function callAgent() {
+    window.location.href = 'tel:' + ((selectedAgent && selectedAgent.phone) || '+251700000000');
+  }
+
+  function directions() {
+    const q = encodeURIComponent((selectedAgent && selectedAgent.addr) || (selectedAgent && selectedAgent.name) || 'M-PESA agent');
+    window.open('https://www.google.com/maps/search/?api=1&query=' + q, '_blank');
   }
 
   /* ── Map Re-center Animation ── */
   function recenterMap() {
+    if (!locationAsked) { locationAsked = true; $('permOverlay').classList.add('show'); return; }
     const you = document.querySelector('.map-you-marker');
     if (!you) return;
     you.style.transition = 'transform 0.4s ease';
@@ -1146,6 +1143,42 @@
     document.getElementById('locSuggest').classList.remove('show');
   }
 
+  /* ── Agent panel ── */
+  // The QR button skips straight to the QR step with no agent preselected.
+  function entryQr() {
+    sessionStorage.setItem('withdrawData', JSON.stringify({ method: 'agent', methodLabel: 'Scan Agent QR', entry: 'qr' }));
+    window.location.href = 'Withdraw Cash - Agent Locator.html';
+  }
+
+  function onCodeInput(el) {
+    el.value = el.value.replace(/\D/g, '').slice(0, 6);
+    $('apEnter').disabled = el.value.length === 0;
+    $('apCodeBox').classList.remove('error');
+    $('apMsg').classList.remove('show');
+  }
+
+  // Enter hands the typed short code to the next step, which resolves it.
+  function submitCode() {
+    const code = $('apCode').value;
+    if (!/^\d{6}$/.test(code)) {
+      $('apCodeBox').classList.add('error');
+      $('apMsg').classList.add('show');
+      return;
+    }
+    sessionStorage.setItem('withdrawData', JSON.stringify({ method: 'agent', methodLabel: 'Merchant Short Code', entry: 'code', agentCode: code }));
+    window.location.href = 'Withdraw Cash - Agent Locator.html';
+  }
+
+  // Continue proceeds with the tapped merchant, same as entering its code.
+  function continueWithAgent() {
+    if (!selectedAgent) return;
+    $('apCode').value = selectedAgent.code;
+    submitCode();
+  }
+
+  // Location is asked for the first time the user re-centers the map.
+  let locationAsked = false;
+
   /* ── Location Permission Modal ── */
   function allowLocation() {
     document.getElementById('permOverlay').classList.remove('show');
@@ -1161,7 +1194,15 @@
 
   // Initial render
   renderMapPins(AGENTS);
-  renderAgentList(AGENTS);
+
+  // The card floats over the map and grows when a merchant is picked; shrink
+  // the pin area to the map left visible above it so no pin hides behind it.
+  new ResizeObserver(() => {
+    const map = $('mapContainer').getBoundingClientRect();
+    let top = $('agentPanel').getBoundingClientRect().top;
+    if (!$('apSelected').hidden) top = Math.min(top, document.querySelector('.ap-back').getBoundingClientRect().top);
+    $('mapContainer').style.setProperty('--card-safe', Math.max(0, map.bottom - top + 6) + 'px');
+  }).observe($('agentPanel'));
 </script>
 <script src="test-scenarios-data.js"></script>
 <script src="test-scenarios.js"></script>

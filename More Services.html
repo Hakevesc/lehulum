@@ -54,7 +54,7 @@
   .view-all:hover svg { stroke: var(--On-Surface); }
 
   /* ── Quick actions ── */
-  .feature-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+  .feature-row { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; }
   .feature-btn { background: #FFF; border: 1px solid var(--Border); border-radius: 16px; padding: 12px; height: 106px; display: flex; flex-direction: column; gap: 14px; cursor: pointer; transition: transform 0.15s, box-shadow 0.15s; box-shadow: 0 2px 8px rgba(0,0,0,0.04); }
   .feature-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 16px rgba(0,0,0,0.08); }
   .feature-btn:active { transform: translateY(0); }
@@ -95,6 +95,7 @@
   .promo-cta:hover { transform: translateY(-2px); box-shadow: 0 8px 28px rgba(0,0,0,0.2); }
   .promo-cta:active { transform: translateY(0); }
 </style>
+<link rel="stylesheet" href="styles/device.css">
 </head>
 <body>
 <div class="phone-frame">
@@ -134,13 +135,6 @@
             <i data-lucide="arrow-right"></i>
           </div>
           <span class="label">Withdraw/<br>Cash Out</span>
-        </div>
-        <div class="feature-btn" onclick="window.location.href='Cash In.html'">
-          <div class="feature-top">
-            <div class="feature-chip"><i data-lucide="arrow-up-down"></i></div>
-            <i data-lucide="arrow-right"></i>
-          </div>
-          <span class="label">Deposit/<br>Cash In</span>
         </div>
         <div class="feature-btn" onclick="window.location.href='Buy Ticket.html'">
           <div class="feature-top">

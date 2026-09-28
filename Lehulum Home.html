@@ -23,6 +23,7 @@
 <style>
 </style>
 
+<link rel="stylesheet" href="styles/device.css">
 </head>
 <body>
 
@@ -103,10 +104,10 @@
 
     welcomeAppBar: `
       <div class="welcome-app-bar">
-        <div class="leading-icon">
+        <div class="leading-icon" onclick="window.location.href='Account Detail.html'" style="cursor:pointer">
           <div class="avatar"><span>AM</span></div>
         </div>
-        <div class="title"><span>Good Morning, Aster 👋</span></div>
+        <div class="title" onclick="window.location.href='Account Detail.html'" style="cursor:pointer"><span>Good Morning, Aster 👋</span></div>
         <div class="trailing-icon" id="bellIcon" onclick="window.location.href='Notification Center.html'" style="cursor:pointer">
           <span class="ann-bell-badge" id="annBellBadge"></span>
           <div class="icon-button">
