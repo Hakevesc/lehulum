@@ -24,6 +24,10 @@
 </style>
 
 <link rel="stylesheet" href="styles/device.css">
+<style>
+  /* Phones: the device draws its own status bar, so drop the extra top padding above the greeting */
+  @media (max-width: 480px) { .app-content { padding-top: 2px; } }
+</style>
 </head>
 <body>
 
