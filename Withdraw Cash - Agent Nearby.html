@@ -511,7 +511,7 @@
   .av { border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0; font-family: 'Switzer', sans-serif; font-weight: 700; background: var(--Primary-Light); color: var(--Primary); }
 
   /* "Drag to open" shows just under the bar while it is pulled (and during the hint) */
-  .drop-hint { position: absolute; z-index: 45; left: 0; right: 0; text-align: center; transform: translateY(-4px); color: var(--On-Surface); font-family: 'Switzer', sans-serif; font-size: 15px; font-weight: 500; white-space: nowrap; text-shadow: 0 0 6px #FFF, 0 0 3px #FFF, 0 0 1px #FFF; opacity: 0; pointer-events: none; transition: opacity 0.2s, transform 0.2s; }
+  .drop-hint { position: absolute; z-index: 45; left: 0; right: 0; text-align: center; transform: translateY(-4px); color: var(--On-Surface); font-family: 'Switzer', sans-serif; font-size: 15px; font-weight: 500; white-space: nowrap; text-shadow: 0 0 6px #FFF, 0 0 3px #FFF, 0 0 1px #FFF; opacity: 0; pointer-events: none; transition: transform 0.2s; }
   .drop-hint.show { opacity: 1; transform: none; }
 
   /* The stretched bar: one outline, the bar with its bottom edge bulging down */
@@ -1385,8 +1385,12 @@
     pk.style.width = (bw * 1.8) + 'px';
     pk.style.height = (D * 0.84) + 'px';
     pk.style.opacity = Math.max(0, Math.min(1, (p - 0.35) / 0.45));
-    $('dropHint').style.top = (y1 + D + 12) + 'px';
+    const hint = $('dropHint');
+    hint.style.top = (y1 + D + 12) + 'px';
+    // The text rides under the bulge and fades with it as it sinks back
+    if (hint.classList.contains('show')) hint.style.opacity = String(Math.max(0, Math.min(1, (p - 0.02) / 0.1)));
   }
+  function hideHint() { const h = $('dropHint'); h.classList.remove('show'); h.style.opacity = ''; }
 
   // Released too early: the bulge sinks back into the bar
   function retractDrop(from) {
@@ -1396,7 +1400,7 @@
       const k = Math.min(1, (now - t0) / 260);
       drawDrop(from * (1 - k) * (1 - k));
       if (k < 1) requestAnimationFrame(step);
-      else { $('drop').classList.remove('show'); $('island').classList.remove('stretching'); }
+      else { $('drop').classList.remove('show'); $('island').classList.remove('stretching'); hideHint(); }
     })(t0);
   }
 
@@ -1456,7 +1460,7 @@
     if (hintDone) return;
     hintDone = true;
     clearTimeout(hintTimer); cancelAnimationFrame(hintRaf);
-    if (!pull && !pickerOpen) { drawDrop(0); $('drop').classList.remove('show'); $('island').classList.remove('stretching'); $('dropHint').classList.remove('show'); }
+    if (!pull && !pickerOpen) { drawDrop(0); $('drop').classList.remove('show'); $('island').classList.remove('stretching'); hideHint(); }
   }
   function playHint() {
     if (hintDone || pull || pickerOpen || tapping) return;
@@ -1469,7 +1473,7 @@
       drawDrop(PEAK * Math.sin(Math.PI * k));          // ease out and back
       if (k < 1) { hintRaf = requestAnimationFrame(step); return; }
       drawDrop(0); $('drop').classList.remove('show'); $('island').classList.remove('stretching');
-      setTimeout(() => { if (!hintDone) $('dropHint').classList.remove('show'); }, 500);
+      hideHint();
       hintTimer = setTimeout(playHint, 2600);
     })(t0);
   }
@@ -1582,9 +1586,8 @@
     swallowClick = true;
     setTimeout(() => { swallowClick = false; }, 350);
     island.classList.remove('grabbing');
-    $('dropHint').classList.remove('show');
-    if (p >= ARM) openPicker();
-    else retractDrop(p);
+    if (p >= ARM) { hideHint(); openPicker(); }
+    else retractDrop(p);                 // the text fades out with the shape
   }
   island.addEventListener('pointerup', endPull);
   island.addEventListener('pointercancel', endPull);
