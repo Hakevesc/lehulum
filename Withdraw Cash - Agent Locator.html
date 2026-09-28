@@ -139,6 +139,9 @@
   .recent-info { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px; }
   .recent-name { font-family: 'Switzer', sans-serif; font-size: 14px; font-weight: 600; color: var(--On-Surface); letter-spacing: 0.2px; }
   .recent-sub { font-family: 'Switzer', sans-serif; font-size: 12px; color: var(--On-Surface-Low); }
+  .recent-avatar svg { width: 19px; height: 19px; stroke: var(--Primary); stroke-width: 1.9; fill: none; }
+  .recent-amt { font-family: 'Switzer', sans-serif; font-size: 14px; font-weight: 700; color: var(--On-Surface); white-space: nowrap; }
+  .recent-empty { font-family: 'Switzer', sans-serif; font-size: 13px; color: var(--On-Surface-Low); padding: 6px 0; }
   .chev { width: 18px; height: 18px; stroke: var(--Primary); stroke-width: 2.4; fill: none; flex-shrink: 0; }
 
   /* ── Bottom button ── */
@@ -279,35 +282,10 @@
         </div>
       </div>
 
-      <!-- Recent agents -->
+      <!-- Recent: agents, or once an agent is set, your withdrawals there -->
       <div class="recent-card">
-        <span class="recent-title">Recent</span>
-        <div class="recent-list">
-          <div class="recent-item" onclick="useRecent('323217')">
-            <div class="recent-avatar initials">BM</div>
-            <div class="recent-info">
-              <span class="recent-name">Betty Merhat Agency</span>
-              <span class="recent-sub">323217</span>
-            </div>
-            <svg class="chev" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
-          </div>
-          <div class="recent-item" onclick="useRecent('562394')">
-            <div class="recent-avatar initials">KR</div>
-            <div class="recent-info">
-              <span class="recent-name">Kebede Retails</span>
-              <span class="recent-sub">562394</span>
-            </div>
-            <svg class="chev" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
-          </div>
-          <div class="recent-item" onclick="useRecent('204411')">
-            <div class="recent-avatar initials">BM</div>
-            <div class="recent-info">
-              <span class="recent-name">Bole Mini-Mart</span>
-              <span class="recent-sub">204411</span>
-            </div>
-            <svg class="chev" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
-          </div>
-        </div>
+        <span class="recent-title" id="recentTitle">Recent</span>
+        <div class="recent-list" id="recentList"></div>
       </div>
 
     </div>
@@ -383,6 +361,17 @@
     '430092': { abbr: 'HS', name: 'Hana Supermarket', code: '430092', dist: '4.1 km', addr: 'Megenagna, Addis Ababa' }
   };
 
+  // Recent agents (no agent picked yet) and past withdrawals at each agent
+  const RECENT_AGENTS = ['323217', '562394', '204411'];
+  const WITHDRAWALS = {
+    '323217': [{ amt: 1500, when: '24 Sep 2026 · 6:12 PM' }, { amt: 800, when: '17 Sep 2026 · 1:40 PM' }, { amt: 2000, when: '02 Sep 2026 · 9:05 AM' }],
+    '562394': [{ amt: 500, when: '21 Sep 2026 · 11:18 AM' }, { amt: 1200, when: '08 Sep 2026 · 4:55 PM' }],
+    '615208': [{ amt: 3000, when: '26 Sep 2026 · 7:30 PM' }, { amt: 1000, when: '12 Sep 2026 · 10:02 AM' }],
+    '778901': [{ amt: 600, when: '15 Sep 2026 · 2:20 PM' }],
+    '430092': [{ amt: 2500, when: '30 Aug 2026 · 5:45 PM' }],
+    '204411': [{ amt: 400, when: '19 Sep 2026 · 8:10 AM' }]
+  };
+
   const MIN_AMT = 10, MAX_AMT = 10000, BALANCE = 12580;
   let tab = 'qr';            // 'code' | 'qr' — Scan QR is the default tab for agent withdrawals
   let agent = null;          // resolved agent for the active tab
@@ -400,6 +389,7 @@
     $('qrAgentCard').style.display = 'none';
     $('qrWindow').classList.remove('confirmed');
     $('qrDetectOverlay').classList.remove('show');
+    renderRecent();
 
     // Auto-scan after 10 seconds on QR tab
     if (t === 'qr') {
@@ -466,6 +456,7 @@
     $('qrWindow').classList.remove('confirmed');
     $('qrSub').textContent = "Open the camera and align the merchant's QR code within the frame.";
     updateBtn();
+    renderRecent();
     if (tab === 'qr') {
       startCamera();
       clearTimeout(qrScanTimeout);
@@ -485,6 +476,7 @@
     $('qrWindow').classList.add('confirmed');
     $('qrSub').textContent = 'Tap the square to scan a different agent.';
     updateBtn();
+    renderRecent();
   }
 
   /* ── Amount ── */
@@ -522,6 +514,42 @@
   }
 
   /* ── Recent ── */
+  const CHEV = '<svg class="chev" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>';
+  const CASH = '<svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="6" width="20" height="12" rx="2"/><circle cx="12" cy="12" r="2.5"/><path d="M6 12h.01M18 12h.01"/></svg>';
+
+  // No agent: recent agents to pick from. Agent set: your withdrawals there —
+  // tapping one fills the amount again.
+  function renderRecent() {
+    const list = $('recentList');
+    if (!agent) {
+      $('recentTitle').textContent = 'Recent';
+      list.innerHTML = RECENT_AGENTS.map(c => AGENTS[c]).map(a => `
+        <div class="recent-item" onclick="useRecent('${a.code}')">
+          <div class="recent-avatar initials">${a.abbr}</div>
+          <div class="recent-info"><span class="recent-name">${a.name}</span><span class="recent-sub">${a.code}</span></div>
+          ${CHEV}
+        </div>`).join('');
+      return;
+    }
+    $('recentTitle').textContent = 'Recent withdrawals';
+    const rows = WITHDRAWALS[agent.code] || [];
+    list.innerHTML = rows.length ? rows.map(w => `
+        <div class="recent-item" onclick="reuseAmount(${w.amt})">
+          <div class="recent-avatar initials">${CASH}</div>
+          <div class="recent-info"><span class="recent-name">Withdraw</span><span class="recent-sub">${w.when}</span></div>
+          <span class="recent-amt">${fmt(w.amt)} ETB</span>
+        </div>`).join('')
+      : '<div class="recent-empty">No withdrawals at this agent yet.</div>';
+  }
+
+  function reuseAmount(n) {
+    const el = amountEl();
+    el.value = String(n);
+    validateAmount();
+    updateBtn();
+    el.focus();
+  }
+
   // The merchant (picked on the map, a favourite, or Recent) shows as the
   // merchant card above the amount.
   function useRecent(code) {
@@ -539,6 +567,7 @@
     $('mcCode').textContent = a.code;
     $('merchantCard').hidden = false;
     updateBtn();
+    renderRecent();
   }
 
   /* ── Confirmation sheet ── */
@@ -589,6 +618,8 @@
     }));
     window.location.href = 'Withdraw Cash - Enter PIN.html';
   }
+
+  renderRecent();
 
   // Scan QR is the default tab — open the camera and arm the auto-scan timer on load.
   startCamera();
