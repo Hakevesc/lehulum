@@ -498,7 +498,7 @@
   /* ── Favorites & Frequents island: black bar under the title. Dragging the
      agent card up drops a blob out of it, then opens the Withdraw At picker. ── */
   .island-row { display: flex; justify-content: center; padding: 0 16px 10px; background: var(--Background); flex-shrink: 0; position: relative; z-index: 60; }
-  .island { width: 100%; height: 56px; border: none; border-radius: 16px; background: #1C1C21; color: #FFF; display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 0 10px 0 18px; box-shadow: 0 4px 14px rgba(15,15,20,0.25); font-family: 'Switzer', sans-serif; font-size: 15px; }
+  .island { width: 100%; height: 56px; border: none; border-radius: 16px; background: #1C1C21; color: #FFF; display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 0 10px 0 18px; cursor: pointer; box-shadow: 0 4px 14px rgba(15,15,20,0.25); font-family: 'Switzer', sans-serif; font-size: 15px; }
   .island-lbl { font-weight: 400; letter-spacing: 0.1px; }
   .island-lbl b { font-weight: 700; }
   .island-avs { display: flex; padding-left: 8px; }
@@ -825,9 +825,9 @@
       <h1 class="header-title">Find an Agent</h1>
     </div>
 
-    <!-- Favorites & Frequents island: drag the agent card up into it -->
+    <!-- Favorites & Frequents island: tap it, or drag the agent card up into it -->
     <div class="island-row">
-      <div class="island" id="island">
+      <div class="island" id="island" role="button" tabindex="0" aria-label="Open favourite and frequent agents" onclick="tapIsland()" onkeydown="if(event.key==='Enter'||event.key===' ')tapIsland()">
         <span class="island-lbl">Favorites <b>&amp; Frequents</b></span>
         <span class="island-avs" id="islandAvs"></span>
       </div>
@@ -1389,6 +1389,20 @@
         <svg class="wd-row-go" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg>
       </button>`;
     }).join('');
+  }
+
+  // Tap: play the same droplet the drag makes, then open
+  let tapping = false;
+  function tapIsland() {
+    if (pickerOpen || drag || tapping) return;
+    tapping = true;
+    const t0 = performance.now(), END = 0.8;
+    (function step(now) {
+      const k = Math.min(1, (now - t0) / 320);
+      drawDrop(END * (1 - Math.pow(1 - k, 3)));
+      if (k < 1) requestAnimationFrame(step);
+      else { tapping = false; openPicker(); }
+    })(t0);
   }
 
   // Opens from the droplet's ball, which swells to fill the screen

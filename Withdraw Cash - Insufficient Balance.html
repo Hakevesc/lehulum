@@ -100,7 +100,7 @@
   function lower() {
     const m = (JSON.parse(sessionStorage.getItem('withdrawData') || '{}').method) || 'agent';
     window.location.href = m === 'atm'    ? 'Withdraw Cash - ATM Locator.html'
-                         : m === 'nearby' ? 'Withdraw Cash - Agent Details.html'
+                         : m === 'nearby' ? 'Withdraw Cash - Agent Nearby.html'
                          :                  'Withdraw Cash - Agent Locator.html';
   }
   function topUp() { window.location.href = 'Lehulum Home.html'; }

@@ -218,10 +218,6 @@ window.TEST_SCENARIOS_DATA = {
      "ATM Locator"
     ],
     [
-     "Withdraw Cash - Agent Details.html",
-     "Agent Details"
-    ],
-    [
      "Withdraw Cash - Agent Locator.html",
      "Agent Locator"
     ],
@@ -959,7 +955,6 @@ window.TEST_SCENARIOS_DATA = {
   "Verify Receipt.html": "Account & Statements",
   "Withdraw Cash - ATM Instructions.html": "Withdraw Cash",
   "Withdraw Cash - ATM Locator.html": "Withdraw Cash",
-  "Withdraw Cash - Agent Details.html": "Withdraw Cash",
   "Withdraw Cash - Agent Locator.html": "Withdraw Cash",
   "Withdraw Cash - Agent Nearby.html": "Withdraw Cash",
   "Withdraw Cash - Enter PIN.html": "Withdraw Cash",

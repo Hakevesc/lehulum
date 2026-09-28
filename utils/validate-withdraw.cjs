@@ -9,7 +9,6 @@ const files = [
   'Withdraw Cash.html',
   'Withdraw Cash - Enter Amount.html',
   'Withdraw Cash - Agent Nearby.html',
-  'Withdraw Cash - Agent Details.html',
   'Withdraw Cash - Review.html',
   'Withdraw Cash - Enter PIN.html',
   'Withdraw Cash - Voucher.html',
