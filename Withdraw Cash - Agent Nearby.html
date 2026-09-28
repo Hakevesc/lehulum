@@ -1451,20 +1451,29 @@
   }
 
   // Drag the card up: a small drag shows the hint, further drops the droplet
-  // out of the island, and releasing past ARM opens the picker.
+  // out of the island, and releasing past ARM opens the picker. A drag can
+  // start anywhere on the card, even on the short-code field or a button:
+  // it only becomes a drag once the finger moves up, so taps still type or
+  // press as usual, and a finished drag swallows the click it would cause.
   let drag = null;
+  let swallowClick = false;
   panel.addEventListener('pointerdown', e => {
-    if (pickerOpen || e.button > 0 || e.target.closest('button, input')) return;
+    if (pickerOpen || e.button > 0) return;
     const pill = $('island').getBoundingClientRect();
-    drag = { y0: e.clientY, p: 0, moved: false, max: Math.max(80, panel.getBoundingClientRect().top - pill.bottom - 24) };
-    panel.setPointerCapture(e.pointerId);
-    panel.style.transition = 'none';
+    drag = { y0: e.clientY, p: 0, moved: false, id: e.pointerId, max: Math.max(80, panel.getBoundingClientRect().top - pill.bottom - 24) };
   });
   panel.addEventListener('pointermove', e => {
-    if (!drag) return;
+    if (!drag || e.pointerId !== drag.id) return;
     const dy = Math.min(0, e.clientY - drag.y0);
-    if (!drag.moved && dy > -6) return;
-    if (!drag.moved) { drag.moved = true; panel.classList.add('grabbing'); $('dropHint').classList.add('show'); }
+    if (!drag.moved && dy > -8) return;
+    if (!drag.moved) {
+      drag.moved = true;
+      try { panel.setPointerCapture(e.pointerId); } catch (_) {}
+      if (document.activeElement && panel.contains(document.activeElement)) document.activeElement.blur();
+      panel.style.transition = 'none';
+      panel.classList.add('grabbing');
+      $('dropHint').classList.add('show');
+    }
     drag.p = Math.min(1, -dy / drag.max);
     panel.style.transform = `translateY(${dy}px)`;
     $('dropHint').textContent = drag.p >= ARM ? 'Release to withdraw' : 'Drag to withdraw';
@@ -1474,16 +1483,21 @@
     if (!drag) return;
     const { p, moved } = drag;
     drag = null;
+    if (!moved) return;
+    swallowClick = true;
+    setTimeout(() => { swallowClick = false; }, 350);
     panel.classList.remove('grabbing');
     panel.style.transition = 'transform 0.35s cubic-bezier(.2,.8,.2,1)';
     panel.style.transform = '';
     $('dropHint').classList.remove('show');
-    if (!moved) return;
     if (p >= ARM) openPicker();
     else retractDrop(p);
   }
   panel.addEventListener('pointerup', endDrag);
   panel.addEventListener('pointercancel', endDrag);
+  panel.addEventListener('click', e => {
+    if (swallowClick) { e.stopPropagation(); e.preventDefault(); swallowClick = false; }
+  }, true);
   document.addEventListener('keydown', e => { if (e.key === 'Escape') closePicker(); });
 
   // Initial render
