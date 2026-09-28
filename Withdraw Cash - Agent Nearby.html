@@ -510,7 +510,7 @@
 
   .av { border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0; font-family: 'Switzer', sans-serif; font-weight: 700; background: var(--Primary-Light); color: var(--Primary); }
 
-  /* "Drag to withdraw" shows just under the island once the card moves */
+  /* "Drag to open" shows just under the bar while it is pulled (and during the hint) */
   .drop-hint { position: absolute; z-index: 45; left: 0; right: 0; text-align: center; transform: translateY(-4px); color: var(--On-Surface); font-family: 'Switzer', sans-serif; font-size: 15px; font-weight: 500; white-space: nowrap; text-shadow: 0 0 6px #FFF, 0 0 3px #FFF, 0 0 1px #FFF; opacity: 0; pointer-events: none; transition: opacity 0.2s, transform 0.2s; }
   .drop-hint.show { opacity: 1; transform: none; }
 
@@ -1003,7 +1003,7 @@
   </div>
 
   <!-- Drag feedback: the bar stretches down into a droplet, hint below it -->
-  <div class="drop-hint" id="dropHint">Drag to withdraw</div>
+  <div class="drop-hint" id="dropHint">Drag to open</div>
   <svg class="drop" id="drop" aria-hidden="true">
     <path id="dropShape" fill="#1C1C21"/>
   </svg>
@@ -1448,6 +1448,35 @@
     setTimeout(() => { $('drop').classList.remove('show'); $('island').classList.remove('stretching'); $('dropPeek').style.opacity = 0; }, 60);
   }
 
+  // Hint until first use: the bar peeks — a small bulge with "Drag to
+  // withdraw" under it — every few seconds, so it reads as draggable. Stops
+  // for good the moment the user touches the screen or scrolls.
+  let hintTimer = null, hintRaf = 0, hintDone = false;
+  function stopHint() {
+    if (hintDone) return;
+    hintDone = true;
+    clearTimeout(hintTimer); cancelAnimationFrame(hintRaf);
+    if (!pull && !pickerOpen) { drawDrop(0); $('drop').classList.remove('show'); $('island').classList.remove('stretching'); $('dropHint').classList.remove('show'); }
+  }
+  function playHint() {
+    if (hintDone || pull || pickerOpen || tapping) return;
+    const t0 = performance.now(), DUR = 1500, PEAK = 0.22;   // deep enough that the text clears the location card
+    $('dropHint').textContent = 'Drag to open';
+    $('dropHint').classList.add('show');
+    (function step(now) {
+      if (hintDone || pull || pickerOpen) return;
+      const k = Math.min(1, (now - t0) / DUR);
+      drawDrop(PEAK * Math.sin(Math.PI * k));          // ease out and back
+      if (k < 1) { hintRaf = requestAnimationFrame(step); return; }
+      drawDrop(0); $('drop').classList.remove('show'); $('island').classList.remove('stretching');
+      setTimeout(() => { if (!hintDone) $('dropHint').classList.remove('show'); }, 500);
+      hintTimer = setTimeout(playHint, 2600);
+    })(t0);
+  }
+  ['pointerdown', 'wheel', 'keydown', 'touchstart'].forEach(ev => document.addEventListener(ev, stopHint, { capture: true, passive: true }));
+  document.querySelectorAll('.app-content, .scroll').forEach(el => el.addEventListener('scroll', stopHint, { passive: true }));
+  if (!matchMedia('(prefers-reduced-motion: reduce)').matches) hintTimer = setTimeout(playHint, 1200);
+
   // Pull the handle up: the picker folds up toward the bar as the finger
   // rises; letting go past halfway closes it, earlier springs back open.
   let pullBack = null, pullBackMoved = false;
@@ -1542,7 +1571,7 @@
       $('dropHint').classList.add('show');
     }
     pull.p = Math.min(1, dy / PULL);
-    $('dropHint').textContent = pull.p >= ARM ? 'Release to withdraw' : 'Drag to withdraw';
+    $('dropHint').textContent = pull.p >= ARM ? 'Release to open' : 'Drag to open';
     drawDrop(pull.p);
   });
   function endPull() {
