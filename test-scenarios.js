@@ -41,6 +41,7 @@
       '.test-fab{position:fixed;bottom:86px;right:24px;z-index:999999;width:50px;height:50px;border-radius:50%;background:#2563EB;border:3.5px solid #FFF;color:#FFF;display:flex;align-items:center;justify-content:center;cursor:pointer;box-shadow:0 8px 24px rgba(37,99,235,.45),0 2px 8px rgba(0,0,0,.2);transition:all .22s cubic-bezier(.34,1.56,.64,1);user-select:none;padding:0;font-size:22px;line-height:1}',
       '.test-fab:hover{background:#1D4ED8;transform:translateY(-3px) scale(1.06);box-shadow:0 12px 28px rgba(37,99,235,.6),0 4px 12px rgba(0,0,0,.25)}',
       '.test-fab:active{transform:scale(.95)}',
+      '.test-fab .tp-info{width:26px;height:26px}',
       '.test-popup{position:fixed;bottom:148px;right:24px;width:320px;background:#1C1C21;border:1px solid rgba(255,255,255,.14);border-radius:18px;box-shadow:0 16px 40px rgba(0,0,0,.5);z-index:999999;display:none;flex-direction:column;overflow:hidden;font-family:"Switzer","Inter",sans-serif;animation:tsPopupSlide .25s cubic-bezier(.34,1.2,.64,1)}',
       '.test-popup.show{display:flex}',
       '@keyframes tsPopupSlide{from{opacity:0;transform:translateY(12px) scale(.96)}to{opacity:1;transform:translateY(0) scale(1)}}',
@@ -95,8 +96,8 @@
     var fab = document.createElement('div');
     fab.className = 'test-fab';
     fab.id = 'testFab';
-    fab.title = 'Test Scenarios — ' + data.flow;
-    fab.innerHTML = '<span class="tp-emoji">🧪</span>';
+    fab.title = 'Test info — ' + data.flow;
+    fab.innerHTML = '<svg class="tp-info" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9.5"/><line x1="12" y1="11" x2="12" y2="16.5"/><circle cx="12" cy="7.6" r="0.6" fill="currentColor"/></svg>';
     fab.onclick = window.toggleTestPopup;
 
     var body = '';
@@ -114,7 +115,7 @@
     popup.innerHTML =
       '<div class="test-popup-header">' +
         '<div>' +
-          '<div class="test-popup-title"><span class="tp-emoji">🧪</span> Test Scenarios</div>' +
+          '<div class="test-popup-title">Test Info</div>' +
           '<div class="test-popup-flow">' + data.flow + '</div>' +
         '</div>' +
         '<button class="test-popup-close" type="button">' +
