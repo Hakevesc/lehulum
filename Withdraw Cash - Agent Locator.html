@@ -37,19 +37,6 @@
   .scroll { flex: 1; overflow-y: auto; padding: 0 16px 16px; display: flex; flex-direction: column; gap: 14px; }
   .scroll::-webkit-scrollbar { width: 0; }
 
-  /* ── Merchant card: the agent picked on the map (or from Recent). Replaces
-     the short-code field when the agent is already known. ── */
-  .merchant-card { position: relative; background: #FFF; border: 1px solid var(--Border); border-radius: 14px; padding: 14px; display: flex; align-items: center; gap: 12px; margin-top: 11px; }
-  .merchant-card[hidden] { display: none; }
-  .merchant-avatar { width: 44px; height: 44px; border-radius: 50%; background: #FFE9EA; color: var(--Primary); display: flex; align-items: center; justify-content: center; font-family: 'Switzer', sans-serif; font-size: 14px; font-weight: 700; flex-shrink: 0; }
-  .merchant-info { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 3px; }
-  .merchant-name { font-family: 'Switzer', sans-serif; font-size: 15px; font-weight: 700; color: var(--On-Surface); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-  .merchant-sub { font-family: 'Switzer', sans-serif; font-size: 12.5px; color: var(--On-Surface-Low); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-  .merchant-badge { position: absolute; top: -11px; right: 14px; background: #EDEDF0; color: var(--On-Surface-Low); font-family: 'Switzer', sans-serif; font-size: 9.5px; font-weight: 700; letter-spacing: 0.6px; padding: 4px 9px; border-radius: 6px; }
-
-  .panel { display: none; flex-direction: column; gap: 14px; }
-  .panel.active { display: flex; }
-
   /* ── Form card ── */
   .form-card { background: #FFF; border-radius: 16px; padding: 16px; box-shadow: 0 2px 8px rgba(0,0,0,0.04); display: flex; flex-direction: column; gap: 8px; }
   .field-label { font-family: 'Switzer', sans-serif; font-size: 14px; font-weight: 600; color: var(--On-Surface); margin-top: 6px; }
@@ -72,44 +59,40 @@
 
 
 
-  /* ── Resolved agent row (QR tab): a tinted row at the top of the amount
-     card, same language as the Cash In profile row — avatar, name, short
-     code, and a chevron on the right ── */
-  .agent-card { background: var(--Field); border-radius: 14px; padding: 12px 14px; display: flex; align-items: center; gap: 12px; margin-bottom: 4px; }
+  /* ── Resolved agent row under the short code field: avatar, name, code and
+     a green check once the code matches a known agent ── */
+  .agent-card { background: var(--Field); border-radius: 14px; padding: 12px 14px; display: flex; align-items: center; gap: 12px; margin-top: 4px; }
+  .agent-card[hidden] { display: none; }
   .agent-card-avatar { width: 44px; height: 44px; border-radius: 50%; background: #FFE9EA; color: var(--Primary); display: flex; align-items: center; justify-content: center; font-family: 'Switzer', sans-serif; font-size: 14px; font-weight: 700; flex-shrink: 0; }
   .agent-card-info { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 3px; }
   .agent-card-name { font-family: 'Switzer', sans-serif; font-size: 15px; font-weight: 700; color: var(--On-Surface); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
   .agent-card-sub { font-family: 'Switzer', sans-serif; font-size: 12.5px; color: var(--On-Surface-Low); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-  .agent-card-chev { width: 18px; height: 18px; stroke: var(--On-Surface-Low); stroke-width: 2; fill: none; flex-shrink: 0; }
+  .agent-card-check { width: 22px; height: 22px; border-radius: 50%; background: var(--Success); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+  .agent-card-check svg { width: 13px; height: 13px; stroke: #FFF; stroke-width: 3; fill: none; }
 
-  /* ── QR stage (Merchant QR scanner style) ── */
-  .qr-stage { background: #141414; border-radius: 24px; padding: 22px 20px 20px; display: flex; flex-direction: column; align-items: center; gap: 12px; cursor: pointer; }
-  .qr-window { position: relative; width: 140px; height: 140px; background: #262626; border-radius: 18px; }
-  #qrCameraFeed { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; border-radius: 18px; display: none; }
-  .qr-window.live { background: transparent; }
-  .qr-window.live #qrCameraFeed { display: block; }
-  .qr-window.live .qr-laser { display: none; }
-  .qr-window i { position: absolute; width: 32px; height: 32px; border: 3px solid rgba(255,255,255,0.9); }
-  .qr-window i:nth-of-type(1) { top: -1px; left: -1px; border-right: none; border-bottom: none; border-radius: 18px 0 0 0; }
-  .qr-window i:nth-of-type(2) { top: -1px; right: -1px; border-left: none; border-bottom: none; border-radius: 0 18px 0 0; }
-  .qr-window i:nth-of-type(3) { bottom: -1px; left: -1px; border-right: none; border-top: none; border-radius: 0 0 0 18px; }
-  .qr-window i:nth-of-type(4) { bottom: -1px; right: -1px; border-left: none; border-top: none; border-radius: 0 0 18px 0; }
-  .qr-laser { position: absolute; left: 10px; right: 10px; height: 2px; background: var(--Primary); box-shadow: 0 0 14px rgba(254,53,61,0.9); border-radius: 2px; animation: sweep 2.6s ease-in-out infinite; }
-  @keyframes sweep { 0%, 100% { top: 12px; } 50% { top: 122px; } }
-  .qr-copy { display: flex; flex-direction: column; align-items: center; gap: 4px; }
-  .qr-sub { font-family: 'Switzer', sans-serif; font-size: 11px; line-height: 1.4; color: rgba(255,255,255,0.6); text-align: center; max-width: 220px; }
-  .qr-actions { display: flex; gap: 10px; }
-  .qr-action { flex: 1; height: 42px; border: 1.5px solid var(--Border); background: var(--Field); border-radius: 12px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 7px; font-family: 'Switzer', sans-serif; font-size: 12.5px; font-weight: 600; color: var(--On-Surface); transition: border-color 0.2s, background 0.2s; }
-  .qr-action:hover { border-color: var(--Primary); background: #FFF; }
-  .qr-action svg { width: 16px; height: 16px; stroke: var(--Primary); stroke-width: 1.9; fill: none; }
-
-  /* Once an agent is confirmed, the square swaps its live feed/laser for a static
-     "tap to rescan" cue instead of continuing to look like it's still scanning. */
-  .qr-rescan { display: none; position: absolute; inset: 0; align-items: center; justify-content: center; }
-  .qr-window.confirmed .qr-laser,
-  .qr-window.confirmed #qrCameraFeed { display: none; }
-  .qr-window.confirmed .qr-rescan { display: flex; }
-  .qr-rescan svg { width: 42px; height: 42px; stroke: #fff; stroke-width: 2; fill: none; }
+  /* ── Full-screen camera (same as the Scan QR page) ── */
+  .camera { position: absolute; inset: 0; z-index: 40; background: radial-gradient(120% 90% at 50% 30%, #2a2a31 0%, #161619 55%, #0a0a0c 100%); overflow: hidden; display: none; }
+  .camera.show { display: block; }
+  #cameraFeed { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; display: none; }
+  .camera.live #cameraFeed { display: block; }
+  .camera-scene { position: absolute; inset: 0; background: radial-gradient(40% 30% at 25% 25%, rgba(255,255,255,0.06), transparent), radial-gradient(35% 25% at 75% 70%, rgba(254,53,61,0.08), transparent); filter: blur(2px); }
+  .camera.live .camera-scene { display: none; }
+  .viewfinder { position: absolute; top: 50%; left: 50%; width: 226px; height: 226px; transform: translate(-50%, -54%); border-radius: 26px; box-shadow: 0 0 0 9999px rgba(0,0,0,0.55); }
+  .corner { position: absolute; width: 34px; height: 34px; border: 4px solid #fff; }
+  .corner.tl { top: -2px; left: -2px; border-right: none; border-bottom: none; border-radius: 26px 0 0 0; }
+  .corner.tr { top: -2px; right: -2px; border-left: none; border-bottom: none; border-radius: 0 26px 0 0; }
+  .corner.bl { bottom: -2px; left: -2px; border-right: none; border-top: none; border-radius: 0 0 0 26px; }
+  .corner.br { bottom: -2px; right: -2px; border-left: none; border-top: none; border-radius: 0 0 26px 0; }
+  .scan-line { position: absolute; left: 10px; right: 10px; top: 12px; height: 3px; border-radius: 3px; background: linear-gradient(90deg, transparent, #FE353D, transparent); box-shadow: 0 0 14px 2px rgba(254,53,61,0.7); animation: scanMove 2.2s ease-in-out infinite; }
+  @keyframes scanMove { 0% { transform: translateY(0); opacity: 0.4; } 50% { transform: translateY(196px); opacity: 1; } 100% { transform: translateY(0); opacity: 0.4; } }
+  .cam-top { position: absolute; top: 0; left: 0; right: 0; z-index: 5; display: flex; align-items: center; justify-content: space-between; padding: 14px 18px; }
+  .cam-time { color: #fff; font-size: 14px; font-weight: 600; font-family: 'Switzer', sans-serif; }
+  .cam-icon-btn { width: 40px; height: 40px; border-radius: 50%; background: rgba(255,255,255,0.16); backdrop-filter: blur(6px); border: none; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: all 0.2s; }
+  .cam-icon-btn:hover { background: rgba(255,255,255,0.28); }
+  .cam-icon-btn.active { background: #FE353D; }
+  .cam-icon-btn svg { width: 20px; height: 20px; stroke: #fff; stroke-width: 2; fill: none; }
+  .cam-title { position: absolute; top: 64px; left: 0; right: 0; text-align: center; z-index: 5; color: #fff; font-family: 'Switzer', sans-serif; font-size: 16px; font-weight: 600; }
+  .cam-hint { position: absolute; left: 0; right: 0; bottom: 160px; z-index: 5; text-align: center; color: rgba(255,255,255,0.85); font-family: 'Switzer', sans-serif; font-size: 13px; font-weight: 400; padding: 0 40px; line-height: 1.5; }
 
   /* ── QR-detected sheet: name + short code, Back / Pay — same language as the
      home Scan QR page's merchant-detected bottom sheet ── */
@@ -145,7 +128,10 @@
   .chev { width: 18px; height: 18px; stroke: var(--Primary); stroke-width: 2.4; fill: none; flex-shrink: 0; }
 
   /* ── Bottom button ── */
-  .bottom-bar { flex-shrink: 0; padding: 10px 16px 18px; background: var(--Background); }
+  .bottom-bar { flex-shrink: 0; padding: 10px 16px 18px; background: var(--Background); display: flex; gap: 12px; }
+  .bottom-bar .qr-detect-btn[hidden] { display: none; }
+  .bottom-bar .qr-detect-btn.back { flex: 1; height: 52px; }
+  .bottom-bar .continue-btn { flex: 1.4; }
   .continue-btn { width: 100%; height: 52px; border-radius: 14px; border: none; background: #E0E0E0; color: var(--On-Surface-Low); font-family: 'Poppins', sans-serif; font-size: 15px; font-weight: 500; cursor: not-allowed; transition: all 0.2s; }
   .continue-btn.active { background: var(--Primary); color: #FFF; cursor: pointer; box-shadow: 0 4px 16px rgba(254,53,61,0.25); }
   .continue-btn.active:hover { background: #E5303A; box-shadow: 0 6px 20px rgba(254,53,61,0.35); transform: translateY(-1px); }
@@ -205,80 +191,38 @@
 
     <div class="scroll">
 
-      <!-- ── Short code panel ── -->
-      <div class="panel" id="panelCode">
-        <div class="merchant-card" id="merchantCard" hidden>
-          <div class="merchant-avatar" id="mcAvatar"></div>
-          <div class="merchant-info">
-            <span class="merchant-name" id="mcName"></span>
-            <span class="merchant-sub">Merchant Short Code: <span id="mcCode"></span></span>
-          </div>
-          <span class="merchant-badge">MERCHANT</span>
+      <div class="form-card">
+        <span class="field-label">Merchant Short Code</span>
+        <div class="field">
+          <input id="codeInput" class="strong" type="text" inputmode="numeric" maxlength="6" placeholder="Enter short code" autocomplete="off" oninput="onCodeInput(this)">
+        </div>
+        <div class="msg warn" id="codeMsg">
+          <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 8v5M12 16h.01"/></svg>
+          <span id="codeMsgTxt"></span>
+        </div>
+        <div class="agent-card" id="agentRow" hidden>
+          <span class="agent-card-avatar" id="agentAbbr"></span>
+          <span class="agent-card-info">
+            <span class="agent-card-name" id="agentName"></span>
+            <span class="agent-card-sub" id="agentSub"></span>
+          </span>
+          <span class="agent-card-check"><svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5 9-10"/></svg></span>
         </div>
 
-        <div class="form-card">
-          <span class="field-label">Amount</span>
-          <div class="field">
-            <input id="amtCode" type="text" inputmode="decimal" placeholder="e.g. 120 ETB" oninput="onAmountInput(this)">
-            <span class="suffix">ETB</span>
-          </div>
-          <div class="balance-hint" id="balanceHintCode"><b>Balance:</b> 12,580.00 ETB</div>
-          <div class="msg warn" id="amtMsgCode">
-            <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 8v5M12 16h.01"/></svg>
-            <span id="amtMsgCodeTxt"></span>
-          </div>
-
-          <span class="field-label">Note (Optional)</span>
-          <div class="field">
-            <input id="noteCode" type="text" placeholder="e.g. Rent money" maxlength="40">
-          </div>
+        <span class="field-label">Amount</span>
+        <div class="field">
+          <input id="amtCode" type="text" inputmode="decimal" placeholder="e.g. 120 ETB" oninput="onAmountInput(this)">
+          <span class="suffix">ETB</span>
         </div>
-      </div>
-
-      <!-- ── QR panel ── -->
-      <div class="panel active" id="panelQr">
-
-        <!-- QR scanner: its own section, separate from the result below -->
-        <div class="qr-stage" id="qrStage" onclick="onQrStageClick()">
-          <div class="qr-window" id="qrWindow">
-            <video id="qrCameraFeed" autoplay playsinline muted></video>
-            <i></i><i></i><i></i><i></i>
-            <div class="qr-laser"></div>
-            <div class="qr-rescan" id="qrRescanIcon">
-              <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 1 1-3-6.7"/><polyline points="21 3 21 9 15 9"/></svg>
-            </div>
-          </div>
-          <div class="qr-copy">
-            <span class="qr-sub" id="qrSub">Open the camera and align the merchant's QR code within the frame.</span>
-          </div>
+        <div class="balance-hint" id="balanceHintCode"><b>Balance:</b> 12,580.00 ETB</div>
+        <div class="msg warn" id="amtMsgCode">
+          <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 8v5M12 16h.01"/></svg>
+          <span id="amtMsgCodeTxt"></span>
         </div>
 
-        <!-- Amount card: the resolved agent row sits at its top -->
-        <div class="form-card">
-          <div class="agent-card" id="qrAgentCard" style="display:none;">
-            <span class="agent-card-avatar" id="qrAgentAbbr"></span>
-            <span class="agent-card-info">
-              <span class="agent-card-name" id="qrAgentName"></span>
-              <span class="agent-card-sub" id="qrAgentCode"></span>
-            </span>
-            <svg class="agent-card-chev" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" style="cursor:pointer;" onclick="useRecent(agent.code)" role="button" aria-label="Edit via short code"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>
-          </div>
-
-          <span class="field-label">Amount</span>
-          <div class="field">
-            <input id="amtQr" type="text" inputmode="decimal" placeholder="e.g. 120 ETB" oninput="onAmountInput(this)">
-            <span class="suffix">ETB</span>
-          </div>
-          <div class="balance-hint" id="balanceHintQr"><b>Balance:</b> 12,580.00 ETB</div>
-          <div class="msg warn" id="amtMsgQr">
-            <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 8v5M12 16h.01"/></svg>
-            <span id="amtMsgQrTxt"></span>
-          </div>
-
-          <span class="field-label">Note (Optional)</span>
-          <div class="field">
-            <input id="noteQr" type="text" placeholder="e.g. Rent money" maxlength="40">
-          </div>
+        <span class="field-label">Note (Optional)</span>
+        <div class="field">
+          <input id="noteCode" type="text" placeholder="e.g. Rent money" maxlength="40">
         </div>
       </div>
 
@@ -291,13 +235,36 @@
     </div>
 
     <div class="bottom-bar">
+      <button class="qr-detect-btn back" id="rescanBtn" onclick="openCamera()" hidden>Rescan</button>
       <button class="continue-btn" id="continueBtn" onclick="continueFlow()" disabled>Continue</button>
     </div>
 
   </div>
 
+  <!-- Full-screen camera for scanning the agent's QR -->
+  <div class="camera" id="camera">
+    <video id="cameraFeed" autoplay playsinline muted></video>
+    <div class="camera-scene"></div>
+    <div class="cam-top">
+      <button class="cam-icon-btn" onclick="closeCamera()" aria-label="Close">
+        <svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+      <span class="cam-time">10:00</span>
+      <button class="cam-icon-btn" id="flashBtn" onclick="this.classList.toggle('active')" aria-label="Flash">
+        <svg viewBox="0 0 24 24"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+      </button>
+    </div>
+    <div class="cam-title">Scan QR Code</div>
+    <div class="viewfinder">
+      <span class="corner tl"></span><span class="corner tr"></span>
+      <span class="corner bl"></span><span class="corner br"></span>
+      <div class="scan-line"></div>
+    </div>
+    <div class="cam-hint" id="camHint">Point your camera at the agent's QR code to withdraw cash.</div>
+  </div>
+
   <!-- QR agent detected — merchant-scan-style sheet: name + short code, Back / Pay -->
-  <div class="sheet-overlay" id="qrDetectOverlay" onclick="if(event.target===this)rescanAgent()">
+  <div class="sheet-overlay" id="qrDetectOverlay" onclick="if(event.target===this)resumeScan()">
     <div class="sheet">
       <div class="sheet-grip"></div>
       <div class="qr-detect-party">
@@ -308,7 +275,7 @@
         </span>
       </div>
       <div class="qr-detect-actions">
-        <button class="qr-detect-btn back" onclick="rescanAgent()">Back</button>
+        <button class="qr-detect-btn back" onclick="resumeScan()">Back</button>
         <button class="qr-detect-btn pay" onclick="confirmAgentDetected()">Continue</button>
       </div>
     </div>
@@ -373,108 +340,98 @@
   };
 
   const MIN_AMT = 10, MAX_AMT = 10000, BALANCE = 12580;
-  let tab = 'qr';            // 'code' | 'qr' — Scan QR is the default tab for agent withdrawals
-  let agent = null;          // resolved agent for the active tab
-  let qrScanTimeout = null;  // timeout for auto-scan
+  let agent = null;          // agent resolved from the short code field
+  let scanned = false;       // agent came from a QR scan → Rescan button shows
+  let scanTimer = null;      // simulated "QR found" timer while the camera is open
 
   const $ = id => document.getElementById(id);
 
-  function switchTab(t) {
-    tab = t;
-    agent = null;
-    $('panelCode').classList.toggle('active', t === 'code');
-    $('panelQr').classList.toggle('active', t === 'qr');
-    // Each tab resolves its own agent, so clear the other one's result.
-    $('merchantCard').hidden = true;
-    $('qrAgentCard').style.display = 'none';
-    $('qrWindow').classList.remove('confirmed');
-    $('qrDetectOverlay').classList.remove('show');
-    renderRecent();
-
-    // Auto-scan after 10 seconds on QR tab
-    if (t === 'qr') {
-      startCamera();
-      clearTimeout(qrScanTimeout);
-      qrScanTimeout = setTimeout(() => simulateScan(), 5000);
-    } else {
-      clearTimeout(qrScanTimeout);
-      stopCamera();
-    }
-    updateBtn();
-  }
-
-  /* The QR scanner opens the device camera, same as the Scan QR page.
-     Falls back to the animated window when no camera is available. */
+  /* ── Full-screen camera ── */
   async function startCamera() {
-    if (window._qrCamStream) return;
-    if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) return;
+    if (window._camStream || !navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) return;
     try {
       const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } });
-      const v = $('qrCameraFeed');
-      if (!v) return;
-      window._qrCamStream = stream;
-      v.srcObject = stream;
-      $('qrWindow').classList.add('live');
+      window._camStream = stream;
+      $('cameraFeed').srcObject = stream;
+      $('camera').classList.add('live');
     } catch (e) {}
   }
-
   function stopCamera() {
-    if (window._qrCamStream) window._qrCamStream.getTracks().forEach(t => t.stop());
-    window._qrCamStream = null;
-    $('qrWindow').classList.remove('live');
+    if (window._camStream) window._camStream.getTracks().forEach(t => t.stop());
+    window._camStream = null;
+    $('camera').classList.remove('live');
   }
 
-  /* ── Short code ── */
-  /* ── QR ── */
-  function onQrStageClick() {
-    // Once confirmed, the square shows a rescan cue — tapping it starts over.
-    if ($('qrWindow').classList.contains('confirmed')) rescanAgent();
-    else simulateScan();
+  function openCamera() {
+    $('camHint').textContent = "Point your camera at the agent's QR code to withdraw cash.";
+    $('camera').classList.add('show');
+    startCamera();
+    clearTimeout(scanTimer);
+    scanTimer = setTimeout(simulateScan, 3000);
   }
 
-  // The QR already identifies the agent on its own, so there's no separate
-  // lookup step to wait on — the sheet appears the moment it's read.
-  function simulateScan() {
-    clearTimeout(qrScanTimeout);
-    $('qrAgentCard').style.display = 'none';
-    const a = AGENTS['562394'];
-    agent = a;
+  // Close: back to the form if an agent is already set, else leave the flow
+  function closeCamera() {
+    clearTimeout(scanTimer);
+    $('qrDetectOverlay').classList.remove('show');
     stopCamera();
-    // Surface the detected agent in a bottom sheet first — same name/short-code +
-    // Back/Pay language as the home Scan QR page's merchant-detected sheet.
+    if (agent) $('camera').classList.remove('show');
+    else window.location.href = 'Withdraw Cash.html';
+  }
+
+  // The QR identifies the agent on its own — show it in the detected sheet
+  function simulateScan() {
+    const a = AGENTS['562394'];
     $('qrDetAvatar').textContent = a.abbr;
     $('qrDetName').textContent = a.name;
-    $('qrDetSub').textContent = 'Short Code: ' + a.code;
+    $('qrDetSub').textContent = 'Merchant Short Code: ' + a.code;
+    $('qrDetectOverlay').dataset.code = a.code;
+    $('camHint').textContent = 'QR code detected';
     $('qrDetectOverlay').classList.add('show');
   }
 
-  // "Back" on the detected sheet — discard the match and resume live scanning.
-  function rescanAgent() {
+  // Back on the sheet: keep scanning
+  function resumeScan() {
     $('qrDetectOverlay').classList.remove('show');
-    agent = null;
-    $('qrAgentCard').style.display = 'none';
-    $('qrWindow').classList.remove('confirmed');
-    $('qrSub').textContent = "Open the camera and align the merchant's QR code within the frame.";
-    updateBtn();
-    renderRecent();
-    if (tab === 'qr') {
-      startCamera();
-      clearTimeout(qrScanTimeout);
-      qrScanTimeout = setTimeout(() => simulateScan(), 5000);
-    }
+    $('camHint').textContent = "Point your camera at the agent's QR code to withdraw cash.";
+    clearTimeout(scanTimer);
+    scanTimer = setTimeout(simulateScan, 3000);
   }
 
-  // "Pay" on the detected sheet — collapse it into its own resolved-agent
-  // card (avatar, name, short code, checkmark), separate from the QR above
-  // and the amount card below, and reveal the amount field.
+  // Continue on the sheet: close the camera and fill the form with the agent
   function confirmAgentDetected() {
+    const a = AGENTS[$('qrDetectOverlay').dataset.code];
     $('qrDetectOverlay').classList.remove('show');
-    $('qrAgentAbbr').textContent = agent.abbr;
-    $('qrAgentName').textContent = agent.name;
-    $('qrAgentCode').textContent = 'Short Code: ' + agent.code;
-    $('qrAgentCard').style.display = '';
-    $('qrWindow').classList.add('confirmed');
-    $('qrSub').textContent = 'Tap the square to scan a different agent.';
+    clearTimeout(scanTimer);
+    stopCamera();
+    $('camera').classList.remove('show');
+    scanned = true;
+    $('rescanBtn').hidden = false;
+    lockAgent(a);
+    $('amtCode').focus();
+  }
+
+  /* ── Merchant short code (editable, also filled by a scan) ── */
+  function onCodeInput(el) {
+    el.value = el.value.replace(/\D/g, '').slice(0, 6);
+    const a = AGENTS[el.value];
+    $('codeMsg').classList.remove('show');
+    if (a) { lockAgent(a); return; }
+    agent = null;
+    $('agentRow').hidden = true;
+    if (el.value.length === 6) { $('codeMsgTxt').textContent = 'Invalid merchant short code.'; $('codeMsg').classList.add('show'); }
+    updateBtn();
+    renderRecent();
+  }
+
+  function lockAgent(a) {
+    agent = a;
+    $('codeInput').value = a.code;
+    $('codeMsg').classList.remove('show');
+    $('agentAbbr').textContent = a.abbr;
+    $('agentName').textContent = a.name;
+    $('agentSub').textContent = a.code + (a.dist ? ' · ' + a.dist : '');
+    $('agentRow').hidden = false;
     updateBtn();
     renderRecent();
   }
@@ -486,24 +443,21 @@
     updateBtn();
   }
 
-  function amountEl() { return tab === 'code' ? $('amtCode') : $('amtQr'); }
-  function amountMsg() { return tab === 'code' ? $('amtMsgCode') : $('amtMsgQr'); }
-  function amountMsgTxt() { return tab === 'code' ? $('amtMsgCodeTxt') : $('amtMsgQrTxt'); }
-  function balanceHintEl() { return tab === 'code' ? $('balanceHintCode') : $('balanceHintQr'); }
+  function amountEl() { return $('amtCode'); }
 
   function validateAmount() {
     const raw = amountEl().value.trim();
-    const msg = amountMsg();
-    if (raw === '') { msg.classList.remove('show'); balanceHintEl().style.display = ''; return null; }
+    const msg = $('amtMsgCode');
+    if (raw === '') { msg.classList.remove('show'); $('balanceHintCode').style.display = ''; return null; }
     const n = parseFloat(raw);
     let err = '';
     if (isNaN(n) || n <= 0) err = 'Enter a valid amount.';
     else if (n < MIN_AMT) err = 'Minimum withdrawal is ' + MIN_AMT + ' ETB.';
     else if (n > MAX_AMT) err = 'Maximum withdrawal is ' + MAX_AMT.toLocaleString() + ' ETB/Transaction';
     else if (n > BALANCE) err = 'Amount exceeds your available balance.';
-    if (err) { amountMsgTxt().textContent = err; msg.classList.add('show'); balanceHintEl().style.display = 'none'; return null; }
+    if (err) { $('amtMsgCodeTxt').textContent = err; msg.classList.add('show'); $('balanceHintCode').style.display = 'none'; return null; }
     msg.classList.remove('show');
-    balanceHintEl().style.display = '';
+    $('balanceHintCode').style.display = '';
     return n;
   }
 
@@ -543,31 +497,18 @@
   }
 
   function reuseAmount(n) {
-    const el = amountEl();
-    el.value = String(n);
+    amountEl().value = String(n);
     validateAmount();
     updateBtn();
-    el.focus();
+    amountEl().focus();
   }
 
-  // The merchant (picked on the map, a favourite, or Recent) shows as the
-  // merchant card above the amount.
+  // A picked agent (map, favourite, frequent or Recent) fills the short code
   function useRecent(code) {
-    if (tab !== 'code') switchTab('code');
     const a = AGENTS[code];
     if (!a) return;
     lockAgent(a);
     $('amtCode').focus();
-  }
-
-  function lockAgent(a) {
-    agent = a;
-    $('mcAvatar').textContent = a.abbr;
-    $('mcName').textContent = a.name;
-    $('mcCode').textContent = a.code;
-    $('merchantCard').hidden = false;
-    updateBtn();
-    renderRecent();
   }
 
   /* ── Confirmation sheet ── */
@@ -601,11 +542,10 @@
     const amt = validateAmount();
     if (!agent || amt === null) return;
     const fee = computeFee(amt);
-    const note = (tab === 'code' ? $('noteCode') : $('noteQr')).value.trim();
     sessionStorage.setItem('withdrawData', JSON.stringify({
       method: 'agent',
-      methodLabel: tab === 'qr' ? 'Merchant QR Code' : 'Merchant Short Code',
-      entry: tab,
+      methodLabel: scanned ? 'Merchant QR Code' : 'Merchant Short Code',
+      entry: scanned ? 'qr' : 'code',
       agent: agent,
       agentName: agent.name,
       agentCode: agent.code,
@@ -613,7 +553,7 @@
       amount: amt,
       fee: fee,
       total: amt + fee,
-      note: note,
+      note: $('noteCode').value.trim(),
       time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
     }));
     window.location.href = 'Withdraw Cash - Enter PIN.html';
@@ -621,15 +561,12 @@
 
   renderRecent();
 
-  // Scan QR is the default tab — open the camera and arm the auto-scan timer on load.
-  startCamera();
-  qrScanTimeout = setTimeout(() => simulateScan(), 5000);
-
-  /* ── Saved favourite / frequent agent: prefill the short code and resolve it ── */
+  /* ── Entry: a picked agent fills the form; a Scan QR entry opens the camera ── */
   try {
     const data = JSON.parse(sessionStorage.getItem('withdrawData') || '{}');
     const code = String(data.agentCode || (data.agent && data.agent.code) || '');
     if (/^\d{6}$/.test(code)) useRecent(code);
+    else if (data.entry === 'qr') openCamera();
   } catch (e) { /* ignore corrupt state and render the screen as-is */ }
 </script>
 <script src="test-scenarios-data.js"></script>
