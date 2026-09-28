@@ -53,26 +53,8 @@
   .view-all:hover { color: var(--On-Surface); }
   .view-all:hover svg { stroke: var(--On-Surface); }
 
-  /* ── Quick actions ── */
-  .feature-row { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; }
-  .feature-btn { background: #FFF; border: 1px solid var(--Border); border-radius: 16px; padding: 12px; height: 106px; display: flex; flex-direction: column; gap: 14px; cursor: pointer; transition: transform 0.15s, box-shadow 0.15s; box-shadow: 0 2px 8px rgba(0,0,0,0.04); }
-  .feature-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 16px rgba(0,0,0,0.08); }
-  .feature-btn:active { transform: translateY(0); }
-  .feature-chip { width: 38px; height: 38px; border-radius: 12px; display: flex; align-items: center; justify-content: center; background: var(--Primary-Container); }
-  .feature-chip svg { width: 20px; height: 20px; stroke: var(--Primary); stroke-width: 2.2; fill: none; stroke-linecap: round; stroke-linejoin: round; }
-  .feature-top { display: flex; align-items: flex-start; justify-content: space-between; gap: 4px; }
-  .feature-top > svg { width: 15px; height: 15px; stroke: var(--Primary); stroke-width: 2.2; fill: none; flex-shrink: 0; margin-top: 2px; }
-  .feature-btn .label { font-family: 'Switzer', sans-serif; font-size: 10.5px; font-weight: 700; color: var(--On-Surface); line-height: 1.2; white-space: normal; }
-
-  /* ── Category chips ── */
-  .chips { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 2px; }
-  .chips::-webkit-scrollbar { height: 0; }
-  .chip { flex-shrink: 0; height: 32px; padding: 0 14px; border-radius: 999px; border: 1px solid var(--Border); background: #FFF; cursor: pointer; font-family: 'Switzer', sans-serif; font-size: 12px; font-weight: 600; color: var(--On-Surface-Low); transition: background 0.18s, color 0.18s, border-color 0.18s; }
-  .chip:hover { border-color: #D8D8DE; }
-  .chip.active { background: var(--On-Surface); border-color: var(--On-Surface); color: #FFF; }
-
   /* ── Popular services grid ── */
-  .services-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
+  .services-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
   .service-tile { background: #FFF; border: 1px solid var(--Border); border-radius: 14px; padding: 11px 4px; display: flex; flex-direction: column; align-items: center; justify-content: flex-start; gap: 7px; cursor: pointer; transition: transform 0.15s, box-shadow 0.15s; box-shadow: 0 2px 8px rgba(0,0,0,0.04); min-height: 84px; }
   .service-tile:hover { transform: translateY(-2px); box-shadow: 0 6px 16px rgba(0,0,0,0.08); }
   .tile-icon { width: 40px; height: 40px; border-radius: 12px; display: flex; align-items: center; justify-content: center; background: var(--Primary); flex-shrink: 0; }
@@ -125,25 +107,69 @@
         <input class="search-input" type="text" placeholder="Search services, categories or brands..." oninput="filterServices(this.value)">
       </div>
 
-      <div class="section-title">Quick Actions</div>
-
-      <!-- Three primary money actions -->
-      <div class="feature-row">
-        <div class="feature-btn" onclick="window.location.href='Withdraw Cash.html'">
-          <div class="feature-top">
-            <div class="feature-chip"><i data-lucide="wallet"></i></div>
-            <i data-lucide="arrow-right"></i>
-          </div>
-          <span class="label">Withdraw/<br>Cash Out</span>
-        </div>
-        <div class="feature-btn" onclick="window.location.href='Buy Ticket.html'">
-          <div class="feature-top">
-            <div class="feature-chip"><i data-lucide="ticket"></i></div>
-            <i data-lucide="arrow-right"></i>
-          </div>
-          <span class="label">Buy<br>Ticket</span>
-        </div>
+      <div class="section-head">
+        <span class="section-title">Popular Services</span>
+        <button class="view-all" onclick="window.location.href='Pay Merchant.html'">
+          View all services
+          <i data-lucide="arrow-right"></i>
+        </button>
       </div>
+
+      <div class="services-grid" id="servicesGrid">
+
+        <div class="service-tile" data-name="withdraw cash out agent atm" onclick="window.location.href='Withdraw Cash.html'">
+          <div class="tile-icon"><span class="msi">payments</span></div>
+          <span class="tile-label">Withdraw/<br>Cash Out</span>
+        </div>
+
+        <div class="service-tile" data-name="buy ticket event bus" onclick="window.location.href='Buy Ticket.html'">
+          <div class="tile-icon"><span class="msi">confirmation_number</span></div>
+          <span class="tile-label">Buy<br>Ticket</span>
+        </div>
+
+        <div class="service-tile" data-name="ride taxi transport" onclick="window.location.href='Pay Merchant.html'">
+          <div class="tile-icon logo"><img src="assets/bill pay logos/ride logo.png" alt="Ride"></div>
+          <span class="tile-label">Ride</span>
+        </div>
+
+        <div class="service-tile" data-name="beu food delivery" onclick="window.location.href='Pay Merchant.html'">
+          <div class="tile-icon logo"><img src="assets/bill pay logos/beu-logo.png" alt="Beu"></div>
+          <span class="tile-label">Beu</span>
+        </div>
+
+        <div class="service-tile" data-name="qetero booking appointment" onclick="window.location.href='Pay Merchant.html'">
+          <div class="tile-icon logo"><img src="assets/bill pay logos/qetro-logo.png" alt="Qetero"></div>
+          <span class="tile-label">Qetero</span>
+        </div>
+
+        <div class="service-tile" data-name="z-mall zmall shopping" onclick="window.location.href='Pay Merchant.html'">
+          <div class="tile-icon logo"><img src="assets/bill pay logos/z-mall-logo.png" alt="Z-mall"></div>
+          <span class="tile-label">Z-mall</span>
+        </div>
+
+        <div class="service-tile" data-name="tomoca coffee" onclick="window.location.href='Pay Merchant.html'">
+          <div class="tile-icon logo"><img src="assets/bill pay logos/tomoca-logo.png" alt="Tomoca"></div>
+          <span class="tile-label">Tomoca</span>
+        </div>
+
+        <div class="service-tile" data-name="yene guzo travel trip" onclick="window.location.href='Pay Merchant.html'">
+          <div class="tile-icon logo"><img src="assets/bill pay logos/yene-guzo.jpg" alt="Yene Guzo"></div>
+          <span class="tile-label">Yene Guzo</span>
+        </div>
+
+        <div class="service-tile" data-name="parking" onclick="window.location.href='Pay Merchant.html'">
+          <div class="tile-icon logo"><img src="assets/bill pay logos/parking-logo.png" alt="Parking"></div>
+          <span class="tile-label">Parking</span>
+        </div>
+
+        <div class="service-tile" data-name="ethiopian airlines flight" onclick="window.location.href='Bill Payment_Airlines.html'">
+          <div class="tile-icon logo"><img src="assets/bill pay logos/ethiopia_airlines_logo.png" alt="Ethiopian Airlines"></div>
+          <span class="tile-label">Ethiopian<br>Airlines</span>
+        </div>
+
+      </div>
+
+      <div class="empty-state" id="emptyState">No services match your search.</div>
 
       <!-- Promo banner -->
       <div class="promo-banner" onclick="window.location.href='Pay Merchant.html'">
@@ -157,67 +183,6 @@
         </button>
       </div>
 
-      <div class="chips" id="chips">
-        <button class="chip active" data-cat="all" data-title="Popular Services" onclick="filterCategory(this)">Popular</button>
-        <button class="chip" data-cat="frequent" data-title="Frequent Used" onclick="filterCategory(this)">Frequent</button>
-        <button class="chip" data-cat="payment" data-title="Payment Services" onclick="filterCategory(this)">Payment</button>
-        <button class="chip" data-cat="others" data-title="Other Services" onclick="filterCategory(this)">Others</button>
-      </div>
-
-      <div class="section-head">
-        <span class="section-title" id="gridTitle">Popular Services</span>
-        <button class="view-all" onclick="window.location.href='Pay Merchant.html'">
-          View all services
-          <i data-lucide="arrow-right"></i>
-        </button>
-      </div>
-
-      <div class="services-grid" id="servicesGrid">
-
-        <div class="service-tile" data-cat="frequent" data-name="ride taxi transport" onclick="window.location.href='Pay Merchant.html'">
-          <div class="tile-icon logo"><img src="assets/bill pay logos/ride logo.png" alt="Ride"></div>
-          <span class="tile-label">Ride</span>
-        </div>
-
-        <div class="service-tile" data-cat="frequent" data-name="beu food delivery" onclick="window.location.href='Pay Merchant.html'">
-          <div class="tile-icon logo"><img src="assets/bill pay logos/beu-logo.png" alt="Beu"></div>
-          <span class="tile-label">Beu</span>
-        </div>
-
-        <div class="service-tile" data-cat="payment" data-name="qetero booking appointment" onclick="window.location.href='Pay Merchant.html'">
-          <div class="tile-icon logo"><img src="assets/bill pay logos/qetro-logo.png" alt="Qetero"></div>
-          <span class="tile-label">Qetero</span>
-        </div>
-
-        <div class="service-tile" data-cat="others" data-name="z-mall zmall shopping" onclick="window.location.href='Pay Merchant.html'">
-          <div class="tile-icon logo"><img src="assets/bill pay logos/z-mall-logo.png" alt="Z-mall"></div>
-          <span class="tile-label">Z-mall</span>
-        </div>
-
-        <div class="service-tile" data-cat="frequent" data-name="tomoca coffee" onclick="window.location.href='Pay Merchant.html'">
-          <div class="tile-icon logo"><img src="assets/bill pay logos/tomoca-logo.png" alt="Tomoca"></div>
-          <span class="tile-label">Tomoca</span>
-        </div>
-
-        <div class="service-tile" data-cat="others" data-name="yene guzo travel trip" onclick="window.location.href='Pay Merchant.html'">
-          <div class="tile-icon logo"><img src="assets/bill pay logos/yene-guzo.jpg" alt="Yene Guzo"></div>
-          <span class="tile-label">Yene Guzo</span>
-        </div>
-
-        <div class="service-tile" data-cat="payment" data-name="parking" onclick="window.location.href='Pay Merchant.html'">
-          <div class="tile-icon logo"><img src="assets/bill pay logos/parking-logo.png" alt="Parking"></div>
-          <span class="tile-label">Parking</span>
-        </div>
-
-        <div class="service-tile" data-cat="others" data-name="ethiopian airlines flight" onclick="window.location.href='Bill Payment_Airlines.html'">
-          <div class="tile-icon logo"><img src="assets/bill pay logos/ethiopia_airlines_logo.png" alt="Ethiopian Airlines"></div>
-          <span class="tile-label">Ethiopian<br>Airlines</span>
-        </div>
-
-      </div>
-
-      <div class="empty-state" id="emptyState">No services match your search.</div>
-
     </div>
   </div>
 </div>
@@ -226,7 +191,6 @@
   // Define search/filter functions FIRST so they are always available even if
   // the lucide icon CDN fails to load (icon rendering is purely cosmetic).
   let query = '';
-  let category = 'all';
 
   function applyFilters() {
     let visible = 0;
@@ -234,8 +198,7 @@
       const label = (t.querySelector('.tile-label').textContent || '').toLowerCase().replace(/\s+/g, ' ');
       const keys = t.dataset.name || '';
       const matchQuery = query === '' || label.indexOf(query) !== -1 || keys.indexOf(query) !== -1;
-      const matchCat = category === 'all' || t.dataset.cat === category;
-      const show = matchQuery && matchCat;
+      const show = matchQuery;
       t.style.display = show ? '' : 'none';
       if (show) visible++;
     });
@@ -244,13 +207,6 @@
 
   function filterServices(v) {
     query = (v || '').trim().toLowerCase();
-    applyFilters();
-  }
-
-  function filterCategory(btn) {
-    document.querySelectorAll('#chips .chip').forEach(c => c.classList.toggle('active', c === btn));
-    category = btn.dataset.cat;
-    document.getElementById('gridTitle').textContent = btn.dataset.title;
     applyFilters();
   }
 

@@ -495,6 +495,68 @@
   .as-action-btn.call { flex: 0 0 48px; border: none; background: var(--Success); box-shadow: 0 4px 14px rgba(22,163,74,0.3); }
   .as-action-btn.call svg { width: 20px; height: 20px; fill: #FFF; stroke: none; }
 
+  /* ── Withdraw-at island: red pill at the top with favourite agents. Dragging
+     the agent card up into it (or tapping it) opens the Withdraw At picker. ── */
+  .island-row { display: flex; justify-content: center; padding: 0 16px 10px; background: var(--Background); flex-shrink: 0; position: relative; z-index: 60; }
+  .island { width: 100%; height: 44px; border: none; border-radius: 16px; background: var(--Primary); color: #FFF; display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 0 7px 0 16px; cursor: pointer; box-shadow: 0 4px 14px rgba(254,53,61,0.3); font-family: 'Switzer', sans-serif; font-size: 14px; transition: transform 0.15s; }
+  .island:active { transform: scale(0.97); }
+  .island-lbl { font-weight: 400; letter-spacing: 0.1px; }
+  .island-lbl b { font-weight: 700; }
+  .island-avs { display: flex; padding-left: 8px; }
+  .island-avs .av { width: 30px; height: 30px; margin-left: -9px; border: 2px solid var(--Primary); font-size: 10px; }
+
+  .av { border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0; font-family: 'Switzer', sans-serif; font-weight: 700; background: var(--Primary-Light); color: var(--Primary); }
+
+  /* Hint over the card while it is held */
+  .ap-hint { position: absolute; top: -42px; left: 50%; transform: translate(-50%, 6px); display: flex; align-items: center; gap: 6px; padding: 7px 14px; border-radius: 999px; background: rgba(15,23,42,0.86); color: #FFF; font-family: 'Switzer', sans-serif; font-size: 12.5px; font-weight: 600; white-space: nowrap; opacity: 0; pointer-events: none; transition: opacity 0.2s, transform 0.2s; }
+  .ap-hint.show { opacity: 1; transform: translate(-50%, 0); }
+  .ap-hint svg { width: 14px; height: 14px; stroke: currentColor; stroke-width: 2.4; fill: none; }
+  .agent-panel { touch-action: none; }
+  .agent-panel.grabbing { cursor: grabbing; }
+
+  /* The blob grows out of the island while dragging, then fills the screen */
+  .wd-blob { position: absolute; z-index: 70; overflow: hidden; background: #111114; color: #FFF; opacity: 0; pointer-events: none; transition: left 0.45s cubic-bezier(.2,.8,.2,1), top 0.45s cubic-bezier(.2,.8,.2,1), width 0.45s cubic-bezier(.2,.8,.2,1), height 0.45s cubic-bezier(.2,.8,.2,1), border-radius 0.45s, background-color 0.3s, opacity 0.2s; }
+  .wd-blob.dragging { transition: opacity 0.15s; }
+  .wd-blob.open { pointer-events: auto; }
+  .blob-peek { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px; opacity: 0; font-family: 'Switzer', sans-serif; }
+  .blob-peek .peek-title { font-size: 12px; font-weight: 600; color: #A1A1AA; letter-spacing: 0.3px; }
+  .blob-peek .peek-avs { display: flex; gap: 8px; }
+  .blob-peek .av { width: 38px; height: 38px; font-size: 12px; }
+  .blob-peek svg { width: 18px; height: 18px; stroke: #FFF; stroke-width: 2.2; fill: none; }
+  .wd-blob.open .blob-peek { opacity: 0 !important; transition: opacity 0.15s; }
+
+  .blob-full { position: absolute; left: 0; top: 0; display: flex; flex-direction: column; padding: 26px 20px 20px; opacity: 0; transition: opacity 0.2s; font-family: 'Switzer', sans-serif; }
+  .wd-blob.open .blob-full { opacity: 1; transition: opacity 0.25s 0.2s; }
+  .wd-close { position: absolute; top: 24px; right: 18px; width: 36px; height: 36px; border: none; border-radius: 50%; background: rgba(255,255,255,0.08); color: #FFF; display: flex; align-items: center; justify-content: center; cursor: pointer; }
+  .wd-close svg { width: 18px; height: 18px; stroke: currentColor; stroke-width: 2.2; fill: none; }
+  .wd-title { font-size: 34px; line-height: 1.08; letter-spacing: -0.6px; font-weight: 500; color: #9A9AA5; }
+  .wd-title b { display: block; font-weight: 700; color: #FFF; }
+  .wd-sec { font-size: 22px; line-height: 1.1; letter-spacing: -0.3px; font-weight: 500; color: #9A9AA5; margin: 26px 0 14px; }
+  .wd-sec b { display: block; font-weight: 700; color: #FFF; }
+  .wd-favs { display: flex; gap: 14px; overflow-x: auto; padding: 2px 2px 4px; margin: 0 -2px; }
+  .wd-favs::-webkit-scrollbar { height: 0; }
+  .wd-fav { display: flex; flex-direction: column; align-items: center; gap: 7px; width: 62px; flex-shrink: 0; background: none; border: none; color: #FFF; cursor: pointer; font-family: inherit; }
+  .wd-fav .av { width: 52px; height: 52px; font-size: 15px; box-shadow: 0 0 0 2px #111114, 0 0 0 2px transparent; transition: box-shadow 0.2s; }
+  .wd-fav.sel .av { box-shadow: 0 0 0 2px #111114, 0 0 0 4px var(--Primary); }
+  .wd-fav span { font-size: 11.5px; font-weight: 500; max-width: 62px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .wd-fav .add { width: 52px; height: 52px; border-radius: 50%; border: 1.5px solid rgba(255,255,255,0.5); display: flex; align-items: center; justify-content: center; }
+  .wd-fav .add svg { width: 20px; height: 20px; stroke: #FFF; stroke-width: 2; fill: none; }
+  .wd-list { flex: 1; min-height: 0; overflow-y: auto; display: flex; flex-direction: column; gap: 4px; margin: 0 -8px; }
+  .wd-list::-webkit-scrollbar { width: 0; }
+  .wd-row { display: flex; align-items: center; gap: 12px; padding: 9px 8px; border-radius: 14px; background: none; border: none; color: #FFF; text-align: left; cursor: pointer; font-family: inherit; transition: background 0.15s; }
+  .wd-row:hover { background: rgba(255,255,255,0.04); }
+  .wd-row.sel { background: rgba(254,53,61,0.12); }
+  .wd-row .av { width: 42px; height: 42px; font-size: 13px; }
+  .wd-row-main { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 3px; }
+  .wd-row-name { font-size: 14.5px; font-weight: 600; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .wd-row-sub { font-size: 11.5px; color: #8E8E99; }
+  .wd-radio { width: 22px; height: 22px; border-radius: 50%; border: 1.5px solid #4A4A55; flex-shrink: 0; display: flex; align-items: center; justify-content: center; transition: all 0.15s; }
+  .wd-row.sel .wd-radio { border-color: var(--Primary); background: var(--Primary); }
+  .wd-radio svg { width: 12px; height: 12px; stroke: #FFF; stroke-width: 3; fill: none; opacity: 0; }
+  .wd-row.sel .wd-radio svg { opacity: 1; }
+  .wd-next { height: 52px; margin-top: 14px; border: none; border-radius: 16px; background: var(--Primary); color: #FFF; font-family: inherit; font-size: 15px; font-weight: 600; cursor: pointer; box-shadow: 0 6px 18px rgba(254,53,61,0.35); flex-shrink: 0; transition: opacity 0.2s; }
+  .wd-next:disabled { opacity: 0.35; box-shadow: none; cursor: default; }
+
   /* Selected pin lifts above the others. */
   .map-marker.active { z-index: 25; }
   .map-marker.active .pin-bubble { transform: scale(1.18); }
@@ -763,6 +825,14 @@
       <h1 class="header-title">Find an Agent</h1>
     </div>
 
+    <!-- Withdraw-at island: drag the agent card up into it, or tap it -->
+    <div class="island-row">
+      <button class="island" id="island" onclick="openPicker()" aria-label="Withdraw at a favourite agent">
+        <span class="island-lbl">Withdraw <b>at</b></span>
+        <span class="island-avs" id="islandAvs"></span>
+      </button>
+    </div>
+
     <div class="scroll">
 
       <!-- Location / Search Card -->
@@ -875,6 +945,10 @@
 
   <!-- Agent panel — static over the map: selected agent, short code, call / directions -->
   <div class="agent-panel" id="agentPanel">
+    <div class="ap-hint" id="apHint">
+      <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19V5M5 12l7-7 7 7"/></svg>
+      <span id="apHintTxt">Drag to withdraw</span>
+    </div>
     <div class="sheet-grip"></div>
 
     <!-- Selected merchant — only shown after a pin is tapped; Back returns to
@@ -919,6 +993,26 @@
       <button class="ap-enter" id="apEnter" onclick="submitCode()" disabled>Enter</button>
     </div>
     <div class="ap-msg" id="apMsg">Short code must be 6 digits.</div>
+    </div>
+  </div>
+
+  <!-- Withdraw At picker: grows out of the island -->
+  <div class="wd-blob" id="wdBlob" role="dialog" aria-modal="true" aria-label="Withdraw at">
+    <div class="blob-peek" id="blobPeek">
+      <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19V5M5 12l7-7 7 7"/></svg>
+      <div class="peek-avs" id="peekAvs"></div>
+      <div class="peek-title">FAVOURITES</div>
+    </div>
+    <div class="blob-full" id="blobFull">
+      <button class="wd-close" onclick="closePicker()" aria-label="Close">
+        <svg viewBox="0 0 24 24" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg>
+      </button>
+      <div class="wd-title">Withdraw <b>Cash At</b></div>
+      <div class="wd-sec">Your <b>Favourites</b></div>
+      <div class="wd-favs" id="wdFavs"></div>
+      <div class="wd-sec">Your <b>Frequents</b></div>
+      <div class="wd-list" id="wdFreq"></div>
+      <button class="wd-next" id="wdNext" onclick="pickerNext()" disabled>Next</button>
     </div>
   </div>
 
@@ -990,7 +1084,20 @@
       open: true,
       x: '20%',
       y: '58%'
-    }
+    },
+    // Off-map agents the user has used before (Frequents only)
+    { id: 5, abbr: 'AT', name: 'Abebe Tadesse Shop', code: '615208', dist: '3.4 km', addr: 'Gerji, Addis Ababa', open: true },
+    { id: 6, abbr: 'HS', name: 'Hana Supermarket', code: '430092', dist: '4.1 km', addr: 'Megenagna, Addis Ababa', open: true }
+  ];
+
+  // Saved favourite agents, and the agents withdrawn at most often
+  const FAVOURITES = ['323217', '562394', '615208'];
+  const FREQUENTS = [
+    { code: '323217', times: 12 },
+    { code: '615208', times: 8 },
+    { code: '562394', times: 5 },
+    { code: '778901', times: 3 },
+    { code: '430092', times: 2 }
   ];
 
   function pinSvg() {
@@ -1194,6 +1301,161 @@
     document.getElementById('locName').textContent = 'Addis Ababa';
     document.getElementById('locSub').textContent = 'Turn on location for more accurate results';
   }
+
+  /* ── Withdraw At: island, drag-to-withdraw and picker ── */
+  const agentBy = code => AGENTS.find(a => a.code === code);
+  const avHtml = (a, cls) => `<span class="av ${cls || ''}">${a.abbr}</span>`;
+
+  $('islandAvs').innerHTML = FAVOURITES.map(c => avHtml(agentBy(c))).join('');
+  $('peekAvs').innerHTML = FAVOURITES.map(c => avHtml(agentBy(c))).join('');
+
+  const frame = document.querySelector('.phone-frame');
+  const blob = $('wdBlob');
+  const panel = $('agentPanel');
+  const ARM = 0.6;               // drag progress needed to open on release
+  const RED = [254, 53, 61], DARK = [17, 17, 20];
+  let pickerOpen = false;
+  let pickCode = null, pickSrc = null;
+
+  function relRect(el) {
+    const f = frame.getBoundingClientRect(), r = el.getBoundingClientRect();
+    return { left: r.left - f.left, top: r.top - f.top, width: r.width, height: r.height };
+  }
+  function setGeom(g, radius, rgb) {
+    blob.style.left = g.left + 'px';
+    blob.style.top = g.top + 'px';
+    blob.style.width = g.width + 'px';
+    blob.style.height = g.height + 'px';
+    blob.style.borderRadius = radius + 'px';
+    blob.style.backgroundColor = `rgb(${rgb.join(',')})`;
+  }
+  const mix = t => RED.map((c, i) => Math.round(c + (DARK[i] - c) * t));
+
+  // Blob grows out of the island as the card is dragged up (p: 0..1)
+  function peek(p) {
+    const pill = relRect($('island'));
+    if (p < 0.03) { blob.style.opacity = 0; return; }
+    const w = pill.width;
+    const h = pill.height + (190 - pill.height) * p;
+    blob.classList.add('dragging');
+    setGeom({ left: pill.left + pill.width / 2 - w / 2, top: pill.top, width: w, height: h }, 16 + 24 * p, mix(Math.min(1, p * 2.5)));
+    blob.style.opacity = 1;
+    $('blobPeek').style.opacity = Math.max(0, (p - 0.35) / 0.65);
+  }
+
+  function renderPicker() {
+    $('wdFavs').innerHTML = FAVOURITES.map(c => {
+      const a = agentBy(c);
+      return `<button class="wd-fav" data-code="${c}" data-src="fav" onclick="choose('${c}','fav')">${avHtml(a)}<span>${a.name.split(' ')[0]}</span></button>`;
+    }).join('') + `<button class="wd-fav" onclick="addFavourite()"><span class="add"><svg viewBox="0 0 24 24" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg></span><span>Add New</span></button>`;
+    $('wdFreq').innerHTML = FREQUENTS.map(f => {
+      const a = agentBy(f.code);
+      return `<button class="wd-row" data-code="${f.code}" data-src="freq" onclick="choose('${f.code}','freq')">
+        ${avHtml(a)}
+        <span class="wd-row-main"><span class="wd-row-name">${a.name}</span><span class="wd-row-sub">${a.code} &middot; ${a.dist} &middot; ${f.times} withdrawals</span></span>
+        <span class="wd-radio"><svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5 9-10"/></svg></span>
+      </button>`;
+    }).join('');
+    choose(null);
+    // A merchant already picked on the map comes preselected
+    if (selectedAgent) {
+      if (FAVOURITES.includes(selectedAgent.code)) choose(selectedAgent.code, 'fav');
+      else if (FREQUENTS.some(f => f.code === selectedAgent.code)) choose(selectedAgent.code, 'freq');
+    }
+  }
+
+  function choose(code, src) {
+    pickCode = code; pickSrc = src;
+    document.querySelectorAll('.wd-fav[data-code], .wd-row').forEach(el =>
+      el.classList.toggle('sel', el.dataset.code === code && el.dataset.src === src));
+    $('wdNext').disabled = !code;
+  }
+
+  function openPicker() {
+    if (pickerOpen) return;
+    pickerOpen = true;
+    renderPicker();
+    const fr = frame.getBoundingClientRect();
+    $('blobFull').style.width = fr.width + 'px';
+    $('blobFull').style.height = fr.height + 'px';
+    if (blob.style.opacity !== '1') {           // opened by tap: start from the pill
+      blob.classList.add('dragging');
+      peek(0.04);
+    }
+    void blob.offsetWidth;
+    blob.classList.remove('dragging');
+    blob.classList.add('open');
+    setGeom({ left: 0, top: 0, width: fr.width, height: fr.height }, parseFloat(getComputedStyle(frame).borderTopLeftRadius) || 0, DARK);
+  }
+
+  function closePicker() {
+    if (!pickerOpen) return;
+    pickerOpen = false;
+    blob.classList.remove('open');
+    $('blobPeek').style.opacity = 0;
+    const pill = relRect($('island'));
+    setGeom(pill, 16, RED);
+    setTimeout(() => { if (!pickerOpen) blob.style.opacity = 0; }, 420);
+  }
+
+  function addFavourite() {
+    closePicker();
+    clearAgent();
+    setTimeout(() => $('apCode').focus(), 450);
+  }
+
+  function pickerNext() {
+    if (!pickCode) return;
+    sessionStorage.setItem('withdrawData', JSON.stringify({
+      method: 'agent',
+      methodLabel: pickSrc === 'fav' ? 'Favourite Agent' : 'Frequent Agent',
+      entry: 'code',
+      agentCode: pickCode
+    }));
+    window.location.href = 'Withdraw Cash - Agent Locator.html';
+  }
+
+  // Hold the card to see the hint; drag it up into the island to open the picker
+  let drag = null;
+  panel.addEventListener('pointerdown', e => {
+    if (pickerOpen || e.button > 0 || e.target.closest('button, input')) return;
+    const pill = $('island').getBoundingClientRect();
+    drag = { y0: e.clientY, p: 0, max: Math.max(80, panel.getBoundingClientRect().top - pill.bottom - 24) };
+    panel.setPointerCapture(e.pointerId);
+    panel.style.transition = 'none';
+    panel.classList.add('grabbing');
+    $('apHintTxt').textContent = 'Drag to withdraw';
+    $('apHint').classList.add('show');
+  });
+  panel.addEventListener('pointermove', e => {
+    if (!drag) return;
+    const dy = Math.min(0, e.clientY - drag.y0);
+    drag.p = Math.min(1, -dy / drag.max);
+    panel.style.transform = `translateY(${dy}px)`;
+    $('apHintTxt').textContent = drag.p >= ARM ? 'Release to withdraw' : 'Drag to withdraw';
+    peek(drag.p);
+  });
+  function endDrag() {
+    if (!drag) return;
+    const armed = drag.p >= ARM;
+    drag = null;
+    panel.classList.remove('grabbing');
+    panel.style.transition = 'transform 0.35s cubic-bezier(.2,.8,.2,1)';
+    panel.style.transform = '';
+    $('apHint').classList.remove('show');
+    if (armed) openPicker();
+    else { blob.classList.remove('dragging'); closePickerPeek(); }
+  }
+  // Released too early: shrink the blob back into the island
+  function closePickerPeek() {
+    $('blobPeek').style.opacity = 0;
+    const pill = relRect($('island'));
+    setGeom(pill, 16, RED);
+    setTimeout(() => { if (!pickerOpen && !drag) blob.style.opacity = 0; }, 420);
+  }
+  panel.addEventListener('pointerup', endDrag);
+  panel.addEventListener('pointercancel', endDrag);
+  document.addEventListener('keydown', e => { if (e.key === 'Escape') closePicker(); });
 
   // Initial render
   renderMapPins(AGENTS);

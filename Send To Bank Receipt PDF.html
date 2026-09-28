@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Send To Bank Receipt</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Barlow:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html, body { background: #e9ecef; font-family: 'Barlow', sans-serif; }
+  body { display: flex; justify-content: center; padding: 24px 0; min-height: 100vh; }
+
+  /* Page is built on the PDF's own 595 x 857 grid; JS scales it to fit */
+  .stage { width: 595px; height: 857px; position: relative; }
+  .page {
+    position: absolute; top: 0; left: 0;
+    width: 595px; height: 857px;
+    background: #fff; overflow: hidden;
+    transform-origin: top left;
+    box-shadow: 0 4px 24px rgba(0,0,0,.12);
+  }
+  .abs { position: absolute; white-space: nowrap; line-height: 1.15; }
+  .center { left: 0; right: 0; text-align: center; }
+
+  .bg-green { position: absolute; left: 0; top: 0; width: 595px; height: 455px; background: #49cb7e; }
+
+  /* Top summary card */
+  .top-card { position: absolute; left: 147px; top: 20px; width: 303px; height: 209px; background: #fff; border-radius: 30px; }
+  .icon { position: absolute; left: 256px; top: 35px; width: 80px; height: 70px; }
+  .amount { top: 114px; font-size: 24px; font-weight: 700; color: #2fc56d; }
+  .bank { top: 152px; font-size: 14px; font-weight: 700; color: #000; letter-spacing: .1px; }
+  .pill { position: absolute; left: 240px; top: 185px; width: 109px; height: 30px; background: #e6f1ff; border-radius: 15px; }
+  .pill-text { left: 257px; top: 193px; font-size: 10px; font-weight: 700; color: #1074ff; letter-spacing: .1px; }
+  .chev { position: absolute; left: 330px; top: 194px; width: 12px; height: 12px; }
+
+  /* Detail card + bottom lip with shadow */
+  .lip {
+    position: absolute; left: 6px; top: 560px; width: 582px; height: 120px;
+    background: #fff; border-radius: 0 0 40px 40px;
+    box-shadow: 0 9px 10px -2px rgba(0,0,0,.28);
+  }
+  .card {
+    position: absolute; left: 10px; top: 240px; width: 570px; height: 415px;
+    background: #fff; border-radius: 40px;
+    border-bottom: 1px solid #f1f1f1;
+  }
+  .title { top: 252px; font-size: 22px; font-weight: 400; color: #000; letter-spacing: -.2px; }
+
+  .label { left: 30px; font-size: 16px; font-weight: 400; color: #9b9b9b; letter-spacing: .6px; }
+  .value { left: 380px; font-size: 16px; font-weight: 700; color: #000; }
+
+  .barcode { position: absolute; left: 71.33px; top: 613px; width: 444.35px; height: 23.5px; }
+
+  /* Footer */
+  .f1 { top: 761px; font-size: 9px; color: #5cd18d; }
+  .f2 { top: 782px; font-size: 10px; font-weight: 700; color: #aaaaaa; }
+  .f3 { top: 795px; font-size: 10px; font-weight: 300; color: #b0b0b0; }
+  .f4 { top: 809px; font-size: 10px; font-weight: 300; color: #b0b0b0; }
+
+  @media print {
+    @page { size: 595px 857px; margin: 0; }
+    html, body { background: #fff; padding: 0; }
+    .page { transform: none !important; box-shadow: none; }
+    .stage { width: 595px !important; height: 857px !important; }
+    * { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  }
+</style>
+</head>
+<body>
+<div class="stage" id="stage">
+  <div class="page" id="page">
+    <div class="bg-green"></div>
+
+    <div class="top-card"></div>
+    <svg class="icon" viewBox="0 0 80 70" aria-hidden="true">
+      <ellipse cx="40" cy="35" rx="40" ry="35" fill="#1073ff"/>
+      <path fill="#fff" d="M44.87 20.42L43.93 21.60C43.66 21.94 43.71 22.41 44.05 22.67C44.37 22.93 44.86 22.88 45.12 22.55L46.07 21.36C46.33 21.04 46.28 20.56 45.94 20.30C45.62 20.04 45.13 20.10 44.87 20.42M38.83 28.40C37.15 28.85 35.27 29.02 33.45 29.18C32.08 29.29 30.76 29.41 29.56 29.64C29.90 28.45 31.39 24.85 37.34 22.69C41.22 21.28 43.29 18.80 44.33 17.09L53.91 24.63C53.17 25.82 52.02 27.28 50.24 28.58C49.29 28.76 48.42 29.40 47.34 30.26C46.99 30.40 46.62 30.56 46.24 30.69C44.44 31.35 43.10 32.14 42.11 32.93C42.63 31.94 42.59 30.77 42.18 29.91C42.05 29.64 41.87 29.40 41.67 29.19C42.37 29.11 43.08 28.74 43.58 28.11C44.50 26.96 44.45 25.40 43.45 24.62C42.47 23.85 40.91 24.13 39.99 25.28C39.24 26.23 39.14 27.46 39.69 28.29C39.41 28.28 39.12 28.32 38.83 28.40M20.37 43.50C20.37 43.50 25.53 33.46 28.03 32.20C29.38 31.51 31.40 31.33 33.63 31.15C35.51 30.98 37.52 30.80 39.36 30.30C40.51 29.99 40.95 31.77 39.91 32.52C39.53 32.79 38.41 33.14 37.17 33.54C35.02 34.23 32.48 35.04 32.58 35.78C32.72 36.95 39.30 36.93 42.06 35.89C44.65 34.92 46.68 33.31 48.20 32.10C49.38 31.18 50.24 30.49 50.84 30.51C52.51 30.56 52.22 32.05 50.22 33.98C49.96 34.23 49.65 34.53 49.29 34.89C46.90 37.23 42.65 41.40 40.64 41.77C38.34 42.20 30.59 45.32 28.03 48.54C28.03 48.54 26.32 52.39 26.32 52.86C26.32 53.33 18.09 48.54 18.09 48.54L20.37 43.50Z"/>
+    </svg>
+    <div class="abs center amount">600 ETB</div>
+    <div class="abs center bank">COMMERCIAL BANK OF ETHIOPIA</div>
+    <div class="pill"></div>
+    <div class="abs pill-text">SEND TO BANK</div>
+    <svg class="chev" viewBox="0 0 12 12" aria-hidden="true">
+      <path d="M2.2 4.2 6 8l3.8-3.8" fill="none" stroke="#1074ff" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>
+
+    <div class="lip"></div>
+    <div class="card"></div>
+    <div class="abs center title">TRANSACTION DETAIL</div>
+
+    <div class="abs label" style="top:326px">TRANSACTION ID</div>
+    <div class="abs label" style="top:350px">TRANSACTION DATE</div>
+    <div class="abs label" style="top:374px">SENDER NAME</div>
+    <div class="abs label" style="top:398px">BANK ACCOUNT NUMBER</div>
+    <div class="abs label" style="top:422px">RECEIVING BANK</div>
+    <div class="abs label" style="top:461px">SENDING PHONE NUMBER</div>
+    <div class="abs label" style="top:485px">ACCOUNT HOLDER NAME</div>
+    <div class="abs label" style="top:509px">PAID AMOUNT</div>
+    <div class="abs label" style="top:533px">PAYMENT TYPE</div>
+    <div class="abs label" style="top:557px">PAYMENT REASON</div>
+
+    <div class="abs value" style="top:326px">UIS9PXU2IL</div>
+    <div class="abs value" style="top:350px">28-09-2026</div>
+    <div class="abs value" style="top:374px">Mikias Dereje Tsegaye</div>
+    <div class="abs value" style="top:398px">1000218407866</div>
+    <div class="abs value" style="top:420px">&nbsp;COMMERCIAL BANK OF</div>
+    <div class="abs value" style="top:439px">ETHIOPIA</div>
+    <div class="abs value" style="top:461px">251799185321</div>
+    <div class="abs value" style="top:485px">ABEBECH GALETO GAGA</div>
+    <div class="abs value" style="top:509px">600</div>
+    <div class="abs value" style="top:533px">SEND TO BANK</div>
+
+    <svg class="barcode" viewBox="0 0 444.35 23.5" preserveAspectRatio="none" aria-hidden="true">
+      <path fill="#000" d="M0.00 0h0.67v23h-0.67z M1.00 0h0.33v23h-0.33z M2.00 0h0.33v23h-0.33z M3.67 0h0.67v23h-0.67z M4.67 0h1.00v23h-1.00z M6.67 0h0.33v23h-0.33z M7.34 0h0.33v23h-0.33z M8.34 0h0.33v23h-0.33z M9.34 0h1.33v23h-1.33z M11.00 0h0.33v23h-0.33z M12.00 0h0.33v23h-0.33z M12.67 0h0.67v23h-0.67z M14.67 0h0.67v23h-0.67z M16.67 0h0.33v23h-0.33z M17.34 0h0.33v23h-0.33z M18.34 0h0.33v23h-0.33z M19.00 0h1.33v23h-1.33z M21.00 0h0.33v23h-0.33z M22.00 0h0.33v23h-0.33z M23.00 0h0.33v23h-0.33z M23.67 0h0.67v23h-0.67z M25.67 0h0.33v23h-0.33z M27.34 0h0.33v23h-0.33z M28.00 0h0.67v23h-0.67z M29.34 0h0.33v23h-0.33z M30.34 0h1.33v23h-1.33z M32.00 0h0.33v23h-0.33z M33.00 0h0.33v23h-0.33z M34.67 0h0.67v23h-0.67z M35.67 0h0.33v23h-0.33z M36.67 0h0.33v23h-0.33z M38.00 0h1.33v23h-1.33z M39.67 0h0.33v23h-0.33z M40.34 0h0.67v23h-0.67z M42.34 0h0.33v23h-0.33z M43.00 0h0.33v23h-0.33z M44.00 0h0.67v23h-0.67z M45.00 0h0.67v23h-0.67z M46.34 0h0.67v23h-0.67z M47.67 0h0.67v23h-0.67z M49.34 0h0.33v23h-0.33z M50.67 0h0.33v23h-0.33z M51.34 0h0.33v23h-0.33z M53.00 0h0.33v23h-0.33z M54.00 0h0.67v23h-0.67z M55.00 0h1.00v23h-1.00z M56.67 0h0.67v23h-0.67z M58.00 0h0.33v23h-0.33z M58.67 0h0.67v23h-0.67z M59.67 0h0.67v23h-0.67z M61.00 0h0.67v23h-0.67z M62.34 0h0.67v23h-0.67z M63.34 0h1.00v23h-1.00z M64.67 0h1.00v23h-1.00z M66.00 0h0.67v23h-0.67z M67.67 0h0.33v23h-0.33z M69.00 0h0.33v23h-0.33z M69.67 0h0.67v23h-0.67z M70.67 0h1.00v23h-1.00z M72.00 0h0.33v23h-0.33z M73.34 0h1.00v23h-1.00z M75.00 0h0.33v23h-0.33z M75.67 0h0.67v23h-0.67z M77.00 0h1.00v23h-1.00z M78.34 0h1.00v23h-1.00z M79.67 0h0.67v23h-0.67z M80.67 0h1.00v23h-1.00z M82.67 0h0.33v23h-0.33z M83.34 0h0.67v23h-0.67z M84.34 0h0.67v23h-0.67z M85.34 0h1.00v23h-1.00z M86.67 0h1.00v23h-1.00z M88.01 0h0.67v23h-0.67z M89.34 0h1.00v23h-1.00z M91.01 0h0.33v23h-0.33z M91.67 0h0.67v23h-0.67z M93.34 0h0.33v23h-0.33z M94.67 0h0.33v23h-0.33z M95.34 0h0.33v23h-0.33z M96.67 0h0.67v23h-0.67z M97.67 0h1.00v23h-1.00z M99.01 0h0.67v23h-0.67z M100.01 0h0.67v23h-0.67z M101.34 0h0.67v23h-0.67z M102.67 0h0.33v23h-0.33z M103.34 0h0.67v23h-0.67z M104.67 0h1.00v23h-1.00z M106.34 0h0.67v23h-0.67z M107.34 0h0.67v23h-0.67z M108.67 0h0.67v23h-0.67z M110.01 0h1.00v23h-1.00z M111.34 0h1.00v23h-1.00z M112.67 0h0.67v23h-0.67z M113.67 0h0.33v23h-0.33z M114.67 0h0.33v23h-0.33z M115.34 0h0.67v23h-0.67z M117.34 0h0.67v23h-0.67z M118.34 0h0.67v23h-0.67z M119.34 0h1.33v23h-1.33z M121.01 0h0.33v23h-0.33z M121.67 0h0.67v23h-0.67z M123.01 0h0.33v23h-0.33z M124.67 0h0.33v23h-0.33z M125.67 0h0.33v23h-0.33z M126.67 0h1.33v23h-1.33z M128.34 0h0.67v23h-0.67z M129.34 0h0.67v23h-0.67z M130.67 0h0.67v23h-0.67z M132.01 0h0.33v23h-0.33z M132.67 0h1.00v23h-1.00z M134.67 0h0.67v23h-0.67z M135.67 0h0.33v23h-0.33z M136.67 0h0.33v23h-0.33z M137.34 0h0.67v23h-0.67z M139.34 0h1.33v23h-1.33z M141.01 0h1.00v23h-1.00z M142.34 0h0.33v23h-0.33z M143.01 0h0.33v23h-0.33z M143.67 0h0.67v23h-0.67z M145.01 0h0.33v23h-0.33z M146.67 0h1.00v23h-1.00z M148.34 0h0.67v23h-0.67z M149.67 0h0.33v23h-0.33z M150.34 0h0.67v23h-0.67z M151.34 0h0.67v23h-0.67z M152.67 0h0.67v23h-0.67z M154.01 0h0.33v23h-0.33z M154.67 0h1.00v23h-1.00z M156.01 0h0.67v23h-0.67z M157.67 0h0.33v23h-0.33z M159.34 0h0.67v23h-0.67z M160.34 0h0.33v23h-0.33z M161.34 0h0.67v23h-0.67z M163.34 0h0.33v23h-0.33z M164.34 0h0.33v23h-0.33z M165.01 0h0.33v23h-0.33z M166.67 0h0.67v23h-0.67z M167.67 0h0.33v23h-0.33z M168.67 0h0.33v23h-0.33z M169.67 0h0.33v23h-0.33z M170.34 0h0.67v23h-0.67z M172.34 0h0.33v23h-0.33z M173.01 0h1.33v23h-1.33z M175.01 0h0.33v23h-0.33z M176.01 0h0.67v23h-0.67z M177.01 0h0.67v23h-0.67z M178.34 0h0.67v23h-0.67z M179.67 0h0.33v23h-0.33z M180.34 0h0.67v23h-0.67z M182.01 0h0.33v23h-0.33z M183.34 0h0.33v23h-0.33z M184.01 0h0.67v23h-0.67z M185.34 0h0.33v23h-0.33z M187.01 0h0.33v23h-0.33z M188.01 0h0.33v23h-0.33z M189.01 0h1.33v23h-1.33z M190.67 0h0.33v23h-0.33z M191.34 0h0.67v23h-0.67z M192.67 0h0.33v23h-0.33z M194.34 0h0.33v23h-0.33z M196.01 0h0.67v23h-0.67z M197.34 0h0.33v23h-0.33z M198.01 0h0.33v23h-0.33z M198.67 0h0.67v23h-0.67z M200.01 0h0.33v23h-0.33z M201.67 0h0.67v23h-0.67z M202.67 0h0.67v23h-0.67z M204.01 0h0.67v23h-0.67z M205.34 0h0.67v23h-0.67z M206.34 0h1.00v23h-1.00z M208.34 0h0.33v23h-0.33z M209.01 0h0.33v23h-0.33z M209.67 0h1.33v23h-1.33z M211.67 0h0.33v23h-0.33z M212.67 0h0.33v23h-0.33z M213.34 0h0.67v23h-0.67z M214.67 0h0.33v23h-0.33z M216.34 0h0.33v23h-0.33z M217.34 0h0.67v23h-0.67z M218.34 0h0.33v23h-0.33z M220.01 0h0.33v23h-0.33z M221.01 0h0.33v23h-0.33z M221.67 0h0.67v23h-0.67z M223.67 0h0.67v23h-0.67z M224.67 0h0.67v23h-0.67z M225.67 0h1.33v23h-1.33z M227.34 0h0.33v23h-0.33z M228.01 0h0.67v23h-0.67z M229.34 0h0.33v23h-0.33z M231.01 0h0.67v23h-0.67z M232.01 0h0.67v23h-0.67z M233.34 0h0.67v23h-0.67z M234.67 0h0.33v23h-0.33z M235.34 0h0.67v23h-0.67z M236.67 0h1.00v23h-1.00z M238.34 0h0.67v23h-0.67z M239.34 0h0.67v23h-0.67z M240.67 0h0.67v23h-0.67z M242.01 0h0.67v23h-0.67z M243.67 0h0.33v23h-0.33z M244.34 0h1.00v23h-1.00z M245.67 0h0.33v23h-0.33z M246.34 0h0.67v23h-0.67z M247.68 0h0.33v23h-0.33z M249.34 0h0.33v23h-0.33z M251.01 0h0.33v23h-0.33z M251.68 0h0.67v23h-0.67z M253.01 0h0.33v23h-0.33z M253.68 0h0.67v23h-0.67z M255.01 0h0.33v23h-0.33z M256.68 0h0.33v23h-0.33z M258.34 0h0.67v23h-0.67z M259.34 0h0.33v23h-0.33z M260.34 0h1.33v23h-1.33z M262.01 0h0.33v23h-0.33z M263.01 0h0.33v23h-0.33z M264.01 0h0.33v23h-0.33z M264.68 0h0.67v23h-0.67z M266.01 0h0.33v23h-0.33z M267.68 0h0.33v23h-0.33z M268.68 0h0.33v23h-0.33z M269.68 0h1.33v23h-1.33z M271.34 0h1.00v23h-1.00z M273.01 0h0.67v23h-0.67z M274.34 0h0.33v23h-0.33z M275.01 0h0.67v23h-0.67z M276.01 0h0.67v23h-0.67z M277.34 0h0.67v23h-0.67z M278.68 0h0.67v23h-0.67z M279.68 0h0.67v23h-0.67z M281.01 0h0.67v23h-0.67z M282.34 0h0.33v23h-0.33z M283.68 0h0.33v23h-0.33z M285.01 0h0.67v23h-0.67z M286.01 0h0.33v23h-0.33z M287.34 0h1.00v23h-1.00z M288.68 0h0.67v23h-0.67z M289.68 0h0.33v23h-0.33z M290.34 0h1.00v23h-1.00z M291.68 0h0.67v23h-0.67z M293.34 0h0.33v23h-0.33z M294.01 0h1.00v23h-1.00z M295.34 0h0.67v23h-0.67z M297.01 0h0.33v23h-0.33z M298.34 0h0.67v23h-0.67z M299.34 0h0.33v23h-0.33z M300.68 0h0.67v23h-0.67z M302.34 0h0.33v23h-0.33z M303.01 0h1.00v23h-1.00z M304.34 0h0.33v23h-0.33z M305.68 0h0.33v23h-0.33z M307.01 0h0.67v23h-0.67z M308.01 0h0.67v23h-0.67z M309.68 0h0.33v23h-0.33z M311.01 0h0.33v23h-0.33z M311.68 0h0.33v23h-0.33z M312.34 0h0.33v23h-0.33z M313.68 0h0.67v23h-0.67z M315.34 0h0.33v23h-0.33z M316.68 0h0.67v23h-0.67z M317.68 0h1.00v23h-1.00z M319.01 0h0.67v23h-0.67z M320.01 0h0.67v23h-0.67z M321.34 0h0.67v23h-0.67z M322.68 0h0.33v23h-0.33z M324.01 0h0.33v23h-0.33z M324.68 0h0.67v23h-0.67z M326.34 0h0.33v23h-0.33z M327.01 0h0.33v23h-0.33z M328.34 0h0.67v23h-0.67z M330.01 0h0.33v23h-0.33z M330.68 0h1.00v23h-1.00z M332.68 0h0.67v23h-0.67z M333.68 0h0.33v23h-0.33z M334.34 0h0.67v23h-0.67z M336.01 0h1.00v23h-1.00z M337.34 0h0.67v23h-0.67z M338.34 0h0.67v23h-0.67z M339.68 0h0.67v23h-0.67z M341.01 0h0.33v23h-0.33z M342.34 0h1.00v23h-1.00z M343.68 0h0.67v23h-0.67z M344.68 0h0.33v23h-0.33z M346.01 0h0.67v23h-0.67z M347.68 0h0.33v23h-0.33z M348.34 0h0.67v23h-0.67z M349.34 0h0.67v23h-0.67z M350.68 0h0.67v23h-0.67z M352.01 0h0.33v23h-0.33z M353.34 0h0.67v23h-0.67z M354.34 0h0.33v23h-0.33z M355.68 0h0.67v23h-0.67z M356.68 0h1.00v23h-1.00z M358.68 0h0.33v23h-0.33z M359.34 0h0.67v23h-0.67z M361.01 0h0.33v23h-0.33z M361.68 0h0.33v23h-0.33z M363.01 0h0.67v23h-0.67z M364.68 0h0.33v23h-0.33z M366.01 0h0.33v23h-0.33z M366.68 0h0.33v23h-0.33z M368.01 0h1.00v23h-1.00z M369.34 0h0.67v23h-0.67z M370.34 0h1.00v23h-1.00z M371.68 0h1.00v23h-1.00z M373.01 0h0.67v23h-0.67z M374.01 0h0.67v23h-0.67z M375.68 0h0.33v23h-0.33z M377.01 0h0.33v23h-0.33z M377.68 0h0.33v23h-0.33z M378.34 0h0.33v23h-0.33z M379.68 0h0.67v23h-0.67z M381.34 0h0.33v23h-0.33z M382.01 0h0.67v23h-0.67z M383.34 0h1.00v23h-1.00z M385.01 0h0.67v23h-0.67z M386.01 0h0.67v23h-0.67z M387.34 0h0.67v23h-0.67z M388.68 0h0.33v23h-0.33z M389.34 0h0.33v23h-0.33z M390.68 0h0.67v23h-0.67z M392.34 0h1.33v23h-1.33z M394.01 0h1.00v23h-1.00z M395.34 0h0.33v23h-0.33z M396.01 0h0.33v23h-0.33z M397.34 0h1.33v23h-1.33z M399.01 0h0.33v23h-0.33z M399.68 0h0.33v23h-0.33z M400.68 0h1.33v23h-1.33z M402.68 0h0.33v23h-0.33z M403.34 0h0.67v23h-0.67z M405.34 0h0.33v23h-0.33z M406.01 0h0.33v23h-0.33z M407.01 0h0.33v23h-0.33z M408.01 0h1.33v23h-1.33z M409.68 0h0.33v23h-0.33z M410.68 0h1.00v23h-1.00z M412.34 0h0.67v23h-0.67z M413.68 0h0.33v23h-0.33z M414.35 0h0.67v23h-0.67z M415.35 0h0.67v23h-0.67z M416.68 0h0.67v23h-0.67z M418.01 0h0.67v23h-0.67z M419.35 0h1.00v23h-1.00z M420.68 0h0.33v23h-0.33z M421.68 0h0.33v23h-0.33z M422.68 0h1.00v23h-1.00z M424.01 0h0.67v23h-0.67z M425.35 0h0.33v23h-0.33z M426.35 0h1.00v23h-1.00z M427.68 0h0.67v23h-0.67z M429.01 0h0.33v23h-0.33z M430.01 0h0.67v23h-0.67z M431.35 0h1.00v23h-1.00z M432.68 0h0.33v23h-0.33z M433.68 0h1.00v23h-1.00z M435.01 0h0.67v23h-0.67z M436.35 0h0.33v23h-0.33z M437.35 0h0.33v23h-0.33z M438.35 0h0.67v23h-0.67z M440.01 0h0.67v23h-0.67z M441.68 0h1.00v23h-1.00z M443.01 0h0.33v23h-0.33z M443.68 0h0.67v23h-0.67z"/>
+    </svg>
+
+    <div class="abs center f1">Got a question? Get in touch</div>
+    <div class="abs center f2">Call us:733 | Email: M-PESAcustomercare@safaricom.et</div>
+    <div class="abs center f3">VAT No : 20034 | TIN No : 23476</div>
+    <div class="abs center f4">Wollo Sefer Africa Avenue(Bole Arport Road), Kirkos Subcity, Woreda 01</div>
+  </div>
+</div>
+<script>
+  // Shrink the fixed 595px page on narrow screens (never upscale, so Figma export stays 1:1)
+  (function () {
+    var stage = document.getElementById('stage'), page = document.getElementById('page');
+    function fit() {
+      var s = Math.min(1, (window.innerWidth - 32) / 595);
+      page.style.transform = 'scale(' + s + ')';
+      stage.style.width = 595 * s + 'px';
+      stage.style.height = 857 * s + 'px';
+    }
+    window.addEventListener('resize', fit); fit();
+  })();
+</script>
+
+<!-- Export to Figma button (shared exporter) -->
+<script src="figma-export.js"></script>
+</body>
+</html>
