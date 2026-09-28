@@ -55,6 +55,7 @@
   flex-direction: column;
   align-items: flex-start;
   flex: 1 0 0;
+  min-width: 0;
 }
 .main-balance .header {
   display: flex;
@@ -74,11 +75,12 @@
 .main-balance .amount {
   color: var(--Gray-0, #FFF);
   font-family: var(--Font-Family, 'Switzer', sans-serif);
-  font-size: 30px;
+  font-size: clamp(22px, 8vw, 30px);
   font-style: normal;
   font-weight: var(--Font-Weight-Regular, 400);
   line-height: var(--Line-Height, 150%);
   letter-spacing: 0px;
+  white-space: nowrap;   /* hidden stars never wrap onto a second line */
 }
 
 /* ---- Add Money Button ---- */
@@ -97,6 +99,7 @@
   border: none;
   cursor: pointer;
   z-index: 1;
+  flex-shrink: 0;
   animation: btnPop 1.6s ease-in-out infinite;
 }
 .add-money-btn:hover { animation-play-state: paused; transform: scale(1.05); }
@@ -183,11 +186,12 @@
   color: var(--Gray-0, #FFF);
   text-align: center;
   font-family: var(--Font-Family, 'Switzer', sans-serif);
-  font-size: 30px;
+  font-size: clamp(22px, 8vw, 30px);
   font-style: normal;
   font-weight: var(--Font-Weight-Regular, 400);
   line-height: var(--Line-Height, 150%);
   letter-spacing: 0px;
+  white-space: nowrap;   /* hidden stars never wrap onto a second line */
 }
 .balance-visible .other-balance .amount {
   color: var(--Gray-0, #FFF);
