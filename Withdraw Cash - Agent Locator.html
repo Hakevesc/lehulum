@@ -39,17 +39,13 @@
 
   /* ── Merchant card: the agent picked on the map (or from Recent). Replaces
      the short-code field when the agent is already known. ── */
-  .merchant-card { position: relative; background: #FFF; border: 1px solid var(--Border); border-radius: 16px; padding: 16px; display: flex; align-items: center; gap: 12px; }
-  .merchant-card { cursor: pointer; }
+  .merchant-card { position: relative; background: #FFF; border: 1px solid var(--Border); border-radius: 14px; padding: 14px; display: flex; align-items: center; gap: 12px; margin-top: 11px; }
   .merchant-card[hidden] { display: none; }
-  .merchant-avatar { width: 48px; height: 48px; border-radius: 50%; background: #FFE9EA; color: var(--Primary); display: flex; align-items: center; justify-content: center; font-family: 'Switzer', sans-serif; font-size: 15px; font-weight: 700; flex-shrink: 0; }
+  .merchant-avatar { width: 44px; height: 44px; border-radius: 50%; background: #FFE9EA; color: var(--Primary); display: flex; align-items: center; justify-content: center; font-family: 'Switzer', sans-serif; font-size: 14px; font-weight: 700; flex-shrink: 0; }
   .merchant-info { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 3px; }
-  .merchant-name { font-family: 'Switzer', sans-serif; font-size: 16px; font-weight: 700; color: var(--On-Surface); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; padding-right: 56px; }
-  .merchant-sub { font-family: 'Switzer', sans-serif; font-size: 13px; color: var(--On-Surface-Low); }
-  .merchant-badge { position: absolute; top: 10px; right: 12px; background: #EEEEF1; color: #6B6B75; border-radius: 6px; padding: 3px 8px; font-family: 'Switzer', sans-serif; font-size: 10.5px; font-weight: 700; letter-spacing: 0.6px; }
-  .code-entry { display: flex; flex-direction: column; gap: 8px; }
-  .code-entry[hidden] { display: none; }
-  .code-entry + .field-label { margin-top: 6px; }
+  .merchant-name { font-family: 'Switzer', sans-serif; font-size: 15px; font-weight: 700; color: var(--On-Surface); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .merchant-sub { font-family: 'Switzer', sans-serif; font-size: 12.5px; color: var(--On-Surface-Low); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .merchant-badge { position: absolute; top: -11px; right: 14px; background: #EDEDF0; color: var(--On-Surface-Low); font-family: 'Switzer', sans-serif; font-size: 9.5px; font-weight: 700; letter-spacing: 0.6px; padding: 4px 9px; border-radius: 6px; }
 
   .panel { display: none; flex-direction: column; gap: 14px; }
   .panel.active { display: flex; }
@@ -74,21 +70,7 @@
   .msg.warn { color: var(--Primary); }
   .msg.warn svg { stroke: var(--Primary); }
 
-  /* Resolved agent row */
-  /* ── Loading state ── */
-  .loading-chip { display: none; align-items: center; gap: 12px; background: #F5F5F5; border-radius: 12px; padding: 14px; margin-top: 4px; }
-  .loading-chip.show { display: flex; }
-  .loading-spinner { width: 24px; height: 24px; border: 2.5px solid #E0E0E0; border-top-color: var(--Primary); border-radius: 50%; animation: spin 0.8s linear infinite; flex-shrink: 0; }
-  @keyframes spin { to { transform: rotate(360deg); } }
-  .loading-text { font-family: 'Switzer', sans-serif; font-size: 13px; font-weight: 500; color: var(--On-Surface-Low); }
 
-  .agent-chip { display: none; align-items: center; gap: 12px; background: #F2FAF4; border-radius: 12px; padding: 12px 14px; margin-top: 4px; }
-  .agent-chip.show { display: flex; }
-  .agent-chip .tick { width: 24px; height: 24px; border-radius: 50%; border: 1.8px solid var(--Success); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
-  .agent-chip .tick svg { width: 13px; height: 13px; stroke: var(--Success); stroke-width: 3; fill: none; }
-  .agent-chip .info { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px; }
-  .agent-chip .nm { font-family: 'Switzer', sans-serif; font-size: 14px; font-weight: 500; color: var(--On-Surface); }
-  .agent-chip .sub { font-family: 'Switzer', sans-serif; font-size: 11.5px; color: var(--On-Surface-Low); }
 
   /* ── Resolved agent row (QR tab): a tinted row at the top of the amount
      card, same language as the Cash In profile row — avatar, name, short
@@ -222,35 +204,16 @@
 
       <!-- ── Short code panel ── -->
       <div class="panel" id="panelCode">
-        <div class="merchant-card" id="merchantCard" hidden onclick="editCode()" role="button" aria-label="Change agent">
+        <div class="merchant-card" id="merchantCard" hidden>
           <div class="merchant-avatar" id="mcAvatar"></div>
           <div class="merchant-info">
             <span class="merchant-name" id="mcName"></span>
-            <span class="merchant-sub">Short Code: <span id="mcCode"></span></span>
+            <span class="merchant-sub">Merchant Short Code: <span id="mcCode"></span></span>
           </div>
-          <span class="merchant-badge">AGENT</span>
+          <span class="merchant-badge">MERCHANT</span>
         </div>
 
         <div class="form-card">
-          <div class="code-entry" id="codeEntry">
-          <span class="field-label">Merchant Short Code</span>
-          <div class="field">
-            <input id="codeInput" class="strong" type="text" inputmode="numeric" maxlength="6" placeholder="e.g. 323217" oninput="onCodeInput(this)">
-          </div>
-          <div class="msg warn" id="codeMsg">
-            <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 8v5M12 16h.01"/></svg>
-            <span id="codeMsgTxt"></span>
-          </div>
-          <div class="loading-chip" id="codeLoading">
-            <div class="loading-spinner"></div>
-            <span class="loading-text">Looking Up Agent</span>
-          </div>
-          <div class="agent-chip" id="codeChip">
-            <span class="tick"><svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></span>
-            <div class="info"><span class="nm"></span><span class="sub"></span></div>
-          </div>
-          </div>
-
           <span class="field-label">Amount</span>
           <div class="field">
             <input id="amtCode" type="text" inputmode="decimal" placeholder="e.g. 120 ETB" oninput="onAmountInput(this)">
@@ -283,7 +246,7 @@
             </div>
           </div>
           <div class="qr-copy">
-            <span class="qr-sub" id="qrSub">Open the camera and align the agent's QR code within the frame.</span>
+            <span class="qr-sub" id="qrSub">Open the camera and align the merchant's QR code within the frame.</span>
           </div>
         </div>
 
@@ -380,7 +343,7 @@
       <div class="sheet-title">Confirmation</div>
 
       <div class="party-card">
-        <span class="party-badge">AGENT</span>
+        <span class="party-badge">MERCHANT</span>
         <div class="party-avatar" id="cfAvatar"></div>
         <div class="party-info">
           <span class="party-name" id="cfName"></span>
@@ -431,14 +394,10 @@
     $('panelCode').classList.toggle('active', t === 'code');
     $('panelQr').classList.toggle('active', t === 'qr');
     // Each tab resolves its own agent, so clear the other one's result.
-    $('codeChip').classList.remove('show');
     $('merchantCard').hidden = true;
-    $('codeEntry').hidden = false;
     $('qrAgentCard').style.display = 'none';
-    $('codeMsg').classList.remove('show');
     $('qrWindow').classList.remove('confirmed');
     $('qrDetectOverlay').classList.remove('show');
-    if (t === 'code') resolveCode($('codeInput').value.trim());
 
     // Auto-scan after 10 seconds on QR tab
     if (t === 'qr') {
@@ -474,43 +433,6 @@
   }
 
   /* ── Short code ── */
-  function onCodeInput(el) {
-    el.value = el.value.replace(/\D/g, '').slice(0, 6);
-    resolveCode(el.value);
-    updateBtn();
-  }
-
-  let lookupId = 0;
-  function resolveCode(code) {
-    const id = ++lookupId;
-    const chip = $('codeChip'), msg = $('codeMsg'), loading = $('codeLoading');
-    agent = null;
-    if (code.length < 6) { chip.classList.remove('show'); msg.classList.remove('show'); loading.classList.remove('show'); return; }
-
-    // Show loading state
-    loading.classList.add('show');
-    chip.classList.remove('show');
-    msg.classList.remove('show');
-
-    // Simulate lookup delay
-    setTimeout(() => {
-      if (id !== lookupId) return;
-      const a = AGENTS[code];
-      if (a) {
-        loading.classList.remove('show');
-        msg.classList.remove('show');
-        lockAgent(a);
-        $('amtCode').focus();
-      } else {
-        loading.classList.remove('show');
-        chip.classList.remove('show');
-        $('codeMsgTxt').textContent = 'Agent not found. Check the short code and try again.';
-        msg.classList.add('show');
-      }
-      updateBtn();
-    }, 800);
-  }
-
   /* ── QR ── */
   function onQrStageClick() {
     // Once confirmed, the square shows a rescan cue — tapping it starts over.
@@ -540,7 +462,7 @@
     agent = null;
     $('qrAgentCard').style.display = 'none';
     $('qrWindow').classList.remove('confirmed');
-    $('qrSub').textContent = "Open the camera and align the agent's QR code within the frame.";
+    $('qrSub').textContent = "Open the camera and align the merchant's QR code within the frame.";
     updateBtn();
     if (tab === 'qr') {
       startCamera();
@@ -598,41 +520,22 @@
   }
 
   /* ── Recent ── */
-  // A known agent (picked on the map, a favourite, or Recent) shows as the
-  // merchant card instead of the short-code field; unknown codes fall back to
-  // the field so the error can be fixed.
+  // The merchant (picked on the map, a favourite, or Recent) shows as the
+  // merchant card above the amount.
   function useRecent(code) {
     if (tab !== 'code') switchTab('code');
     const a = AGENTS[code];
-    if (a) { lockAgent(a); $('amtCode').focus(); return; }
-    $('merchantCard').hidden = true;
-    $('codeEntry').hidden = false;
-    const el = $('codeInput');
-    el.value = code;
-    resolveCode(code);
-    updateBtn();
+    if (!a) return;
+    lockAgent(a);
     $('amtCode').focus();
   }
 
-  function editCode() {
-    agent = null;
-    $('merchantCard').hidden = true;
-    $('codeEntry').hidden = false;
-    $('codeChip').classList.remove('show');
-    $('codeInput').select();
-    $('codeInput').focus();
-    updateBtn();
-  }
-
   function lockAgent(a) {
-    lookupId++;
     agent = a;
-    $('codeInput').value = a.code;
     $('mcAvatar').textContent = a.abbr;
     $('mcName').textContent = a.name;
     $('mcCode').textContent = a.code;
     $('merchantCard').hidden = false;
-    $('codeEntry').hidden = true;
     updateBtn();
   }
 
@@ -694,7 +597,6 @@
     const data = JSON.parse(sessionStorage.getItem('withdrawData') || '{}');
     const code = String(data.agentCode || (data.agent && data.agent.code) || '');
     if (/^\d{6}$/.test(code)) useRecent(code);
-    else if (data.entry === 'code') { switchTab('code'); $('codeInput').focus(); }
   } catch (e) { /* ignore corrupt state and render the screen as-is */ }
 </script>
 <script src="test-scenarios-data.js"></script>
