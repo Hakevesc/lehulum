@@ -1453,9 +1453,10 @@
   }
 
   // Hint until first use: the bar peeks — a small bulge with "Drag to
-  // withdraw" under it — every few seconds, so it reads as draggable. Stops
-  // for good the moment the user touches the screen or scrolls.
-  let hintTimer = null, hintRaf = 0, hintDone = false;
+  // open" under it — twice, 10 seconds apart, so it reads as draggable.
+  // Stops for good the moment the user touches the screen or scrolls.
+  const HINT_TIMES = 2, HINT_GAP = 10000;
+  let hintTimer = null, hintRaf = 0, hintDone = false, hintCount = 0;
   function stopHint() {
     if (hintDone) return;
     hintDone = true;
@@ -1464,6 +1465,9 @@
   }
   function playHint() {
     if (hintDone || pull || pickerOpen || tapping) return;
+    hintCount++;
+    // next peek is timed from this one's start: 10 s start to start
+    if (hintCount < HINT_TIMES) hintTimer = setTimeout(playHint, HINT_GAP);
     const t0 = performance.now(), DUR = 1500, PEAK = 0.22;   // deep enough that the text clears the location card
     $('dropHint').textContent = 'Drag to open';
     $('dropHint').classList.add('show');
@@ -1474,7 +1478,7 @@
       if (k < 1) { hintRaf = requestAnimationFrame(step); return; }
       drawDrop(0); $('drop').classList.remove('show'); $('island').classList.remove('stretching');
       hideHint();
-      hintTimer = setTimeout(playHint, 2600);
+      if (hintCount >= HINT_TIMES) hintDone = true;
     })(t0);
   }
   ['pointerdown', 'wheel', 'keydown', 'touchstart'].forEach(ev => document.addEventListener(ev, stopHint, { capture: true, passive: true }));
