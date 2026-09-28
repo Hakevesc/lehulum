@@ -397,11 +397,6 @@
   .prov-card.active .prov-radio { border-color: var(--Primary); }
   .prov-card.active .prov-radio::after { background: var(--Primary); }
 
-  /* === Field error === */
-  .field-error { display: none; align-items: center; gap: 6px; padding-left: 4px; }
-  .field-error.show { display: flex; }
-  .field-error svg { width: 14px; height: 14px; stroke: var(--Primary); stroke-width: 2; fill: none; flex-shrink: 0; }
-  .field-error span { color: var(--Primary); font-family: 'Switzer', sans-serif; font-size: 12px; font-weight: 500; }
 
   /* Airtime Amount grid - 3 per row */
   .amount-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
@@ -561,10 +556,6 @@
   .fund-option .radio::after { content: ''; width: 7px; height: 7px; border-radius: 50%; background: transparent; transition: all 0.18s; }
   .fund-option.selected .radio { border-color: var(--Primary); border-width: 2px; }
   .fund-option.selected .radio::after { background: var(--Primary); }
-  .msg { display: none; font-family: 'Switzer', sans-serif; font-size: 12.5px; font-weight: 600; margin-top: -2px; }
-  .msg.show { display: block; }
-  .msg.warn { color: #E09B0B; background: #FDF6E7; border-radius: 8px; padding: 10px 12px; }
-  .msg.err { color: var(--Primary); }
   .custom-amount-input.warn { border-color: #E09B0B; color: #E09B0B; }
   .custom-amount-input.warn:focus { border-color: #E09B0B; }
   .account-select-label { color: var(--On-Surface-Low); font-family: 'Switzer', sans-serif; font-size: 11.5px; font-weight: 600; letter-spacing: 0.4px; text-transform: uppercase; }
@@ -1492,6 +1483,7 @@
   .pay-btn-standard.blue { background: #2563EB; box-shadow: 0 4px 16px rgba(37,99,235,0.28); }
   .pay-btn-standard.blue:hover { background: #1D4ED8; box-shadow: 0 6px 20px rgba(37,99,235,0.35); }
 </style>
+<link rel="stylesheet" href="styles/field-error.css">
 <link rel="stylesheet" href="styles/device.css">
 </head>
 <body>
@@ -1653,8 +1645,8 @@
         <span class="verified-name" id="verifiedNameText">Abudlhafiz Shikur</span>
       </div>
       <div class="field-error" id="fieldError">
-        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
-        <span>Enter a valid 9-digit number starting with 9 or 7</span>
+        <span class="fe-ic"><svg viewBox="0 0 24 24"><path d="M17 7 7 17M7 7l10 10"/></svg></span>
+        <span class="fe-txt">Enter a valid 9-digit number starting with 9 or 7</span>
       </div>
     </div>
 
@@ -1666,7 +1658,7 @@
 
     
     <!-- Amount validation -->
-    <div class="msg" id="msg"></div>
+    <div class="field-error" id="msg"><span class="fe-ic"><svg viewBox="0 0 24 24"><path d="M17 7 7 17M7 7l10 10"/></svg></span><span class="fe-txt"></span></div>
 
     <!-- Account selection (funding selector new style) -->
     <div class="funding-selector" id="accountSelect">
@@ -2423,7 +2415,7 @@
     msg.classList.toggle('warn', kind === 'warn');
     msg.classList.toggle('err', kind === 'err');
     msg.classList.toggle('show', !!kind);
-    if (text) msg.textContent = text;
+    if (text) msg.querySelector('.fe-txt').textContent = text;
   }
 
   // Amount currently in play, whatever the purchase type

@@ -132,10 +132,6 @@ window.TEST_SCENARIOS_DATA = {
      "Agency Banking Cash In"
     ],
     [
-     "Cash In - Agent Details.html",
-     "Agent Details"
-    ],
-    [
      "Cash In - Agent Nearby.html",
      "Agent Nearby"
     ],
@@ -845,7 +841,6 @@ window.TEST_SCENARIOS_DATA = {
   "Bill Payment_Water Town.html": "Bill Payment",
   "Bill Payment_Water.html": "Bill Payment",
   "Buy Ticket.html": "Home & Services",
-  "Cash In - Agent Details.html": "Cash In",
   "Cash In - Agent Nearby.html": "Cash In",
   "Cash In - Agent Unavailable.html": "Cash In",
   "Cash In - Enter PIN.html": "Cash In",

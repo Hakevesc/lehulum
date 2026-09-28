@@ -484,21 +484,6 @@
   .pin-box.error { border-color: var(--Primary); animation: pinShake 0.35s ease; }
   @keyframes pinShake { 0%,100%{transform:translateX(0)} 25%{transform:translateX(-5px)} 75%{transform:translateX(5px)} }
 
-  /* Validation Text */
-  .validation-text {
-    color: var(--Primary);
-    font-family: 'Switzer', sans-serif;
-    font-size: 12px;
-    font-weight: 500;
-    text-align: center;
-    min-height: 18px;
-    margin-top: 8px;
-    margin-bottom: 4px;
-    visibility: hidden;
-  }
-  .validation-text.show {
-    visibility: visible;
-  }
 
   /* Footer Links */
   .footer-links {
@@ -554,6 +539,7 @@
     stroke-width: 2px;
   }
 </style>
+<link rel="stylesheet" href="styles/field-error.css">
 <link rel="stylesheet" href="styles/device.css">
 </head>
 <body>
@@ -643,7 +629,7 @@
           <div class="pin-box" id="pinBox2"></div>
           <div class="pin-box" id="pinBox3"></div>
         </div>
-        <div class="validation-text" id="validationText"></div>
+        <div class="field-error" id="validationText"><span class="fe-ic"><svg viewBox="0 0 24 24"><path d="M17 7 7 17M7 7l10 10"/></svg></span><span class="fe-txt"></span></div>
       </div>
 
       <!-- Improved Keypad -->
@@ -786,11 +772,9 @@
     const remaining = 3 - attempts;
     const valEl = document.getElementById('validationText');
     if (remaining === 1) {
-      valEl.textContent = 'Incorrect PIN. Last attempt before lock.';
-      valEl.style.color = '#F59E0B';
+      valEl.querySelector('.fe-txt').textContent = 'Incorrect PIN. Last attempt before lock.';
     } else {
-      valEl.textContent = `Incorrect PIN. ${remaining} attempts remaining.`;
-      valEl.style.color = 'var(--Primary)';
+      valEl.querySelector('.fe-txt').textContent = `Incorrect PIN. ${remaining} attempts remaining.`;
     }
     valEl.classList.add('show');
 

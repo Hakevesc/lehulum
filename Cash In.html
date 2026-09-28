@@ -35,11 +35,21 @@
   .scroll::-webkit-scrollbar { width: 0; }
 
   /* ── Method rows (clean full-width buttons) ── */
-  .method-list { display: flex; flex-direction: column; gap: 12px; }
-  .method-row { display: flex; align-items: center; justify-content: space-between; gap: 12px; background: #FFF; border-radius: 16px; padding: 18px; box-shadow: 0 2px 8px rgba(0,0,0,0.04); cursor: pointer; transition: box-shadow 0.2s, transform 0.15s; }
-  .method-row:hover { box-shadow: 0 4px 14px rgba(0,0,0,0.08); transform: translateY(-1px); }
-  .method-row:active { transform: scale(0.99); }
-  .method-name { font-family: 'Switzer', sans-serif; font-size: 16px; font-weight: 700; color: var(--On-Surface); letter-spacing: 0.2px; }
+  /* ── Cash In services, same buttons as Withdraw Cash: At Agent and
+     Agent Locator side by side, Scan QR full width below ── */
+  .svc-bar { position: relative; padding: 0; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+  .svc { position: relative; display: flex; flex-direction: column; align-items: flex-start; gap: 10px; padding: 14px; background: #FFF; border: 1.5px solid var(--Border); border-radius: 14px; cursor: pointer; transition: box-shadow 0.2s, transform 0.15s; min-width: 0; }
+  .svc:hover { border-color: #D8D8DE; background: #FAFAFB; }
+  .svc:active { transform: scale(0.99); }
+  .svc-ic { width: 42px; height: 42px; border-radius: 12px; background: var(--Primary); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+  .svc-ic svg { width: 22px; height: 22px; stroke: #FFF; stroke-width: 1.9; fill: none; }
+  .svc-name { font-family: 'Switzer', sans-serif; font-size: 16px; font-weight: 700; letter-spacing: 0.2px; color: var(--On-Surface); }
+  .svc > .chev { position: absolute; top: 14px; right: 12px; }
+  .svc-wide { grid-column: 1 / -1; flex-direction: row; align-items: center; gap: 12px; }
+  .svc-wide .svc-ic { background: var(--On-Surface); }
+  .svc-wide-txt { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px; }
+  .svc-sub { font-family: 'Switzer', sans-serif; font-size: 12px; color: var(--On-Surface-Low); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .svc-wide > .chev { position: static; }
   .chev { width: 18px; height: 18px; stroke: var(--Primary); stroke-width: 2.4; fill: none; flex-shrink: 0; }
 
   /* ── Section headers ── */
@@ -97,14 +107,6 @@
 
     <div class="scroll">
 
-      <!-- Deposit methods -->
-      <div class="method-list">
-        <div class="method-row" onclick="window.location.href='Cash In - Agent Nearby.html'">
-          <span class="method-name">Agent</span>
-          <svg class="chev" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
-        </div>
-      </div>
-
       <!-- Favorites -->
       <div class="favorites-section">
         <div class="section-header">
@@ -128,6 +130,34 @@
             <div class="favorite-avatar"><img src="assets/avatars/avatar-4.png" alt="Bole Mart"></div>
             <span class="favorite-name">Bole Mart</span>
           </div>
+        </div>
+      </div>
+
+      <!-- Cash In services (between Favorites and Frequents): at agent and agent locator side by side, Scan QR row below -->
+      <div class="svc-bar">
+        <div class="svc" onclick="selectMethod('code')">
+          <div class="svc-ic">
+            <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7V5a2 2 0 0 1 2-2h2"/><path d="M17 3h2a2 2 0 0 1 2 2v2"/><path d="M21 17v2a2 2 0 0 1-2 2h-2"/><path d="M7 21H5a2 2 0 0 1-2-2v-2"/><circle cx="12" cy="10" r="3"/><path d="M7 17.5c1-2 2.8-3 5-3s4 1 5 3"/></svg>
+          </div>
+          <span class="svc-name">At Agent</span>
+          <svg class="chev" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+        </div>
+        <div class="svc" onclick="window.location.href='Cash In - Agent Nearby.html'">
+          <div class="svc-ic">
+            <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s7-5.7 7-11a7 7 0 1 0-14 0c0 5.3 7 11 7 11z"/><circle cx="12" cy="10" r="2.5"/></svg>
+          </div>
+          <span class="svc-name">Agent Locator</span>
+          <svg class="chev" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+        </div>
+        <div class="svc svc-wide" onclick="scanQr()" role="button" aria-label="Scan QR, cash in at merchant location">
+          <div class="svc-ic">
+            <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="4" width="6" height="6" rx="1"/><rect x="14" y="4" width="6" height="6" rx="1"/><rect x="4" y="14" width="6" height="6" rx="1"/><path d="M14 14h2M20 14v2M14 20h6M17 17v3"/></svg>
+          </div>
+          <div class="svc-wide-txt">
+            <span class="svc-name">Scan QR</span>
+            <span class="svc-sub">Cash in at merchant location</span>
+          </div>
+          <svg class="chev" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
         </div>
       </div>
 
@@ -199,6 +229,14 @@
   function selectMethod(m) {
     sessionStorage.setItem('cashInData', JSON.stringify({
       method: m, methodLabel: m === 'code' ? 'Merchant Short Code' : 'Agent Locator', time: stamp()
+    }));
+    window.location.href = 'Cash In - Merchant Short Code.html';
+  }
+
+  // Scan QR: straight to the QR step of Cash In, no agent preselected.
+  function scanQr() {
+    sessionStorage.setItem('cashInData', JSON.stringify({
+      method: 'code', methodLabel: 'Show QR to Agent', entry: 'qr', time: stamp()
     }));
     window.location.href = 'Cash In - Merchant Short Code.html';
   }

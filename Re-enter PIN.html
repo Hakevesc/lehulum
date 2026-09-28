@@ -307,16 +307,6 @@
       pointer-events: none;
     }
 
-    .error-text {
-      color: var(--Primary);
-      font-family: 'Switzer', sans-serif;
-      font-size: 13px;
-      font-weight: 500;
-      text-align: center;
-      min-height: 20px;
-      margin-bottom: 4px;
-    }
-
     .footer-links {
       display: flex;
       align-items: center;
@@ -356,6 +346,7 @@
       stroke-width: 2px;
     }
   </style>
+<link rel="stylesheet" href="styles/field-error.css">
 <link rel="stylesheet" href="styles/device.css">
 </head>
 
@@ -407,7 +398,7 @@
 
         <p class="instruction" id="instructionText">Re-enter your PIN to confirm</p>
 
-        <div class="error-text" id="errorText"></div>
+        <div class="field-error" id="errorText"><span class="fe-ic"><svg viewBox="0 0 24 24"><path d="M17 7 7 17M7 7l10 10"/></svg></span><span class="fe-txt"></span></div>
 
         <div class="pin-container" id="pinContainer">
           <div class="pin-box" data-index="0"><div class="dot"></div></div>
@@ -481,7 +472,7 @@
         pin += value;
         pinInput.value = pin;
         updatePinDisplay();
-        errorText.textContent = '';
+        errorText.classList.remove('show');
       }
     }
 
@@ -489,18 +480,19 @@
       pin = pin.slice(0, -1);
       pinInput.value = pin;
       updatePinDisplay();
-      errorText.textContent = '';
+      errorText.classList.remove('show');
     }
 
     function showError() {
       pinBoxes.forEach(box => box.classList.add('error'));
-      errorText.textContent = 'PINs do not match. Please try again';
+      errorText.querySelector('.fe-txt').textContent = 'PINs do not match. Please try again';
+      errorText.classList.add('show');
       instructionText.style.color = 'var(--Primary)';
       setTimeout(() => {
         pin = '';
         pinInput.value = '';
         pinBoxes.forEach(box => box.classList.remove('error'));
-        errorText.textContent = '';
+        errorText.classList.remove('show');
         instructionText.style.color = 'var(--On-Surface)';
         updatePinDisplay();
       }, 1500);

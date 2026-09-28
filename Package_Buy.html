@@ -63,10 +63,6 @@
   .number-value.placeholder { color: #C5C5CB; font-weight: 500; letter-spacing: 0.5px; }
   .number-caret { width: 2px; height: 28px; background: var(--Primary); animation: caret-blink 1s step-end infinite; }
   @keyframes caret-blink { 0%, 49% { opacity: 1; } 50%, 100% { opacity: 0; } }
-  .field-error { display: none; align-items: center; justify-content: center; gap: 6px; }
-  .field-error.show { display: flex; }
-  .field-error svg { width: 14px; height: 14px; stroke: var(--Primary); stroke-width: 2; fill: none; }
-  .field-error span { color: var(--Primary); font-family: 'Switzer', sans-serif; font-size: 12px; font-weight: 500; }
   .contacts-btn { align-self: center; display: flex; align-items: center; gap: 8px; background: var(--On-Primary); border: none; border-radius: 12px; padding: 10px 18px; cursor: pointer; transition: all 0.2s; }
   .contacts-btn:hover { background: #FFE0E2; }
   .contacts-btn svg { width: 18px; height: 18px; stroke: var(--Primary); stroke-width: 2; fill: none; }
@@ -99,6 +95,7 @@
   .sheet-item-name { font-family: 'Switzer', sans-serif; font-size: 14px; font-weight: 600; color: var(--On-Surface); }
   .sheet-item-sub { font-family: 'Switzer', sans-serif; font-size: 12px; color: var(--On-Surface-Low); margin-top: 1px; }
 </style>
+<link rel="stylesheet" href="styles/field-error.css">
 <link rel="stylesheet" href="styles/device.css">
 </head>
 <body>
@@ -156,8 +153,8 @@
         <span class="number-caret"></span>
       </div>
       <div class="field-error" id="fieldError">
-        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
-        <span>Enter a valid 10-digit number starting with 09 or 07</span>
+        <span class="fe-ic"><svg viewBox="0 0 24 24"><path d="M17 7 7 17M7 7l10 10"/></svg></span>
+        <span class="fe-txt">Enter a valid 10-digit number starting with 09 or 07</span>
       </div>
       <button class="contacts-btn" onclick="openContacts()">
         <svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>

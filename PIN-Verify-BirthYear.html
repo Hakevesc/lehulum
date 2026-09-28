@@ -121,14 +121,6 @@
     80%{transform:translateX(4px)}
   }
 
-  /* Validation text — always reserves a line height */
-  .validation-text {
-    color: var(--Primary); font-family: 'Switzer', sans-serif;
-    font-size: 12px; font-weight: 500; text-align: center;
-    min-height: 18px; margin-top: 10px; margin-bottom: 4px;
-    visibility: hidden;
-  }
-  .validation-text.show { visibility: visible; }
 
   /* Continue button */
   .action-btn {
@@ -161,6 +153,7 @@
   }
   .verify-alt:hover { color: var(--Primary); }
 </style>
+<link rel="stylesheet" href="styles/field-error.css">
 <link rel="stylesheet" href="styles/device.css">
 </head>
 <body>
@@ -201,7 +194,7 @@
         <div class="pin-box" id="box3"><div class="dot"></div></div>
       </div>
 
-      <div class="validation-text" id="validationText">Birth year doesn't match our records.</div>
+      <div class="field-error" id="validationText"><span class="fe-ic"><svg viewBox="0 0 24 24"><path d="M17 7 7 17M7 7l10 10"/></svg></span><span class="fe-txt">Birth year doesn't match our records.</span></div>
 
       <div class="keypad">
         <button class="key" onclick="pressKey('1')">1</button>
@@ -282,7 +275,7 @@
 
       // After 3 failed attempts, escalate to the security question
       if (attempts >= MAX_ATTEMPTS) {
-        validationText.textContent = "Too many attempts. Verifying another way…";
+        validationText.querySelector('.fe-txt').textContent = "Too many attempts. Verifying another way…";
         continueBtn.disabled = true;
         setTimeout(() => { window.location.href = 'Forgot-PIN-SQ.html'; }, 1500);
         return;

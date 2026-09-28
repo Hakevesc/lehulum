@@ -63,10 +63,6 @@
   .pin-box .dot { display: none; width: 11px; height: 11px; border-radius: 50%; background: var(--On-Surface); }
   .pin-box.filled .dot { display: block; }
   .pin-box.filled .caret { display: none; }
-/* ── PIN error message ── */
-  .pin-error { display: none; align-items: center; justify-content: center; gap: 6px; margin-top: 10px; font-family: 'Switzer', sans-serif; font-size: 12.5px; color: var(--Primary); }
-  .pin-error.show { display: flex; }
-  .pin-error svg { width: 14px; height: 14px; stroke: var(--Primary); stroke-width: 2; fill: none; }
 
   /* ── Keypad ── */
   .keypad { background: #FFF; border-radius: 20px; padding: 14px 10px; margin-top: auto; display: grid; grid-template-columns: repeat(3, 1fr); box-shadow: 0 2px 8px rgba(0,0,0,0.04); }
@@ -91,6 +87,7 @@
     .pay-btn { margin-top: 12px; }
   }
 </style>
+<link rel="stylesheet" href="styles/field-error.css">
 <link rel="stylesheet" href="styles/device.css">
 </head>
 <body>
@@ -136,9 +133,9 @@
         <div class="pin-box"><span class="caret"></span><span class="dot"></span></div>
       </div>
 
-      <div class="pin-error" id="pinError">
-        <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
-        <span id="pinErrorTxt">Incorrect PIN. Please try again.</span>
+      <div class="field-error" id="pinError">
+        <span class="fe-ic"><svg viewBox="0 0 24 24"><path d="M17 7 7 17M7 7l10 10"/></svg></span>
+        <span class="fe-txt" id="pinErrorTxt">Incorrect PIN. Please try again.</span>
       </div>
 
       <div class="keypad">
@@ -205,7 +202,7 @@
   function goBack() {
     // The short-code screen captures code and amount together, so it owns the back step.
     if (data.method === 'code') window.location.href = 'Cash In - Merchant Short Code.html';
-    else if (data.method === 'nearby') window.location.href = 'Cash In - Agent Details.html';
+    else if (data.method === 'nearby') window.location.href = 'Cash In - Agent Nearby.html';
     else window.location.href = 'Cash In - Agent Nearby.html';
   }
 

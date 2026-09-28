@@ -142,12 +142,6 @@
   .clear-btn svg { width: 16px; height: 16px; stroke: currentColor; stroke-width: 2; fill: none; }
   .clear-btn.show { display: flex; align-items: center; }
 
-  .error-text {
-    color: var(--Primary); font-family: 'Switzer', sans-serif;
-    font-size: 12px; font-weight: 500; margin-top: 6px;
-    visibility: hidden; min-height: 18px;
-  }
-  .error-text.show { visibility: visible; }
 
   /* Hint */
   .hint-text {
@@ -177,6 +171,7 @@
     40%{transform:translateX(6px)} 60%{transform:translateX(-4px)} 80%{transform:translateX(4px)}
   }
 </style>
+<link rel="stylesheet" href="styles/field-error.css">
 <link rel="stylesheet" href="styles/device.css">
 </head>
 <body>
@@ -238,7 +233,7 @@
             <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>
           </button>
         </div>
-        <div class="error-text" id="errorText">Incorrect answer. Please try again.</div>
+        <div class="field-error" id="errorText"><span class="fe-ic"><svg viewBox="0 0 24 24"><path d="M17 7 7 17M7 7l10 10"/></svg></span><span class="fe-txt">Incorrect answer. Please try again.</span></div>
       </div>
 
       <p class="hint-text">Your answer is case-insensitive. Make sure it matches what you set during registration.</p>
@@ -290,7 +285,7 @@
 
       // After 3 failed answers, send the user to support
       if (attempts >= MAX_ATTEMPTS) {
-        errorText.textContent = 'Too many failed attempts. Redirecting to support…';
+        errorText.querySelector('.fe-txt').textContent = 'Too many failed attempts. Redirecting to support…';
         answerInput.disabled = true;
         continueBtn.disabled = true;
         setTimeout(() => { window.location.href = 'Forgot-PIN.html'; }, 1500);

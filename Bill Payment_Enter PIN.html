@@ -66,10 +66,6 @@
   .pin-box.filled .dot { display: block; }
   .pin-box.filled .caret { display: none; }
 
-  .pin-error { display: none; align-items: center; justify-content: center; gap: 7px; margin-top: 12px; }
-  .pin-error.show { display: flex; }
-  .pin-error svg { width: 15px; height: 15px; stroke: var(--Primary); stroke-width: 2.2; fill: none; flex-shrink: 0; }
-  .pin-error span { font-family: 'Switzer', sans-serif; font-size: 12.5px; font-weight: 600; color: var(--Primary); }
 
   /* Off-screen field keeps the hardware keyboard working on a real device */
   .pin-input { position: absolute; opacity: 0; pointer-events: none; height: 0; width: 0; }
@@ -100,6 +96,7 @@
     .pay-btn { margin-top: 12px; }
   }
 </style>
+<link rel="stylesheet" href="styles/field-error.css">
 <link rel="stylesheet" href="styles/device.css">
 </head>
 <body>
@@ -145,9 +142,9 @@
         <div class="pin-box"><span class="caret"></span><span class="dot"></span></div>
       </div>
 
-      <div class="pin-error" id="pinError">
-        <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 8v5M12 16h.01"/></svg>
-        <span id="pinErrorText">Incorrect PIN. 2 attempts left.</span>
+      <div class="field-error" id="pinError">
+        <span class="fe-ic"><svg viewBox="0 0 24 24"><path d="M17 7 7 17M7 7l10 10"/></svg></span>
+        <span class="fe-txt" id="pinErrorText">Incorrect PIN. 2 attempts left.</span>
       </div>
 
       <input type="password" class="pin-input" id="pinInput" maxlength="4" inputmode="numeric">

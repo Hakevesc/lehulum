@@ -480,8 +480,10 @@
   .ap-qr svg { width: 19px; height: 19px; stroke: currentColor; stroke-width: 1.9; fill: none; }
   .ap-code input { flex: 1; min-width: 0; border: none; outline: none; background: transparent; font-family: 'Switzer', sans-serif; font-size: 14px; color: var(--On-Surface); letter-spacing: 0.3px; }
   .ap-code input::placeholder { color: #A0A0AA; letter-spacing: 0; }
-  .ap-enter { height: 40px; padding: 0 16px; border: none; border-radius: 10px; background: var(--Primary); color: #FFF; font-family: 'Switzer', sans-serif; font-size: 13.5px; font-weight: 600; cursor: pointer; flex-shrink: 0; transition: background 0.2s, color 0.2s; }
-  .ap-enter:disabled { background: #E0E0E0; color: var(--On-Surface-Low); cursor: not-allowed; }   /* silver like the other inactive buttons */
+  /* Continue sits under the short-code field, full width like the app's other main buttons */
+  .ap-continue { width: 100%; height: 52px; margin-top: 12px; border: none; border-radius: 14px; background: var(--Primary); color: #FFF; font-family: 'Poppins', sans-serif; font-size: 15px; font-weight: 500; cursor: pointer; box-shadow: 0 4px 16px rgba(254,53,61,0.25); transition: background 0.2s, color 0.2s, box-shadow 0.2s; }
+  .ap-continue:active { transform: scale(0.98); }
+  .ap-continue:disabled { background: #E0E0E0; color: var(--On-Surface-Low); box-shadow: none; cursor: not-allowed; }   /* silver like the other inactive buttons */
 
   .ap-actions { display: flex; gap: 10px; }
   .as-action-btn { flex: 1; height: 48px; border-radius: 12px; cursor: pointer; font-family: 'Switzer', sans-serif; font-size: 13.5px; font-weight: 600; display: flex; align-items: center; justify-content: center; gap: 8px; transition: all 0.2s; }
@@ -999,9 +1001,9 @@
         <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7V5a2 2 0 0 1 2-2h2"/><path d="M17 3h2a2 2 0 0 1 2 2v2"/><path d="M21 17v2a2 2 0 0 1-2 2h-2"/><path d="M7 21H5a2 2 0 0 1-2-2v-2"/><rect x="7" y="7" width="4" height="4"/><rect x="13" y="13" width="4" height="4"/><path d="M13 7h4v2M7 15v2h2"/></svg>
       </button>
       <input id="apCode" type="text" inputmode="numeric" maxlength="6" placeholder="Enter short code" autocomplete="off" oninput="onCodeInput(this)" onkeydown="if(event.key==='Enter')submitCode()">
-      <button class="ap-enter" id="apEnter" onclick="submitCode()" disabled>Continue</button>
     </div>
     <div class="field-error" id="apMsg"><span class="fe-ic"><svg viewBox="0 0 24 24"><path d="M17 7 7 17M7 7l10 10"/></svg></span><span class="fe-txt">Short code must be 6 digits.</span></div>
+    <button class="ap-continue" id="apEnter" onclick="submitCode()" disabled>Continue</button>
     </div>
   </div>
 

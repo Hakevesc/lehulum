@@ -9,6 +9,8 @@
     .scroll-area::-webkit-scrollbar { display: none; }
     .scroll-area { -ms-overflow-style: none; scrollbar-width: none; }
   </style>
+  <link href="https://api.fontshare.com/v2/css?f[]=switzer@400,500,600,700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles/field-error.css" />
 </head>
 <body style="margin:0;padding:0;font-family:'Barlow',sans-serif;background: transparent;display:flex;justify-content:center;align-items:center;min-height:100vh;padding:20px;box-sizing:border-box;">
 
@@ -67,7 +69,8 @@
         <div style="padding:24px 22px 28px;width:100%;background:rgba(255,255,255,0.10);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border:1px solid rgba(255,255,255,0.18);border-radius:16px;box-sizing:border-box;">
           <h2 style="font-size:20px;font-weight:700;color:#fff;line-height:1.35;margin:0 0 22px 0;font-family:'Barlow',sans-serif;">Enter your Fayda Number<br>(FAN or FCN)</h2>
           <input id="fanInput" type="text" placeholder="Enter Your FAN or FCN" oninput="handleFanInput(this)" style="width:100%;padding:14px 16px;border:1.5px solid rgba(255,255,255,0.25);border-radius:10px;background:rgba(255,255,255,0.92);font-family:'Barlow',sans-serif;font-size:14px;font-weight:500;color:#1a1a1a;outline:none;margin-bottom:12px;box-sizing:border-box;" />
-          <div id="fanError" style="font-size:12.5px;font-weight:600;color:#e74c3c;margin-bottom:8px;min-height:18px;"></div>
+          <div class="field-error" id="fanError" style="margin:0 0 8px;"><span class="fe-ic"><svg viewBox="0 0 24 24"><path d="M17 7 7 17M7 7l10 10"/></svg></span><span class="fe-txt"></span></div>
+          <div id="fanValid" style="font-size:12.5px;font-weight:600;margin-bottom:8px;min-height:18px;"></div>
           <div onclick="showHelp()" style="display:flex;align-items:center;gap:6px;margin-bottom:22px;cursor:pointer;width:fit-content;">
             <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:16px;height:16px;stroke:rgba(255,255,255,0.75);">
               <circle cx="12" cy="12" r="10"></circle>
@@ -105,7 +108,7 @@
             <input class="otp-line-box" type="text" inputmode="numeric" maxlength="1" style="width:36px;height:44px;border:none;border-bottom:2px solid rgba(255,255,255,0.45);background:transparent;font-family:'Barlow',sans-serif;font-size:22px;font-weight:700;color:#fff;text-align:center;outline:none;caret-color:#2FC56D;box-sizing:border-box;" />
             <input class="otp-line-box" type="text" inputmode="numeric" maxlength="1" style="width:36px;height:44px;border:none;border-bottom:2px solid rgba(255,255,255,0.45);background:transparent;font-family:'Barlow',sans-serif;font-size:22px;font-weight:700;color:#fff;text-align:center;outline:none;caret-color:#2FC56D;box-sizing:border-box;" />
           </div>
-          <div id="fanOtpError" style="font-size:12px;font-weight:600;color:#e74c3c;text-align:center;min-height:16px;margin-bottom:6px;"></div>
+          <div class="field-error" id="fanOtpError" style="margin:0 0 6px;"><span class="fe-ic"><svg viewBox="0 0 24 24"><path d="M17 7 7 17M7 7l10 10"/></svg></span><span class="fe-txt"></span></div>
           <p style="font-size:12px;color:rgba(255,255,255,0.60);text-align:center;margin:0 0 20px 0;line-height:1.5;font-family:'Barlow',sans-serif;">
             Code sent to: <strong id="maskedPhone" style="color:rgba(255,255,255,0.85);">XXXXXX9403</strong>
           </p>
@@ -180,7 +183,7 @@
           </div>
         </div>
 
-        <div id="consentError" style="font-size:12px;font-weight:600;color:#e74c3c;text-align:center;min-height:18px;"></div>
+        <div class="field-error" id="consentError"><span class="fe-ic"><svg viewBox="0 0 24 24"><path d="M17 7 7 17M7 7l10 10"/></svg></span><span class="fe-txt"></span></div>
 
         <!-- Action Buttons -->
         <div style="display:flex;gap:12px;width:100%;">
@@ -255,23 +258,26 @@
   /* Back to the Link Fayda screen */
   function goBack() { window.location.href = 'Link Fayda_SignUp.html'; }
 
+  /* Inline field error (styles/field-error.css): set text, show when non-empty */
+  function setFieldError(id, m) { const e = document.getElementById(id); e.querySelector('.fe-txt').textContent = m || ''; e.classList.toggle('show', !!m); }
+
   /* ── FAN ── */
   function showFanError(msg) {
     const el=document.getElementById('fanError'), inp=document.getElementById('fanInput');
-    el.textContent = msg;
+    setFieldError('fanError', msg);
     if(msg){ inp.style.borderColor='#e74c3c'; inp.style.boxShadow='0 0 0 3px rgba(231,76,60,0.15)'; inp.style.color='#e74c3c'; }
     else{ inp.style.borderColor=''; inp.style.boxShadow=''; inp.style.color='#1a1a1a'; }
   }
   function handleFanInput(input) {
-    const btn=document.getElementById('sendBtn'), err=document.getElementById('fanError');
+    const btn=document.getElementById('sendBtn'), valid=document.getElementById('fanValid');
     let d=input.value.replace(/\D/g,''); if(d.length>16) d=d.slice(0,16);
     const m=d.match(/\d{1,4}/g); input.value=m?m.join(' '):'';
-    err.textContent=''; input.style.borderColor=''; input.style.boxShadow=''; input.style.color='#1a1a1a';
+    setFieldError('fanError', ''); valid.textContent=''; input.style.borderColor=''; input.style.boxShadow=''; input.style.color='#1a1a1a';
     const has=d.length>=1; btn.disabled=!has;
     if(has){ btn.style.background='#1a5f72'; btn.style.color='#fff'; btn.style.cursor='pointer'; btn.style.boxShadow='0 6px 20px rgba(0,0,0,0.20)'; }
     else{ btn.style.background='#1e4f60'; btn.style.color='rgba(255,255,255,0.45)'; btn.style.cursor='not-allowed'; btn.style.boxShadow='none'; }
-    if(d.length===12){ err.innerHTML='<span style="color:#2FC56D;font-weight:700;">✓ Valid 12-digit FAN</span>'; input.style.borderColor='#2FC56D'; input.style.boxShadow='0 0 0 3px rgba(47,197,109,0.15)'; }
-    else if(d.length===16){ err.innerHTML='<span style="color:#2FC56D;font-weight:700;">✓ Valid 16-digit FCN</span>'; input.style.borderColor='#2FC56D'; input.style.boxShadow='0 0 0 3px rgba(47,197,109,0.15)'; }
+    if(d.length===12){ valid.innerHTML='<span style="color:#2FC56D;font-weight:700;">✓ Valid 12-digit FAN</span>'; input.style.borderColor='#2FC56D'; input.style.boxShadow='0 0 0 3px rgba(47,197,109,0.15)'; }
+    else if(d.length===16){ valid.innerHTML='<span style="color:#2FC56D;font-weight:700;">✓ Valid 16-digit FCN</span>'; input.style.borderColor='#2FC56D'; input.style.boxShadow='0 0 0 3px rgba(47,197,109,0.15)'; }
   }
   function goToOtp() {
     const inp=document.getElementById('fanInput'), v=inp.value.trim(), d=v.replace(/\D/g,'');
@@ -289,7 +295,7 @@
 
   /* ── OTP ── */
   const lineBoxes=Array.from(document.querySelectorAll('.otp-line-box')); let fanOtpExpired=false;
-  function showFanOtpError(m){ document.getElementById('fanOtpError').textContent=m; lineBoxes.forEach(b=>{ b.style.borderColor=m?'#e74c3c':''; b.style.color=m?'#e74c3c':'#fff'; }); }
+  function showFanOtpError(m){ setFieldError('fanOtpError', m); lineBoxes.forEach(b=>{ b.style.borderColor=m?'#e74c3c':''; b.style.color=m?'#e74c3c':'#fff'; }); }
   lineBoxes.forEach((b,i)=>{
     b.addEventListener('input',e=>{
       const v=e.target.value.replace(/\D/g,''); e.target.value=v.slice(0,1);
@@ -334,7 +340,7 @@
         clearInterval(consentTimerInterval);
         document.getElementById('consentTimer').textContent = '00:00';
         document.getElementById('consentTimer').style.color = '#e74c3c';
-        document.getElementById('consentError').textContent = 'Session expired. Please go back and try again.';
+        setFieldError('consentError', 'Session expired. Please go back and try again.');
       }
     }, 1000);
   }
@@ -352,7 +358,7 @@
       document.getElementById('fanInput').value = '';
       handleFanInput(document.getElementById('fanInput'));
       clearInterval(consentTimerInterval);
-      document.getElementById('consentError').textContent = '';
+      setFieldError('consentError', '');
     }
   }
   function acceptConsent() {
@@ -370,7 +376,7 @@
     clearOtp();
     clearInterval(timerInterval);
     clearInterval(consentTimerInterval);
-    document.getElementById('consentError').textContent = '';
+    setFieldError('consentError', '');
     document.getElementById('consentTimer').style.color = '#e87722';
     document.getElementById('emailToggle').checked = false;
     document.getElementById('emailToggleThumb').style.transform = 'translateX(0)';
