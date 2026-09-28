@@ -498,7 +498,8 @@
   /* ── Favorites & Frequents island: black bar under the title. Dragging the
      agent card up drops a blob out of it, then opens the Withdraw At picker. ── */
   .island-row { display: flex; justify-content: center; padding: 0 16px 10px; background: var(--Background); flex-shrink: 0; position: relative; z-index: 60; }
-  .island { width: 100%; height: 56px; border: none; border-radius: 16px; background: #1C1C21; color: #FFF; display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 0 10px 0 18px; cursor: pointer; box-shadow: 0 4px 14px rgba(15,15,20,0.25); font-family: 'Switzer', sans-serif; font-size: 15px; }
+  .island { width: 100%; height: 56px; border: none; border-radius: 16px; background: #1C1C21; color: #FFF; display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 0 10px 0 18px; cursor: grab; touch-action: none; user-select: none; -webkit-user-select: none; box-shadow: 0 4px 14px rgba(15,15,20,0.25); font-family: 'Switzer', sans-serif; font-size: 15px; }
+  .island.grabbing { cursor: grabbing; }
   .island-lbl { font-weight: 400; letter-spacing: 0.1px; }
   .island-lbl b { font-weight: 700; }
   .island-avs { display: flex; padding-left: 8px; }
@@ -1368,7 +1369,7 @@
   function retractDrop(from) {
     const t0 = performance.now();
     (function step(now) {
-      if (drag) return;
+      if (drag || pull) return;
       const k = Math.min(1, (now - t0) / 260);
       drawDrop(from * (1 - k) * (1 - k));
       if (k < 1) requestAnimationFrame(step);
@@ -1497,6 +1498,48 @@
   panel.addEventListener('pointercancel', endDrag);
   panel.addEventListener('click', e => {
     if (swallowClick) { e.stopPropagation(); e.preventDefault(); swallowClick = false; }
+  }, true);
+
+  // Hold the Favorites & Frequents bar and pull down: the droplet follows the
+  // finger out of the bar; letting go past ARM opens the picker, earlier
+  // sinks it back. A tap (no movement) still opens it via tapIsland().
+  const island = $('island');
+  const PULL = 260;              // pull distance for a full droplet
+  let pull = null;
+  island.addEventListener('pointerdown', e => {
+    if (pickerOpen || tapping || e.button > 0) return;
+    pull = { y0: e.clientY, p: 0, moved: false, id: e.pointerId };
+  });
+  island.addEventListener('pointermove', e => {
+    if (!pull || e.pointerId !== pull.id) return;
+    const dy = Math.max(0, e.clientY - pull.y0);
+    if (!pull.moved && dy < 8) return;
+    if (!pull.moved) {
+      pull.moved = true;
+      try { island.setPointerCapture(e.pointerId); } catch (_) {}
+      island.classList.add('grabbing');
+      $('dropHint').classList.add('show');
+    }
+    pull.p = Math.min(1, dy / PULL);
+    $('dropHint').textContent = pull.p >= ARM ? 'Release to withdraw' : 'Drag to withdraw';
+    drawDrop(pull.p);
+  });
+  function endPull() {
+    if (!pull) return;
+    const { p, moved } = pull;
+    pull = null;
+    if (!moved) return;
+    swallowClick = true;
+    setTimeout(() => { swallowClick = false; }, 350);
+    island.classList.remove('grabbing');
+    $('dropHint').classList.remove('show');
+    if (p >= ARM) openPicker();
+    else retractDrop(p);
+  }
+  island.addEventListener('pointerup', endPull);
+  island.addEventListener('pointercancel', endPull);
+  island.addEventListener('click', e => {
+    if (swallowClick) { e.stopImmediatePropagation(); e.preventDefault(); swallowClick = false; }
   }, true);
   document.addEventListener('keydown', e => { if (e.key === 'Escape') closePicker(); });
 
