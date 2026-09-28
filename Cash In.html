@@ -36,7 +36,7 @@
 
   /* ── Method rows (clean full-width buttons) ── */
   /* ── Cash In services, same buttons as Withdraw Cash: At Agent and
-     Agent Locator side by side, Scan QR full width below ── */
+     Agent Locator side by side, Generate QR full width below ── */
   .svc-bar { position: relative; padding: 0; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
   .svc { position: relative; display: flex; flex-direction: column; align-items: flex-start; gap: 10px; padding: 14px; background: #FFF; border: 1.5px solid var(--Border); border-radius: 14px; cursor: pointer; transition: box-shadow 0.2s, transform 0.15s; min-width: 0; }
   .svc:hover { border-color: #D8D8DE; background: #FAFAFB; }
@@ -133,7 +133,7 @@
         </div>
       </div>
 
-      <!-- Cash In services (between Favorites and Frequents): at agent and agent locator side by side, Scan QR row below -->
+      <!-- Cash In services (between Favorites and Frequents): at agent and agent locator side by side, Generate QR row below -->
       <div class="svc-bar">
         <div class="svc" onclick="selectMethod('code')">
           <div class="svc-ic">
@@ -149,13 +149,13 @@
           <span class="svc-name">Agent Locator</span>
           <svg class="chev" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
         </div>
-        <div class="svc svc-wide" onclick="scanQr()" role="button" aria-label="Scan QR, cash in at merchant location">
+        <div class="svc svc-wide" onclick="generateQr()" role="button" aria-label="Generate QR, show your code to the agent to deposit cash">
           <div class="svc-ic">
             <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="4" width="6" height="6" rx="1"/><rect x="14" y="4" width="6" height="6" rx="1"/><rect x="4" y="14" width="6" height="6" rx="1"/><path d="M14 14h2M20 14v2M14 20h6M17 17v3"/></svg>
           </div>
           <div class="svc-wide-txt">
-            <span class="svc-name">Scan QR</span>
-            <span class="svc-sub">Cash in at merchant location</span>
+            <span class="svc-name">Generate QR</span>
+            <span class="svc-sub">Show your QR to the agent</span>
           </div>
           <svg class="chev" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
         </div>
@@ -233,8 +233,9 @@
     window.location.href = 'Cash In - Merchant Short Code.html';
   }
 
-  // Scan QR: straight to the QR step of Cash In, no agent preselected.
-  function scanQr() {
+  // Generate QR: straight to the QR step of Cash In, no agent preselected —
+  // the customer shows their own code to the agent instead of scanning one.
+  function generateQr() {
     sessionStorage.setItem('cashInData', JSON.stringify({
       method: 'code', methodLabel: 'Show QR to Agent', entry: 'qr', time: stamp()
     }));
