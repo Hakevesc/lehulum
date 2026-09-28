@@ -155,6 +155,7 @@
   </div>
 </div>
 
+<script src="pin-feedback.js"></script>
 <script>
   const data = JSON.parse(sessionStorage.getItem('withdrawData') || '{}');
   const method = data.method || 'agent';
@@ -208,25 +209,29 @@
   }
 
   function submitPin() {
-    const total = parseFloat(data.total || data.amount || '0');
-    /* Balance validation BEFORE voucher generation — insufficient means NO voucher */
-    if (total > MAIN_BALANCE) {
+    if (pinFeedback.busy) return;
+    // Any 4 digits are accepted here: green stroke, then continue
+    pinFeedback(true, () => {
+      const total = parseFloat(data.total || data.amount || '0');
+      /* Balance validation BEFORE voucher generation — insufficient means NO voucher */
+      if (total > MAIN_BALANCE) {
+        sessionStorage.setItem('withdrawData', JSON.stringify(data));
+        window.location.href = 'Withdraw Cash - Insufficient Balance.html';
+        return;
+      }
+      // Only ATM cardless withdrawals carry a one-time voucher code; the agent
+      // settles the withdrawal in person, so agent bills never show one.
+      if (method === 'atm') {
+        data.voucherCode = genVoucher();
+        data.expiry = new Date(Date.now() + 24 * 3600 * 1000).toISOString();
+      } else {
+        delete data.voucherCode;
+        delete data.expiry;
+      }
+      data.ref = 'U' + 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'[Math.floor(Math.random()*26)] + Array.from({length:8},()=>'ABCDEFGHJKLMNPQRSTUVWXYZ23456789'[Math.floor(Math.random()*31)]).join('');
       sessionStorage.setItem('withdrawData', JSON.stringify(data));
-      window.location.href = 'Withdraw Cash - Insufficient Balance.html';
-      return;
-    }
-    // Only ATM cardless withdrawals carry a one-time voucher code; the agent
-    // settles the withdrawal in person, so agent bills never show one.
-    if (method === 'atm') {
-      data.voucherCode = genVoucher();
-      data.expiry = new Date(Date.now() + 24 * 3600 * 1000).toISOString();
-    } else {
-      delete data.voucherCode;
-      delete data.expiry;
-    }
-    data.ref = 'U' + 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'[Math.floor(Math.random()*26)] + Array.from({length:8},()=>'ABCDEFGHJKLMNPQRSTUVWXYZ23456789'[Math.floor(Math.random()*31)]).join('');
-    sessionStorage.setItem('withdrawData', JSON.stringify(data));
-    window.location.href = 'Withdraw Cash - Receipt.html';
+      window.location.href = 'Withdraw Cash - Receipt.html';
+    });
   }
 </script>
 <script src="test-scenarios-data.js"></script>

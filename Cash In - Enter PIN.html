@@ -164,6 +164,7 @@
   </div>
 </div>
 
+<script src="pin-feedback.js"></script>
 <script>
   const data = JSON.parse(sessionStorage.getItem('cashInData') || '{}');
   const fmt = n => parseFloat(n || 0).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
@@ -215,14 +216,18 @@
   }
 
   function submitPin() {
-    // NOTE: Cash-In is free (fee = 0) and credits after agent validation, so there is
-    // no wallet-balance check here. The voucher only PRE-AUTHORIZES the deposit.
-    data.voucherCode = genVoucher();
-    data.expiry = new Date(Date.now() + 24 * 3600 * 1000).toISOString();
-    data.ref = 'U' + 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'[Math.floor(Math.random()*26)] + Array.from({length:8},()=>'ABCDEFGHJKLMNPQRSTUVWXYZ23456789'[Math.floor(Math.random()*31)]).join('');
-    data.status = 'AWAITING_AGENT';
-    sessionStorage.setItem('cashInData', JSON.stringify(data));
-    window.location.href = 'Cash In - Voucher.html';
+    if (pinFeedback.busy) return;
+    // Any 4 digits are accepted here: green stroke, then continue
+    pinFeedback(true, () => {
+      // NOTE: Cash-In is free (fee = 0) and credits after agent validation, so there is
+      // no wallet-balance check here. The voucher only PRE-AUTHORIZES the deposit.
+      data.voucherCode = genVoucher();
+      data.expiry = new Date(Date.now() + 24 * 3600 * 1000).toISOString();
+      data.ref = 'U' + 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'[Math.floor(Math.random()*26)] + Array.from({length:8},()=>'ABCDEFGHJKLMNPQRSTUVWXYZ23456789'[Math.floor(Math.random()*31)]).join('');
+      data.status = 'AWAITING_AGENT';
+      sessionStorage.setItem('cashInData', JSON.stringify(data));
+      window.location.href = 'Cash In - Voucher.html';
+    });
   }
 </script>
 <script src="test-scenarios-data.js"></script>

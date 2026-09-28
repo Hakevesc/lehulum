@@ -168,6 +168,7 @@
   </div>
 </div>
 
+<script src="pin-feedback.js"></script>
 <script>
   const CORRECT_PIN = '1234';
   const MAX_ATTEMPTS = 3;
@@ -221,6 +222,7 @@
   }
 
   function confirmTransfer() {
+    if (pinFeedback.busy) return;
     if (pin.length !== 4) {
       showPinError('Enter your 4-digit PIN.');
       setTimeout(updatePinDisplay, 400);
@@ -229,21 +231,26 @@
 
     if (pin === CORRECT_PIN) {
       sessionStorage.removeItem('pinAttempts');
-      window.location.href = 'Transfer to Wallet_Confirmation.html';
+      pinFeedback(true, () => {
+        window.location.href = 'Transfer to Wallet_Confirmation.html';
+      });
       return;
     }
 
-    const attempts = parseInt(sessionStorage.getItem('pinAttempts') || '0', 10) + 1;
-    sessionStorage.setItem('pinAttempts', String(attempts));
+    // Wrong PIN: red stroke + shake first, then the usual error handling
+    pinFeedback(false, () => {
+      const attempts = parseInt(sessionStorage.getItem('pinAttempts') || '0', 10) + 1;
+      sessionStorage.setItem('pinAttempts', String(attempts));
 
-    if (attempts >= MAX_ATTEMPTS) {
-      window.location.href = 'PIN-Locked.html';
-      return;
-    }
+      if (attempts >= MAX_ATTEMPTS) {
+        window.location.href = 'PIN-Locked.html';
+        return;
+      }
 
-    const left = MAX_ATTEMPTS - attempts;
-    showPinError('Incorrect PIN. ' + left + (left === 1 ? ' attempt' : ' attempts') + ' left.');
-    setTimeout(() => { pin = ''; pinInput.value = ''; updatePinDisplay(); }, 500);
+      const left = MAX_ATTEMPTS - attempts;
+      showPinError('Incorrect PIN. ' + left + (left === 1 ? ' attempt' : ' attempts') + ' left.');
+      setTimeout(() => { pin = ''; pinInput.value = ''; updatePinDisplay(); }, 500);
+    });
   }
 
   function goBack() { history.back(); }

@@ -179,6 +179,7 @@
   </div>
 </div>
 
+<script src="pin-feedback.js"></script>
 <script>
   const CORRECT_PIN = '1234';
   const MAX_ATTEMPTS = 3;
@@ -261,6 +262,7 @@
   }
 
   function confirmPayment() {
+    if (pinFeedback.busy) return;
     if (pin.length !== 4) {
       showPinError('Enter your 4-digit PIN.');
       setTimeout(updatePinDisplay, 400);
@@ -269,24 +271,29 @@
 
     if (pin === CORRECT_PIN) {
       sessionStorage.removeItem('pinAttempts');
-      if (processingOutcome === 'success') window.location.href = 'Airtime Confirmation.html';
-      else if (processingOutcome === 'failed') window.location.href = 'Airtime_Failed.html';
-      else if (processingOutcome === 'timeout') window.location.href = 'Airtime_Timeout.html';
-      else if (processingOutcome === 'service') window.location.href = 'Airtime_Service Unavailable.html';
+      pinFeedback(true, () => {
+        if (processingOutcome === 'success') window.location.href = 'Airtime Confirmation.html';
+        else if (processingOutcome === 'failed') window.location.href = 'Airtime_Failed.html';
+        else if (processingOutcome === 'timeout') window.location.href = 'Airtime_Timeout.html';
+        else if (processingOutcome === 'service') window.location.href = 'Airtime_Service Unavailable.html';
+      });
       return;
     }
 
-    const attempts = parseInt(sessionStorage.getItem('pinAttempts') || '0', 10) + 1;
-    sessionStorage.setItem('pinAttempts', String(attempts));
+    // Wrong PIN: red stroke + shake first, then the usual error handling
+    pinFeedback(false, () => {
+      const attempts = parseInt(sessionStorage.getItem('pinAttempts') || '0', 10) + 1;
+      sessionStorage.setItem('pinAttempts', String(attempts));
 
-    if (attempts >= MAX_ATTEMPTS) {
-      window.location.href = 'PIN-Locked.html';
-      return;
-    }
+      if (attempts >= MAX_ATTEMPTS) {
+        window.location.href = 'PIN-Locked.html';
+        return;
+      }
 
-    const left = MAX_ATTEMPTS - attempts;
-    showPinError('Incorrect PIN. ' + left + (left === 1 ? ' attempt' : ' attempts') + ' left.');
-    setTimeout(() => { pin = ''; pinInput.value = ''; updatePinDisplay(); }, 500);
+      const left = MAX_ATTEMPTS - attempts;
+      showPinError('Incorrect PIN. ' + left + (left === 1 ? ' attempt' : ' attempts') + ' left.');
+      setTimeout(() => { pin = ''; pinInput.value = ''; updatePinDisplay(); }, 500);
+    });
   }
 
   function goBack() { window.location.href = 'Airtime_Buy.html'; }
