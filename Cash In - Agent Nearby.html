@@ -448,7 +448,7 @@
   }
 
   /* ── Agent panel: floating card over the bottom of the map. Shows the tapped
-     agent (only once a pin is picked), a Merchant Short Code field with a QR shortcut,
+     agent (only once a pin is picked) and a Merchant Short Code field,
      with Call / Directions above it. Tapping a pin swaps the agent shown here. ── */
   .agent-panel { position: absolute; left: 16px; right: 16px; bottom: 16px; z-index: 40; background: #FFF; border-radius: 22px; padding: 10px 16px 16px; box-shadow: 0 10px 30px rgba(15,23,42,0.18), 0 2px 6px rgba(15,23,42,0.08); display: flex; flex-direction: column; }
   .sheet-grip { width: 44px; height: 4px; border-radius: 2px; background: #D8D8DE; margin: 0 auto 12px; }
@@ -473,13 +473,9 @@
   .ap-back:active { transform: scale(0.94); }
   .ap-back svg { width: 18px; height: 18px; stroke: currentColor; stroke-width: 2; fill: none; }
   .ap-label { font-family: 'Switzer', sans-serif; font-size: 12.5px; font-weight: 600; color: var(--On-Surface); margin: 14px 0 8px; }
-  /* The typed code sits on the same 14px inset as every other field in the app;
-     the QR chip keeps the tighter inset, so it reads as pinned to the right edge. */
-  .ap-code { display: flex; align-items: center; gap: 8px; height: 52px; border: 1.5px solid var(--Border); border-radius: 14px; padding: 0 6px 0 14px; background: #FFF; transition: border-color 0.2s; }
+  /* Plain code entry: text sits on the same 14px inset as every other field in the app. */
+  .ap-code { display: flex; align-items: center; height: 52px; border: 1.5px solid var(--Border); border-radius: 14px; padding: 0 14px; background: #FFF; transition: border-color 0.2s; }
   .ap-code:focus-within, .ap-code.error { border-color: var(--Primary); }
-  .ap-qr { width: 38px; height: 38px; border: none; border-radius: 10px; background: #1C1C21; color: #FFF; display: flex; align-items: center; justify-content: center; cursor: pointer; flex-shrink: 0; }
-  .ap-qr:active { transform: scale(0.94); }
-  .ap-qr svg { width: 20px; height: 20px; stroke: currentColor; stroke-width: 2; fill: none; }
   .ap-code input { flex: 1; min-width: 0; border: none; outline: none; background: transparent; font-family: 'Switzer', sans-serif; font-size: 14px; color: var(--On-Surface); letter-spacing: 0.3px; }
   .ap-code input::placeholder { color: #A0A0AA; letter-spacing: 0; }
   /* Continue sits under the short-code field, full width like the app's other main buttons */
@@ -1000,9 +996,6 @@
     <div class="ap-label">Merchant Short Code</div>
     <div class="ap-code" id="apCodeBox">
       <input id="apCode" type="text" inputmode="numeric" maxlength="6" placeholder="Enter short code" autocomplete="off" oninput="onCodeInput(this)" onkeydown="if(event.key==='Enter')submitCode()">
-      <button class="ap-qr" onclick="entryQr()" aria-label="Show my QR code to the agent">
-        <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7V5a2 2 0 0 1 2-2h2"/><path d="M17 3h2a2 2 0 0 1 2 2v2"/><path d="M21 17v2a2 2 0 0 1-2 2h-2"/><path d="M7 21H5a2 2 0 0 1-2-2v-2"/><rect x="7" y="7" width="4" height="4"/><rect x="13" y="13" width="4" height="4"/><path d="M13 7h4v2M7 15v2h2"/></svg>
-      </button>
     </div>
     <div class="field-error" id="apMsg"><span class="fe-ic"><svg viewBox="0 0 24 24"><path d="M17 7 7 17M7 7l10 10"/></svg></span><span class="fe-txt">Short code must be 6 digits.</span></div>
     <button class="ap-continue" id="apEnter" onclick="submitCode()" disabled>Continue</button>
@@ -1276,11 +1269,6 @@
   }
 
   /* ── Agent panel ── */
-  // The QR button skips straight to the QR step with no agent preselected.
-  function entryQr() {
-    sessionStorage.setItem('cashInData', JSON.stringify({ method: 'code', methodLabel: 'Show QR to Agent', entry: 'qr' }));
-    window.location.href = 'Cash In - Merchant Short Code.html';
-  }
 
   function onCodeInput(el) {
     el.value = el.value.replace(/\D/g, '').slice(0, 6);
