@@ -497,9 +497,12 @@
 
   /* ── Favorites & Frequents island: black bar under the title. Dragging the
      agent card up drops a blob out of it, then opens the Withdraw At picker. ── */
-  .island-row { display: flex; justify-content: center; padding: 0 16px 10px; background: var(--Background); flex-shrink: 0; position: relative; z-index: 60; }
+  .island-row { display: flex; justify-content: center; padding: 0 16px 10px; background: transparent; flex-shrink: 0; position: relative; z-index: 60; }
   .island { width: 100%; height: 56px; border: none; border-radius: 16px; background: #1C1C21; color: #FFF; display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 0 10px 0 18px; cursor: grab; touch-action: none; user-select: none; -webkit-user-select: none; box-shadow: 0 4px 14px rgba(15,15,20,0.25); font-family: 'Switzer', sans-serif; font-size: 15px; }
   .island.grabbing { cursor: grabbing; }
+  /* While stretching, the SVG outline below draws the bar, so the bar itself goes clear */
+  .island.stretching { background: transparent; box-shadow: none; }
+  .island:focus:not(:focus-visible) { outline: none; }
   .island-lbl { font-weight: 400; letter-spacing: 0.1px; }
   .island-lbl b { font-weight: 700; }
   .island-avs { display: flex; padding-left: 8px; }
@@ -508,13 +511,13 @@
   .av { border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0; font-family: 'Switzer', sans-serif; font-weight: 700; background: var(--Primary-Light); color: var(--Primary); }
 
   /* "Drag to withdraw" shows just under the island once the card moves */
-  .drop-hint { position: absolute; z-index: 45; left: 50%; transform: translate(-50%, -6px); padding: 6px 14px; border-radius: 999px; background: #FFF; color: var(--On-Surface); box-shadow: 0 4px 14px rgba(15,23,42,0.14); font-family: 'Switzer', sans-serif; font-size: 13px; font-weight: 500; white-space: nowrap; opacity: 0; pointer-events: none; transition: opacity 0.2s, transform 0.2s; }
-  .drop-hint.show { opacity: 1; transform: translate(-50%, 0); }
+  .drop-hint { position: absolute; z-index: 45; left: 0; right: 0; text-align: center; transform: translateY(-4px); color: var(--On-Surface); font-family: 'Switzer', sans-serif; font-size: 15px; font-weight: 500; white-space: nowrap; text-shadow: 0 0 6px #FFF, 0 0 3px #FFF, 0 0 1px #FFF; opacity: 0; pointer-events: none; transition: opacity 0.2s, transform 0.2s; }
+  .drop-hint.show { opacity: 1; transform: none; }
 
-  /* The droplet: bar + ball merged by a goo filter, drawn under the island */
+  /* The stretched bar: one outline, the bar with its bottom edge bulging down */
   .drop { position: absolute; left: 0; top: 0; width: 100%; height: 100%; z-index: 50; pointer-events: none; opacity: 0; overflow: visible; }
   .drop.show { opacity: 1; }
-  .drop-peek { position: absolute; z-index: 51; border-radius: 50%; overflow: hidden; pointer-events: none; opacity: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px; color: #FFF; font-family: 'Switzer', sans-serif; }
+  .drop-peek { position: absolute; z-index: 51; border-radius: 45%; overflow: hidden; pointer-events: none; opacity: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px; color: #FFF; font-family: 'Switzer', sans-serif; }
   .drop-peek > svg { width: 22px; height: 22px; stroke: #FFF; stroke-width: 2.2; fill: none; }
   .drop-peek .peek-title { font-size: 11px; font-weight: 600; color: rgba(255,255,255,0.6); letter-spacing: 0.4px; }
   .drop-peek .peek-avs { display: flex; gap: 8px; }
@@ -993,19 +996,10 @@
     </div>
   </div>
 
-  <!-- Drag feedback: hint under the island, then a droplet falling out of it -->
+  <!-- Drag feedback: the bar stretches down into a droplet, hint below it -->
   <div class="drop-hint" id="dropHint">Drag to withdraw</div>
   <svg class="drop" id="drop" aria-hidden="true">
-    <defs>
-      <filter id="goo" x="-50%" y="-50%" width="200%" height="200%">
-        <feGaussianBlur in="SourceGraphic" stdDeviation="9" result="b"/>
-        <feColorMatrix in="b" mode="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 24 -11"/>
-      </filter>
-    </defs>
-    <g filter="url(#goo)" fill="#1C1C21">
-      <rect id="dropBar"/>
-      <circle id="dropBall"/>
-    </g>
+    <path id="dropShape" fill="#1C1C21"/>
   </svg>
   <div class="drop-peek" id="dropPeek">
     <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M17 7L7 17M7 7h10v10"/></svg>
@@ -1330,7 +1324,6 @@
   const ARM = 0.6;               // drag progress needed to open on release
   const BLACK = '#1C1C21';
   let pickerOpen = false;
-  let ball = null;               // last drawn droplet ball {cx, cy, r}
 
   function relRect(el) {
     const f = frame.getBoundingClientRect(), r = el.getBoundingClientRect();
@@ -1346,26 +1339,45 @@
   }
   const attrs = (el, o) => Object.keys(o).forEach(k => el.setAttribute(k, o[k]));
 
-  // Droplet for drag progress p (0..1): a ball swells out of the bar and hangs
-  // under it, joined by a gooey neck, with a faint preview of the lists inside.
+  // Stretched bar for drag progress p (0..1): one shape — the bar's bottom
+  // edge bulges down into a rounded droplet that grows with the pull, with
+  // soft shoulders where it leaves the bar and a faint preview inside.
+  let dropBox = null;            // bounds of the stretched shape, for openPicker
   function drawDrop(p) {
     const isl = relRect($('island'));
-    attrs($('dropBar'), { x: isl.left, y: isl.top, width: isl.width, height: isl.height, rx: 16 });
-    const r = 16 + 134 * p;
-    const cx = isl.left + isl.width / 2;
-    const cy = isl.top + isl.height / 2 + (isl.height / 2 + r - 8) * Math.min(1, p * 1.4);
-    attrs($('dropBall'), { cx, cy, r });
-    ball = { cx, cy, r };
-    $('drop').classList.toggle('show', p > 0.02);
+    const x0 = isl.left, y0 = isl.top, w = isl.width, h = isl.height, r = 16;
+    const x1 = x0 + w, y1 = y0 + h, cx = x0 + w / 2;
+    const bw = 34 + 106 * p;                 // half width of the bulge
+    const D = 8 + 262 * p;                   // how far it hangs below the bar
+    const s = 14 + 22 * p;                   // shoulder where it leaves the bar
+    const k = 0.5523;                        // circle-ish cubic handle
+    const neckY = y1 + D * 0.32;
+    const d = [
+      `M ${x0 + r} ${y0}`, `H ${x1 - r}`, `Q ${x1} ${y0} ${x1} ${y0 + r}`,
+      `V ${y1 - r}`, `Q ${x1} ${y1} ${x1 - r} ${y1}`,
+      `H ${cx + bw + s}`,
+      `C ${cx + bw + s * 0.35} ${y1} ${cx + bw} ${y1 + D * 0.06} ${cx + bw} ${neckY}`,
+      `C ${cx + bw} ${neckY + (y1 + D - neckY) * k} ${cx + bw * k} ${y1 + D} ${cx} ${y1 + D}`,
+      `C ${cx - bw * k} ${y1 + D} ${cx - bw} ${neckY + (y1 + D - neckY) * k} ${cx - bw} ${neckY}`,
+      `C ${cx - bw} ${y1 + D * 0.06} ${cx - bw - s * 0.35} ${y1} ${cx - bw - s} ${y1}`,
+      `H ${x0 + r}`, `Q ${x0} ${y1} ${x0} ${y1 - r}`,
+      `V ${y0 + r}`, `Q ${x0} ${y0} ${x0 + r} ${y0}`, 'Z'
+    ].join(' ');
+    $('dropShape').setAttribute('d', d);
+    dropBox = { left: cx - bw, top: y1 - 4, width: bw * 2, height: D + 4 };
+    const on = p > 0.02;
+    $('drop').classList.toggle('show', on);
+    $('island').classList.toggle('stretching', on);
     const pk = $('dropPeek');
-    pk.style.left = (cx - r) + 'px';
-    pk.style.top = (cy - r) + 'px';
-    pk.style.width = pk.style.height = (r * 2) + 'px';
-    pk.style.opacity = Math.max(0, Math.min(1, (p - 0.3) / 0.5));
-    $('dropHint').style.top = (isl.top + isl.height + 12) + 'px';
+    pk.style.left = (cx - bw * 0.9) + 'px';
+    pk.style.top = (y1 + D * 0.12) + 'px';
+    pk.style.width = (bw * 1.8) + 'px';
+    pk.style.height = (D * 0.84) + 'px';
+    pk.style.opacity = Math.max(0, Math.min(1, (p - 0.35) / 0.45));
+    $('dropHint').style.top = (y1 + D + 12) + 'px';
   }
 
-  // Released too early: the ball sinks back into the bar
+  // Released too early: the bulge sinks back into the bar
   function retractDrop(from) {
     const t0 = performance.now();
     (function step(now) {
@@ -1373,7 +1385,7 @@
       const k = Math.min(1, (now - t0) / 260);
       drawDrop(from * (1 - k) * (1 - k));
       if (k < 1) requestAnimationFrame(step);
-      else $('drop').classList.remove('show');
+      else { $('drop').classList.remove('show'); $('island').classList.remove('stretching'); }
     })(t0);
   }
 
@@ -1406,7 +1418,7 @@
     })(t0);
   }
 
-  // Opens from the droplet's ball, which swells to fill the screen
+  // Opens from the stretched droplet, which swells to fill the screen
   function openPicker() {
     if (pickerOpen) return;
     pickerOpen = true;
@@ -1414,15 +1426,15 @@
     const fr = frame.getBoundingClientRect();
     $('blobFull').style.width = fr.width + 'px';
     $('blobFull').style.height = fr.height + 'px';
-    const b = ball || { cx: fr.width / 2, cy: 80, r: 30 };
+    const b = dropBox || { left: fr.width / 2 - 40, top: 80, width: 80, height: 60 };
     blob.classList.add('dragging');
-    setGeom({ left: b.cx - b.r, top: b.cy - b.r, width: b.r * 2, height: b.r * 2 }, b.r);
+    setGeom(b, Math.min(b.width, b.height) / 2);
     blob.style.opacity = 1;
     void blob.offsetWidth;
     blob.classList.remove('dragging');
     blob.classList.add('open');
     setGeom({ left: 0, top: 0, width: fr.width, height: fr.height }, parseFloat(getComputedStyle(frame).borderTopLeftRadius) || 0);
-    setTimeout(() => { $('drop').classList.remove('show'); $('dropPeek').style.opacity = 0; }, 60);
+    setTimeout(() => { $('drop').classList.remove('show'); $('island').classList.remove('stretching'); $('dropPeek').style.opacity = 0; }, 60);
   }
 
   // Closes back into the island
@@ -1509,6 +1521,7 @@
   island.addEventListener('pointerdown', e => {
     if (pickerOpen || tapping || e.button > 0) return;
     pull = { y0: e.clientY, p: 0, moved: false, id: e.pointerId };
+    try { island.setPointerCapture(e.pointerId); } catch (_) {}   // keep getting moves once the finger leaves the bar
   });
   island.addEventListener('pointermove', e => {
     if (!pull || e.pointerId !== pull.id) return;
@@ -1516,7 +1529,6 @@
     if (!pull.moved && dy < 8) return;
     if (!pull.moved) {
       pull.moved = true;
-      try { island.setPointerCapture(e.pointerId); } catch (_) {}
       island.classList.add('grabbing');
       $('dropHint').classList.add('show');
     }
