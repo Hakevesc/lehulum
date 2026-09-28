@@ -75,7 +75,7 @@
 .main-balance .amount {
   color: var(--Gray-0, #FFF);
   font-family: var(--Font-Family, 'Switzer', sans-serif);
-  font-size: clamp(22px, 8vw, 30px);
+  font-size: clamp(27px, 8.5vw, 30px);
   font-style: normal;
   font-weight: var(--Font-Weight-Regular, 400);
   line-height: var(--Line-Height, 150%);
@@ -84,11 +84,6 @@
 }
 
 /* ---- Add Money Button ---- */
-@keyframes btnPop {
-  0%, 100% { transform: scale(1); }
-  50%       { transform: scale(1.08); }
-}
-
 .add-money-btn {
   display: flex;
   align-items: center;
@@ -100,9 +95,8 @@
   cursor: pointer;
   z-index: 1;
   flex-shrink: 0;
-  animation: btnPop 1.6s ease-in-out infinite;
 }
-.add-money-btn:hover { animation-play-state: paused; transform: scale(1.05); }
+.add-money-btn:hover { transform: scale(1.05); }
 
 .add-money-btn .plus-icon {
   width: 18px;
