@@ -34,12 +34,15 @@
   .scroll { flex: 1; overflow-y: auto; padding: 4px 16px 96px; display: flex; flex-direction: column; gap: 16px; }
   .scroll::-webkit-scrollbar { width: 0; }
 
-  /* ── Method rows (clean full-width buttons) ── */
-  .method-list { display: flex; flex-direction: column; gap: 12px; }
-  .method-row { display: flex; align-items: center; justify-content: space-between; gap: 12px; background: #FFF; border-radius: 16px; padding: 18px 18px; box-shadow: 0 2px 8px rgba(0,0,0,0.04); cursor: pointer; transition: box-shadow 0.2s, transform 0.15s; }
-  .method-row:hover { box-shadow: 0 4px 14px rgba(0,0,0,0.08); transform: translateY(-1px); }
-  .method-row:active { transform: scale(0.99); }
-  .method-name { font-family: 'Switzer', sans-serif; font-size: 16px; font-weight: 700; color: var(--On-Surface); letter-spacing: 0.2px; }
+  /* ── Withdrawal services: two cards side by side ── */
+  .svc-row { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+  .svc { display: flex; align-items: center; gap: 8px; padding: 14px 8px 14px 12px; background: #FFF6F6; border: 1px solid #FFE3E4; border-radius: 16px; box-shadow: 0 4px 14px rgba(254,53,61,0.08); cursor: pointer; transition: box-shadow 0.2s, transform 0.15s; min-width: 0; }
+  .svc:hover { box-shadow: 0 6px 18px rgba(254,53,61,0.14); transform: translateY(-1px); }
+  .svc:active { transform: scale(0.98); }
+  .svc-ic { width: 38px; height: 38px; border-radius: 12px; background: var(--Primary); display: flex; align-items: center; justify-content: center; flex-shrink: 0; box-shadow: 0 4px 10px rgba(254,53,61,0.3); }
+  .svc-ic svg { width: 21px; height: 21px; stroke: #FFF; stroke-width: 1.9; fill: none; }
+  .svc-name { flex: 1; min-width: 0; font-family: 'Switzer', sans-serif; font-size: 14px; font-weight: 700; line-height: 1.25; color: var(--On-Surface); white-space: nowrap; }
+  .svc .chev { width: 16px; height: 16px; }
   .chev { width: 18px; height: 18px; stroke: var(--Primary); stroke-width: 2.4; fill: none; flex-shrink: 0; }
 
   /* ── Section headers ── */
@@ -75,6 +78,23 @@
   .frequent-info { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px; }
   .frequent-name { color: var(--On-Surface); font-family: 'Switzer', sans-serif; font-size: 14px; font-weight: 600; letter-spacing: 0.2px; }
   .frequent-sub { color: var(--On-Surface-Low); font-family: 'Switzer', sans-serif; font-size: 12px; font-weight: 400; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+  /* ── Scan QR tooltip: points at the scan button ── */
+  .qr-tip { position: absolute; right: 100px; bottom: 30px; z-index: 99; display: flex; align-items: center; gap: 12px; padding: 12px 12px 12px 14px; max-width: calc(100% - 128px); background: #FFF1F2; border: 1px solid #FFDDE0; border-radius: 16px; box-shadow: 0 8px 22px rgba(254,53,61,0.14); cursor: pointer; animation: tipIn 0.35s ease-out both 0.3s; }
+  .qr-tip::after { content: ''; position: absolute; right: -7px; top: 50%; width: 12px; height: 12px; background: #FFF1F2; border-top: 1px solid #FFDDE0; border-right: 1px solid #FFDDE0; transform: translateY(-50%) rotate(45deg); }
+  .qr-tip.hide { display: none; }
+  .qr-tip-ic { width: 26px; height: 26px; stroke: var(--Primary); stroke-width: 1.9; fill: none; flex-shrink: 0; }
+  .qr-tip-txt { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+  .qr-tip-title { font-family: 'Switzer', sans-serif; font-size: 14px; font-weight: 700; color: var(--On-Surface); }
+  .qr-tip-sub { font-family: 'Switzer', sans-serif; font-size: 11.5px; color: var(--On-Surface-Low); white-space: nowrap; }
+  .qr-tip .chev { width: 16px; height: 16px; }
+  /* Narrow phones: stack the service icon over its label, let the tip wrap */
+  @media (max-width: 370px) {
+    .svc { position: relative; flex-direction: column; align-items: flex-start; gap: 10px; padding: 14px 12px; }
+    .svc .chev { position: absolute; top: 14px; right: 10px; }
+    .qr-tip-sub { white-space: normal; }
+  }
+  @keyframes tipIn { from { opacity: 0; transform: translateX(8px); } to { opacity: 1; transform: none; } }
 </style>
 <link rel="stylesheet" href="styles/component-qr-popup.css">
 <link rel="stylesheet" href="styles/device.css">
@@ -102,14 +122,20 @@
 
     <div class="scroll">
 
-      <!-- Withdrawal channels -->
-      <div class="method-list">
-        <div class="method-row" onclick="window.location.href='Withdraw Cash - Agent Nearby.html'">
-          <span class="method-name">Agent</span>
+      <!-- Withdrawal services -->
+      <div class="svc-row">
+        <div class="svc" onclick="window.location.href='Withdraw Cash - Agent Nearby.html'">
+          <div class="svc-ic">
+            <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7V5a2 2 0 0 1 2-2h2"/><path d="M17 3h2a2 2 0 0 1 2 2v2"/><path d="M21 17v2a2 2 0 0 1-2 2h-2"/><path d="M7 21H5a2 2 0 0 1-2-2v-2"/><circle cx="12" cy="10" r="3"/><path d="M7 17.5c1-2 2.8-3 5-3s4 1 5 3"/></svg>
+          </div>
+          <span class="svc-name">Withdraw<br>at Agent</span>
           <svg class="chev" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
         </div>
-        <div class="method-row" onclick="selectMethod('atm')">
-          <span class="method-name">ATM</span>
+        <div class="svc" onclick="selectMethod('atm')">
+          <div class="svc-ic">
+            <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="7" rx="2"/><path d="M6 10v9a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2v-9"/><path d="M13.5 13.5h-2.25a1.25 1.25 0 0 0 0 2.5h1.5a1.25 1.25 0 0 1 0 2.5H10.5"/><path d="M12 12.5v1M12 18.5v1"/></svg>
+          </div>
+          <span class="svc-name">Withdraw<br>at ATM</span>
           <svg class="chev" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
         </div>
       </div>
@@ -196,11 +222,21 @@
     </div>
   </div>
 
+  <!-- Scan QR tooltip pointing at the FAB; tapping either opens the agent QR scanner -->
+  <div class="qr-tip" id="qrTip" onclick="scanAgentQr()" role="button" aria-label="Scan QR to withdraw cash at merchant">
+    <svg class="qr-tip-ic" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7V5a2 2 0 0 1 2-2h2"/><path d="M17 3h2a2 2 0 0 1 2 2v2"/><path d="M21 17v2a2 2 0 0 1-2 2h-2"/><path d="M7 21H5a2 2 0 0 1-2-2v-2"/><rect x="7" y="7" width="4" height="4" rx="0.5"/><rect x="13" y="7" width="4" height="4" rx="0.5"/><rect x="7" y="13" width="4" height="4" rx="0.5"/><path d="M13 13h1.5M17 13v1.5M13 17h4M15.5 15.5v1.5"/></svg>
+    <div class="qr-tip-txt">
+      <span class="qr-tip-title">Scan QR</span>
+      <span class="qr-tip-sub">to withdraw cash at merchant</span>
+    </div>
+    <svg class="chev" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+  </div>
+
   <!-- Scan QR FAB — same button as the home screen; jumps straight to the agent QR scanner -->
   <div class="qr-fab-wrapper">
     <button class="qr-popup" onclick="scanAgentQr()" title="Scan QR Code" aria-label="Scan agent QR code">
       <div class="frame-2061">
-        <svg viewBox="0 0 24 24" fill="none" stroke="#FFF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7V5a2 2 0 0 1 2-2h2"/><path d="M17 3h2a2 2 0 0 1 2 2v2"/><path d="M21 17v2a2 2 0 0 1-2 2h-2"/><path d="M7 21H5a2 2 0 0 1-2-2v-2"/><line x1="7" y1="12" x2="17" y2="12"/></svg>
+        <svg viewBox="0 0 24 24" fill="none" stroke="#FFF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="4" width="6" height="6" rx="1"/><rect x="14" y="4" width="6" height="6" rx="1"/><rect x="4" y="14" width="6" height="6" rx="1"/><path d="M14 14h2M20 14v2M14 20h6M17 17v3"/></svg>
       </div>
     </button>
   </div>
