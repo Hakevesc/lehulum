@@ -528,8 +528,8 @@
   .wd-blob { position: absolute; z-index: 70; overflow: hidden; background: var(--Primary); color: #FFF; opacity: 0; pointer-events: none; transition: left 0.45s cubic-bezier(.2,.8,.2,1), top 0.45s cubic-bezier(.2,.8,.2,1), width 0.45s cubic-bezier(.2,.8,.2,1), height 0.45s cubic-bezier(.2,.8,.2,1), border-radius 0.45s, background-color 0.3s, opacity 0.2s; }
   .wd-blob.dragging { transition: none; }
   .wd-blob.open { pointer-events: auto; }
-  /* Red to black-red gradient fades in over the black droplet as it opens */
-  .wd-blob::before { content: ''; position: absolute; inset: 0; background: linear-gradient(170deg, #E3242E 0%, #A3121B 45%, #3A070B 80%, #1C0305 100%); opacity: 0; transition: opacity 0.4s; }
+  /* Black-to-red gradient fades in over the black droplet as it opens */
+  .wd-blob::before { content: ''; position: absolute; inset: 0; background: linear-gradient(170deg, #1C1C21 0%, #3A070B 28%, #A3121B 65%, #E3242E 100%); opacity: 0; transition: opacity 0.4s; }
   .wd-blob.open::before { opacity: 1; }
 
   .blob-full { position: absolute; left: 0; top: 0; display: flex; flex-direction: column; padding: 26px 20px 20px; opacity: 0; transition: opacity 0.2s; font-family: 'Switzer', sans-serif; }
@@ -543,8 +543,7 @@
   .wd-favs { display: flex; gap: 14px; overflow-x: auto; padding: 2px 2px 4px; margin: 0 -2px; }
   .wd-favs::-webkit-scrollbar { height: 0; }
   .wd-fav { display: flex; flex-direction: column; align-items: center; gap: 7px; width: 62px; flex-shrink: 0; background: none; border: none; color: #FFF; cursor: pointer; font-family: inherit; }
-  .wd-fav .av { width: 52px; height: 52px; font-size: 15px; box-shadow: 0 0 0 2px #B51720, 0 0 0 2px transparent; transition: box-shadow 0.2s; }
-  .wd-fav.sel .av { box-shadow: 0 0 0 2px #B51720, 0 0 0 4px #FFF; }
+  .wd-fav .av { width: 52px; height: 52px; font-size: 15px; }
   .wd-fav span { font-size: 11.5px; font-weight: 500; max-width: 62px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
   .wd-fav .add { width: 52px; height: 52px; border-radius: 50%; border: 1.5px solid rgba(255,255,255,0.7); display: flex; align-items: center; justify-content: center; }
   .wd-fav .add svg { width: 20px; height: 20px; stroke: #FFF; stroke-width: 2; fill: none; }
@@ -552,17 +551,11 @@
   .wd-list::-webkit-scrollbar { width: 0; }
   .wd-row { display: flex; align-items: center; gap: 12px; padding: 9px 8px; border-radius: 14px; background: none; border: none; color: #FFF; text-align: left; cursor: pointer; font-family: inherit; transition: background 0.15s; }
   .wd-row:hover { background: rgba(255,255,255,0.08); }
-  .wd-row.sel { background: rgba(255,255,255,0.16); }
   .wd-row .av { width: 42px; height: 42px; font-size: 13px; }
   .wd-row-main { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 3px; }
   .wd-row-name { font-size: 14.5px; font-weight: 600; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
   .wd-row-sub { font-size: 11.5px; color: rgba(255,255,255,0.75); }
-  .wd-radio { width: 22px; height: 22px; border-radius: 50%; border: 1.5px solid rgba(255,255,255,0.55); flex-shrink: 0; display: flex; align-items: center; justify-content: center; transition: all 0.15s; }
-  .wd-row.sel .wd-radio { border-color: #FFF; background: #FFF; }
-  .wd-radio svg { width: 12px; height: 12px; stroke: var(--Primary); stroke-width: 3; fill: none; opacity: 0; }
-  .wd-row.sel .wd-radio svg { opacity: 1; }
-  .wd-next { height: 52px; margin-top: 14px; border: none; border-radius: 16px; background: #FFF; color: var(--Primary); font-family: inherit; font-size: 15px; font-weight: 700; cursor: pointer; box-shadow: 0 6px 18px rgba(120,0,6,0.25); flex-shrink: 0; transition: opacity 0.2s; }
-  .wd-next:disabled { opacity: 0.5; box-shadow: none; cursor: default; }
+  .wd-row-go { width: 18px; height: 18px; stroke: rgba(255,255,255,0.85); stroke-width: 2.2; fill: none; flex-shrink: 0; }
 
   /* Selected pin lifts above the others. */
   .map-marker.active { z-index: 25; }
@@ -1034,7 +1027,6 @@
       <div class="wd-favs" id="wdFavs"></div>
       <div class="wd-sec">Your <b>Frequents</b></div>
       <div class="wd-list" id="wdFreq"></div>
-      <button class="wd-next" id="wdNext" onclick="pickerNext()" disabled>Next</button>
     </div>
   </div>
 
@@ -1337,7 +1329,6 @@
   const ARM = 0.6;               // drag progress needed to open on release
   const BLACK = '#1C1C21';
   let pickerOpen = false;
-  let pickCode = null, pickSrc = null;
   let ball = null;               // last drawn droplet ball {cx, cy, r}
 
   function relRect(el) {
@@ -1388,29 +1379,16 @@
   function renderPicker() {
     $('wdFavs').innerHTML = `<button class="wd-fav" onclick="addFavourite()"><span class="add"><svg viewBox="0 0 24 24" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg></span><span>Add New</span></button>` + FAVOURITES.map(c => {
       const a = agentBy(c);
-      return `<button class="wd-fav" data-code="${c}" data-src="fav" onclick="choose('${c}','fav')">${avHtml(a)}<span>${a.name.split(' ')[0]}</span></button>`;
+      return `<button class="wd-fav" data-code="${c}" data-src="fav" onclick="goAgent('${c}','fav')">${avHtml(a)}<span>${a.name.split(' ')[0]}</span></button>`;
     }).join('');
     $('wdFreq').innerHTML = FREQUENTS.map(f => {
       const a = agentBy(f.code);
-      return `<button class="wd-row" data-code="${f.code}" data-src="freq" onclick="choose('${f.code}','freq')">
+      return `<button class="wd-row" data-code="${f.code}" data-src="freq" onclick="goAgent('${f.code}','freq')">
         ${avHtml(a)}
-        <span class="wd-row-main"><span class="wd-row-name">${a.name}</span><span class="wd-row-sub">${a.code} &middot; ${a.dist} &middot; ${f.times} withdrawals</span></span>
-        <span class="wd-radio"><svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5 9-10"/></svg></span>
+        <span class="wd-row-main"><span class="wd-row-name">${a.name}</span><span class="wd-row-sub">${a.code} &middot; ${a.dist}</span></span>
+        <svg class="wd-row-go" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg>
       </button>`;
     }).join('');
-    choose(null);
-    // A merchant already picked on the map comes preselected
-    if (selectedAgent) {
-      if (FAVOURITES.includes(selectedAgent.code)) choose(selectedAgent.code, 'fav');
-      else if (FREQUENTS.some(f => f.code === selectedAgent.code)) choose(selectedAgent.code, 'freq');
-    }
-  }
-
-  function choose(code, src) {
-    pickCode = code; pickSrc = src;
-    document.querySelectorAll('.wd-fav[data-code], .wd-row').forEach(el =>
-      el.classList.toggle('sel', el.dataset.code === code && el.dataset.src === src));
-    $('wdNext').disabled = !code;
   }
 
   // Opens from the droplet's ball, which swells to fill the screen
@@ -1447,13 +1425,13 @@
     setTimeout(() => $('apCode').focus(), 450);
   }
 
-  function pickerNext() {
-    if (!pickCode) return;
+  // Tapping a favourite or frequent agent goes straight to the amount step
+  function goAgent(code, src) {
     sessionStorage.setItem('withdrawData', JSON.stringify({
       method: 'agent',
-      methodLabel: pickSrc === 'fav' ? 'Favourite Agent' : 'Frequent Agent',
+      methodLabel: src === 'fav' ? 'Favourite Agent' : 'Frequent Agent',
       entry: 'code',
-      agentCode: pickCode
+      agentCode: code
     }));
     window.location.href = 'Withdraw Cash - Agent Locator.html';
   }
