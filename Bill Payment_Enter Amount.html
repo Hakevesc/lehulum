@@ -118,8 +118,6 @@
   .msg.show { display: flex; }
   .msg svg { width: 14px; height: 14px; flex-shrink: 0; fill: none; stroke-width: 2; }
   .msg .txt { font-family: 'Switzer', sans-serif; font-size: 12.5px; font-weight: 500; }
-  .msg.warn svg { stroke: var(--Primary); }
-  .msg.warn .txt { color: var(--Primary); }
   .msg.info svg { stroke: var(--Warning); }
   .msg.info .txt { color: #9a6a00; }
 
@@ -162,6 +160,7 @@
   .pay-btn.active:hover { background: #E5303A; transform: translateY(-1px); }
   .pay-btn.active:active { transform: scale(0.98); }
 </style>
+<link rel="stylesheet" href="styles/field-error.css">
 <link rel="stylesheet" href="styles/device.css">
 </head>
 <body>
@@ -215,6 +214,7 @@
           <svg id="msgIcon" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
           <span class="txt" id="msgText"></span>
         </div>
+        <div class="field-error" id="msgErr"><span class="fe-ic"><svg viewBox="0 0 24 24"><path d="M17 7 7 17M7 7l10 10"/></svg></span><span class="fe-txt" id="msgErrText"></span></div>
 
         <!-- Fee -->
         <div class="fee-line" id="feeLine">
@@ -303,8 +303,15 @@
 
   function setMsg(kind, text) {
     const msg = document.getElementById('msg');
-    if (!kind) { msg.classList.remove('show'); return; }
-    msg.classList.remove('warn', 'info');
+    const msgErr = document.getElementById('msgErr');
+    msg.classList.remove('show', 'warn', 'info');
+    msgErr.classList.remove('show');
+    if (!kind) return;
+    if (kind === 'warn') {
+      document.getElementById('msgErrText').textContent = text;
+      msgErr.classList.add('show');
+      return;
+    }
     msg.classList.add('show', kind);
     document.getElementById('msgText').textContent = text;
   }

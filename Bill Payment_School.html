@@ -78,9 +78,6 @@
   .status-chip.loading { background: #F1F1F4; color: var(--On-Surface-Low); }
   .status-chip.loading .ic { border: 2.5px dashed var(--Success); animation: spin 1.6s linear infinite; }
   .status-chip.info { background: #EDEDF0; color: var(--On-Surface); }
-  .status-chip.bad { background: var(--Error-Light); color: var(--Primary); }
-  .status-chip.bad .ic { border: 1.8px solid var(--Primary); }
-  .status-chip.bad .ic svg { stroke: var(--Primary); }
   @keyframes spin { to { transform: rotate(360deg); } }
 
   .students-wrap { display: flex; flex-direction: column; gap: 14px; }
@@ -131,6 +128,7 @@
   .continue-btn.active:hover { background: #E5303A; box-shadow: 0 6px 20px rgba(254,53,61,0.35); transform: translateY(-1px); }
   .continue-btn.active:active { transform: scale(0.98) translateY(0); }
 </style>
+<link rel="stylesheet" href="styles/field-error.css">
 <link rel="stylesheet" href="styles/device.css">
 </head>
 <body>
@@ -187,9 +185,9 @@
           <div class="status-chip info" id="phoneNone">
             <span>There is no open invoice</span>
           </div>
-          <div class="status-chip bad" id="phoneBad">
-            <span class="ic"><svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M17 7 7 17M7 7l10 10"/></svg></span>
-            <span>No student registered on this number</span>
+          <div class="field-error" id="phoneBad">
+            <span class="fe-ic"><svg viewBox="0 0 24 24"><path d="M17 7 7 17M7 7l10 10"/></svg></span>
+            <span class="fe-txt">No student registered on this number</span>
           </div>
         </div>
       </div>
@@ -226,9 +224,9 @@
           <div class="status-chip info" id="codeNone">
             <span>There is no open invoice</span>
           </div>
-          <div class="status-chip bad" id="codeBad">
-            <span class="ic"><svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M17 7 7 17M7 7l10 10"/></svg></span>
-            <span id="codeBadText">Invalid school code or student ID</span>
+          <div class="field-error" id="codeBad">
+            <span class="fe-ic"><svg viewBox="0 0 24 24"><path d="M17 7 7 17M7 7l10 10"/></svg></span>
+            <span class="fe-txt" id="codeBadText">Invalid school code or student ID</span>
           </div>
         </div>
       </div>

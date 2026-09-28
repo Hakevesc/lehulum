@@ -95,9 +95,6 @@
   .note-hint span { font-family: 'Switzer', sans-serif; font-size: 11.5px; line-height: 1.45; color: var(--On-Surface-Low); }
   .note-hint span b { color: var(--On-Surface); }
 
-  .msg { display: none; align-items: flex-start; gap: 7px; font-family: 'Switzer', sans-serif; font-size: 12.5px; line-height: 1.45; color: var(--Primary); }
-  .msg.show { display: flex; }
-  .msg svg { width: 15px; height: 15px; stroke: var(--Primary); stroke-width: 2; fill: none; flex-shrink: 0; margin-top: 1px; }
 
 
   /* ── Resolved agent chip ── */
@@ -155,6 +152,7 @@
   .toast { position: absolute; left: 50%; bottom: 26px; transform: translateX(-50%) translateY(20px); background: #1C1C21; color: #FFF; font-family: 'Switzer', sans-serif; font-size: 12.5px; font-weight: 500; padding: 11px 18px; border-radius: 30px; opacity: 0; transition: all 0.3s ease; pointer-events: none; z-index: 60; white-space: nowrap; }
   .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
 </style>
+<link rel="stylesheet" href="styles/field-error.css">
 <link rel="stylesheet" href="styles/device.css">
 </head>
 <body>
@@ -208,9 +206,9 @@
               <input id="qrAmt" type="text" inputmode="decimal" placeholder="Enter amount to deposit" oninput="onQrAmountInput(this)">
               <span class="unit">ETB</span>
             </div>
-            <div class="msg" id="qrAmtMsg">
-              <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
-              <span id="qrAmtMsgTxt"></span>
+            <div class="field-error" id="qrAmtMsg">
+              <span class="fe-ic"><svg viewBox="0 0 24 24"><path d="M17 7 7 17M7 7l10 10"/></svg></span>
+              <span class="fe-txt" id="qrAmtMsgTxt"></span>
             </div>
           </div>
 
@@ -242,9 +240,9 @@
           <input id="amt" type="text" inputmode="decimal" placeholder="0.00" oninput="onAmountInput(this)">
           <span class="unit">ETB</span>
         </div>
-        <div class="msg" id="amtMsg">
-          <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
-          <span id="amtMsgTxt"></span>
+        <div class="field-error" id="amtMsg">
+          <span class="fe-ic"><svg viewBox="0 0 24 24"><path d="M17 7 7 17M7 7l10 10"/></svg></span>
+          <span class="fe-txt" id="amtMsgTxt"></span>
         </div>
         <div class="field-label">Note (Optional)</div>
         <div class="field">
@@ -317,7 +315,9 @@
     '323217': { abbr: 'BM', name: 'Betty Merhat Agency', code: '323217', dist: '0.8 km', eta: '9 min walk', addr: 'Bole Medhanialem, Addis Ababa', open: true, phone: '+251911000001' },
     '562394': { abbr: 'KR', name: 'Kebede Retails', code: '562394', dist: '1.2 km', eta: '14 min walk', addr: 'Bole Airport Road, Addis Ababa', open: true, phone: '+251911000002' },
     '778901': { abbr: 'MS', name: 'Meskerem Agent Services', code: '778901', dist: '2.1 km', eta: '6 min drive', addr: 'Mekanisa, Addis Ababa', open: false, phone: '+251911000003' },
-    '204411': { abbr: 'BM', name: 'Bole Mini-Mart', code: '204411', dist: '2.6 km', eta: '8 min drive', addr: 'Dembel City Center', open: true, phone: '+251911000004' }
+    '204411': { abbr: 'BM', name: 'Bole Mini-Mart', code: '204411', dist: '2.6 km', eta: '8 min drive', addr: 'Dembel City Center', open: true, phone: '+251911000004' },
+    '615208': { abbr: 'AT', name: 'Abebe Tadesse Shop', code: '615208', dist: '3.4 km', eta: '10 min drive', addr: 'Gerji, Addis Ababa', open: true, phone: '+251911000005' },
+    '430092': { abbr: 'HS', name: 'Hana Supermarket', code: '430092', dist: '4.1 km', eta: '12 min drive', addr: 'Megenagna, Addis Ababa', open: true, phone: '+251911000006' }
   };
 
   const MIN_AMT = 10, MAX_AMT = 100000;

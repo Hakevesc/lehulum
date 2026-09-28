@@ -93,10 +93,10 @@
   .balance-hint { font-family: 'Switzer', sans-serif; font-size: 11.5px; color: var(--On-Surface-Low); margin-top: 2px; }
   .balance-hint b { color: var(--On-Surface); font-weight: 600; }
 
-  .msg { display: none; font-family: 'Switzer', sans-serif; font-size: 12.5px; font-weight: 600; margin-top: 6px; }
-  .msg.show { display: block; }
-  .msg.warn { color: var(--Warning); background: var(--Warning-Light); border-radius: 8px; padding: 10px 12px; }
-  .msg.err { color: var(--Primary); }
+  /* Amount messages use styles/field-error.css; only the amber 'warn' state keeps its own look. */
+  .field-error.msg.warn { color: var(--Warning); background: var(--Warning-Light); border-radius: 8px; padding: 10px 12px; margin-top: 6px; font-size: 12.5px; font-weight: 600; }
+  .field-error.msg.warn.show { display: block; }
+  .field-error.msg.warn .fe-ic { display: none; }
 
   /* ── Lookup status chip ── */
   .status-chip { display: none; align-items: center; gap: 10px; border-radius: 12px; padding: 13px 14px; margin-top: 4px; font-family: 'Switzer', sans-serif; font-size: 14px; font-weight: 500; }
@@ -109,7 +109,7 @@
   .status-chip.ok .ic { border: 1.8px solid var(--Success); }
   .status-chip.ok .ic svg { stroke: var(--Success); }
   .status-chip.bad { background: var(--Error-Light); color: var(--Primary); }
-  .status-chip.bad .ic { border: 1.8px solid var(--Primary); }
+  .status-chip.bad .ic { width: 26px; height: 26px; border-radius: 8px; border: 1.8px solid var(--Primary); }
   .status-chip.bad .ic svg { stroke: var(--Primary); }
   @keyframes spin { to { transform: rotate(360deg); } }
 
@@ -309,6 +309,7 @@
   .pin-action-btn { margin-top: 14px; height: 52px; border-radius: 14px; border: none; background: #2563EB; color: #FFF; font-family: 'Poppins', sans-serif; font-size: 15px; font-weight: 500; cursor: pointer; box-shadow: 0 4px 16px rgba(37,99,235,0.28); transition: all 0.2s; flex-shrink: 0; width: 100%; }
   .pin-action-btn:hover { background: #1D4ED8; box-shadow: 0 6px 20px rgba(37,99,235,0.35); }
 </style>
+<link rel="stylesheet" href="styles/field-error.css">
 <link rel="stylesheet" href="styles/device.css">
 </head>
 <body>
@@ -380,7 +381,7 @@
                    oninput="onAmountInput()" onfocus="unformatAmount()" onblur="formatAmount()">
           </div>
           <div class="balance-hint"><span id="qrBalanceText"><b>Balance:</b> 12,580.00 ETB</span> <span class="od-badge" style="display:none;">Errif Overdraft Active</span></div>
-          <div class="msg" id="qrAmtMsg"></div>
+          <div class="field-error msg" id="qrAmtMsg"><span class="fe-ic"><svg viewBox="0 0 24 24"><path d="M17 7 7 17M7 7l10 10"/></svg></span><span class="fe-txt"></span></div>
         </div>
 
         <div class="frequent-section" id="frequentSection">
@@ -429,7 +430,7 @@
                    oninput="onAmountInput()" onfocus="unformatAmount()" onblur="formatAmount()">
           </div>
           <div class="balance-hint"><span id="codeBalanceText"><b>Balance:</b> 12,580.00 ETB</span> <span class="od-badge" style="display:none;">Errif Overdraft Active</span></div>
-          <div class="msg" id="codeAmtMsg"></div>
+          <div class="field-error msg" id="codeAmtMsg"><span class="fe-ic"><svg viewBox="0 0 24 24"><path d="M17 7 7 17M7 7l10 10"/></svg></span><span class="fe-txt"></span></div>
         </div>
 
         <div class="frequent-section" id="codeFrequentSection" style="flex: none; min-height: auto;">
@@ -973,7 +974,7 @@
     msg.classList.toggle('err', state === 'err');
     msg.classList.toggle('show', !!state);
     amtBalanceText().style.display = state ? 'none' : '';
-    if (text) msg.textContent = text;
+    if (text) msg.querySelector('.fe-txt').textContent = text;
   }
 
   function validateAmount() {
@@ -986,7 +987,7 @@
       // Over the main balance and Errif isn't active yet → offer activation at confirm.
       setAmountState('warn', 'Low balance — continue with Errif overdraft');
     } else if (n + FEE > MAIN + (errifOdActive ? ERIFF_OD_LIMIT : 0)) {
-      setAmountState('warn', 'Insufficient Balance');
+      setAmountState('err', 'Insufficient Balance');
       return null;
     } else {
       setAmountState(null);

@@ -64,9 +64,6 @@
   .status-chip.info { background: #EDEDF0; color: var(--On-Surface); }
   .status-chip.info .ic { border: 1.8px solid var(--On-Surface); }
   .status-chip.info .ic svg { stroke: var(--On-Surface); }
-  .status-chip.bad { background: var(--Error-Light); color: var(--Primary); }
-  .status-chip.bad .ic { border: 1.8px solid var(--Primary); }
-  .status-chip.bad .ic svg { stroke: var(--Primary); }
   @keyframes spin { to { transform: rotate(360deg); } }
 
   .bottom-bar { flex-shrink: 0; padding: 10px 16px 18px; background: var(--Background); }
@@ -75,6 +72,7 @@
   .continue-btn.active:hover { background: #E5303A; box-shadow: 0 6px 20px rgba(254,53,61,0.35); transform: translateY(-1px); }
   .continue-btn.active:active { transform: scale(0.98) translateY(0); }
 </style>
+<link rel="stylesheet" href="styles/field-error.css">
 <link rel="stylesheet" href="styles/device.css">
 </head>
 <body>
@@ -118,13 +116,13 @@
           <span class="ic"><svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></span>
           <span id="prnOkName"></span>
         </div>
-        <div class="status-chip bad" id="prnBad">
-          <span class="ic"><svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M17 7 7 17M7 7l10 10"/></svg></span>
-          <span>Invalid PNR</span>
+        <div class="field-error" id="prnBad">
+          <span class="fe-ic"><svg viewBox="0 0 24 24"><path d="M17 7 7 17M7 7l10 10"/></svg></span>
+          <span class="fe-txt">Invalid PNR</span>
         </div>
-        <div class="status-chip bad" id="prnExpired">
-          <span class="ic"><svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M17 7 7 17M7 7l10 10"/></svg></span>
-          <span>Expired PNR</span>
+        <div class="field-error" id="prnExpired">
+          <span class="fe-ic"><svg viewBox="0 0 24 24"><path d="M17 7 7 17M7 7l10 10"/></svg></span>
+          <span class="fe-txt">Expired PNR</span>
         </div>
         <div class="status-chip info" id="prnPaid">
           <span class="ic"><svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M17 7 7 17M7 7l10 10"/></svg></span>

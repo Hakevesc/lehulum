@@ -481,9 +481,7 @@
   .ap-code input { flex: 1; min-width: 0; border: none; outline: none; background: transparent; font-family: 'Switzer', sans-serif; font-size: 14px; color: var(--On-Surface); letter-spacing: 0.3px; }
   .ap-code input::placeholder { color: #A0A0AA; letter-spacing: 0; }
   .ap-enter { height: 40px; padding: 0 16px; border: none; border-radius: 10px; background: var(--Primary); color: #FFF; font-family: 'Switzer', sans-serif; font-size: 13.5px; font-weight: 600; cursor: pointer; flex-shrink: 0; transition: background 0.2s, color 0.2s; }
-  .ap-enter:disabled { background: var(--Primary-Light); color: var(--Primary); opacity: 0.6; cursor: default; }
-  .ap-msg { display: none; font-family: 'Switzer', sans-serif; font-size: 11.5px; color: var(--Primary); margin-top: 6px; }
-  .ap-msg.show { display: block; }
+  .ap-enter:disabled { background: #E0E0E0; color: var(--On-Surface-Low); cursor: not-allowed; }   /* silver like the other inactive buttons */
 
   .ap-actions { display: flex; gap: 10px; }
   .as-action-btn { flex: 1; height: 48px; border-radius: 12px; cursor: pointer; font-family: 'Switzer', sans-serif; font-size: 13.5px; font-weight: 600; display: flex; align-items: center; justify-content: center; gap: 8px; transition: all 0.2s; }
@@ -494,6 +492,82 @@
   .as-action-btn.solid { border: none; background: var(--Primary); color: #FFF; box-shadow: 0 4px 14px rgba(254,53,61,0.3); }
   .as-action-btn.call { flex: 0 0 48px; border: none; background: var(--Success); box-shadow: 0 4px 14px rgba(22,163,74,0.3); }
   .as-action-btn.call svg { width: 20px; height: 20px; fill: #FFF; stroke: none; }
+
+  /* ── Favorites & Frequents island: black bar under the title. Dragging the
+     agent card up drops a blob out of it, then opens the Deposit Cash At picker. ── */
+  .island-row { display: flex; justify-content: center; padding: 0 16px 10px; background: transparent; flex-shrink: 0; position: relative; z-index: 60; }
+  .island { width: 100%; height: 56px; border: none; border-radius: 16px; background: #1C1C21; color: #FFF; display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 0 10px 0 18px; cursor: grab; touch-action: none; user-select: none; -webkit-user-select: none; box-shadow: 0 4px 14px rgba(15,15,20,0.25); font-family: 'Switzer', sans-serif; font-size: 15px; }
+  .island.grabbing { cursor: grabbing; }
+  /* While stretching, the SVG outline below draws the bar, so the bar itself goes clear */
+  .island.stretching { background: transparent; box-shadow: none; }
+  .island:focus:not(:focus-visible) { outline: none; }
+  .island-lbl { font-weight: 400; letter-spacing: 0.1px; }
+  .island-lbl b { font-weight: 700; }
+  .island-avs { display: flex; padding-left: 8px; }
+  .island-avs .av { width: 36px; height: 36px; margin-left: -10px; border: 2px solid #1C1C21; font-size: 10px; overflow: hidden; }
+  .island-avs .av img { width: 100%; height: 100%; object-fit: cover; display: block; }
+
+  .av { border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0; font-family: 'Switzer', sans-serif; font-weight: 700; background: var(--Primary-Light); color: var(--Primary); }
+
+  /* "Drag to open" shows just under the bar while it is pulled (and during the hint) */
+  .drop-hint { position: absolute; z-index: 45; left: 0; right: 0; text-align: center; transform: translateY(-4px); color: var(--On-Surface); font-family: 'Switzer', sans-serif; font-size: 15px; font-weight: 500; white-space: nowrap; text-shadow: 0 0 6px #FFF, 0 0 3px #FFF, 0 0 1px #FFF; opacity: 0; pointer-events: none; transition: transform 0.2s; }
+  .drop-hint.show { opacity: 1; transform: none; }
+
+  /* The stretched bar: one outline, the bar with its bottom edge bulging down */
+  .drop { position: absolute; left: 0; top: 0; width: 100%; height: 100%; z-index: 50; pointer-events: none; opacity: 0; overflow: visible; }
+  .drop.show { opacity: 1; }
+  .drop-peek { position: absolute; z-index: 51; border-radius: 45%; overflow: hidden; pointer-events: none; opacity: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px; color: #FFF; font-family: 'Switzer', sans-serif; }
+  .drop-peek > svg { width: 22px; height: 22px; stroke: #FFF; stroke-width: 2.2; fill: none; }
+  .drop-peek .peek-title { font-size: 11px; font-weight: 600; color: rgba(255,255,255,0.6); letter-spacing: 0.4px; }
+  .drop-peek .peek-avs { display: flex; gap: 8px; }
+  .drop-peek .peek-avs .av { width: 34px; height: 34px; font-size: 11px; }
+  .drop-peek .peek-row { display: flex; align-items: center; gap: 8px; width: 150px; opacity: 0.45; }
+  .drop-peek .peek-row i { width: 22px; height: 22px; border-radius: 50%; background: rgba(255,255,255,0.35); flex-shrink: 0; }
+  .drop-peek .peek-row b { height: 7px; border-radius: 4px; background: rgba(255,255,255,0.35); flex: 1; }
+
+  /* The blob grows out of the island while dragging, then fills the screen */
+  .wd-blob { position: absolute; z-index: 70; overflow: hidden; background: var(--Primary); color: #FFF; opacity: 0; pointer-events: none; transition: left 0.45s cubic-bezier(.2,.8,.2,1), top 0.45s cubic-bezier(.2,.8,.2,1), width 0.45s cubic-bezier(.2,.8,.2,1), height 0.45s cubic-bezier(.2,.8,.2,1), border-radius 0.45s, background-color 0.3s, opacity 0.2s; }
+  .wd-blob.dragging { transition: none; }
+  .wd-blob.open { pointer-events: auto; }
+  /* Black-to-red gradient fades in over the black droplet as it opens */
+  .wd-blob::before { content: ''; position: absolute; inset: 0; background: linear-gradient(170deg, #1C1C21 0%, #3A070B 28%, #A3121B 65%, #E3242E 100%); opacity: 0; transition: opacity 0.4s; }
+  .wd-blob.open::before { opacity: 1; }
+
+  .blob-full { position: absolute; left: 0; top: 0; display: flex; flex-direction: column; padding: 26px 20px 20px; opacity: 0; transition: opacity 0.2s; font-family: 'Switzer', sans-serif; }
+  .wd-blob.open .blob-full { opacity: 1; transition: opacity 0.25s 0.2s; }
+  .wd-close { position: absolute; top: 24px; right: 18px; width: 36px; height: 36px; border: none; border-radius: 50%; background: rgba(255,255,255,0.2); color: #FFF; display: flex; align-items: center; justify-content: center; cursor: pointer; }
+  .wd-close svg { width: 18px; height: 18px; stroke: currentColor; stroke-width: 2.2; fill: none; }
+  .wd-title { font-size: 34px; line-height: 1.08; letter-spacing: -0.6px; font-weight: 500; color: rgba(255,255,255,0.72); }
+  .wd-title b { display: block; font-weight: 700; color: #FFF; }
+  .wd-sec { font-size: 22px; line-height: 1.1; letter-spacing: -0.3px; font-weight: 500; color: rgba(255,255,255,0.72); margin: 26px 0 14px; }
+  .wd-sec b { display: block; font-weight: 700; color: #FFF; }
+  .wd-favs { display: flex; gap: 14px; overflow-x: auto; padding: 2px 2px 4px; margin: 0 -2px; }
+  .wd-favs::-webkit-scrollbar { height: 0; }
+  .wd-fav { display: flex; flex-direction: column; align-items: center; gap: 7px; width: 62px; flex-shrink: 0; background: none; border: none; color: #FFF; cursor: pointer; font-family: inherit; }
+  .wd-fav .av { width: 52px; height: 52px; font-size: 15px; }
+  .wd-fav span { font-size: 11.5px; font-weight: 500; max-width: 62px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .wd-fav .add { width: 52px; height: 52px; border-radius: 50%; border: 1.5px solid rgba(255,255,255,0.7); display: flex; align-items: center; justify-content: center; }
+  .wd-fav .add svg { width: 20px; height: 20px; stroke: #FFF; stroke-width: 2; fill: none; }
+  /* Drag-up handle at the foot of the picker: pull up (or tap) to fold the
+     picker back into the Favorites & Frequents bar */
+  .wd-pull { flex-shrink: 0; display: flex; flex-direction: column; align-items: center; gap: 2px; padding: 12px 0 2px; margin-top: 6px; color: rgba(255,255,255,0.85); cursor: grab; touch-action: none; user-select: none; -webkit-user-select: none; background: none; border: none; font-family: inherit; }
+  .wd-pull.grabbing { cursor: grabbing; }
+  .wd-pull svg { width: 26px; height: 26px; stroke: currentColor; stroke-width: 2.4; fill: none; animation: pullNudge 1.6s ease-in-out infinite; }
+  .wd-pull span { font-size: 12px; font-weight: 500; letter-spacing: 0.2px; }
+  @keyframes pullNudge { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-5px); } }
+  @media (prefers-reduced-motion: reduce) { .wd-pull svg { animation: none; } }
+  .wd-list { flex: 1; min-height: 0; overflow-y: auto; display: flex; flex-direction: column; gap: 4px; margin: 0 -8px; padding: 10px 0 18px;
+    /* rows fade out at the top and bottom edges instead of being cut off */
+    -webkit-mask-image: linear-gradient(to bottom, transparent 0, #000 22px, #000 calc(100% - 34px), transparent 100%);
+            mask-image: linear-gradient(to bottom, transparent 0, #000 22px, #000 calc(100% - 34px), transparent 100%); }
+  .wd-list::-webkit-scrollbar { width: 0; }
+  .wd-row { display: flex; align-items: center; gap: 12px; padding: 9px 8px; border-radius: 14px; background: none; border: none; color: #FFF; text-align: left; cursor: pointer; font-family: inherit; transition: background 0.15s; }
+  .wd-row:hover { background: rgba(255,255,255,0.08); }
+  .wd-row .av { width: 42px; height: 42px; font-size: 13px; }
+  .wd-row-main { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 3px; }
+  .wd-row-name { font-size: 14.5px; font-weight: 600; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .wd-row-sub { font-size: 11.5px; color: rgba(255,255,255,0.75); }
+  .wd-row-go { width: 18px; height: 18px; stroke: rgba(255,255,255,0.85); stroke-width: 2.2; fill: none; flex-shrink: 0; }
 
   /* Selected pin lifts above the others. */
   .map-marker.active { z-index: 25; }
@@ -737,6 +811,7 @@
     color: var(--On-Surface-Low);
   }
 </style>
+<link rel="stylesheet" href="styles/field-error.css">
 <link rel="stylesheet" href="styles/device.css">
 </head>
 <body>
@@ -761,6 +836,14 @@
         </svg>
       </button>
       <h1 class="header-title">Find an Agent</h1>
+    </div>
+
+    <!-- Favorites & Frequents island: tap it, or hold and pull it down -->
+    <div class="island-row">
+      <div class="island" id="island" role="button" tabindex="0" aria-label="Open favourite and frequent agents" onclick="tapIsland()" onkeydown="if(event.key==='Enter'||event.key===' ')tapIsland()">
+        <span class="island-lbl">Favorites <b>&amp; Frequents</b></span>
+        <span class="island-avs" id="islandAvs"></span>
+      </div>
     </div>
 
     <div class="scroll">
@@ -916,9 +999,42 @@
         <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7V5a2 2 0 0 1 2-2h2"/><path d="M17 3h2a2 2 0 0 1 2 2v2"/><path d="M21 17v2a2 2 0 0 1-2 2h-2"/><path d="M7 21H5a2 2 0 0 1-2-2v-2"/><rect x="7" y="7" width="4" height="4"/><rect x="13" y="13" width="4" height="4"/><path d="M13 7h4v2M7 15v2h2"/></svg>
       </button>
       <input id="apCode" type="text" inputmode="numeric" maxlength="6" placeholder="Enter short code" autocomplete="off" oninput="onCodeInput(this)" onkeydown="if(event.key==='Enter')submitCode()">
-      <button class="ap-enter" id="apEnter" onclick="submitCode()" disabled>Enter</button>
+      <button class="ap-enter" id="apEnter" onclick="submitCode()" disabled>Continue</button>
     </div>
-    <div class="ap-msg" id="apMsg">Short code must be 6 digits.</div>
+    <div class="field-error" id="apMsg"><span class="fe-ic"><svg viewBox="0 0 24 24"><path d="M17 7 7 17M7 7l10 10"/></svg></span><span class="fe-txt">Short code must be 6 digits.</span></div>
+    </div>
+  </div>
+
+  <!-- Drag feedback: the bar stretches down into a droplet, hint below it -->
+  <div class="drop-hint" id="dropHint">Drag to open</div>
+  <svg class="drop" id="drop" aria-hidden="true">
+    <path id="dropShape" fill="#1C1C21"/>
+  </svg>
+  <div class="drop-peek" id="dropPeek">
+    <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M17 7L7 17M7 7h10v10"/></svg>
+    <div class="peek-title">FAVORITES</div>
+    <div class="peek-avs" id="peekAvs"></div>
+    <div class="peek-title">FREQUENTS</div>
+    <div class="peek-row"><i></i><b></b></div>
+    <div class="peek-row"><i></i><b></b></div>
+    <div class="peek-row"><i></i><b></b></div>
+  </div>
+
+  <!-- Deposit Cash At picker: grows out of the droplet -->
+  <div class="wd-blob" id="wdBlob" role="dialog" aria-modal="true" aria-label="Deposit cash at">
+    <div class="blob-full" id="blobFull">
+      <button class="wd-close" onclick="closePicker()" aria-label="Close">
+        <svg viewBox="0 0 24 24" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg>
+      </button>
+      <div class="wd-title">Deposit <b>Cash At</b></div>
+      <div class="wd-sec">Your <b>Favourites</b></div>
+      <div class="wd-favs" id="wdFavs"></div>
+      <div class="wd-sec">Your <b>Frequents</b></div>
+      <div class="wd-list" id="wdFreq"></div>
+      <button class="wd-pull" id="wdPull" type="button" aria-label="Close" onclick="if(!pullBackMoved)closePicker()">
+        <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M6 15l6-6 6 6"/></svg>
+        <span>Drag up to close</span>
+      </button>
     </div>
   </div>
 
@@ -990,7 +1106,20 @@
       open: true,
       x: '20%',
       y: '58%'
-    }
+    },
+    // Off-map agents the user has used before (Frequents only)
+    { id: 5, abbr: 'AT', name: 'Abebe Tadesse Shop', code: '615208', dist: '3.4 km', addr: 'Gerji, Addis Ababa', open: true },
+    { id: 6, abbr: 'HS', name: 'Hana Supermarket', code: '430092', dist: '4.1 km', addr: 'Megenagna, Addis Ababa', open: true }
+  ];
+
+  // Saved favourite agents, and the agents used most often for cash in
+  const FAVOURITES = ['323217', '562394', '615208', '778901'];
+  const FREQUENTS = [
+    { code: '323217', times: 12 },
+    { code: '615208', times: 8 },
+    { code: '562394', times: 5 },
+    { code: '778901', times: 3 },
+    { code: '430092', times: 2 }
   ];
 
   function pinSvg() {
@@ -1163,7 +1292,7 @@
     if (!/^\d{6}$/.test(code)) err = 'Short code must be 6 digits.';
     else if (!AGENTS.some(a => a.code === code)) err = 'Invalid merchant short code.';
     if (err) {
-      $('apMsg').textContent = err;
+      $('apMsg').querySelector('.fe-txt').textContent = err;
       $('apCodeBox').classList.add('error');
       $('apMsg').classList.add('show');
       return;
@@ -1194,6 +1323,287 @@
     document.getElementById('locName').textContent = 'Addis Ababa';
     document.getElementById('locSub').textContent = 'Turn on location for more accurate results';
   }
+
+  /* ── Deposit Cash At: island, drag-to-open and picker ── */
+  const agentBy = code => AGENTS.find(a => a.code === code);
+  const avHtml = (a, cls) => `<span class="av ${cls || ''}">${a.abbr}</span>`;
+
+  // The bar shows the top favourites as photos
+  $('islandAvs').innerHTML = FAVOURITES.slice(0, 3).map((c, i) =>
+    `<span class="av"><img src="assets/avatars/avatar-${i + 1}.png" alt="${agentBy(c).name}"></span>`).join('');
+  $('peekAvs').innerHTML = FAVOURITES.slice(0, 3).map(c => avHtml(agentBy(c))).join('');
+
+  const frame = document.querySelector('.phone-frame');
+  const blob = $('wdBlob');
+  const ARM = 0.6;               // drag progress needed to open on release
+  const BLACK = '#1C1C21';
+  let pickerOpen = false;
+
+  function relRect(el) {
+    const f = frame.getBoundingClientRect(), r = el.getBoundingClientRect();
+    return { left: r.left - f.left, top: r.top - f.top, width: r.width, height: r.height };
+  }
+  function setGeom(g, radius) {
+    blob.style.left = g.left + 'px';
+    blob.style.top = g.top + 'px';
+    blob.style.width = g.width + 'px';
+    blob.style.height = g.height + 'px';
+    blob.style.borderRadius = radius + 'px';
+    blob.style.backgroundColor = BLACK;
+  }
+  const attrs = (el, o) => Object.keys(o).forEach(k => el.setAttribute(k, o[k]));
+
+  // Stretched bar for drag progress p (0..1): one shape — the bar's bottom
+  // edge bulges down into a rounded droplet that grows with the pull, with
+  // soft shoulders where it leaves the bar and a faint preview inside.
+  let dropBox = null;            // bounds of the stretched shape, for openPicker
+  function drawDrop(p) {
+    const isl = relRect($('island'));
+    const x0 = isl.left, y0 = isl.top, w = isl.width, h = isl.height, r = 16;
+    const x1 = x0 + w, y1 = y0 + h, cx = x0 + w / 2;
+    // Bulge + shoulders always stay inside the bar's straight bottom edge,
+    // so the shape never pokes out past the rounded corners.
+    const bw = Math.min(34 + 106 * p, w / 2 - r - 8);             // half width of the bulge
+    const D = 8 + 262 * p;                                        // how far it hangs below the bar
+    const s = Math.max(4, Math.min(14 + 22 * p, w / 2 - r - bw)); // shoulder where it leaves the bar
+    const k = 0.5523;                        // circle-ish cubic handle
+    const neckY = y1 + D * 0.32;
+    const d = [
+      `M ${x0 + r} ${y0}`, `H ${x1 - r}`, `Q ${x1} ${y0} ${x1} ${y0 + r}`,
+      `V ${y1 - r}`, `Q ${x1} ${y1} ${x1 - r} ${y1}`,
+      `H ${cx + bw + s}`,
+      `C ${cx + bw + s * 0.35} ${y1} ${cx + bw} ${y1 + D * 0.06} ${cx + bw} ${neckY}`,
+      `C ${cx + bw} ${neckY + (y1 + D - neckY) * k} ${cx + bw * k} ${y1 + D} ${cx} ${y1 + D}`,
+      `C ${cx - bw * k} ${y1 + D} ${cx - bw} ${neckY + (y1 + D - neckY) * k} ${cx - bw} ${neckY}`,
+      `C ${cx - bw} ${y1 + D * 0.06} ${cx - bw - s * 0.35} ${y1} ${cx - bw - s} ${y1}`,
+      `H ${x0 + r}`, `Q ${x0} ${y1} ${x0} ${y1 - r}`,
+      `V ${y0 + r}`, `Q ${x0} ${y0} ${x0 + r} ${y0}`, 'Z'
+    ].join(' ');
+    $('dropShape').setAttribute('d', d);
+    dropBox = { left: cx - bw, top: y1 - 4, width: bw * 2, height: D + 4 };
+    const on = p > 0.02;
+    $('drop').classList.toggle('show', on);
+    $('island').classList.toggle('stretching', on);
+    const pk = $('dropPeek');
+    pk.style.left = (cx - bw * 0.9) + 'px';
+    pk.style.top = (y1 + D * 0.12) + 'px';
+    pk.style.width = (bw * 1.8) + 'px';
+    pk.style.height = (D * 0.84) + 'px';
+    pk.style.opacity = Math.max(0, Math.min(1, (p - 0.35) / 0.45));
+    const hint = $('dropHint');
+    hint.style.top = (y1 + D + 12) + 'px';
+    // The text rides under the bulge and fades with it as it sinks back
+    if (hint.classList.contains('show')) hint.style.opacity = String(Math.max(0, Math.min(1, (p - 0.02) / 0.1)));
+  }
+  function hideHint() { const h = $('dropHint'); h.classList.remove('show'); h.style.opacity = ''; }
+
+  // Released too early: the bulge sinks back into the bar
+  function retractDrop(from) {
+    const t0 = performance.now();
+    (function step(now) {
+      if (pull) return;
+      const k = Math.min(1, (now - t0) / 260);
+      drawDrop(from * (1 - k) * (1 - k));
+      if (k < 1) requestAnimationFrame(step);
+      else { $('drop').classList.remove('show'); $('island').classList.remove('stretching'); hideHint(); }
+    })(t0);
+  }
+
+  function renderPicker() {
+    $('wdFavs').innerHTML = `<button class="wd-fav" onclick="addFavourite()"><span class="add"><svg viewBox="0 0 24 24" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg></span><span>Add New</span></button>` + FAVOURITES.map(c => {
+      const a = agentBy(c);
+      return `<button class="wd-fav" data-code="${c}" data-src="fav" onclick="goAgent('${c}','fav')">${avHtml(a)}<span>${a.name.split(' ')[0]}</span></button>`;
+    }).join('');
+    $('wdFreq').innerHTML = FREQUENTS.map(f => {
+      const a = agentBy(f.code);
+      return `<button class="wd-row" data-code="${f.code}" data-src="freq" onclick="goAgent('${f.code}','freq')">
+        ${avHtml(a)}
+        <span class="wd-row-main"><span class="wd-row-name">${a.name}</span><span class="wd-row-sub">${a.code} &middot; ${a.dist}</span></span>
+        <svg class="wd-row-go" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg>
+      </button>`;
+    }).join('');
+  }
+
+  // Tap: play the same droplet the drag makes, then open
+  let tapping = false;
+  function tapIsland() {
+    if (pickerOpen || pull || tapping) return;
+    tapping = true;
+    const t0 = performance.now(), END = 0.8;
+    (function step(now) {
+      const k = Math.min(1, (now - t0) / 320);
+      drawDrop(END * (1 - Math.pow(1 - k, 3)));
+      if (k < 1) requestAnimationFrame(step);
+      else { tapping = false; openPicker(); }
+    })(t0);
+  }
+
+  // Opens from the stretched droplet, which swells to fill the screen
+  function openPicker() {
+    if (pickerOpen) return;
+    pickerOpen = true;
+    renderPicker();
+    const fr = frame.getBoundingClientRect();
+    $('blobFull').style.width = fr.width + 'px';
+    $('blobFull').style.height = fr.height + 'px';
+    const b = dropBox || { left: fr.width / 2 - 40, top: 80, width: 80, height: 60 };
+    blob.classList.add('dragging');
+    setGeom(b, Math.min(b.width, b.height) / 2);
+    blob.style.opacity = 1;
+    void blob.offsetWidth;
+    blob.classList.remove('dragging');
+    blob.classList.add('open');
+    setGeom({ left: 0, top: 0, width: fr.width, height: fr.height }, parseFloat(getComputedStyle(frame).borderTopLeftRadius) || 0);
+    setTimeout(() => { $('drop').classList.remove('show'); $('island').classList.remove('stretching'); $('dropPeek').style.opacity = 0; }, 60);
+  }
+
+  // Hint until first use: the bar peeks — a small bulge with "Drag to
+  // open" under it — twice, 10 seconds apart, so it reads as draggable.
+  // Stops for good the moment the user touches the screen or scrolls.
+  const HINT_TIMES = 2, HINT_GAP = 10000;
+  let hintTimer = null, hintRaf = 0, hintDone = false, hintCount = 0;
+  function stopHint() {
+    if (hintDone) return;
+    hintDone = true;
+    clearTimeout(hintTimer); cancelAnimationFrame(hintRaf);
+    if (!pull && !pickerOpen) { drawDrop(0); $('drop').classList.remove('show'); $('island').classList.remove('stretching'); hideHint(); }
+  }
+  function playHint() {
+    if (hintDone || pull || pickerOpen || tapping) return;
+    hintCount++;
+    // next peek is timed from this one's start: 10 s start to start
+    if (hintCount < HINT_TIMES) hintTimer = setTimeout(playHint, HINT_GAP);
+    const t0 = performance.now(), DUR = 1500, PEAK = 0.22;   // deep enough that the text clears the location card
+    $('dropHint').textContent = 'Drag to open';
+    $('dropHint').classList.add('show');
+    (function step(now) {
+      if (hintDone || pull || pickerOpen) return;
+      const k = Math.min(1, (now - t0) / DUR);
+      drawDrop(PEAK * Math.sin(Math.PI * k));          // ease out and back
+      if (k < 1) { hintRaf = requestAnimationFrame(step); return; }
+      drawDrop(0); $('drop').classList.remove('show'); $('island').classList.remove('stretching');
+      hideHint();
+      if (hintCount >= HINT_TIMES) hintDone = true;
+    })(t0);
+  }
+  ['pointerdown', 'wheel', 'keydown', 'touchstart'].forEach(ev => document.addEventListener(ev, stopHint, { capture: true, passive: true }));
+  document.querySelectorAll('.app-content, .scroll').forEach(el => el.addEventListener('scroll', stopHint, { passive: true }));
+  if (!matchMedia('(prefers-reduced-motion: reduce)').matches) hintTimer = setTimeout(playHint, 1200);
+
+  // Pull the handle up: the picker folds up toward the bar as the finger
+  // rises; letting go past halfway closes it, earlier springs back open.
+  let pullBack = null, pullBackMoved = false;
+  const wdPull = $('wdPull');
+  wdPull.addEventListener('pointerdown', e => {
+    if (!pickerOpen || e.button > 0) return;
+    pullBack = { y0: e.clientY, k: 0, id: e.pointerId };
+    pullBackMoved = false;
+    try { wdPull.setPointerCapture(e.pointerId); } catch (_) {}
+  });
+  wdPull.addEventListener('pointermove', e => {
+    if (!pullBack || e.pointerId !== pullBack.id) return;
+    const dy = Math.max(0, pullBack.y0 - e.clientY);
+    if (!pullBackMoved && dy < 8) return;
+    if (!pullBackMoved) { pullBackMoved = true; wdPull.classList.add('grabbing'); blob.classList.add('dragging'); $('blobFull').style.transition = 'none'; }
+    const fr = frame.getBoundingClientRect(), isl = relRect($('island'));
+    const k = pullBack.k = Math.min(1, dy / (fr.height * 0.6));
+    const full = { left: 0, top: 0, width: fr.width, height: fr.height };
+    const lerp = (a, b) => a + (b - a) * k;
+    setGeom({
+      left: lerp(full.left, isl.left), top: lerp(full.top, isl.top),
+      width: lerp(full.width, isl.width), height: lerp(full.height, isl.height)
+    }, lerp(parseFloat(getComputedStyle(frame).borderTopLeftRadius) || 0, 16));
+    $('blobFull').style.opacity = String(1 - k * 1.4);
+  });
+  function endPullBack() {
+    if (!pullBack) return;
+    const { k } = pullBack;
+    pullBack = null;
+    wdPull.classList.remove('grabbing');
+    if (!pullBackMoved) return;
+    blob.classList.remove('dragging');
+    $('blobFull').style.opacity = '';
+    $('blobFull').style.transition = '';
+    if (k >= 0.4) closePicker();
+    else {
+      const fr = frame.getBoundingClientRect();
+      setGeom({ left: 0, top: 0, width: fr.width, height: fr.height }, parseFloat(getComputedStyle(frame).borderTopLeftRadius) || 0);
+    }
+    setTimeout(() => { pullBackMoved = false; }, 350);
+  }
+  wdPull.addEventListener('pointerup', endPullBack);
+  wdPull.addEventListener('pointercancel', endPullBack);
+
+  // Closes back into the island
+  function closePicker() {
+    if (!pickerOpen) return;
+    pickerOpen = false;
+    blob.classList.remove('open');
+    setGeom(relRect($('island')), 16);
+    setTimeout(() => { if (!pickerOpen) blob.style.opacity = 0; }, 420);
+  }
+
+  function addFavourite() {
+    closePicker();
+    clearAgent();
+    setTimeout(() => $('apCode').focus(), 450);
+  }
+
+  // Tapping a favourite or frequent agent goes straight to the amount step
+  function goAgent(code, src) {
+    sessionStorage.setItem('cashInData', JSON.stringify({
+      method: 'code',
+      methodLabel: src === 'fav' ? 'Favourite Agent' : 'Frequent Agent',
+      entry: 'code',
+      agentCode: code
+    }));
+    window.location.href = 'Cash In - Merchant Short Code.html';
+  }
+
+  // Only the Favorites & Frequents bar drags; the short-code card stays put.
+  let swallowClick = false;
+
+  // Hold the Favorites & Frequents bar and pull down: the droplet follows the
+  // finger out of the bar; letting go past ARM opens the picker, earlier
+  // sinks it back. A tap (no movement) still opens it via tapIsland().
+  const island = $('island');
+  const PULL = 260;              // pull distance for a full droplet
+  let pull = null;
+  island.addEventListener('pointerdown', e => {
+    if (pickerOpen || tapping || e.button > 0) return;
+    pull = { y0: e.clientY, p: 0, moved: false, id: e.pointerId };
+    try { island.setPointerCapture(e.pointerId); } catch (_) {}   // keep getting moves once the finger leaves the bar
+  });
+  island.addEventListener('pointermove', e => {
+    if (!pull || e.pointerId !== pull.id) return;
+    const dy = Math.max(0, e.clientY - pull.y0);
+    if (!pull.moved && dy < 8) return;
+    if (!pull.moved) {
+      pull.moved = true;
+      island.classList.add('grabbing');
+      $('dropHint').classList.add('show');
+    }
+    pull.p = Math.min(1, dy / PULL);
+    $('dropHint').textContent = pull.p >= ARM ? 'Release to open' : 'Drag to open';
+    drawDrop(pull.p);
+  });
+  function endPull() {
+    if (!pull) return;
+    const { p, moved } = pull;
+    pull = null;
+    if (!moved) return;
+    swallowClick = true;
+    setTimeout(() => { swallowClick = false; }, 350);
+    island.classList.remove('grabbing');
+    if (p >= ARM) { hideHint(); openPicker(); }
+    else retractDrop(p);                 // the text fades out with the shape
+  }
+  island.addEventListener('pointerup', endPull);
+  island.addEventListener('pointercancel', endPull);
+  island.addEventListener('click', e => {
+    if (swallowClick) { e.stopImmediatePropagation(); e.preventDefault(); swallowClick = false; }
+  }, true);
+  document.addEventListener('keydown', e => { if (e.key === 'Escape') closePicker(); });
 
   // Initial render
   renderMapPins(AGENTS);

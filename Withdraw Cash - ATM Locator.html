@@ -47,9 +47,6 @@
   .balance-hint { font-family: 'Switzer', sans-serif; font-size: 11.5px; color: var(--On-Surface-Low); margin-top: 2px; }
   .balance-hint b { color: var(--On-Surface); font-weight: 600; }
 
-  .msg { display: none; align-items: center; gap: 8px; font-family: 'Switzer', sans-serif; font-size: 12px; margin-top: 2px; color: var(--Primary); }
-  .msg.show { display: flex; }
-  .msg svg { width: 15px; height: 15px; stroke: var(--Primary); stroke-width: 2.4; fill: none; flex-shrink: 0; }
 
   /* ── Bank picker ── */
   .select-wrap { position: relative; }
@@ -158,6 +155,7 @@
   .sheet-btn.confirm { border: 1.5px solid var(--Primary); color: var(--Primary); font-weight: 600; }
   .sheet-btn.confirm:hover { background: #FFF5F5; }
 </style>
+<link rel="stylesheet" href="styles/field-error.css">
 <link rel="stylesheet" href="styles/device.css">
 </head>
 <body>
@@ -201,9 +199,9 @@
           <span class="suffix">ETB</span>
         </div>
         <div class="balance-hint" id="balanceHint"><b>Balance:</b> 12,580.00 ETB</div>
-        <div class="msg" id="amtMsg">
-          <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 8v5M12 16h.01"/></svg>
-          <span id="amtMsgTxt"></span>
+        <div class="field-error" id="amtMsg">
+          <span class="fe-ic"><svg viewBox="0 0 24 24"><path d="M17 7 7 17M7 7l10 10"/></svg></span>
+          <span class="fe-txt" id="amtMsgTxt"></span>
         </div>
 
         <span class="field-label">Note (Optional)</span>

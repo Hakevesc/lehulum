@@ -51,11 +51,6 @@
   .balance-hint b { color: var(--On-Surface); font-weight: 600; }
 
   /* Inline validation message */
-  .msg { display: none; align-items: center; gap: 8px; font-family: 'Switzer', sans-serif; font-size: 12px; margin-top: 2px; }
-  .msg.show { display: flex; }
-  .msg svg { width: 15px; height: 15px; stroke-width: 2.4; fill: none; flex-shrink: 0; }
-  .msg.warn { color: var(--Primary); }
-  .msg.warn svg { stroke: var(--Primary); }
 
 
 
@@ -166,6 +161,7 @@
   .sheet-btn.confirm { border: 1.5px solid var(--Primary); color: var(--Primary); font-weight: 600; }
   .sheet-btn.confirm:hover { background: #FFF5F5; }
 </style>
+<link rel="stylesheet" href="styles/field-error.css">
 <link rel="stylesheet" href="styles/device.css">
 </head>
 <body>
@@ -196,9 +192,9 @@
         <div class="field">
           <input id="codeInput" class="strong" type="text" inputmode="numeric" maxlength="6" placeholder="Enter short code" autocomplete="off" oninput="onCodeInput(this)">
         </div>
-        <div class="msg warn" id="codeMsg">
-          <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 8v5M12 16h.01"/></svg>
-          <span id="codeMsgTxt"></span>
+        <div class="field-error" id="codeMsg">
+          <span class="fe-ic"><svg viewBox="0 0 24 24"><path d="M17 7 7 17M7 7l10 10"/></svg></span>
+          <span class="fe-txt" id="codeMsgTxt"></span>
         </div>
         <div class="agent-card" id="agentRow" hidden>
           <span class="agent-card-avatar" id="agentAbbr"></span>
@@ -215,9 +211,9 @@
           <span class="suffix">ETB</span>
         </div>
         <div class="balance-hint" id="balanceHintCode"><b>Balance:</b> 12,580.00 ETB</div>
-        <div class="msg warn" id="amtMsgCode">
-          <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 8v5M12 16h.01"/></svg>
-          <span id="amtMsgCodeTxt"></span>
+        <div class="field-error" id="amtMsgCode">
+          <span class="fe-ic"><svg viewBox="0 0 24 24"><path d="M17 7 7 17M7 7l10 10"/></svg></span>
+          <span class="fe-txt" id="amtMsgCodeTxt"></span>
         </div>
 
         <span class="field-label">Note (Optional)</span>

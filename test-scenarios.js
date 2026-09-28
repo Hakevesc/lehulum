@@ -534,7 +534,7 @@
       var val = e.target.closest('.test-data-val');
       if (val) {
         var v = val.getAttribute('data-copy');
-        try { navigator.clipboard.writeText(v); } catch (_) {}
+        try { navigator.clipboard.writeText(v).catch(function () {}); } catch (_) {}
         val.classList.add('copied'); val.textContent = 'Copied';
         setTimeout(function () { val.classList.remove('copied'); val.textContent = v; }, 1100);
         return;

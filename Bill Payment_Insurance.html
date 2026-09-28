@@ -60,10 +60,6 @@
   .balance-hint { font-family: 'Switzer', sans-serif; font-size: 11.5px; color: var(--On-Surface-Low); margin-top: 4px; }
   .balance-hint b { color: var(--On-Surface); font-weight: 600; }
 
-  .msg { display: none; font-family: 'Switzer', sans-serif; font-size: 12.5px; font-weight: 600; margin-top: 6px; }
-  .msg.show { display: block; }
-  .msg.warn { color: var(--Warning); background: var(--Warning-Light); border-radius: 8px; padding: 10px 12px; }
-  .msg.err { color: var(--Primary); }
 
   .status-chip { display: none; align-items: center; gap: 10px; border-radius: 12px; padding: 13px 14px; margin-top: 4px; font-family: 'Switzer', sans-serif; font-size: 14px; font-weight: 500; }
   .status-chip.show { display: flex; }
@@ -74,9 +70,6 @@
   .status-chip.ok { background: var(--Success-Light); color: var(--On-Surface); }
   .status-chip.ok .ic { border: 1.8px solid var(--Success); }
   .status-chip.ok .ic svg { stroke: var(--Success); }
-  .status-chip.bad { background: var(--Error-Light); color: var(--Primary); }
-  .status-chip.bad .ic { border: 1.8px solid var(--Primary); }
-  .status-chip.bad .ic svg { stroke: var(--Primary); }
   @keyframes spin { to { transform: rotate(360deg); } }
 
   .bottom-bar { flex-shrink: 0; padding: 10px 16px 18px; background: var(--Background); }
@@ -85,6 +78,7 @@
   .continue-btn.active:hover { background: #E5303A; box-shadow: 0 6px 20px rgba(254,53,61,0.35); transform: translateY(-1px); }
   .continue-btn.active:active { transform: scale(0.98) translateY(0); }
 </style>
+<link rel="stylesheet" href="styles/field-error.css">
 <link rel="stylesheet" href="styles/device.css">
 </head>
 <body>
@@ -128,9 +122,9 @@
           <span class="ic"><svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></span>
           <span id="policyOkName"></span>
         </div>
-        <div class="status-chip bad" id="policyBad">
-          <span class="ic"><svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M17 7 7 17M7 7l10 10"/></svg></span>
-          <span>Invalid policy number</span>
+        <div class="field-error" id="policyBad">
+          <span class="fe-ic"><svg viewBox="0 0 24 24"><path d="M17 7 7 17M7 7l10 10"/></svg></span>
+          <span class="fe-txt">Invalid policy number</span>
         </div>
 
         <span class="field-label">Enter Amount</span>
@@ -139,7 +133,7 @@
                  oninput="onAmountInput()" onfocus="unformatAmount()" onblur="formatAmount()">
         </div>
         <div class="balance-hint" id="balanceHintRow"><b>Balance:</b> <span id="balanceHint">—</span></div>
-        <div class="msg" id="amtMsg"></div>
+        <div class="field-error" id="amtMsg"><span class="fe-ic"><svg viewBox="0 0 24 24"><path d="M17 7 7 17M7 7l10 10"/></svg></span><span class="fe-txt"></span></div>
       </div>
 
     </div>
@@ -249,7 +243,7 @@
     msg.classList.toggle('err', state === 'err');
     msg.classList.toggle('show', !!state);
     $('balanceHintRow').style.display = state ? 'none' : '';
-    if (text) msg.textContent = text;
+    if (text) msg.querySelector('.fe-txt').textContent = text;
   }
 
   function validateAmount() {

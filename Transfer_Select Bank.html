@@ -67,10 +67,10 @@
   .balance-hint b { color: var(--On-Surface); font-weight: 600; }
 
   /* Amber strip for a balance shortfall, plain red for the hard limits */
-  .msg { display: none; font-family: 'Switzer', sans-serif; font-size: 12.5px; font-weight: 600; margin-top: 6px; }
-  .msg.show { display: block; }
-  .msg.warn { color: var(--Warning); background: var(--Warning-Light); border-radius: 8px; padding: 10px 12px; }
-  .msg.err { color: var(--Primary); }
+  /* Amount messages use styles/field-error.css; only the amber 'warn' state keeps its own look. */
+  .field-error.msg.warn { color: var(--Warning); background: var(--Warning-Light); border-radius: 8px; padding: 10px 12px; margin-top: 6px; font-size: 12.5px; font-weight: 600; }
+  .field-error.msg.warn.show { display: block; }
+  .field-error.msg.warn .fe-ic { display: none; }
 
   /* ── Account lookup state ── */
   .status-chip { display: none; align-items: center; gap: 10px; border-radius: 12px; padding: 13px 14px; margin-top: 4px; font-family: 'Switzer', sans-serif; font-size: 14px; font-weight: 500; }
@@ -83,7 +83,7 @@
   .status-chip.ok .ic { border: 1.8px solid var(--Success); }
   .status-chip.ok .ic svg { stroke: var(--Success); }
   .status-chip.bad { background: var(--Error-Light); color: var(--Primary); }
-  .status-chip.bad .ic { border: 1.8px solid var(--Primary); }
+  .status-chip.bad .ic { width: 26px; height: 26px; border-radius: 8px; border: 1.8px solid var(--Primary); }
   .status-chip.bad .ic svg { stroke: var(--Primary); }
   @keyframes spin { to { transform: rotate(360deg); } }
 
@@ -167,6 +167,7 @@
   .sheet-btn.confirm:hover { background: #FFF5F5; }
 
   </style>
+<link rel="stylesheet" href="styles/field-error.css">
 <link rel="stylesheet" href="styles/device.css">
 </head>
 <body>
@@ -228,7 +229,7 @@
                  oninput="onAmountInput()" onfocus="unformatAmount()" onblur="formatAmount()">
         </div>
         <div class="balance-hint" id="balanceHint"><b>Balance:</b> 20,000.00 ETB</div>
-        <div class="msg" id="amtMsg"></div>
+        <div class="field-error msg" id="amtMsg"><span class="fe-ic"><svg viewBox="0 0 24 24"><path d="M17 7 7 17M7 7l10 10"/></svg></span><span class="fe-txt"></span></div>
 
         <span class="field-label">Payment Reason(Optional)</span>
         <div class="field">
@@ -458,7 +459,7 @@
     msg.classList.toggle('err', state === 'err');
     msg.classList.toggle('show', !!state);
     $('balanceHint').style.display = state ? 'none' : '';
-    if (text) msg.textContent = text;
+    if (text) msg.querySelector('.fe-txt').textContent = text;
   }
 
   function validateAmount() {
@@ -467,7 +468,7 @@
     if (isNaN(n) || n <= 0) { setAmountState('err', 'Enter a valid amount'); return null; }
     if (n < MIN_AMT)   { setAmountState('err', 'Minimum Amount: ' + fmt(MIN_AMT) + ' ETB'); return null; }
     if (n > MAX_AMT)   { setAmountState('err', 'Maximum Amount: ' + fmt(MAX_AMT) + ' ETB'); return null; }
-    if (n + FEE > BALANCE) { setAmountState('warn', 'Insufficient Balance'); return null; }
+    if (n + FEE > BALANCE) { setAmountState('err', 'Insufficient Balance'); return null; }
     setAmountState(null);
     return n;
   }

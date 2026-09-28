@@ -1,0 +1,43 @@
+/* ============================================================
+   Field error — the one look for every inline "invalid" message
+   (same as Transfer's "Invalid account number"): a soft red box
+   with a red ✕ in an outlined rounded square, then the message.
+
+   Markup:
+     <div class="field-error" id="…">
+       <span class="fe-ic"><svg viewBox="0 0 24 24"><path d="M17 7 7 17M7 7l10 10"/></svg></span>
+       <span class="fe-txt">Invalid account number</span>
+     </div>
+   Hidden until it has .show (screens that toggle display / hidden
+   themselves can keep doing so — see .field-error.always).
+   ============================================================ */
+.field-error {
+  display: none;
+  align-items: center;
+  gap: 12px;
+  margin-top: 8px;
+  padding: 11px 14px;
+  border-radius: 12px;
+  background: #FDECEC;
+  color: #FE353D;
+  font-family: 'Switzer', sans-serif;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 1.35;
+  text-align: left;
+}
+.field-error.show,
+.field-error.always { display: flex; }
+.field-error[hidden] { display: none !important; }
+.field-error .fe-ic {
+  width: 26px;
+  height: 26px;
+  border: 1.8px solid #FE353D;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+.field-error .fe-ic svg { width: 13px; height: 13px; stroke: #FE353D; stroke-width: 3; fill: none; stroke-linecap: round; }
+.field-error .fe-txt { flex: 1; min-width: 0; }

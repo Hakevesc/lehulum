@@ -94,6 +94,7 @@
   .btn.confirm.disabled:hover { background: #FFF; }
 
   </style>
+<link rel="stylesheet" href="styles/field-error.css">
 <link rel="stylesheet" href="styles/device.css">
 </head>
 <body>
@@ -139,7 +140,8 @@
           <span class="sum-val" id="total">—</span>
         </div>
 
-        <div class="short-strip" id="shortStrip">Insufficient Balance</div>
+        <div class="short-strip" id="shortStrip"></div>
+        <div class="field-error" id="shortErr"><span class="fe-ic"><svg viewBox="0 0 24 24"><path d="M17 7 7 17M7 7l10 10"/></svg></span><span class="fe-txt">Insufficient Balance</span></div>
 
         <div class="funding-selector">
           <div class="fund-option selected" id="optMain" onclick="pickAccount('main')">
@@ -245,13 +247,15 @@
       $('shortStrip').classList.add('od');
       $('shortStrip').textContent = 'Paying with Errif Overdraft · up to 5,000.00 ETB limit';
       $('shortStrip').classList.add('show');
+      $('shortErr').classList.remove('show');
       $('confirmBtn').disabled = false;
       $('confirmBtn').classList.remove('disabled');
     } else {
       $('totalRow').classList.remove('od');
       $('shortStrip').classList.remove('od');
-      $('shortStrip').textContent = 'Insufficient Balance';
-      $('shortStrip').classList.toggle('show', short);
+      $('shortStrip').classList.remove('show');
+      $('shortErr').querySelector('.fe-txt').textContent = 'Insufficient Balance';
+      $('shortErr').classList.toggle('show', short);
       $('confirmBtn').disabled = short;
       $('confirmBtn').classList.toggle('disabled', short);
     }
