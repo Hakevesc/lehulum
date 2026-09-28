@@ -1347,9 +1347,11 @@
     const isl = relRect($('island'));
     const x0 = isl.left, y0 = isl.top, w = isl.width, h = isl.height, r = 16;
     const x1 = x0 + w, y1 = y0 + h, cx = x0 + w / 2;
-    const bw = 34 + 106 * p;                 // half width of the bulge
-    const D = 8 + 262 * p;                   // how far it hangs below the bar
-    const s = 14 + 22 * p;                   // shoulder where it leaves the bar
+    // Bulge + shoulders always stay inside the bar's straight bottom edge,
+    // so the shape never pokes out past the rounded corners.
+    const bw = Math.min(34 + 106 * p, w / 2 - r - 8);             // half width of the bulge
+    const D = 8 + 262 * p;                                        // how far it hangs below the bar
+    const s = Math.max(4, Math.min(14 + 22 * p, w / 2 - r - bw)); // shoulder where it leaves the bar
     const k = 0.5523;                        // circle-ish cubic handle
     const neckY = y1 + D * 0.32;
     const d = [

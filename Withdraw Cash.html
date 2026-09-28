@@ -37,7 +37,9 @@
   /* ── Withdrawal services: bottom bar, one per row, in the Transfer Money
      row style (white card, bold label) with an icon on the left. The agent
      row carries a black Scan QR button in place of the arrow. ── */
-  .svc-bar { flex-shrink: 0; padding: 10px 16px 18px; background: var(--Background); display: flex; flex-direction: column; gap: 12px; }
+  .svc-bar { position: relative; flex-shrink: 0; padding: 10px 16px 18px; background: var(--Background); display: flex; flex-direction: column; gap: 12px; }
+  /* Floating Scan QR button (home-screen FAB) parked just above the bar */
+  .svc-bar .qr-fab-wrapper { bottom: calc(100% + 10px); right: 16px; }
   .svc-line { position: relative; }
   .svc { display: flex; align-items: center; gap: 12px; padding: 14px 18px 14px 14px; background: #FFF; border-radius: 16px; box-shadow: 0 2px 8px rgba(0,0,0,0.04); cursor: pointer; transition: box-shadow 0.2s, transform 0.15s; min-width: 0; }
   .svc:hover { box-shadow: 0 4px 14px rgba(0,0,0,0.08); transform: translateY(-1px); }
@@ -45,11 +47,7 @@
   .svc-ic { width: 42px; height: 42px; border-radius: 12px; background: var(--Primary); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
   .svc-ic svg { width: 22px; height: 22px; stroke: #FFF; stroke-width: 1.9; fill: none; }
   .svc-name { flex: 1; min-width: 0; font-family: 'Switzer', sans-serif; font-size: 16px; font-weight: 700; letter-spacing: 0.2px; line-height: 1.25; color: var(--On-Surface); }
-  .svc-qr { height: 44px; padding: 0 12px 0 10px; flex-shrink: 0; border: none; border-radius: 12px; background: var(--On-Surface); display: flex; align-items: center; gap: 7px; cursor: pointer; transition: transform 0.15s; }
   @media (max-width: 370px) { .svc { gap: 10px; padding-left: 12px; padding-right: 14px; } .svc-name { font-size: 14px; } .svc-ic { width: 38px; height: 38px; } }
-  .svc-qr span { font-family: 'Switzer', sans-serif; font-size: 11px; font-weight: 600; line-height: 1.15; color: #FFF; text-align: left; }
-  .svc-qr:active { transform: scale(0.94); }
-  .svc-qr svg { width: 22px; height: 22px; stroke: #FFF; stroke-width: 2; fill: none; }
   .chev { width: 18px; height: 18px; stroke: var(--Primary); stroke-width: 2.4; fill: none; flex-shrink: 0; }
 
   /* ── Section headers ── */
@@ -87,15 +85,16 @@
   .frequent-sub { color: var(--On-Surface-Low); font-family: 'Switzer', sans-serif; font-size: 12px; font-weight: 400; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 
   /* ── Scan QR tooltip: points at the scan button ── */
-  .qr-tip { position: absolute; right: 0; bottom: calc(100% + 12px); z-index: 20; display: flex; align-items: center; gap: 12px; padding: 12px 12px 12px 14px; max-width: 100%; background: #FFF; border-radius: 16px; box-shadow: 0 4px 14px rgba(0,0,0,0.08); cursor: pointer; opacity: 0; transform: translateY(6px); pointer-events: none; transition: opacity 0.3s, transform 0.3s; }
+  .qr-tip { position: absolute; right: 100px; bottom: calc(100% + 17px); z-index: 99; display: flex; align-items: center; gap: 12px; padding: 12px 12px 12px 14px; max-width: calc(100% - 116px); background: #FFF; border-radius: 16px; box-shadow: 0 4px 14px rgba(0,0,0,0.08); cursor: pointer; opacity: 0; transform: translateX(8px); pointer-events: none; transition: opacity 0.3s, transform 0.3s; }
   .qr-tip.show { opacity: 1; transform: none; pointer-events: auto; }
-  .qr-tip::after { content: ''; position: absolute; right: 76px; bottom: -6px; width: 12px; height: 12px; background: #FFF; transform: rotate(45deg); }
+  .qr-tip::after { content: ''; position: absolute; right: -6px; top: 50%; width: 12px; height: 12px; background: #FFF; transform: translateY(-50%) rotate(45deg); }
   .qr-tip-ic { width: 26px; height: 26px; stroke: var(--Primary); stroke-width: 1.9; fill: none; flex-shrink: 0; }
   .qr-tip-txt { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
   .qr-tip-title { font-family: 'Switzer', sans-serif; font-size: 14px; font-weight: 700; color: var(--On-Surface); }
   .qr-tip-sub { font-family: 'Switzer', sans-serif; font-size: 11.5px; color: var(--On-Surface-Low); white-space: nowrap; }
   .qr-tip .chev { width: 16px; height: 16px; }
 </style>
+<link rel="stylesheet" href="styles/component-qr-popup.css">
 <link rel="stylesheet" href="styles/device.css">
 </head>
 <body>
@@ -204,24 +203,28 @@
 
     <!-- Withdrawal services: agent (with Scan QR) and ATM -->
     <div class="svc-bar">
-      <div class="svc-line">
-        <div class="qr-tip" id="qrTip" onclick="scanAgentQr()" role="button" aria-label="Scan QR to withdraw cash at merchant location">
-          <svg class="qr-tip-ic" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7V5a2 2 0 0 1 2-2h2"/><path d="M17 3h2a2 2 0 0 1 2 2v2"/><path d="M21 17v2a2 2 0 0 1-2 2h-2"/><path d="M7 21H5a2 2 0 0 1-2-2v-2"/><rect x="7" y="7" width="4" height="4" rx="0.5"/><rect x="13" y="7" width="4" height="4" rx="0.5"/><rect x="7" y="13" width="4" height="4" rx="0.5"/><path d="M13 13h1.5M17 13v1.5M13 17h4M15.5 15.5v1.5"/></svg>
-          <div class="qr-tip-txt">
-            <span class="qr-tip-title">Scan QR to Withdraw</span>
-            <span class="qr-tip-sub">cash at merchant location</span>
-          </div>
-          <svg class="chev" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+      <div class="qr-tip" id="qrTip" onclick="scanAgentQr()" role="button" aria-label="Scan QR to withdraw cash at merchant location">
+        <svg class="qr-tip-ic" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7V5a2 2 0 0 1 2-2h2"/><path d="M17 3h2a2 2 0 0 1 2 2v2"/><path d="M21 17v2a2 2 0 0 1-2 2h-2"/><path d="M7 21H5a2 2 0 0 1-2-2v-2"/><rect x="7" y="7" width="4" height="4" rx="0.5"/><rect x="13" y="7" width="4" height="4" rx="0.5"/><rect x="7" y="13" width="4" height="4" rx="0.5"/><path d="M13 13h1.5M17 13v1.5M13 17h4M15.5 15.5v1.5"/></svg>
+        <div class="qr-tip-txt">
+          <span class="qr-tip-title">Scan QR to Withdraw</span>
+          <span class="qr-tip-sub">cash at merchant location</span>
         </div>
-        <div class="svc has-qr" onclick="window.location.href='Withdraw Cash - Agent Nearby.html'">
+        <svg class="chev" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+      </div>
+      <!-- Floating Scan QR (same button as the home screen) -->
+      <div class="qr-fab-wrapper">
+        <button class="qr-popup" onclick="scanAgentQr()" title="Scan QR Code" aria-label="Scan agent QR code">
+          <div class="frame-2061">
+            <svg viewBox="0 0 24 24" fill="none" stroke="#FFF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="4" width="6" height="6" rx="1"/><rect x="14" y="4" width="6" height="6" rx="1"/><rect x="4" y="14" width="6" height="6" rx="1"/><path d="M14 14h2M20 14v2M14 20h6M17 17v3"/></svg>
+          </div>
+        </button>
+      </div>
+      <div class="svc-line">
+        <div class="svc" onclick="window.location.href='Withdraw Cash - Agent Nearby.html'">
           <div class="svc-ic">
             <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7V5a2 2 0 0 1 2-2h2"/><path d="M17 3h2a2 2 0 0 1 2 2v2"/><path d="M21 17v2a2 2 0 0 1-2 2h-2"/><path d="M7 21H5a2 2 0 0 1-2-2v-2"/><circle cx="12" cy="10" r="3"/><path d="M7 17.5c1-2 2.8-3 5-3s4 1 5 3"/></svg>
           </div>
           <span class="svc-name">At Agent</span>
-          <button class="svc-qr" onclick="event.stopPropagation(); scanAgentQr()" aria-label="Scan agent QR code">
-            <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="4" width="6" height="6" rx="1"/><rect x="14" y="4" width="6" height="6" rx="1"/><rect x="4" y="14" width="6" height="6" rx="1"/><path d="M14 14h2M20 14v2M14 20h6M17 17v3"/></svg>
-            <span>Scan<br>QR</span>
-          </button>
           <svg class="chev" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
         </div>
       </div>
