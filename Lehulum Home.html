@@ -21,6 +21,29 @@
 <link rel="stylesheet" href="styles/component-announcement.css">
 
 <style>
+  /* ---------- Banner ad story ----------
+     Tapping a home banner opens it as a full-screen story: progress bars on
+     top, a big headline, the picture, and one call to action at the foot. */
+  .banner-slide { cursor: pointer; }
+  .story { position: absolute; inset: 0; z-index: 200; overflow: hidden; background: #FFFFFF; opacity: 0; visibility: hidden; transform: scale(0.96); transition: opacity 0.22s ease, transform 0.22s ease, visibility 0.22s; }
+  .story.show { opacity: 1; visibility: visible; transform: none; }
+  .story-bars { position: absolute; top: 14px; left: 14px; right: 14px; display: flex; gap: 5px; z-index: 3; }
+  .story-bars span { flex: 1; height: 3px; border-radius: 2px; background: rgba(28, 28, 33, 0.15); overflow: hidden; }
+  .story-bars i { display: block; height: 100%; width: 0; background: #1C1C21; }
+  .story-x { position: absolute; top: 30px; right: 12px; width: 40px; height: 40px; border: 0; background: none; z-index: 4; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+  .story-x svg { width: 24px; height: 24px; stroke: #1C1C21; stroke-width: 2.2; fill: none; stroke-linecap: round; }
+  .story-slide { position: absolute; inset: 0; display: flex; flex-direction: column; }
+  .story-slide .txt { padding: 88px 24px 0; text-align: center; color: #1C1C21; animation: storyIn 0.35s ease; }
+  .story-slide h2 { font-family: 'Switzer', 'Inter', sans-serif; font-size: 34px; font-weight: 800; line-height: 1.02; letter-spacing: -0.5px; text-transform: uppercase; }
+  .story-slide p { margin-top: 14px; font-size: 15.5px; line-height: 1.4; color: #3A3A42; }
+  .story-slide .pic { position: relative; flex: 1; min-height: 0; margin: 14px 0 96px; animation: storyIn 0.45s ease; }
+  .story-slide .pic img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; object-position: center bottom; display: block; mix-blend-mode: multiply; /* melts the picture's off-white backdrop into the page */ }
+  @keyframes storyIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
+  .story-tap { position: absolute; top: 70px; bottom: 100px; border: 0; background: none; z-index: 2; cursor: pointer; }
+  .story-tap.prev { left: 0; width: 33%; }
+  .story-tap.next { right: 0; width: 67%; }
+  .story-cta { position: absolute; left: 24px; right: 24px; bottom: 28px; height: 54px; border: 0; border-radius: 27px; background: #FE353D; color: #FFFFFF; font-family: 'Poppins', 'Inter', sans-serif; font-size: 16px; font-weight: 600; z-index: 4; cursor: pointer; box-shadow: 0 8px 20px rgba(254, 53, 61, 0.3); }
+  .story-cta:active { transform: scale(0.98); }
 </style>
 
 <link rel="stylesheet" href="styles/device.css">
@@ -92,6 +115,18 @@
         <div id="qrPopupContainer"></div>
         <div id="announcementTipContainer"></div>
         <div id="announcementModalContainer"></div>
+
+        <!-- Banner ad story: full screen, slides with progress bars, one call to action -->
+        <div class="story" id="story" aria-hidden="true">
+          <div class="story-bars" id="storyBars"></div>
+          <button class="story-x" onclick="closeStory()" aria-label="Close">
+            <svg viewBox="0 0 24 24"><path d="M5.5 5.5 18.5 18.5M18.5 5.5 5.5 18.5"/></svg>
+          </button>
+          <div class="story-slide" id="storySlide"></div>
+          <button class="story-tap prev" onclick="storyStep(-1)" aria-label="Previous"></button>
+          <button class="story-tap next" onclick="storyStep(1)" aria-label="Next"></button>
+          <button class="story-cta" id="storyCta"></button>
+        </div>
       </div>
     `,
 
@@ -205,7 +240,7 @@
       <div class="banner-slider">
         <div class="banner-slides-container" id="bannerSlidesContainer">
           <!-- Banner 1 -->
-          <div class="banner-slide active" data-index="0">
+          <div class="banner-slide active" data-index="0" onclick="openStory('all')">
             <div class="banner-image">
               <img src="assets/banner-ads-1.png" alt="M-PESA Banner 1">
               <div class="banner-overlay"></div>
@@ -217,7 +252,7 @@
           </div>
           
           <!-- Banner 2 -->
-          <div class="banner-slide" data-index="1">
+          <div class="banner-slide" data-index="1" onclick="openStory('send')">
             <div class="banner-image">
               <img src="assets/banner-ads-2.png" alt="M-PESA Banner 2">
               <div class="banner-overlay"></div>
@@ -229,7 +264,7 @@
           </div>
           
           <!-- Banner 3 -->
-          <div class="banner-slide" data-index="2">
+          <div class="banner-slide" data-index="2" onclick="openStory('bills')">
             <div class="banner-image">
               <img src="assets/banner-ads-3.png" alt="M-PESA Banner 3">
               <div class="banner-overlay"></div>
@@ -441,6 +476,7 @@
 
     // 5. Initialize Banner Slider
     initBannerSlider();
+    initStory();
 
     // 6. Initialize QR FAB Speed-dial
     initQrFab();
@@ -640,6 +676,90 @@
     window.location.href = id
       ? 'Announcement Detail.html?id=' + encodeURIComponent(id)
       : 'Announcement.html';
+  }
+
+  // Banner ad story: each banner opens a short story. Slides advance on
+  // their own (5 s); tap right for next, left for previous, hold to pause.
+  const STORIES = {
+    all: {
+      cta: 'Get started', go: 'More Services.html',
+      slides: [
+        { title: 'Do it all with <span style="white-space:nowrap">M-PESA</span>', text: 'Send, pay, buy airtime and settle bills, all from one app.', img: 'assets/stories/all-1.jpg' },
+        { title: 'Pay in a scan', text: 'Scan the merchant QR and pay in seconds, no cash needed.', img: 'assets/stories/all-2.jpg' },
+        { title: 'Everything in one place', text: 'Airtime, packages, bills and transfers, right where you need them.', img: 'assets/stories/all-3.jpg' }
+      ]
+    },
+    send: {
+      cta: 'Send money', go: 'Send Money Menu.html',
+      slides: [
+        { title: 'Send money anywhere', text: 'Transfer to any M-PESA user instantly, day or night.', img: 'assets/stories/send-1.jpg' },
+        { title: 'Straight to the bank', text: 'Move money from your wallet to any bank account in seconds.', img: 'assets/stories/send-2.jpg' }
+      ]
+    },
+    bills: {
+      cta: 'Pay a bill', go: 'Pay Bill.html',
+      slides: [
+        { title: 'Pay bills easily', text: 'Electricity, water and DSTV, settled from your sofa.', img: 'assets/stories/bills-1.jpg' },
+        { title: 'School fees, sorted', text: 'Pay school fees on time without queuing at the bank.', img: 'assets/stories/bills-2.jpg' },
+        { title: 'A receipt every time', text: 'Get an instant receipt for every bill you pay.', img: 'assets/stories/bills-3.jpg' }
+      ]
+    }
+  };
+  const STORY_MS = 5000;
+  let story = null, storyAt = 0, storyT0 = 0, storyLeft = STORY_MS, storyTimer = 0, storyHeld = false;
+
+  function openStory(key) {
+    story = STORIES[key];
+    if (!story) return;
+    document.getElementById('storyBars').innerHTML = story.slides.map(() => '<span><i></i></span>').join('');
+    const s = story;
+    document.getElementById('storyCta').textContent = s.cta;
+    document.getElementById('storyCta').onclick = () => { window.location.href = s.go; };
+    document.getElementById('story').classList.add('show');
+    showStorySlide(0);
+  }
+
+  function closeStory() {
+    clearTimeout(storyTimer);
+    document.getElementById('story').classList.remove('show');
+    story = null;
+  }
+
+  function showStorySlide(i) {
+    storyAt = i;
+    const sl = story.slides[i];
+    document.getElementById('storySlide').innerHTML =
+      '<div class="txt"><h2>' + sl.title + '</h2><p>' + sl.text + '</p></div>' +
+      '<div class="pic"><img src="' + sl.img + '" alt=""></div>';
+    document.querySelectorAll('#storyBars i').forEach((b, k) => { b.style.width = k < i ? '100%' : '0'; });
+    storyLeft = STORY_MS;
+    storyT0 = performance.now();
+    clearTimeout(storyTimer);
+    storyTimer = setTimeout(() => tickStory(performance.now()), 40);
+  }
+
+  function tickStory(now) {
+    if (!story) return;
+    if (storyHeld) { storyT0 = now - (STORY_MS - storyLeft); storyTimer = setTimeout(() => tickStory(performance.now()), 40); return; }
+    const done = Math.min(1, (now - storyT0) / STORY_MS);
+    storyLeft = STORY_MS * (1 - done);
+    document.querySelectorAll('#storyBars i')[storyAt].style.width = (done * 100) + '%';
+    if (done >= 1) { storyStep(1); return; }
+    storyTimer = setTimeout(() => tickStory(performance.now()), 40);
+  }
+
+  function storyStep(d) {
+    if (!story) return;
+    const n = storyAt + d;
+    if (n >= story.slides.length) { closeStory(); return; }
+    showStorySlide(Math.max(0, n));
+  }
+
+  function initStory() {
+    const el = document.getElementById('story');
+    if (!el) return;
+    el.addEventListener('pointerdown', e => { if (!e.target.closest('.story-cta, .story-x')) storyHeld = true; });
+    ['pointerup', 'pointerleave', 'pointercancel'].forEach(t => el.addEventListener(t, () => { storyHeld = false; }));
   }
 
   // Banner Slider Functionality

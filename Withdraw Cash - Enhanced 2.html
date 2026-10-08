@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Withdraw Cash</title>
+<title>Withdraw Cash (Enhanced 2)</title>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@400;500;600&display=swap');
   @import url('https://api.fontshare.com/v2/css?f[]=switzer@400,500,600,700&display=swap');
@@ -162,6 +162,53 @@
   .svc-red .svc-name { color: #FFF; }
   .svc-red .svc-sub { color: rgba(255,255,255,0.85); }
   .svc-red .chev { stroke: #FFF; }
+
+  /* ═══ Enhanced look: dark header, glass ATM card, white sheet with the list ═══ */
+  /* Header: plain white */
+  .phone-frame { background: #FFF; }
+  /* M-PESA pattern watermark in the header, same as My QR Code */
+  .phone-frame::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 300px; opacity: 0.035; z-index: 0; pointer-events: none; background-image: url('assets/M-PESA-pattern.svg'); background-size: 490px; background-position: right -270px top -270px; background-repeat: no-repeat; filter: brightness(0); }
+  .app-content { position: relative; z-index: 1; }
+  .status-bar, .header-nav { background: transparent; }
+  .status-bar .time { color: var(--On-Surface); }
+  .header-title { color: var(--On-Surface); font-weight: 600; font-size: 18px; }
+  .back-btn svg { stroke: var(--On-Surface); stroke-width: 2; }
+  .back-btn:hover { background: rgba(0,0,0,0.05); }
+  .bell-btn { position: relative; }
+  .bell-dot { position: absolute; top: 7px; right: 8px; width: 8px; height: 8px; border-radius: 50%; background: var(--Primary); border: 1.5px solid #FFF; }
+
+  .hero { flex-shrink: 0; padding: 2px 16px 22px; }
+  .svc-bar .svc { padding: 13px 14px 12px; gap: 10px; border-radius: 18px; }
+  /* Agent Locator: red gradient card on the white header */
+  .svc-red { background: linear-gradient(135deg, #FE353D 0%, #C41520 100%); border: none; box-shadow: 0 10px 24px rgba(254,53,61,0.3); }
+  .svc-red:hover { background: linear-gradient(135deg, #F02D35 0%, #B0121C 100%); }
+
+  /* White sheet holding Frequent Withdrawals and the short code card */
+  .sheet { flex: 1; min-height: 0; display: flex; flex-direction: column; background: #EEEEF2; border-radius: 28px 28px 0 0; box-shadow: 0 -6px 22px rgba(15,23,42,0.14), inset 0 1px 0 rgba(15,23,42,0.05); }
+  .sheet .section-card { flex: 1; min-height: 0; padding: 16px 16px 0; gap: 10px; }
+
+  .sheet .frequent-list { padding: 6px 14px; border-radius: 18px; box-shadow: 0 4px 16px rgba(15,23,42,0.06); }
+
+  .sheet .code-dock { background: transparent; padding: 10px 16px 16px; }
+  .sheet .code-card { border-radius: 22px; box-shadow: 0 -2px 18px rgba(15,23,42,0.08); }
+
+  /* ═══ Enhanced 2: short code card above the list, floating Scan QR ═══ */
+  /* No grey sheet: the cards sit straight on the white page */
+  .sheet { background: transparent; box-shadow: none; border-radius: 0; }
+  .hero { padding-bottom: 14px; }  /* tighter gap between the service cards and the short code card */
+  .sheet .code-dock { padding: 0 16px 4px; }
+  .sheet .code-card { box-shadow: 0 4px 16px rgba(15,23,42,0.06); }
+  .sheet .code-card .code-btn.primary { margin-top: 20px; }
+  .sheet .section-card { padding-top: 12px; }
+  /* room under the last agent so the floating button never covers it */
+  .sheet .frequent-list { margin-bottom: 0; }
+  .sheet .section-card { padding-bottom: 84px; }
+  .scan-float { position: absolute; left: 50%; bottom: 20px; transform: translateX(-50%); width: 50%; height: 54px; z-index: 30; border: none; border-radius: 27px;
+    background: var(--On-Surface); color: #FFF; display: flex; align-items: center; justify-content: center; gap: 10px; cursor: pointer;
+    font-family: 'Poppins', sans-serif; font-size: 15px; font-weight: 500; box-shadow: 0 10px 24px rgba(0,0,0,0.25); transition: transform .15s, background .15s; }
+  .scan-float:hover { background: #000; }
+  .scan-float:active { transform: translateX(-50%) scale(0.97); }
+  .scan-float .qr-ic { width: 24px; height: 20px; flex-shrink: 0; }
 </style>
 <link rel="stylesheet" href="styles/field-error.css">
 <link rel="stylesheet" href="styles/device.css">
@@ -184,10 +231,13 @@
         <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
       </button>
       <span class="header-title">Withdraw Cash</span>
-      <div style="width:36px;"></div>
+      <button class="back-btn bell-btn" onclick="window.location.href='Notification Center.html'" aria-label="Notifications">
+        <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg>
+        <span class="bell-dot"></span>
+      </button>
     </div>
 
-    <div class="scroll">
+    <div class="hero">
 
       <!-- Agent Locator and To ATM side by side at the top -->
       <div class="svc-bar">
@@ -210,6 +260,33 @@
             <span class="svc-sub">Cardless withdrawal</span>
           </div>
           <svg class="chev" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Sheet under the service cards: short code card, then Frequent Withdrawals -->
+    <div class="sheet">
+      <!-- Short code first: type it and Continue (Scan QR floats at the bottom) -->
+      <div class="code-dock">
+        <div class="code-card">
+          <span class="code-label">Merchant Short Code</span>
+          <div class="code-field" id="codeField">
+            <input id="codeInput" type="text" inputmode="numeric" maxlength="6" placeholder="Enter short code" autocomplete="off" oninput="onCodeInput(this)" onkeydown="if(event.key==='Enter')continueWithCode()">
+          </div>
+          <div class="status-chip loading" id="codeLoading">
+            <span class="ic"></span>
+            <span>Looking Up Short Code</span>
+          </div>
+          <div class="status-chip ok" id="codeOk">
+            <span class="ic"><svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></span>
+            <span id="codeOkName"></span>
+          </div>
+          <div class="status-chip bad" id="codeBad">
+            <span class="ic"><svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M17 7 7 17M7 7l10 10"/></svg></span>
+            <span>Invalid merchant short code</span>
+          </div>
+          <button class="code-btn primary" id="continueBtn" onclick="continueWithCode()" disabled>Continue</button>
         </div>
       </div>
 
@@ -262,44 +339,14 @@
           </div>
         </div>
       </div>
-
     </div>
-
-    <!-- Pinned to the bottom (outside the scroll): type the merchant short code and
-         continue, or scan the agent's QR code instead -->
-    <div class="code-dock">
-      <div class="code-card">
-        <span class="code-label">Merchant Short Code</span>
-        <div class="code-field" id="codeField">
-          <input id="codeInput" type="text" inputmode="numeric" maxlength="6" placeholder="Enter short code" autocomplete="off" oninput="onCodeInput(this)" onkeydown="if(event.key==='Enter')continueWithCode()">
-        </div>
-        <div class="status-chip loading" id="codeLoading">
-          <span class="ic"></span>
-          <span>Looking Up Short Code</span>
-        </div>
-        <div class="status-chip ok" id="codeOk">
-          <span class="ic"><svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></span>
-          <span id="codeOkName"></span>
-        </div>
-        <div class="status-chip bad" id="codeBad">
-          <span class="ic"><svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M17 7 7 17M7 7l10 10"/></svg></span>
-          <span>Invalid merchant short code</span>
-        </div>
-        <!-- One row: Scan QR on the left, Continue on the right -->
-        <div class="code-actions">
-          <button class="code-btn secondary" onclick="scanAgentQr()">
-            <svg class="qr-ic" viewBox="0 0 30 24" aria-hidden="true"><path opacity="0.4" d="M18.3496 4.99023C19.1562 4.99023 19.9311 5.30798 20.4951 5.87402C21.0631 6.44538 21.3783 7.21286 21.377 8.01172V9.67188C21.3703 9.86669 21.2114 10.025 21.0127 10.0303H8.31934C8.12204 10.0237 7.96298 9.86536 7.95898 9.67188V8.01172C7.94433 6.3579 9.29922 5.00742 10.9844 4.99023H18.3496ZM21.5918 0.000976562C24.521 0.00107957 26.9022 2.33565 26.9023 5.20801V7.68359C26.9021 8.23253 26.4489 8.67964 25.8877 8.67969C25.3278 8.67969 24.8733 8.23256 24.873 7.68359V5.20801C24.8729 3.43392 23.401 1.99034 21.5918 1.99023H19.4678C18.9079 1.99023 18.4533 1.5461 18.4531 0.99707C18.4531 0.446627 18.9078 0.000976562 19.4678 0.000976562H21.5918ZM9.90332 0C10.4633 0 10.9179 0.44574 10.918 0.996094C10.918 1.54523 10.4647 1.99121 9.90332 1.99121L7.73145 1.99219C5.92887 1.99491 4.46191 3.43516 4.46191 5.2041V7.68262C4.46191 8.23175 4.00629 8.67871 3.44629 8.67871C2.8863 8.6787 2.43164 8.23175 2.43164 7.68262V5.2041C2.43164 2.33813 4.80914 0.0035915 7.73047 0.000976562L9.90234 0H9.90332Z" fill="currentColor"/><path d="M28.3187 12.0551H1.016C0.456 12.0551 0 12.5009 0 13.0513C0 13.6005 0.456 14.045 1.016 14.045H2.43067V18.7964C2.43067 21.6623 4.80933 23.9962 7.73067 23.9988L9.90267 24.0001C10.464 24.0001 10.9173 23.5542 10.9187 23.0038C10.9187 22.4546 10.464 22.0088 9.904 22.0088L7.73333 22.0075C5.92933 22.0049 4.46133 20.5654 4.46133 18.7964V14.045H7.95867V15.3669C7.94533 17.0208 9.29867 18.3727 10.984 18.3884H18.3493C20.036 18.3727 21.3893 17.0208 21.376 15.3669V14.045H24.8733V18.7911C24.8733 20.5667 23.4013 22.0088 21.592 22.0088H19.468C18.9067 22.0088 18.452 22.4546 18.452 23.0038C18.452 23.5542 18.9067 24.0001 19.468 24.0001H21.592C24.52 24.0001 26.9027 21.6649 26.9027 18.7911V14.045H28.3187C28.8787 14.045 29.3333 13.6005 29.3333 13.0513C29.3333 12.5009 28.8787 12.0551 28.3187 12.0551Z" fill="currentColor"/></svg>
-            Scan QR
-          </button>
-          <button class="code-btn primary" id="continueBtn" onclick="continueWithCode()" disabled>
-            Continue
-            <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
-          </button>
-        </div>
-      </div>
-    </div>
-
   </div>
+
+  <!-- Floating Scan QR, centred at the bottom -->
+  <button class="scan-float" onclick="scanAgentQr()" aria-label="Scan agent QR code">
+    <svg class="qr-ic" viewBox="0 0 30 24" aria-hidden="true"><path opacity="0.4" d="M18.3496 4.99023C19.1562 4.99023 19.9311 5.30798 20.4951 5.87402C21.0631 6.44538 21.3783 7.21286 21.377 8.01172V9.67188C21.3703 9.86669 21.2114 10.025 21.0127 10.0303H8.31934C8.12204 10.0237 7.96298 9.86536 7.95898 9.67188V8.01172C7.94433 6.3579 9.29922 5.00742 10.9844 4.99023H18.3496ZM21.5918 0.000976562C24.521 0.00107957 26.9022 2.33565 26.9023 5.20801V7.68359C26.9021 8.23253 26.4489 8.67964 25.8877 8.67969C25.3278 8.67969 24.8733 8.23256 24.873 7.68359V5.20801C24.8729 3.43392 23.401 1.99034 21.5918 1.99023H19.4678C18.9079 1.99023 18.4533 1.5461 18.4531 0.99707C18.4531 0.446627 18.9078 0.000976562 19.4678 0.000976562H21.5918ZM9.90332 0C10.4633 0 10.9179 0.44574 10.918 0.996094C10.918 1.54523 10.4647 1.99121 9.90332 1.99121L7.73145 1.99219C5.92887 1.99491 4.46191 3.43516 4.46191 5.2041V7.68262C4.46191 8.23175 4.00629 8.67871 3.44629 8.67871C2.8863 8.6787 2.43164 8.23175 2.43164 7.68262V5.2041C2.43164 2.33813 4.80914 0.0035915 7.73047 0.000976562L9.90234 0H9.90332Z" fill="currentColor"/><path d="M28.3187 12.0551H1.016C0.456 12.0551 0 12.5009 0 13.0513C0 13.6005 0.456 14.045 1.016 14.045H2.43067V18.7964C2.43067 21.6623 4.80933 23.9962 7.73067 23.9988L9.90267 24.0001C10.464 24.0001 10.9173 23.5542 10.9187 23.0038C10.9187 22.4546 10.464 22.0088 9.904 22.0088L7.73333 22.0075C5.92933 22.0049 4.46133 20.5654 4.46133 18.7964V14.045H7.95867V15.3669C7.94533 17.0208 9.29867 18.3727 10.984 18.3884H18.3493C20.036 18.3727 21.3893 17.0208 21.376 15.3669V14.045H24.8733V18.7911C24.8733 20.5667 23.4013 22.0088 21.592 22.0088H19.468C18.9067 22.0088 18.452 22.4546 18.452 23.0038C18.452 23.5542 18.9067 24.0001 19.468 24.0001H21.592C24.52 24.0001 26.9027 21.6649 26.9027 18.7911V14.045H28.3187C28.8787 14.045 29.3333 13.6005 29.3333 13.0513C29.3333 12.5009 28.8787 12.0551 28.3187 12.0551Z" fill="currentColor"/></svg>
+    Scan QR
+  </button>
 
 </div>
 
@@ -326,7 +373,7 @@
     }));
     // Agent has its own locator (short code / QR); ATM goes straight to amount entry.
     window.location.href = m === 'agent'
-      ? 'Withdraw Cash - Agent Locator.html'
+      ? 'Withdraw Cash - Agent Locator (Enhanced).html'
       : 'Withdraw Cash - ATM Locator.html';
   }
 
@@ -337,7 +384,7 @@
     sessionStorage.setItem('withdrawData', JSON.stringify({
       method: 'agent', methodLabel: 'Merchant Short Code', agentCode: a.code, from: HERE, time: stamp()
     }));
-    window.location.href = 'Withdraw Cash - Agent Locator.html';
+    window.location.href = 'Withdraw Cash - Agent Locator (Enhanced).html';
   }
 
   // Short code card: a full 6-digit code is looked up like Send to Bank's account
@@ -384,7 +431,7 @@
     sessionStorage.setItem('withdrawData', JSON.stringify({
       method: 'agent', methodLabel: 'Scan Agent QR', entry: 'qr', from: HERE, time: stamp()
     }));
-    window.location.href = 'Withdraw Cash - Agent Locator.html';
+    window.location.href = 'Withdraw Cash - Agent Locator (Enhanced).html';
   }
 
   // Back from the next screen's Edit button: the short code comes back filled in and is looked up again

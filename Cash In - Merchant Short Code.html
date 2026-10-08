@@ -192,7 +192,7 @@
 
       <!-- ── Generate QR panel: the customer shows their own code, addressed to
            the merchant typed below, for the agent to scan ── -->
-      <div class="panel active" id="panelQr">
+      <div class="panel" id="panelQr">
         <div class="myqr-card">
           <div class="myqr-profile">
             <div class="myqr-avatar"><img src="assets/avatars/avatar-2.png" alt="Aster" onerror="this.style.display='none'"></div>
@@ -294,17 +294,27 @@
       </div>
 
       <!-- ── Short Code panel ── -->
-      <div class="panel" id="panelCode">
-      <div class="merchant-card" id="merchantCard" hidden>
-        <div class="merchant-avatar" id="mcAvatar"></div>
-        <div class="merchant-info">
-          <span class="merchant-name" id="mcName"></span>
-          <span class="merchant-sub">Merchant Short Code: <span id="mcCode"></span></span>
-        </div>
-        <span class="merchant-badge">MERCHANT</span>
-      </div>
-
+      <div class="panel active" id="panelCode">
       <div class="form-card">
+        <!-- Merchant short code first, same as Withdraw Cash: a known code
+             resolves to the merchant card right under the field -->
+        <div class="field-label">Merchant Short Code</div>
+        <div class="field">
+          <input id="codeInput" type="text" inputmode="numeric" maxlength="6" placeholder="Enter short code" autocomplete="off" oninput="onCodeInput(this)">
+        </div>
+        <div class="field-error" id="codeMsg">
+          <span class="fe-ic"><svg viewBox="0 0 24 24"><path d="M17 7 7 17M7 7l10 10"/></svg></span>
+          <span class="fe-txt" id="codeMsgTxt"></span>
+        </div>
+        <div class="merchant-card" id="merchantCard" hidden style="margin-top:2px">
+          <div class="merchant-avatar" id="mcAvatar"></div>
+          <div class="merchant-info">
+            <span class="merchant-name" id="mcName"></span>
+            <span class="merchant-sub">Merchant Short Code: <span id="mcCode"></span></span>
+          </div>
+          <span class="merchant-badge">MERCHANT</span>
+        </div>
+
         <div class="field-label">Amount</div>
         <div class="field">
           <input id="amt" type="text" inputmode="decimal" placeholder="0.00" oninput="onAmountInput(this)">
@@ -630,8 +640,23 @@
     $('amt').focus();
   }
 
+  // Typing a short code: a known one resolves to the merchant card, a full
+  // but unknown one shows the error under the field (as on Withdraw Cash).
+  function onCodeInput(el) {
+    el.value = el.value.replace(/\D/g, '').slice(0, 6);
+    const a = AGENTS[el.value];
+    $('codeMsg').classList.remove('show');
+    if (a) { lockAgent(a); return; }
+    agent = null;
+    $('merchantCard').hidden = true;
+    if (el.value.length === 6) { $('codeMsgTxt').textContent = 'Invalid merchant short code.'; $('codeMsg').classList.add('show'); }
+    updateBtn();
+  }
+
   function lockAgent(a) {
     agent = a;
+    $('codeInput').value = a.code;
+    $('codeMsg').classList.remove('show');
     $('mcAvatar').textContent = a.abbr;
     $('mcName').textContent = a.name;
     $('mcCode').textContent = a.code;
@@ -643,13 +668,20 @@
 
   // Prefill from a saved favourite/frequent agent, or when editing an
   // already-generated voucher's details from the Cash-In Voucher screen.
+  let enteredByQr = false;
   try {
     const data = JSON.parse(sessionStorage.getItem('cashInData') || '{}');
     const code = String(data.agentCode || (data.agent && data.agent.code) || '');
     if (/^\d{6}$/.test(code)) { useRecent(code); $('qrCode').value = code; onQrCodeInput($('qrCode')); }
     if (data.amount) { $('amt').value = data.amount; onAmountInput($('amt')); }
     if (data.note) { $('note').value = data.note; $('qrNote').value = data.note; }
+    enteredByQr = data.entry === 'qr';
   } catch (e) { /* ignore corrupt state */ }
+
+  // The QR card belongs to the Generate QR entry only. The At Agent / Merchant
+  // Short Code route - and opening this screen on its own - gets the plain code
+  // panel, so the merchant short code step never shows a QR.
+  switchTab(enteredByQr ? 'qr' : 'code');
 </script>
 <script src="test-scenarios-data.js"></script>
 <script src="test-scenarios.js"></script>

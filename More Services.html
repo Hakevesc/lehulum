@@ -47,15 +47,7 @@
   .search-input { flex: 1; min-width: 0; border: none; background: transparent; font-family: 'Switzer', sans-serif; font-size: 13px; color: var(--On-Surface); outline: none; }
   .search-input::placeholder { color: var(--On-Surface-Low); }
 
-  /* ── Section headings ── */
-  .section-title { font-family: 'Switzer', sans-serif; font-size: 16px; font-weight: 700; color: var(--On-Surface); }
-  .section-head { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
-  .view-all { display: flex; align-items: center; gap: 5px; background: none; border: none; padding: 0; cursor: pointer; font-family: 'Switzer', sans-serif; font-size: 12px; font-weight: 500; color: var(--On-Surface-Low); }
-  .view-all svg { width: 15px; height: 15px; stroke: var(--On-Surface-Low); stroke-width: 2; fill: none; }
-  .view-all:hover { color: var(--On-Surface); }
-  .view-all:hover svg { stroke: var(--On-Surface); }
-
-  /* ── Popular services grid ── */
+  /* ── Services grid ── */
   .services-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
   .service-tile { background: #FFF; border: 1px solid var(--Border); border-radius: 14px; padding: 11px 4px; display: flex; flex-direction: column; align-items: center; justify-content: flex-start; gap: 7px; cursor: pointer; transition: transform 0.15s, box-shadow 0.15s; box-shadow: 0 2px 8px rgba(0,0,0,0.04); min-height: 84px; }
   .service-tile:hover { transform: translateY(-2px); box-shadow: 0 6px 16px rgba(0,0,0,0.08); }
@@ -107,14 +99,6 @@
       <div class="search-row">
         <i data-lucide="search"></i>
         <input class="search-input" type="text" placeholder="Search services, categories or brands..." oninput="filterServices(this.value)">
-      </div>
-
-      <div class="section-head">
-        <span class="section-title">Popular Services</span>
-        <button class="view-all" onclick="window.location.href='Pay Merchant.html'">
-          View all services
-          <i data-lucide="arrow-right"></i>
-        </button>
       </div>
 
       <div class="services-grid" id="servicesGrid">
