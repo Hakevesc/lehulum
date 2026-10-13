@@ -82,9 +82,47 @@
   .cam-action .ic svg { width: 22px; height: 22px; stroke: #fff; stroke-width: 2; fill: none; }
   .cam-action span { color: rgba(255,255,255,0.9); font-family: 'Switzer', sans-serif; font-size: 11px; font-weight: 500; }
 
-  /* Manual entry sheet */
-  .sheet { position: absolute; left: 0; right: 0; bottom: 0; z-index: 20; background: #fff; border-radius: 24px 24px 30px 30px; padding: 14px 20px 26px; transform: translateY(110%); transition: transform 0.35s cubic-bezier(0.4,0,0.2,1); box-shadow: 0 -8px 32px rgba(0,0,0,0.25); }
-  .sheet.show { transform: translateY(0); }
+  /* Manual entry backdrop & sheet */
+  .sheet-backdrop {
+    position: absolute; inset: 0; z-index: 18;
+    background: rgba(0,0,0,0.45);
+    opacity: 0; pointer-events: none;
+    transition: opacity 0.3s ease;
+  }
+  .sheet-backdrop.show { opacity: 1; pointer-events: auto; }
+
+  .sheet {
+    position: absolute; left: 0; right: 0; bottom: 0; z-index: 20;
+    background: #fff; border-radius: 24px 24px 30px 30px;
+    padding: 14px 20px 26px;
+    transform: translateY(120%);
+    visibility: hidden;
+    transition: transform 0.35s cubic-bezier(0.4,0,0.2,1), visibility 0.35s;
+    box-shadow: 0 -8px 32px rgba(0,0,0,0.25);
+  }
+  .sheet.show {
+    transform: translateY(0);
+    visibility: visible;
+  }
+  .sheet-back {
+    position: absolute;
+    top: -54px;
+    left: 16px;
+    width: 42px;
+    height: 42px;
+    border: none;
+    border-radius: 50%;
+    background: #FFF;
+    box-shadow: 0 4px 14px rgba(15,23,42,0.18);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: transform 0.15s;
+  }
+  .sheet.show .sheet-back { display: flex; }
+  .sheet-back:active { transform: scale(0.94); }
+  .sheet-back svg { width: 18px; height: 18px; stroke: var(--On-Surface, #1C1C21); stroke-width: 2.2; fill: none; }
   .sheet .grip { width: 40px; height: 4px; background: #D8D8DD; border-radius: 2px; margin: 0 auto 16px; }
   .sheet-title { color: var(--On-Surface); font-family: 'Switzer', sans-serif; font-size: 17px; font-weight: 700; margin-bottom: 4px; }
   .sheet-sub { color: var(--On-Surface-Low); font-size: 12px; margin-bottom: 16px; }
@@ -95,31 +133,161 @@
   .full-btn:hover { background: #E5303A; }
 
   /* Verification RESULT overlay */
-  .result { position: absolute; inset: 0; z-index: 30; background: #F5F5F5; display: none; flex-direction: column; overflow-y: auto; }
+  .result {
+    position: absolute; inset: 0; z-index: 30;
+    background: radial-gradient(130% 90% at 20% 10%, #E82933 0%, #C41822 55%, #9E0F17 100%);
+    display: none; flex-direction: column;
+    overflow-y: auto; padding: 14px 12px 20px;
+  }
   .result.show { display: flex; }
   .result::-webkit-scrollbar { width: 0; }
-  .result-head { background: linear-gradient(180deg, #1FC83B 0%, #19a832 100%); padding: 24px 20px 38px; text-align: center; position: relative; }
-  .result-close { position: absolute; top: 14px; left: 16px; width: 38px; height: 38px; border-radius: 50%; background: rgba(255,255,255,0.18); border: none; display: flex; align-items: center; justify-content: center; cursor: pointer; }
-  .result-close svg { width: 20px; height: 20px; stroke: #fff; stroke-width: 2; fill: none; }
-  .check-circle { width: 72px; height: 72px; border-radius: 50%; background: rgba(255,255,255,0.2); display: flex; align-items: center; justify-content: center; margin: 8px auto 12px; }
-  .check-circle .inner { width: 52px; height: 52px; border-radius: 50%; background: #fff; display: flex; align-items: center; justify-content: center; }
-  .check-circle .inner svg { width: 28px; height: 28px; stroke: var(--Success); stroke-width: 3; fill: none; }
-  .result-head h2 { color: #fff; font-family: 'Switzer', sans-serif; font-size: 19px; font-weight: 700; }
-  .result-head p { color: rgba(255,255,255,0.9); font-size: 12.5px; margin-top: 4px; }
 
-  .receipt-card { margin: -18px 20px 0; background: #fff; border-radius: 18px; padding: 18px; box-shadow: 0 8px 28px rgba(0,0,0,0.1); position: relative; }
-  .receipt-amount { text-align: center; padding-bottom: 14px; border-bottom: 1px dashed var(--Border, #E8E8EC); margin-bottom: 14px; }
-  .receipt-amount .lbl { color: var(--On-Surface-Low); font-size: 11px; font-weight: 500; text-transform: uppercase; letter-spacing: 0.8px; }
-  .receipt-amount .val { color: var(--On-Surface); font-family: 'Switzer', sans-serif; font-size: 28px; font-weight: 700; margin-top: 4px; }
-  .receipt-row { display: flex; justify-content: space-between; align-items: center; padding: 9px 0; }
-  .receipt-row .k { color: var(--On-Surface-Low); font-size: 13px; }
-  .receipt-row .v { color: var(--On-Surface); font-family: 'Switzer', sans-serif; font-size: 13px; font-weight: 600; }
-  .stamp { position: absolute; right: 14px; bottom: 64px; width: 100px; opacity: 0.9; transform: rotate(-12deg); }
-  .stamp img { width: 100%; }
-  .result-note { display: flex; align-items: center; gap: 8px; margin: 16px 20px 0; background: #E8F9EC; border-radius: 12px; padding: 12px 14px; }
-  .result-note svg { width: 18px; height: 18px; stroke: var(--Success); stroke-width: 2.5; fill: none; flex-shrink: 0; }
-  .result-note span { color: #168a2c; font-family: 'Switzer', sans-serif; font-size: 12px; font-weight: 500; line-height: 1.4; }
-  .result-foot { padding: 18px 20px 26px; margin-top: auto; }
+  .result-dialog {
+    background: #FFFFFF; border-radius: 28px;
+    overflow: hidden;
+    box-shadow: 0 16px 48px rgba(0,0,0,0.28);
+    display: flex; flex-direction: column;
+    margin: auto 0;
+  }
+
+  .result-head {
+    background: linear-gradient(160deg, #10B952 0%, #059643 55%, #037A34 100%);
+    padding: 22px 18px 28px; text-align: center; position: relative; overflow: hidden;
+  }
+  .result-head::after {
+    content: ''; position: absolute; right: -40px; top: -40px; width: 180px; height: 180px;
+    border-radius: 50%; background: rgba(255,255,255,0.07); pointer-events: none;
+  }
+  .result-head::before {
+    content: ''; position: absolute; left: -30px; bottom: -30px; width: 140px; height: 140px;
+    border-radius: 50%; background: rgba(255,255,255,0.05); pointer-events: none;
+  }
+  .result-close {
+    position: absolute; top: 16px; left: 16px; width: 34px; height: 34px;
+    border-radius: 50%; background: rgba(255,255,255,0.22); backdrop-filter: blur(4px);
+    border: none; display: flex; align-items: center; justify-content: center; cursor: pointer;
+    transition: background 0.2s; z-index: 3;
+  }
+  .result-close:hover { background: rgba(255,255,255,0.32); }
+  .result-close svg { width: 16px; height: 16px; stroke: #fff; stroke-width: 2.4; fill: none; }
+
+  .check-badge {
+    width: 68px; height: 68px; border-radius: 50%;
+    background: rgba(255,255,255,0.22); backdrop-filter: blur(4px);
+    display: flex; align-items: center; justify-content: center;
+    margin: 4px auto 14px; position: relative; z-index: 2;
+  }
+  .check-badge .inner {
+    width: 50px; height: 50px; border-radius: 50%; background: #FFFFFF;
+    display: flex; align-items: center; justify-content: center;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+  }
+  .check-badge .inner svg {
+    width: 26px; height: 26px; stroke: #059643; stroke-width: 3.6; fill: none;
+  }
+
+  .result-head h2 {
+    color: #FFFFFF; font-family: 'Switzer', sans-serif; font-size: 20px; font-weight: 700;
+    margin: 0 0 4px; letter-spacing: -0.2px; position: relative; z-index: 2;
+  }
+  .result-head p {
+    color: rgba(255,255,255,0.92); font-family: 'Switzer', sans-serif; font-size: 13px; font-weight: 400;
+    margin: 0; position: relative; z-index: 2;
+  }
+
+  .receipt-card {
+    margin: -14px 14px 0; background: #FFFFFF; border-radius: 20px;
+    padding: 18px 16px 14px; box-shadow: 0 8px 24px rgba(0,0,0,0.07);
+    position: relative; z-index: 2;
+  }
+  .receipt-amount {
+    text-align: center; padding-bottom: 12px;
+    border-bottom: 1px solid #F1F1F5; margin-bottom: 10px;
+  }
+  .receipt-amount .lbl {
+    color: #8C8C99; font-size: 11px; font-weight: 700;
+    letter-spacing: 0.9px; text-transform: uppercase; margin-bottom: 4px;
+  }
+  .receipt-amount .val {
+    color: #0F172A; font-family: 'Switzer', sans-serif; font-size: 27px;
+    font-weight: 800; letter-spacing: -0.5px;
+  }
+
+  .receipt-row {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 7.5px 0; font-family: 'Switzer', sans-serif; font-size: 13px;
+  }
+  .receipt-row .k { color: #64748B; font-weight: 400; }
+  .receipt-row .v {
+    color: #0F172A; font-weight: 600; text-align: right;
+    display: inline-flex; align-items: center; gap: 6px;
+  }
+
+  .copy-btn {
+    background: none; border: none; cursor: pointer; padding: 2px 4px;
+    display: inline-flex; align-items: center; justify-content: center;
+    border-radius: 4px; transition: opacity 0.2s;
+  }
+  .copy-btn:hover { opacity: 0.7; }
+  .copy-btn svg { width: 16px; height: 16px; stroke: #64748B; stroke-width: 2; fill: none; }
+
+  .status-badge {
+    background: #E8F9EE; color: #16A34A; border-radius: 999px;
+    padding: 3px 10px 3px 7px; font-size: 11.5px; font-weight: 600;
+    display: inline-flex; align-items: center; gap: 4px;
+  }
+  .status-badge svg { width: 14px; height: 14px; fill: #16A34A; }
+
+  /* Callout banner */
+  .result-note {
+    background: #EAF8EE; border: 1px solid rgba(22,163,74,0.14);
+    border-radius: 16px; margin: 12px 14px 0; padding: 12px 14px;
+    display: flex; align-items: center; gap: 12px;
+  }
+  .shield-badge {
+    width: 44px; height: 44px; border-radius: 14px; background: #C8F0D3;
+    display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+  }
+  .shield-badge svg { width: 22px; height: 22px; fill: #16A34A; }
+  .result-note-text { display: flex; flex-direction: column; gap: 2px; }
+  .result-note-text b {
+    font-family: 'Switzer', sans-serif; font-size: 13.5px; font-weight: 700; color: #15803D;
+  }
+  .result-note-text span {
+    font-family: 'Switzer', sans-serif; font-size: 12px; color: #166534; line-height: 1.35;
+  }
+
+  /* Two actions: Share & Download */
+  .result-actions { display: flex; gap: 10px; margin: 14px 14px 0; }
+  .btn-action {
+    flex: 1; height: 46px; border-radius: 12px; border: 1.5px solid #FE353D;
+    background: #FFFFFF; color: #FE353D; font-family: 'Poppins', sans-serif;
+    font-size: 13px; font-weight: 600; display: flex; align-items: center;
+    justify-content: center; gap: 7px; cursor: pointer; transition: all 0.2s;
+  }
+  .btn-action:hover { background: #FFF1F2; }
+  .btn-action:active { transform: scale(0.98); }
+  .btn-action svg { width: 18px; height: 18px; stroke: #FE353D; stroke-width: 2; fill: none; }
+
+  /* Primary Done button */
+  .btn-done {
+    margin: 12px 14px 16px; height: 50px; border-radius: 14px; border: none;
+    background: #FE353D; color: #FFFFFF; font-family: 'Poppins', sans-serif;
+    font-size: 15px; font-weight: 600; cursor: pointer;
+    box-shadow: 0 4px 14px rgba(254,53,61,0.35); transition: all 0.2s;
+  }
+  .btn-done:hover { background: #E5303A; }
+  .btn-done:active { transform: scale(0.98); }
+
+  /* Toast notification */
+  .toast {
+    position: absolute; bottom: 24px; left: 50%; transform: translateX(-50%) translateY(20px);
+    background: #1C1C21; color: #FFF; padding: 10px 18px; border-radius: 10px;
+    font-family: 'Switzer', sans-serif; font-size: 12.5px; font-weight: 500;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.25); opacity: 0; pointer-events: none;
+    transition: all 0.25s ease; z-index: 50; white-space: nowrap;
+  }
+  .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
 </style>
 <link rel="stylesheet" href="styles/device.css">
 </head>
@@ -157,53 +325,95 @@
       </div>
       <div class="cam-action" onclick="openManual()">
         <div class="ic"><svg viewBox="0 0 24 24"><rect x="2" y="4" width="20" height="16" rx="2"/><line x1="6" y1="9" x2="6" y2="9.01"/><line x1="10" y1="9" x2="10" y2="9.01"/><line x1="14" y1="9" x2="14" y2="9.01"/><line x1="18" y1="9" x2="18" y2="9.01"/><line x1="6" y1="14" x2="18" y2="14"/></svg></div>
-        <span>Enter Code</span>
+        <span>Transaction ID</span>
       </div>
     </div>
 
+    <!-- Manual entry backdrop -->
+    <div class="sheet-backdrop" id="sheetBackdrop" onclick="closeManual()"></div>
+
     <!-- Manual entry sheet -->
     <div class="sheet" id="manualSheet">
+      <button class="sheet-back" onclick="closeManual()" aria-label="Back">
+        <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+      </button>
       <div class="grip"></div>
-      <div class="sheet-title">Enter Receipt Code</div>
-      <div class="sheet-sub">Type the transaction ID printed on the receipt (e.g. UH82LQNP5T).</div>
-      <input class="code-input" id="codeInput" placeholder="e.g. UH82LQNP5T" value="UH82LQNP5T">
+      <div class="sheet-title">Enter Transaction ID</div>
+      <input class="code-input" id="codeInput" placeholder="e.g. UH82LQNP5T" autocomplete="off" required oninput="this.setCustomValidity('')">
       <button class="full-btn" onclick="verifyCode()">Verify Receipt</button>
     </div>
   </div>
 
   <!-- Verification result -->
   <div class="result" id="result">
-    <div class="result-head">
-      <button class="result-close" onclick="closeResult()" aria-label="Close">
-        <svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
-      </button>
-      <div class="check-circle"><div class="inner"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></div></div>
-      <h2>Receipt Verified</h2>
-      <p>This is a genuine M-PESA transaction</p>
-    </div>
-
-    <div class="receipt-card">
-      <div class="receipt-amount">
-        <div class="lbl">Amount</div>
-        <div class="val">500.00 ETB</div>
+    <div class="result-dialog">
+      <div class="result-head">
+        <button class="result-close" onclick="closeResult()" aria-label="Close">
+          <svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        </button>
+        <div class="check-badge">
+          <div class="inner">
+            <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+          </div>
+        </div>
+        <h2>Receipt Verified</h2>
+        <p>Transaction details confirmed</p>
       </div>
-      <div class="receipt-row"><span class="k">Transaction ID</span><span class="v" id="resCode">UH82LQNP5T</span></div>
-      <div class="receipt-row"><span class="k">From</span><span class="v">Aster Mequanent</span></div>
-      <div class="receipt-row"><span class="k">To</span><span class="v">Mom · 2517****78</span></div>
-      <div class="receipt-row"><span class="k">Type</span><span class="v">P2P Send Money</span></div>
-      <div class="receipt-row"><span class="k">Date</span><span class="v">08 May 2026, 10:15 AM</span></div>
-      <div class="receipt-row"><span class="k">Status</span><span class="v" style="color:var(--Success)">Successful</span></div>
-      <div class="stamp"><img src="assets/M-PESA-official_stamp.png" alt="Official" onerror="this.parentElement.style.display='none'"></div>
+
+      <div class="receipt-card">
+        <div class="receipt-amount">
+          <div class="lbl">AMOUNT</div>
+          <div class="val">500.00 ETB</div>
+        </div>
+        <div class="receipt-row">
+          <span class="k">Transaction ID</span>
+          <span class="v">
+            <span id="resCode">JDJSHJHJHDS</span>
+            <button class="copy-btn" onclick="copyId()" aria-label="Copy Transaction ID" title="Copy">
+              <svg viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+            </button>
+          </span>
+        </div>
+        <div class="receipt-row"><span class="k">From</span><span class="v">Aster Mequanent</span></div>
+        <div class="receipt-row"><span class="k">To</span><span class="v">Mom · 2517****78</span></div>
+        <div class="receipt-row"><span class="k">Type</span><span class="v">P2P Send Money</span></div>
+        <div class="receipt-row"><span class="k">Date</span><span class="v">08 May 2026, 10:15 AM</span></div>
+        <div class="receipt-row">
+          <span class="k">Status</span>
+          <span class="v">
+            <span class="status-badge">
+              <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>
+              Successful
+            </span>
+          </span>
+        </div>
+      </div>
+
+      <div class="result-note">
+        <div class="shield-badge">
+          <svg viewBox="0 0 24 24"><path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm-2 16l-4-4 1.41-1.41L10 14.17l6.59-6.59L18 9l-8 8z"/></svg>
+        </div>
+        <div class="result-note-text">
+          <b>Verification successful</b>
+          <span>The transaction details match the verified records.</span>
+        </div>
+      </div>
+
+      <div class="result-actions">
+        <button class="btn-action" onclick="shareReceipt()">
+          <svg viewBox="0 0 24 24"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
+          <span>Share Receipt</span>
+        </button>
+        <button class="btn-action" onclick="downloadReceipt()">
+          <svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          <span>Download Receipt</span>
+        </button>
+      </div>
+
+      <button class="btn-done" onclick="goBack()">Done</button>
     </div>
 
-    <div class="result-note">
-      <svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><polyline points="9 12 11 14 15 10"/></svg>
-      <span>We checked this code against M-PESA's records. The amount, parties and timestamp all match.</span>
-    </div>
-
-    <div class="result-foot">
-      <button class="full-btn" onclick="goBack()">Done</button>
-    </div>
+    <div class="toast" id="receiptToast"></div>
   </div>
 </div>
 
@@ -222,11 +432,49 @@
 
   function toggleFlash() { document.getElementById('flashBtn').classList.toggle('active'); }
 
-  function openManual() { document.getElementById('manualSheet').classList.add('show'); }
-  function closeManual() { document.getElementById('manualSheet').classList.remove('show'); }
+  function openManual() {
+    document.getElementById('manualSheet').classList.add('show');
+    document.getElementById('sheetBackdrop').classList.add('show');
+  }
+  function closeManual() {
+    document.getElementById('manualSheet').classList.remove('show');
+    document.getElementById('sheetBackdrop').classList.remove('show');
+  }
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') {
+      if (document.getElementById('manualSheet').classList.contains('show')) closeManual();
+      else if (document.getElementById('result').classList.contains('show')) closeResult();
+    }
+  });
+
+  function showToast(msg) {
+    const t = document.getElementById('receiptToast');
+    if (!t) return;
+    t.textContent = msg;
+    t.classList.add('show');
+    setTimeout(() => t.classList.remove('show'), 2200);
+  }
+
+  function copyId() {
+    const id = document.getElementById('resCode').textContent.trim();
+    if (navigator.clipboard) navigator.clipboard.writeText(id).catch(() => {});
+    showToast('Transaction ID copied!');
+  }
+
+  function shareReceipt() {
+    if (navigator.share) {
+      navigator.share({ title: 'M-PESA Receipt', text: `Verified transaction ${document.getElementById('resCode').textContent} on M-PESA.` }).catch(() => {});
+    } else {
+      showToast('Receipt share link copied!');
+    }
+  }
+
+  function downloadReceipt() {
+    showToast('Downloading receipt as PDF…');
+  }
 
   function showResult(code) {
-    document.getElementById('resCode').textContent = code || 'UH82LQNP5T';
+    document.getElementById('resCode').textContent = code || 'JDJSHJHJHDS';
     document.getElementById('result').classList.add('show');
   }
   function closeResult() {
@@ -236,11 +484,14 @@
 
   function simulateScan() {
     document.getElementById('camHint').textContent = 'Code detected — verifying…';
-    setTimeout(() => showResult('MP-9988ABC'), 700);
+    setTimeout(() => showResult('JDJSHJHJHDS'), 700);
   }
 
   function verifyCode() {
-    const code = (document.getElementById('codeInput').value || 'UH82LQNP5T').trim().toUpperCase();
+    const field = document.getElementById('codeInput');
+    const code = field.value.trim().toUpperCase();
+    if (!code) { field.setCustomValidity('Enter the transaction ID.'); field.reportValidity(); return; }
+    field.setCustomValidity('');
     closeManual();
     showResult(code);
   }
