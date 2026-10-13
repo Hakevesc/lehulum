@@ -262,6 +262,10 @@
   }
   pickAccount(payAccount);
 
+  // The account is chosen on the entry screen whenever it has an amount entry
+  // (e.g. EEU prepaid); only payments without one choose it here.
+  if (data.accountChosen) document.querySelector('.funding-selector').style.display = 'none';
+
   if (data.partial) $('partialBtn').classList.add('show');
 
   function editPartial() {

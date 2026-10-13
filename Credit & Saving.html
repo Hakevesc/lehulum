@@ -280,6 +280,8 @@
   const dots=[...document.querySelectorAll('#balDots .dot-i')];
   const step=()=>document.querySelector('.balance-slide').offsetWidth+10;
   function goSlide(i){slider.scrollTo({left:i*step(),behavior:'smooth'});}
+  // Home has separate Credit and Saving tiles: ?tab=credit opens on the credit card
+  if (new URLSearchParams(location.search).get('tab') === 'credit') requestAnimationFrame(() => slider.scrollTo({ left: step() }));
   slider.addEventListener('scroll',()=>{
     const i=Math.round(slider.scrollLeft/step());
     dots.forEach((d,n)=>d.classList.toggle('active',n===i));

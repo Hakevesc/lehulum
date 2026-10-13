@@ -196,6 +196,10 @@
   refresh();
 
   function goBack() {
+    if (data.from === 'Withdraw Cash - Amount First.html') {
+      window.location.href = 'Withdraw Cash - Agent Short Code Locate.html';
+      return;
+    }
     // The agent locator captures code and amount together, so it owns the back step.
     if (method === 'agent') window.location.href = 'Withdraw Cash - Agent Locator.html';
     else if (method === 'atm') window.location.href = 'Withdraw Cash - ATM Locator.html';

@@ -502,6 +502,10 @@
 
       <!-- Destination -->
       <div class="transfer-type">
+        <div class="type-row" onclick="sendToMpesa()">
+          <span class="label">M-PESA</span>
+          <svg class="caret" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+        </div>
         <div class="type-row" onclick="selectType('bank')">
           <span class="label">Bank</span>
           <svg class="caret" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
@@ -640,7 +644,6 @@
   lucide.createIcons();
 
   const walletOptions = [
-    { name: 'M-PESA', sub: 'Send to M-PESA', logo: 'assets/banks logo/M-PESA-logo-icon.png', link: 'Transfer to Wallet_Enter Recipient.html' },
     { name: 'Telebirr', sub: 'Send to Telebirr', logo: 'assets/wallets/telebirr.png', link: 'Transfer to Wallet_Enter Recipient.html' },
     { name: 'CBE Birr', sub: 'Send to CBE Birr', logo: 'assets/wallets/cbe-birr.png', link: 'Transfer to Wallet_Enter Recipient.html' },
     { name: 'Kacha', sub: 'Send to Kacha', logo: 'assets/wallets/kacha.png', link: 'Transfer to Wallet_Enter Recipient.html' },
@@ -703,6 +706,14 @@
       name: o.name, sub: o.sub, logo: o.logo, type: selectedType
     }));
     window.location.href = o.link;
+  }
+
+  // M-PESA to M-PESA: straight to the recipient screen with M-PESA already selected
+  function sendToMpesa() {
+    sessionStorage.setItem('sendTarget', JSON.stringify({
+      name: 'M-PESA', sub: 'Send to M-PESA', logo: 'assets/banks logo/M-PESA-logo-icon.png', type: 'wallet'
+    }));
+    window.location.href = 'Transfer to Wallet_Enter Recipient.html';
   }
 
   function showModal() {

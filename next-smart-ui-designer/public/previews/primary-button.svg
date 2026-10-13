@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 140 72" fill="none">
+  <rect width="140" height="72" rx="8" fill="#F5F5F5"/>
+  <rect x="14" y="24" width="112" height="24" rx="8" fill="#FE353D"/>
+  <text x="70" y="40" text-anchor="middle" font-family="Poppins, sans-serif" font-size="11" font-weight="600" fill="#FFF1F2">Action</text>
+</svg>

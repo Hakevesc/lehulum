@@ -338,8 +338,13 @@
     btn.disabled = !hasAccount;
   }
 
+  // One saved list per biller, so each biller only offers its own accounts
+  const SAVED_KEY = 'billSavedAccounts:' + (biller.name || 'biller');
+
   function proceed() {
     if (!accountVerified) return;
+    SavedAccounts.remember(SAVED_KEY, { number: document.getElementById('accountInput').value,
+      customer: document.getElementById('customerName').textContent, tag: biller.name });
     const data = {
       biller,
       account: document.getElementById('accountInput').value,
@@ -357,6 +362,20 @@
   }
 </script>
 
+<script src="components/saved-accounts.js"></script>
+<script>
+  SavedAccounts.mount({
+    key: SAVED_KEY,
+    host: document.getElementById('continueBtn').parentNode,
+    before: document.getElementById('continueBtn'),   // list sits above Continue
+    logo: biller.logo,
+    onPick: a => {
+      const el = document.getElementById('accountInput');
+      el.value = a.number;
+      onAccountInput(a.number);
+    }
+  });
+</script>
 <script src="figma-export.js"></script>
 <script src="test-scenarios-data.js"></script>
 <script src="test-scenarios.js"></script>

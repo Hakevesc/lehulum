@@ -132,7 +132,7 @@ window.TEST_SCENARIOS_DATA = {
      "Agency Banking Cash In"
     ],
     [
-     "Cash In - Agent Nearby.html",
+     "Cash In - Agent Short Code Locate.html",
      "Agent Nearby"
     ],
     [
@@ -152,7 +152,7 @@ window.TEST_SCENARIOS_DATA = {
      "Voucher"
     ],
     [
-     "Cash In.html",
+     "Cash In - Amount First.html",
      "Cash In"
     ],
     [
@@ -841,7 +841,7 @@ window.TEST_SCENARIOS_DATA = {
   "Bill Payment_Water Town.html": "Bill Payment",
   "Bill Payment_Water.html": "Bill Payment",
   "Buy Ticket.html": "Home & Services",
-  "Cash In - Agent Nearby.html": "Cash In",
+  "Cash In - Agent Short Code Locate.html": "Cash In",
   "Cash In - Agent Unavailable.html": "Cash In",
   "Cash In - Enter PIN.html": "Cash In",
   "Cash In - Invalid Agent.html": "Cash In",
@@ -854,7 +854,7 @@ window.TEST_SCENARIOS_DATA = {
   "Cash In - Voucher Already Used.html": "Cash In",
   "Cash In - Voucher Expired.html": "Cash In",
   "Cash In - Voucher.html": "Cash In",
-  "Cash In.html": "Cash In",
+  "Cash In - Amount First.html": "Cash In",
   "Confirm Profile.html": "Sign Up & Onboarding",
   "Create PIN.html": "Login & PIN",
   "Credit & Saving.html": "Saving & Credit",

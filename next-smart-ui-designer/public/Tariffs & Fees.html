@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tariffs &amp; Fees</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@400;500;600&display=swap');
+  @import url('https://api.fontshare.com/v2/css?f[]=switzer@400,500,600,700&display=swap');
+
+  :root {
+    --Primary: #FE353D;
+    --On-Surface: #1C1C21;
+    --On-Surface-Low: #7C7C87;
+    --Surface-Container: #FCFCFC;
+    --Gray-0: #FFF;
+    --Border: #E8E8EC;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Inter', sans-serif;
+    background: transparent;
+    display: flex; justify-content: center; align-items: center;
+    min-height: 100vh; padding: 20px;
+  }
+
+  .phone-frame {
+    width: 360px; height: 780px;
+    background: #F5F5F5; border-radius: 30px;
+    overflow: hidden; position: relative;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.15);
+  }
+
+  .app-content {
+    height: 100%; overflow-y: auto; position: relative;
+    display: flex; flex-direction: column;
+  }
+  .app-content::-webkit-scrollbar { width: 0; }
+
+  /* ── Status Bar ── */
+  .status-bar {
+    position: relative; z-index: 5;
+    display: flex; justify-content: space-between; align-items: center;
+    width: 100%; padding: 14px 24px 8px; background: #F5F5F5;
+  }
+  .status-bar .time { font-size: 14px; font-weight: 600; color: var(--On-Surface); }
+  .status-icons { display: flex; align-items: center; gap: 6px; }
+  .status-icons svg { width: 18px; height: 18px; }
+
+  /* ── Header Navigation ── */
+  .header-nav {
+    position: relative; z-index: 5; width: 100%;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 12px 16px 12px; background: #F5F5F5;
+  }
+  .back-btn {
+    display: flex; align-items: center; justify-content: center;
+    background: transparent; border: none; cursor: pointer; transition: all 0.2s;
+    width: 36px; height: 36px; border-radius: 50%; flex-shrink: 0;
+  }
+  .back-btn:hover { background: rgba(0,0,0,0.05); }
+  .back-btn svg { width: 22px; height: 22px; stroke: var(--On-Surface); stroke-width: 1.8px; fill: none; }
+  .header-title {
+    color: var(--On-Surface); font-family: 'Switzer', sans-serif;
+    font-size: 17px; font-weight: 500; letter-spacing: 0.3px;
+    flex: 1; text-align: center;
+  }
+  .header-spacer { width: 36px; height: 36px; flex-shrink: 0; }
+
+  /* ── Main Content ── */
+  .main-content {
+    padding: 16px 16px 24px; display: flex; flex-direction: column;
+    flex: 1; width: 100%;
+  }
+  .subtitle {
+    color: var(--On-Surface-Low); font-family: 'Switzer', sans-serif;
+    font-size: 13px; font-weight: 400; text-align: center; margin-bottom: 16px;
+    line-height: 1.5;
+  }
+
+  /* ── Category ── */
+  .fee-category { margin-bottom: 18px; }
+  .fee-category-label {
+    color: var(--On-Surface-Low); font-family: 'Switzer', sans-serif;
+    font-size: 12px; font-weight: 600; text-transform: uppercase;
+    letter-spacing: 0.8px; margin: 0 4px 8px;
+  }
+  .fee-card {
+    background: #FFF; border-radius: 16px; overflow: hidden;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+  }
+
+  /* ── Fee Row ── */
+  .fee-row {
+    display: flex; align-items: center; gap: 12px;
+    padding: 14px 16px; border-bottom: 1px solid var(--Border);
+  }
+  .fee-row:last-child { border-bottom: none; }
+  .fee-icon {
+    width: 38px; height: 38px; border-radius: 10px;
+    background: #FFF1F2; display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+  }
+  .fee-icon svg { width: 20px; height: 20px; stroke: var(--Primary); stroke-width: 1.9; fill: none; stroke-linecap: round; stroke-linejoin: round; }
+  .fee-info { flex: 1; display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+  .fee-name { color: var(--On-Surface); font-family: 'Switzer', sans-serif; font-size: 14px; font-weight: 600; }
+  .fee-range { color: var(--On-Surface-Low); font-family: 'Switzer', sans-serif; font-size: 12px; font-weight: 400; }
+  .fee-value {
+    color: var(--On-Surface); font-family: 'Switzer', sans-serif;
+    font-size: 14px; font-weight: 600; text-align: right; flex-shrink: 0;
+  }
+  .fee-value.free { color: var(--Success, #1FC83B); }
+
+  .disclaimer {
+    margin-top: 6px; padding: 12px 14px; border-radius: 12px;
+    background: #F0F0F3; color: var(--On-Surface-Low);
+    font-family: 'Switzer', sans-serif; font-size: 11.5px; line-height: 1.55;
+    display: flex; gap: 8px; align-items: flex-start;
+  }
+  .disclaimer svg { width: 15px; height: 15px; stroke: var(--On-Surface-Low); stroke-width: 2; fill: none; flex-shrink: 0; margin-top: 1px; }
+</style>
+</head>
+<body>
+
+<div class="phone-frame">
+  <div class="app-content">
+
+    <!-- Status Bar -->
+    <div class="status-bar">
+      <span class="time">10:00</span>
+      <div class="status-icons">
+        <svg viewBox="0 0 24 24" fill="none"><rect x="2" y="6" width="4" height="12" rx="1" fill="#1C1C21"/><rect x="8" y="4" width="4" height="14" rx="1" fill="#1C1C21"/><rect x="14" y="2" width="4" height="16" rx="1" fill="#1C1C21"/><rect x="20" y="0" width="4" height="18" rx="1" fill="#1C1C21" opacity="0.3"/></svg>
+        <svg viewBox="0 0 24 24" fill="none"><path d="M5 12.55a11 11 0 0 1 14.08 0" stroke="#1C1C21" stroke-width="1.5" stroke-linecap="round"/><path d="M1.42 9a16 16 0 0 1 21.16 0" stroke="#1C1C21" stroke-width="1.5" stroke-linecap="round"/><path d="M8.53 16.11a6 6 0 0 1 6.95 0" stroke="#1C1C21" stroke-width="1.5" stroke-linecap="round"/><line x1="12" y1="20" x2="12.01" y2="20" stroke="#1C1C21" stroke-width="2" stroke-linecap="round"/></svg>
+        <svg viewBox="0 0 28 14" fill="none"><rect x="0" y="1" width="22" height="12" rx="2.5" stroke="#1C1C21" stroke-width="1.5"/><rect x="2" y="3" width="16" height="8" rx="1" fill="#1C1C21"/><rect x="24" y="4" width="2" height="6" rx="1" fill="#1C1C21"/></svg>
+      </div>
+    </div>
+
+    <!-- Header Navigation -->
+    <div class="header-nav">
+      <button class="back-btn" onclick="goBack()">
+        <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+      </button>
+      <span class="header-title">Tariffs &amp; Fees</span>
+      <div class="header-spacer"></div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+
+      <p class="subtitle">Applicable charges for M-PESA transactions.<br>Fees vary by transaction amount band.</p>
+
+      <!-- Transfers -->
+      <div class="fee-category">
+        <p class="fee-category-label">Transfers</p>
+        <div class="fee-card">
+          <div class="fee-row">
+            <div class="fee-icon"><svg viewBox="0 0 24 24"><path d="M22 2L11 13"/><path d="M22 2L15 22l-4-9-9-4 20-7z"/></svg></div>
+            <div class="fee-info"><span class="fee-name">Send to M-PESA</span><span class="fee-range">Per transaction</span></div>
+            <span class="fee-value">0 – 28.00 Birr</span>
+          </div>
+          <div class="fee-row">
+            <div class="fee-icon"><svg viewBox="0 0 24 24"><polygon points="3 6 21 6 12 1 3 6"/><polyline points="3 21 21 21 21 10"/><line x1="9" y1="10" x2="9" y2="16"/><line x1="15" y1="10" x2="15" y2="16"/></svg></div>
+            <div class="fee-info"><span class="fee-name">Send to Bank</span><span class="fee-range">Per transaction</span></div>
+            <span class="fee-value">9.00 – 55.00 Birr</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Cash -->
+      <div class="fee-category">
+        <p class="fee-category-label">Cash</p>
+        <div class="fee-card">
+          <div class="fee-row">
+            <div class="fee-icon"><svg viewBox="0 0 24 24"><rect x="2" y="6" width="20" height="12" rx="2"/><circle cx="12" cy="12" r="2.5"/></svg></div>
+            <div class="fee-info"><span class="fee-name">Withdraw Cash</span><span class="fee-range">Agent / ATM</span></div>
+            <span class="fee-value">7.00 – 45.00 Birr</span>
+          </div>
+          <div class="fee-row">
+            <div class="fee-icon"><svg viewBox="0 0 24 24"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg></div>
+            <div class="fee-info"><span class="fee-name">Deposit / Add Money</span><span class="fee-range">Agent</span></div>
+            <span class="fee-value free">Free</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Payments -->
+      <div class="fee-category">
+        <p class="fee-category-label">Payments</p>
+        <div class="fee-card">
+          <div class="fee-row">
+            <div class="fee-icon"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><line x1="14" y1="14" x2="14" y2="14.01"/><line x1="20" y1="20" x2="20" y2="20.01"/></svg></div>
+            <div class="fee-info"><span class="fee-name">Pay Merchant</span><span class="fee-range">Buy goods &amp; services</span></div>
+            <span class="fee-value free">Free</span>
+          </div>
+          <div class="fee-row">
+            <div class="fee-icon"><svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/></svg></div>
+            <div class="fee-info"><span class="fee-name">Pay Bill</span><span class="fee-range">Utilities &amp; billers</span></div>
+            <span class="fee-value free">Free</span>
+          </div>
+          <div class="fee-row">
+            <div class="fee-icon"><svg viewBox="0 0 24 24"><rect x="5" y="2" width="14" height="20" rx="2"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg></div>
+            <div class="fee-info"><span class="fee-name">Buy Airtime / Package</span><span class="fee-range">Self &amp; others</span></div>
+            <span class="fee-value free">Free</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="disclaimer">
+        <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+        <span>Fees are indicative and may change. Exact charges are shown on the confirmation screen before you approve any transaction.</span>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<script>
+  function goBack() {
+    if (document.referrer) { window.history.back(); }
+    else { window.location.href = 'Account.html'; }
+  }
+</script>
+
+<!-- Export to Figma button (shared exporter) -->
+<script src="figma-export.js"></script>
+</body>
+</html>

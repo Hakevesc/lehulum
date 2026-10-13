@@ -1,0 +1,788 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Transfer Money</title>
+<link rel="stylesheet" href="styles/design-tokens.css">
+<link rel="stylesheet" href="styles/base.css">
+<link rel="stylesheet" href="styles/component-status-bar.css">
+<link rel="stylesheet" href="styles/component-transactions.css">
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@400;500;600&display=swap');
+  @import url('https://api.fontshare.com/v2/css?f[]=switzer@400,500,600,700&display=swap');
+
+  :root {
+    --Primary: #FE353D;
+    --Primary-Dark: #C41520;
+    --Primary-Darker: #A41016;
+    --On-Surface: #1C1C21;
+    --On-Surface-Low: #7C7C87;
+    --Surface-Container: #FCFCFC;
+    --Gray-0: #FFF;
+    --On-Primary: #FFF1F2;
+    --Border: #E8E8EC;
+    --Success: #1FC83B;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Inter', sans-serif;
+    background: transparent;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    padding: 20px;
+  }
+
+  .phone-frame {
+    width: 360px;
+    height: 780px;
+    background: #F5F5F5;
+    border-radius: 30px;
+    overflow: hidden;
+    position: relative;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
+  }
+
+  .app-content {
+    height: 100%;
+    overflow-y: auto;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    padding: 0 15px;
+  }
+  .app-content::-webkit-scrollbar { width: 0; }
+
+  /* Header Navigation */
+  .header-nav {
+    position: relative;
+    z-index: 5;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 12px 0 0;
+    background: #F5F5F5;
+  }
+
+  .back-btn {
+    position: absolute;
+    left: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    transition: all 0.2s;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+  }
+
+  .back-btn:hover {
+    background: rgba(0,0,0,0.05);
+    transform: scale(1.05);
+  }
+
+  .back-btn svg {
+    width: 22px;
+    height: 22px;
+    stroke: var(--On-Surface);
+    stroke-width: 1.8px;
+  }
+
+  .header-title {
+    color: var(--On-Surface);
+    font-family: 'Switzer', sans-serif;
+    font-size: 17px;
+    font-weight: 500;
+    letter-spacing: 0.3px;
+  }
+
+  /* Main Content */
+  .main-content {
+    padding: 16px 0 20px;
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    width: 100%;
+    gap: 16px;
+  }
+
+  /* Destination rows — Bank / Wallet */
+  .transfer-type {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .type-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    background: #FFF;
+    border-radius: 16px;
+    padding: 18px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+    cursor: pointer;
+    transition: box-shadow 0.2s, transform 0.15s;
+  }
+
+  .type-row:hover { box-shadow: 0 4px 14px rgba(0, 0, 0, 0.08); transform: translateY(-1px); }
+  .type-row:active { transform: scale(0.99); }
+
+  .type-row .label {
+    color: var(--On-Surface);
+    font-family: 'Switzer', sans-serif;
+    font-size: 16px;
+    font-weight: 700;
+    letter-spacing: 0.2px;
+  }
+
+  .type-row .caret {
+    width: 18px;
+    height: 18px;
+    stroke: var(--Primary);
+    stroke-width: 2.4;
+    fill: none;
+    flex-shrink: 0;
+  }
+
+  /* Section Card */
+  .section-card {
+    background: #FFF;
+    border-radius: 16px;
+    padding: 16px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+  }
+
+  .section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 14px;
+  }
+
+  .section-title {
+    color: var(--On-Surface);
+    font-family: 'Switzer', sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+    letter-spacing: 0.2px;
+  }
+
+  .see-all {
+    color: var(--Primary);
+    font-family: 'Switzer', sans-serif;
+    font-size: 12px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: opacity 0.2s;
+  }
+
+  .see-all:hover {
+    opacity: 0.7;
+  }
+
+  /* Favorites Section */
+  .favorites-section {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    padding: 0 4px;
+  }
+
+  /* Favorites Horizontal Scroll */
+  .favorites-scroll {
+    display: flex;
+    gap: 16px;
+    overflow-x: auto;
+    padding-bottom: 4px;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+
+  .favorites-scroll::-webkit-scrollbar {
+    display: none;
+  }
+
+  .favorite-item {
+    flex-shrink: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    cursor: pointer;
+    transition: transform 0.2s;
+  }
+
+  .favorite-item:hover {
+    transform: scale(1.05);
+  }
+
+  .favorite-item:active {
+    transform: scale(0.95);
+  }
+
+  .favorite-avatar {
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    overflow: hidden;
+    border: 2px solid #FFF;
+    background: #FFF;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .favorite-avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .favorite-avatar img[src*="banks logo"] {
+    object-fit: contain;
+    padding: 6px;
+  }
+
+  .favorite-name {
+    color: var(--On-Surface);
+    font-family: 'Switzer', sans-serif;
+    font-size: 11px;
+    font-weight: 500;
+    text-align: center;
+    max-width: 70px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    letter-spacing: 0.1px;
+  }
+
+  /* Frequent Transactions */
+  .frequent-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .frequent-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 8px 0;
+    cursor: pointer;
+    transition: background 0.15s;
+    border-radius: 10px;
+  }
+
+  .frequent-item:hover {
+    background: #FAFAFA;
+  }
+
+  .frequent-item:active {
+    background: #F5F5F5;
+  }
+
+  .frequent-avatar {
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    overflow: hidden;
+    flex-shrink: 0;
+    background: #FFF;
+    border: 1px solid #ECECEC;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 4px;
+  }
+
+  .frequent-avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+  }
+
+  .frequent-info {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+
+  .frequent-name {
+    color: var(--On-Surface);
+    font-family: 'Switzer', sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+    letter-spacing: 0.2px;
+  }
+
+  .frequent-bank {
+    color: var(--On-Surface-Low);
+    font-family: 'Switzer', sans-serif;
+    font-size: 12px;
+    font-weight: 400;
+  }
+
+  .frequent-arrow {
+    width: 20px;
+    height: 20px;
+    color: var(--On-Surface-Low);
+    flex-shrink: 0;
+  }
+
+  /* Override recent-transactions container properties to match section-card shadow/padding */
+  .recent-transactions.section-card {
+    background: #FFF;
+    border-radius: 16px;
+    padding: 16px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+    margin-bottom: 0;
+    align-items: stretch;
+    gap: 14px;
+  }
+
+  .recent-transactions.section-card .header {
+    align-items: center;
+  }
+
+  .recent-transactions.section-card .header .transactions-title {
+    font-family: 'Switzer', sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+    letter-spacing: 0.2px;
+  }
+
+  .recent-transactions.section-card .header .see-all {
+    color: var(--Primary);
+    font-family: 'Switzer', sans-serif;
+    font-size: 12px;
+    font-weight: 500;
+    text-decoration: none;
+  }
+  
+  .recent-transactions.section-card .header .see-all:hover {
+    opacity: 0.7;
+  }
+
+  /* ===== BOTTOM SHEET MODAL ===== */
+  .modal-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 1000;
+    background: rgba(0,0,0,0.5);
+    display: none;
+    align-items: flex-end;
+    justify-content: center;
+    animation: fadeInOverlay 0.2s ease-out;
+  }
+  .modal-overlay.show { display: flex; }
+
+  @keyframes fadeInOverlay {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+
+  .bottom-sheet {
+    width: 100%;
+    max-width: 360px;
+    background: #FFF;
+    border-radius: 24px 24px 0 0;
+    padding: 20px 20px 30px;
+    animation: slideUpSheet 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+    max-height: 70vh;
+    overflow-y: auto;
+  }
+  .bottom-sheet::-webkit-scrollbar { width: 0; }
+
+  @keyframes slideUpSheet {
+    from { transform: translateY(100%); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+  }
+
+  .sheet-grip {
+    width: 40px;
+    height: 4px;
+    background: #D8D8DD;
+    border-radius: 2px;
+    margin: 0 auto 16px;
+  }
+
+  .sheet-title {
+    font-family: 'Switzer', sans-serif;
+    font-size: 17px;
+    font-weight: 700;
+    color: var(--On-Surface);
+    margin-bottom: 16px;
+    text-align: center;
+  }
+
+  .sheet-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+  }
+
+  .sheet-tile {
+    background: #FFF;
+    border: 1px solid var(--Border);
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+    padding: 14px 8px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+    transition: border-color 0.2s, transform 0.15s, box-shadow 0.2s;
+  }
+  .sheet-tile:hover { border-color: var(--Primary); box-shadow: 0 6px 18px rgba(0,0,0,0.08); transform: translateY(-1px); }
+  .sheet-tile:active { transform: scale(0.98); }
+
+  .sheet-tile .logo {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: #FFF;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+  }
+  .sheet-tile .logo img { width: 32px; height: 32px; object-fit: contain; }
+
+  .sheet-tile .nm {
+    font-family: 'Switzer', sans-serif;
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--On-Surface);
+    text-align: center;
+    line-height: 1.3;
+  }
+</style>
+<link rel="stylesheet" href="styles/device.css">
+</head>
+<body>
+
+<div class="phone-frame">
+  <div class="app-content">
+
+    <!-- Status Bar (same as Lehulum Home) -->
+    <div class="status-bar">
+      <span class="time">10:00</span>
+      <div class="status-icons">
+        <svg viewBox="0 0 24 24" fill="none"><path d="M1 9l2 2c4.97-4.97 13.03-4.97 18 0l2-2C16.93 2.93 7.08 2.93 1 9z" fill="#1C1C21"/><path d="M5 13l2 2c2.76-2.76 7.24-2.76 10 0l2-2C15.14 9.14 8.87 9.14 5 13z" fill="#1C1C21"/><path d="M9 17l2 2c1.1-1.1 2.9-1.1 4 0l2-2c-2.21-2.21-5.79-2.21-8 0z" fill="#1C1C21"/></svg>
+        <svg viewBox="0 0 24 24" fill="none"><rect x="2" y="6" width="4" height="12" rx="1" fill="#1C1C21"/><rect x="8" y="4" width="4" height="14" rx="1" fill="#1C1C21"/><rect x="14" y="2" width="4" height="16" rx="1" fill="#1C1C21"/><rect x="20" y="0" width="4" height="18" rx="1" fill="#1C1C21" opacity="0.3"/></svg>
+        <svg viewBox="0 0 28 14" fill="none"><rect x="0" y="1" width="22" height="12" rx="2.5" stroke="#1C1C21" stroke-width="1.5"/><rect x="2" y="3" width="16" height="8" rx="1" fill="#1C1C21"/><rect x="24" y="4" width="2" height="6" rx="1" fill="#1C1C21"/></svg>
+      </div>
+    </div>
+
+    <!-- Header Navigation -->
+    <div class="header-nav">
+      <button class="back-btn" onclick="goBack()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M19 12H5M12 19l-7-7 7-7"/>
+        </svg>
+      </button>
+      <span class="header-title">Transfer Money</span>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+
+      <!-- Destination -->
+      <div class="transfer-type">
+        <div class="type-row" onclick="selectType('bank')">
+          <span class="label">Bank</span>
+          <svg class="caret" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+        </div>
+        <div class="type-row" onclick="selectType('wallet')">
+          <span class="label">Wallet</span>
+          <svg class="caret" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+        </div>
+      </div>
+
+      <!-- My Favorites (no card styling, uses avatar photos or bank logos) -->
+      <div class="favorites-section">
+        <div class="section-header">
+          <span class="section-title">Favorites</span>
+          <span class="see-all" onclick="manageFavorites()">See All</span>
+        </div>
+        <div class="favorites-scroll">
+          <div class="favorite-item" onclick="selectFavorite('Mom')">
+            <div class="favorite-avatar">
+              <img src="assets/avatars/avatar-3.png" alt="Mom">
+            </div>
+            <span class="favorite-name">Mom</span>
+          </div>
+          <div class="favorite-item" onclick="selectFavorite('Rent')">
+            <div class="favorite-avatar">
+              <img src="assets/banks logo/cbe-logo.png" alt="Rent">
+            </div>
+            <span class="favorite-name">Rent</span>
+          </div>
+          <div class="favorite-item" onclick="selectFavorite('Sister')">
+            <div class="favorite-avatar">
+              <img src="assets/avatars/avatar-5.png" alt="Sister">
+            </div>
+            <span class="favorite-name">Sister</span>
+          </div>
+          <div class="favorite-item" onclick="selectFavorite('Landlord')">
+            <div class="favorite-avatar">
+              <img src="assets/banks logo/abyssinya-bank.png" alt="Landlord">
+            </div>
+            <span class="favorite-name">Landlord</span>
+          </div>
+          <div class="favorite-item" onclick="selectFavorite('Aster')">
+            <div class="favorite-avatar">
+              <img src="assets/avatars/avatar-2.png" alt="Aster">
+            </div>
+            <span class="favorite-name">Aster</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Frequent Transactions -->
+      <div class="section-card">
+        <div class="section-header">
+          <span class="section-title">Frequent Transactions</span>
+        </div>
+        <div class="frequent-list">
+          <div class="frequent-item" onclick="sendTo('Aster Mequanent', 'Commercial Bank of Ethiopia', 'assets/banks logo/cbe-logo.png', '1000035632645')">
+            <div class="frequent-avatar">
+              <img src="assets/banks logo/cbe-logo.png" alt="CBE">
+            </div>
+            <div class="frequent-info">
+              <span class="frequent-name">Aster Mequanent</span>
+              <span class="frequent-bank">CBE • 1000035632645</span>
+            </div>
+            <svg class="frequent-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="9 18 15 12 9 6"></polyline>
+            </svg>
+          </div>
+          <div class="frequent-item" onclick="sendTo('Kidist Birhanu', 'Bank of Abyssinia', 'assets/banks logo/abyssinya-bank.png', '3654341')">
+            <div class="frequent-avatar">
+              <img src="assets/banks logo/abyssinya-bank.png" alt="BOA">
+            </div>
+            <div class="frequent-info">
+              <span class="frequent-name">Kidist Birhanu</span>
+              <span class="frequent-bank">BOA • 3654341</span>
+            </div>
+            <svg class="frequent-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="9 18 15 12 9 6"></polyline>
+            </svg>
+          </div>
+          <div class="frequent-item" onclick="sendTo('Aster Mequanent', 'Dashen Bank', 'assets/banks logo/dashen-bank.png', '15252525525632827')">
+            <div class="frequent-avatar">
+              <img src="assets/banks logo/dashen-bank.png" alt="Dashen Bank">
+            </div>
+            <div class="frequent-info">
+              <span class="frequent-name">Aster Mequanent</span>
+              <span class="frequent-bank">Dashen Bank • 15252525525632827</span>
+            </div>
+            <svg class="frequent-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="9 18 15 12 9 6"></polyline>
+            </svg>
+          </div>
+          <div class="frequent-item" onclick="sendTo('Henok Chala', 'Awash Bank', 'assets/banks logo/awass-bank.png', '13456782091')">
+            <div class="frequent-avatar">
+              <img src="assets/banks logo/awass-bank.png" alt="Awash Bank">
+            </div>
+            <div class="frequent-info">
+              <span class="frequent-name">Henok Chala</span>
+              <span class="frequent-bank">Awash Bank • 13456782091</span>
+            </div>
+            <svg class="frequent-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="9 18 15 12 9 6"></polyline>
+            </svg>
+          </div>
+          <div class="frequent-item" onclick="sendTo('Sara Tesfaye', 'Cooperative Bank of Ethiopia', 'assets/banks logo/coop-bank.png', '8973421930')">
+            <div class="frequent-avatar">
+              <img src="assets/banks logo/coop-bank.png" alt="Cooperative Bank">
+            </div>
+            <div class="frequent-info">
+              <span class="frequent-name">Sara Tesfaye</span>
+              <span class="frequent-bank">Cooperative Bank • 8973421930</span>
+            </div>
+            <svg class="frequent-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="9 18 15 12 9 6"></polyline>
+            </svg>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- Bottom Sheet Modal -->
+<div class="modal-overlay" id="modalOverlay" onclick="if(event.target===this)closeModal()">
+  <div class="bottom-sheet" id="bottomSheet">
+    <div class="sheet-grip"></div>
+    <div class="sheet-title" id="sheetTitle">Select Wallet</div>
+    <div class="sheet-grid" id="sheetList"></div>
+  </div>
+</div>
+
+<!-- Lucide Icons -->
+<script src="https://unpkg.com/lucide@latest"></script>
+<script>
+  lucide.createIcons();
+
+  const walletOptions = [
+    { name: 'M-PESA', sub: 'Send to M-PESA', logo: 'assets/banks logo/M-PESA-logo-icon.png', link: 'Transfer to Wallet_Enter Recipient.html' },
+    { name: 'Telebirr', sub: 'Send to Telebirr', logo: 'assets/wallets/telebirr.png', link: 'Transfer to Wallet_Enter Recipient.html' },
+    { name: 'CBE Birr', sub: 'Send to CBE Birr', logo: 'assets/wallets/cbe-birr.png', link: 'Transfer to Wallet_Enter Recipient.html' },
+    { name: 'Kacha', sub: 'Send to Kacha', logo: 'assets/wallets/kacha.png', link: 'Transfer to Wallet_Enter Recipient.html' },
+    { name: 'Yaya', sub: 'Send to Yaya', logo: 'assets/wallets/yaya.png', link: 'Transfer to Wallet_Enter Recipient.html' }
+  ];
+
+  const bankOptions = [
+    { name: 'Commercial Bank of Ethiopia', sub: 'CBE • Account', logo: 'assets/banks logo/cbe-logo.png', link: 'Transfer_Select Bank.html' },
+    { name: 'Bank of Abyssinia', sub: 'BOA • Account', logo: 'assets/banks logo/abyssinya-bank.png', link: 'Transfer_Select Bank.html' },
+    { name: 'Awash Bank', sub: 'Awash • Account', logo: 'assets/banks logo/awass-bank.png', link: 'Transfer_Select Bank.html' },
+    { name: 'Zemen Bank', sub: 'Zemen • Account', logo: 'assets/banks logo/zemen-bank.png', link: 'Transfer_Select Bank.html' },
+    { name: 'Cooperative Bank of Ethiopia', sub: 'COOP • Account', logo: 'assets/banks logo/coop-bank.png', link: 'Transfer_Select Bank.html' },
+    { name: 'Dashen Bank', sub: 'Dashen • Account', logo: 'assets/banks logo/dashen-bank.png', link: 'Transfer_Select Bank.html' },
+    { name: 'Hibret Bank', sub: 'Hibret • Account', logo: 'assets/banks logo/Hibret-bank.png', link: 'Transfer_Select Bank.html' },
+    { name: 'Amhara Bank', sub: 'Amhara • Account', logo: 'assets/banks logo/amhara-bank.png', link: 'Transfer_Select Bank.html' },
+    { name: 'Nib International Bank', sub: 'NIB • Account', logo: 'assets/banks logo/nib-bank.png', link: 'Transfer_Select Bank.html' },
+    { name: 'Oromia International Bank', sub: 'Oromia • Account', logo: 'assets/banks logo/oromia-i-bank.png', link: 'Transfer_Select Bank.html' },
+    { name: 'Wegagen Bank', sub: 'Wegagen • Account', logo: 'assets/banks logo/wegagen-bank.png', link: 'Transfer_Select Bank.html' }
+  ];
+
+  let selectedType = 'wallet';
+
+  function selectType(type) {
+    selectedType = type;
+    if (type === 'wallet') openWalletModal();
+    else openBankModal();
+  }
+
+  function openWalletModal() {
+    document.getElementById('sheetTitle').textContent = 'Select Wallet';
+    renderSheetOptions(walletOptions);
+    showModal();
+  }
+
+  function openBankModal() {
+    document.getElementById('sheetTitle').textContent = 'Select Bank';
+    renderSheetOptions(bankOptions);
+    showModal();
+  }
+
+  let currentOptions = [];
+
+  function renderSheetOptions(options) {
+    currentOptions = options;
+    const grid = document.getElementById('sheetList');
+    grid.innerHTML = options.map((o, i) => `
+      <div class="sheet-tile" onclick="selectSheetOption(${i})">
+        <div class="logo">
+          <img src="${o.logo}" alt="${o.name}" onerror="this.style.display='none'">
+        </div>
+        <span class="nm">${o.name}</span>
+      </div>
+    `).join('');
+  }
+
+  function selectSheetOption(index) {
+    const o = currentOptions[index];
+    if (!o) return;
+    sessionStorage.setItem('sendTarget', JSON.stringify({
+      name: o.name, sub: o.sub, logo: o.logo, type: selectedType
+    }));
+    window.location.href = o.link;
+  }
+
+  function showModal() {
+    document.getElementById('modalOverlay').classList.add('show');
+  }
+
+  function closeModal() {
+    document.getElementById('modalOverlay').classList.remove('show');
+  }
+
+  // Select favorite → trusted saved recipient, skip to amount (wallet rail)
+  function selectFavorite(name) {
+    sessionStorage.setItem('sendTarget', JSON.stringify({
+      type: 'wallet',
+      name: 'M-PESA',
+      logo: 'assets/banks logo/M-PESA-logo-icon.png',
+      holder: name,
+      phone: '+251 9** *** ***'
+    }));
+    window.location.href = 'Transfer to Wallet_Enter Recipient.html';
+  }
+
+  // Manage favorites
+  function manageFavorites() {
+    window.location.href = 'Manage Favourites.html';
+  }
+
+  // Send to frequent contact → trusted saved bank recipient, go to bank select page (with bank pre-filled)
+  function sendTo(name, bank, logo, account) {
+    sessionStorage.setItem('sendTarget', JSON.stringify({
+      type: 'bank',
+      name: bank,
+      logo: logo,
+      holder: name,
+      account: account
+    }));
+    window.location.href = 'Transfer_Select Bank.html';
+  }
+
+  // See all transactions
+  function seeAllTransactions() {
+    console.log('See all transactions');
+  }
+
+  // Go back
+  function goBack() {
+    console.log('Navigate back');
+  }
+</script>
+
+
+<!-- Export to Figma button (shared exporter) -->
+<script src="figma-export.js"></script>
+<script src="test-scenarios-data.js"></script>
+<script src="test-scenarios.js"></script>
+<script>
+window.addEventListener('load', function () {
+  setTimeout(function () {
+    try {
+      selectType('wallet');
+      const overlay = document.getElementById('modalOverlay');
+      const grid = document.getElementById('sheetList');
+      const tiles = grid ? (grid.innerHTML.match(/class="sheet-tile"/g) || []).length : -1;
+      const pre = document.createElement('pre');
+      pre.id = 'probe';
+      pre.textContent = JSON.stringify({
+        overlayShown: overlay.classList.contains('show'),
+        title: document.getElementById('sheetTitle').textContent,
+        containerClass: grid ? grid.className : '',
+        tiles: tiles,
+      });
+      document.body.appendChild(pre);
+    } catch (e) {
+      const p = document.createElement('pre');
+      p.id = 'probe';
+      p.textContent = JSON.stringify({ err: e.message });
+      document.body.appendChild(p);
+    }
+  }, 800);
+});
+</script>
+</body>
+</html>

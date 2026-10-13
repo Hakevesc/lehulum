@@ -1,0 +1,16 @@
+{
+  "flows": [
+    { "id": "onboarding", "label": "First Visit / Onboarding", "description": "First-visit walkthrough into sign up", "icon": "sparkles", "firstScreenId": "first-visit-1", "screens": ["first-visit-1", "first-visit-2", "first-visit-3", "first-visit-4", "signup-home"] },
+    { "id": "lehulum-home", "label": "Lehulum Home", "description": "Main dashboard and quick actions", "icon": "home", "firstScreenId": "lehulum-home", "screens": ["lehulum-home"] },
+    { "id": "send-money-bank", "label": "Transfer to Bank", "description": "Select bank, account, amount, PIN and confirmation", "icon": "building-2", "firstScreenId": "send-money-menu", "screens": ["send-money-menu", "transfer-select-bank", "transfer-enter-amount", "transfer-enter-pin", "transaction-confirmation"] },
+    { "id": "send-money-wallet", "label": "Send to Wallet", "description": "Wallet transfer amount, PIN and confirmation", "icon": "send", "firstScreenId": "send-money-menu", "screens": ["send-money-menu", "transfer-wallet-amount", "transfer-wallet-pin", "transfer-wallet-confirmation"] },
+    { "id": "bill-payment", "label": "Bill Payment", "description": "Select biller, enter account, amount, PIN and confirmation", "icon": "receipt", "firstScreenId": "pay-bill", "screens": ["pay-bill", "bill-select-biller", "bill-enter-account", "bill-enter-amount", "bill-enter-pin", "bill-confirmation"] },
+    { "id": "merchant-payment", "label": "Merchant Payment", "description": "Merchant payment amount, PIN and receipt", "icon": "scan", "firstScreenId": "pay-merchant", "screens": ["pay-merchant", "merchant-enter-amount", "merchant-enter-pin", "merchant-confirmation"] },
+    { "id": "qr-actions", "label": "QR Actions", "description": "My QR, scan QR and verify receipt", "icon": "qr-code", "firstScreenId": "my-qr-code", "screens": ["my-qr-code", "scan-qr", "verify-receipt"] },
+    { "id": "login", "label": "Login", "description": "Login, OTP and PIN", "icon": "smartphone", "firstScreenId": "auth-login", "screens": ["auth-login", "auth-otp", "auth-create-pin", "auth-reenter-pin"] },
+    { "id": "sign-up", "label": "Sign Up", "description": "Sign up, profile, OTP and PIN setup", "icon": "user", "firstScreenId": "auth-signup", "screens": ["auth-signup", "auth-phone-signup", "auth-otp", "auth-confirm-profile", "auth-create-pin", "auth-signup-confirmation"] },
+    { "id": "forgot-pin", "label": "Forgot PIN", "description": "PIN recovery flow", "icon": "help-circle", "firstScreenId": "auth-forgot-pin", "screens": ["auth-forgot-pin", "auth-forgot-pin-sq", "auth-verify-birth-year", "auth-create-pin"] },
+    { "id": "account", "label": "Account & Settings", "description": "Account, profile, notifications and favourites", "icon": "user", "firstScreenId": "account", "screens": ["account", "account-detail", "notification-center", "manage-favourites"] },
+    { "id": "statements", "label": "Statements", "description": "History, statement and PDF export", "icon": "receipt", "firstScreenId": "transaction-history", "screens": ["transaction-history", "manage-statement", "statement-pdf"] }
+  ]
+}

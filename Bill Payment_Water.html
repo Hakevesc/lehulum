@@ -248,6 +248,8 @@
 
   function continuePayment() {
     if (!customer) return;
+    SavedAccounts.remember('waterSavedAccounts', { number: customer.reference, customer: customer.name,
+      tag: town.town, logo: town.logo, extra: { town } });
     const consumption = customer.current - customer.previous;
     const amount = customer.bill + customer.penalty;
 
@@ -296,6 +298,25 @@
   function goBack() { window.location.href = 'Bill Payment_Water Town.html'; }
 </script>
 
+<script src="components/saved-accounts.js"></script>
+<script>
+  // Saved customer keys: tap one to switch to its town and look the key up again
+  SavedAccounts.mount({
+    key: 'waterSavedAccounts',
+    host: document.querySelector('.scroll'),
+    logo: town.logo,
+    onPick: a => {
+      if (a.extra && a.extra.town) {
+        town = a.extra.town;
+        sessionStorage.setItem('waterTown', JSON.stringify(town));
+        $('utilityName').textContent = town.utility;
+        $('utilityLogo').src = town.logo;
+      }
+      $('keyInput').value = a.number;
+      onKeyInput();
+    }
+  });
+</script>
 <script src="figma-export.js"></script>
 <script src="test-scenarios-data.js"></script>
 <script src="test-scenarios.js"></script>

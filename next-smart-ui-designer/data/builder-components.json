@@ -1,0 +1,125 @@
+{
+  "components": [
+    {
+      "id": "status-bar",
+      "name": "Status Bar",
+      "category": "layout",
+      "keywords": ["status", "time", "battery", "top", "signal"],
+      "variants": ["light", "dark"],
+      "props": {},
+      "tokens": ["color.onSurface", "color.background"],
+      "figma": { "component": "Foundations/Status Bar", "type": "COMPONENT", "props": {} },
+      "preview": "/previews/status-bar.svg"
+    },
+    {
+      "id": "header-nav",
+      "name": "Header",
+      "category": "navigation",
+      "keywords": ["header", "title", "top bar", "appbar", "nav", "back"],
+      "variants": ["title", "title-subtitle"],
+      "props": { "title": "string", "subtitle": "string" },
+      "tokens": ["color.onSurface", "color.onSurfaceLow", "color.background", "color.stroke"],
+      "figma": { "component": "Navigation/Header", "type": "COMPONENT", "props": { "title": "text:Title", "subtitle": "text:Subtitle" } },
+      "preview": "/previews/header-nav.svg"
+    },
+    {
+      "id": "input-field",
+      "name": "Input Field",
+      "category": "form",
+      "keywords": ["input", "field", "text", "entry", "form", "number"],
+      "variants": ["text", "tel", "password"],
+      "props": { "label": "string", "value": "string", "placeholder": "string", "type": "string" },
+      "tokens": ["color.onSurface", "color.onSurfaceLow", "color.stroke", "radius.md"],
+      "figma": { "component": "Forms/Input Field", "type": "COMPONENT", "props": { "label": "text:Label", "placeholder": "text:Placeholder", "value": "text:Value", "type": "variant:Type" } },
+      "preview": "/previews/input-field.svg"
+    },
+    {
+      "id": "amount-display",
+      "name": "Amount Display",
+      "category": "display",
+      "keywords": ["amount", "money", "currency", "total", "etb", "price", "balance"],
+      "variants": ["default"],
+      "props": { "amount": "string", "currency": "string" },
+      "tokens": ["color.onSurface", "color.onSurfaceLow", "color.stroke"],
+      "figma": { "component": "Display/Amount", "type": "COMPONENT", "props": { "amount": "text:Amount", "currency": "text:Currency" } },
+      "preview": "/previews/amount-display.svg"
+    },
+    {
+      "id": "pin-input",
+      "name": "PIN Input",
+      "category": "form",
+      "keywords": ["pin", "otp", "passcode", "code", "security", "verify"],
+      "variants": ["4-digit", "6-digit"],
+      "props": { "length": "number", "filled": "number" },
+      "tokens": ["color.primary", "color.onSurface", "color.stroke", "radius.md"],
+      "figma": { "component": "Forms/PIN Input", "type": "COMPONENT", "props": { "length": "variant:Length", "filled": "variant:Filled" } },
+      "preview": "/previews/pin-input.svg"
+    },
+    {
+      "id": "contact-row",
+      "name": "Contact Row",
+      "category": "list",
+      "keywords": ["contact", "recipient", "person", "avatar", "payee", "beneficiary"],
+      "variants": ["default"],
+      "props": { "name": "string", "detail": "string", "initials": "string" },
+      "tokens": ["color.primary", "color.primaryContainer", "color.onSurface", "color.onSurfaceLow", "radius.lg"],
+      "figma": { "component": "Lists/Contact Row", "type": "COMPONENT", "props": { "name": "text:Name", "detail": "text:Detail", "initials": "text:Initials" } },
+      "preview": "/previews/contact-row.svg"
+    },
+    {
+      "id": "transaction-row",
+      "name": "Transaction Row",
+      "category": "list",
+      "keywords": ["transaction", "history", "row", "payment", "activity", "ledger"],
+      "variants": ["credit", "debit"],
+      "props": { "title": "string", "subtitle": "string", "amount": "string", "positive": "boolean" },
+      "tokens": ["color.success", "color.successContainer", "color.primary", "color.primaryContainer", "color.onSurface", "color.onSurfaceLow", "color.surface", "color.stroke", "radius.lg", "radius.md"],
+      "figma": { "component": "Lists/Transaction Row", "type": "COMPONENT", "props": { "title": "text:Title", "subtitle": "text:Subtitle", "amount": "text:Amount", "positive": "variant:Direction" } },
+      "preview": "/previews/transaction-row.svg"
+    },
+    {
+      "id": "toggle",
+      "name": "Toggle Switch",
+      "category": "form",
+      "keywords": ["toggle", "switch", "setting", "on", "off", "enable"],
+      "variants": ["on", "off"],
+      "props": { "label": "string", "on": "boolean" },
+      "tokens": ["color.primary", "color.onSurface", "radius.full"],
+      "figma": { "component": "Forms/Toggle", "type": "COMPONENT", "props": { "label": "text:Label", "on": "variant:State" } },
+      "preview": "/previews/toggle.svg"
+    },
+    {
+      "id": "primary-button",
+      "name": "Primary Button",
+      "category": "button",
+      "keywords": ["button", "submit", "continue", "pay", "action", "confirm", "send"],
+      "variants": ["filled"],
+      "props": { "label": "string" },
+      "tokens": ["color.primary", "color.onPrimary", "radius.md"],
+      "figma": { "component": "Buttons/Primary", "type": "COMPONENT", "props": { "label": "text:Label" } },
+      "preview": "/previews/primary-button.svg"
+    },
+    {
+      "id": "secondary-button",
+      "name": "Secondary Button",
+      "category": "button",
+      "keywords": ["button", "cancel", "secondary", "ghost", "back", "skip"],
+      "variants": ["outlined"],
+      "props": { "label": "string" },
+      "tokens": ["color.surface", "color.onSurface", "color.stroke", "radius.md"],
+      "figma": { "component": "Buttons/Secondary", "type": "COMPONENT", "props": { "label": "text:Label" } },
+      "preview": "/previews/secondary-button.svg"
+    },
+    {
+      "id": "card",
+      "name": "Card",
+      "category": "container",
+      "keywords": ["card", "panel", "info", "container", "tile", "summary"],
+      "variants": ["default"],
+      "props": { "title": "string", "subtitle": "string" },
+      "tokens": ["color.surface", "color.onSurface", "color.onSurfaceLow", "radius.md"],
+      "figma": { "component": "Containers/Card", "type": "COMPONENT", "props": { "title": "text:Title", "subtitle": "text:Subtitle" } },
+      "preview": "/previews/card.svg"
+    }
+  ]
+}

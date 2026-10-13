@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Withdraw Cash · Amount First</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@400;500;600&display=swap');
+  @import url('https://api.fontshare.com/v2/css?f[]=switzer@400,500,600,700&display=swap');
+
+  :root {
+    --Primary: #FE353D;
+    --Primary-Light: #FFF1F2;
+    --On-Surface: #1C1C21;
+    --On-Surface-Low: #7C7C87;
+    --Border: #E8E8EC;
+    --Background: #F5F5F5;
+    --Field: #F7F7F9;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'Inter', sans-serif; background: transparent; display: flex; justify-content: center; align-items: center; min-height: 100vh; padding: 20px; }
+  .phone-frame { width: 360px; height: 780px; background: var(--Background); border-radius: 30px; overflow: hidden; position: relative; box-shadow: 0 20px 60px rgba(0,0,0,0.15); display: flex; flex-direction: column; }
+  .app-content { height: 100%; display: flex; flex-direction: column; }
+
+  .status-bar { display: flex; justify-content: space-between; align-items: center; padding: 14px 24px 8px; background: var(--Background); flex-shrink: 0; }
+  .status-bar .time { font-size: 14px; font-weight: 600; color: var(--On-Surface); }
+  .status-icons { display: flex; align-items: center; gap: 6px; }
+  .status-icons svg { width: 18px; height: 18px; }
+
+  .header-nav { display: flex; align-items: center; justify-content: space-between; padding: 8px 16px 12px; background: var(--Background); flex-shrink: 0; }
+  .back-btn { width: 36px; height: 36px; border-radius: 50%; background: transparent; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: background 0.2s; }
+  .back-btn:hover { background: rgba(0,0,0,0.05); }
+  .back-btn svg { width: 22px; height: 22px; stroke: var(--On-Surface); stroke-width: 1.8px; fill: none; }
+  .header-title { color: var(--On-Surface); font-family: 'Switzer', sans-serif; font-size: 17px; font-weight: 500; letter-spacing: 0.3px; flex: 1; text-align: center; }
+
+  .card { background: #FFF; border-radius: 16px; padding: 16px; box-shadow: 0 4px 14px rgba(15,23,42,0.05); }
+  .field-label { display: block; font-family: 'Switzer', sans-serif; font-size: 14px; font-weight: 600; color: var(--On-Surface); margin-bottom: 8px; }
+  .field { height: 52px; background: var(--Field); border: 1.5px solid var(--Border); border-radius: 14px; padding: 0 8px 0 14px; display: flex; align-items: center; gap: 8px; transition: border-color 0.2s, box-shadow 0.2s, background 0.2s; }
+  .field:focus-within { border-color: var(--Primary); background: #FFF; box-shadow: 0 4px 12px rgba(254,53,61,0.12); }
+  .field.err { border-color: var(--Primary); background: #FFF; }
+  .field input { flex: 1; min-width: 0; border: none; outline: none; background: transparent; font-family: 'Switzer', sans-serif; font-size: 16px; font-weight: 700; letter-spacing: 0.4px; color: var(--On-Surface); }
+  .field input::placeholder { color: var(--On-Surface-Low); font-size: 15px; font-weight: 400; letter-spacing: 0; }
+  .suffix { font-family: 'Switzer', sans-serif; font-size: 13px; font-weight: 600; color: var(--On-Surface-Low); }
+
+  .btn-primary { width: 100%; height: 52px; border: none; border-radius: 14px; background: var(--Primary); color: #FFF; font-family: 'Poppins', sans-serif; font-size: 15px; font-weight: 500; cursor: pointer; box-shadow: 0 4px 16px rgba(254,53,61,0.25); transition: background 0.2s, transform 0.12s; }
+  .btn-primary:active { transform: scale(0.98); }
+  .btn-primary:disabled { background: #E0E0E0; color: var(--On-Surface-Low); box-shadow: none; cursor: not-allowed; }
+  .chev { width: 20px; height: 20px; stroke: var(--On-Surface-Low); stroke-width: 2; fill: none; flex-shrink: 0; }
+  .section-title { font-family: 'Switzer', sans-serif; font-size: 14px; font-weight: 600; color: var(--On-Surface); letter-spacing: 0.2px; }
+
+  .scroll { flex: 1; min-height: 0; overflow-y: auto; padding: 4px 16px 20px; display: flex; flex-direction: column; gap: 16px; }
+  .scroll::-webkit-scrollbar { width: 0; }
+
+  /* ── Amount first: the field, a balance hint and quick amounts ── */
+  .clear-btn { width: 28px; height: 28px; border: none; border-radius: 50%; background: #E8E8EC; display: flex; align-items: center; justify-content: center; cursor: pointer; flex-shrink: 0; }
+  .clear-btn svg { width: 12px; height: 12px; stroke: var(--On-Surface); stroke-width: 2.6; fill: none; }
+  .balance-hint { font-family: 'Switzer', sans-serif; font-size: 12px; color: var(--On-Surface-Low); margin-top: 8px; }
+  .balance-hint b { font-weight: 600; color: var(--On-Surface); }
+  .amount-label { margin-top: 16px; }
+  .quick-title { font-family: 'Switzer', sans-serif; font-size: 12.5px; font-weight: 600; color: var(--On-Surface-Low); margin: 16px 0 8px; }
+  .amounts { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+  /* Quick amounts: same cards as Airtime's amount grid — big bold number;
+     the picked one turns solid red */
+  .chip { display: flex; align-items: center; justify-content: center; gap: 4px; height: 52px; padding: 0 6px; border: 1px solid #EFEFF2; border-radius: 14px; background: #FFF; cursor: pointer; box-shadow: 0 2px 8px rgba(0,0,0,0.04); transition: all 0.18s; }
+  .chip:hover { transform: translateY(-1px); box-shadow: 0 4px 12px rgba(0,0,0,0.08); }
+  .chip .amt-val { font-family: 'Switzer', sans-serif; font-size: 19px; font-weight: 700; color: var(--On-Surface); line-height: 1.2; }
+  .chip.selected { background: var(--Primary); border-color: var(--Primary); box-shadow: 0 4px 16px rgba(254,53,61,0.25); }
+  .chip.selected .amt-val { color: #FFF; }
+
+  /* ── Where to withdraw: rows in one white card, a hairline between them ── */
+  .options { background: #FFF; border-radius: 16px; padding: 4px 14px; box-shadow: 0 4px 14px rgba(15,23,42,0.05); margin-top: -6px; }
+  .option { width: 100%; display: flex; align-items: center; gap: 12px; padding: 13px 0; border: none; border-bottom: 1px solid #F1F1F4; background: none; text-align: left; cursor: pointer; font-family: inherit; }
+  .option:last-child { border-bottom: none; }
+  .opt-ic { width: 42px; height: 42px; border-radius: 12px; background: var(--Primary); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+  .opt-ic svg { width: 22px; height: 22px; stroke: #FFF; stroke-width: 1.9; fill: none; }
+  .opt-ic.dark { background: var(--On-Surface); }
+  .opt-txt { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px; }
+  .opt-txt b { font-family: 'Switzer', sans-serif; font-size: 14.5px; font-weight: 600; color: var(--On-Surface); }
+  .opt-txt small { font-family: 'Switzer', sans-serif; font-size: 12px; color: var(--On-Surface-Low); }
+  .option { border-radius: 0; position: relative; }
+  .bottom-bar { flex-shrink: 0; padding: 12px 16px 20px; background: var(--Background); }
+
+  /* ── Withdraw at ATM: bottom sheet on this screen — pick the bank ATM,
+     then Confirmation (same look as the ATM screen's sheet) ── */
+  .sheet-overlay { position: absolute; inset: 0; background: rgba(0,0,0,0.45); display: flex; align-items: flex-end; opacity: 0; pointer-events: none; transition: opacity 0.25s; z-index: 50; }
+  .sheet-overlay.show { opacity: 1; pointer-events: auto; }
+  .sheet { position: relative; width: 100%; background: #FFF; border-radius: 24px 24px 0 0; padding: 12px 20px 22px; display: flex; flex-direction: column; transform: translateY(100%); transition: transform 0.3s cubic-bezier(0.2, 0.8, 0.3, 1); }
+  .sheet-overlay.show .sheet { transform: translateY(0); }
+  .sheet-grip { width: 44px; height: 4px; border-radius: 2px; background: #D8D8DE; margin: 0 auto 14px; }
+  .sheet-title { text-align: center; font-family: 'Switzer', sans-serif; font-size: 17px; font-weight: 700; color: var(--On-Surface); margin-bottom: 16px; }
+  .sheet-back { position: absolute; top: 18px; left: 16px; width: 32px; height: 32px; border: none; border-radius: 50%; background: var(--Field); display: flex; align-items: center; justify-content: center; cursor: pointer; }
+  .sheet-back svg { width: 16px; height: 16px; stroke: var(--On-Surface); stroke-width: 2.2; fill: none; }
+  .step[hidden] { display: none; }
+
+  .bank { width: 100%; display: flex; align-items: center; gap: 12px; padding: 12px 2px; border: none; border-bottom: 1px solid #F1F1F4; background: none; text-align: left; cursor: pointer; font-family: inherit; }
+  .bank:last-child { border-bottom: none; }
+  .bank-logo { width: 42px; height: 42px; border-radius: 50%; border: 1px solid var(--Border); background: #FFF; display: flex; align-items: center; justify-content: center; overflow: hidden; flex-shrink: 0; }
+  .bank-logo img { width: 28px; height: 28px; object-fit: contain; }
+  .bank-txt { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px; }
+  .bank-txt b { font-family: 'Switzer', sans-serif; font-size: 14.5px; font-weight: 600; color: var(--On-Surface); }
+  .bank-txt small { font-family: 'Switzer', sans-serif; font-size: 12px; color: var(--On-Surface-Low); }
+
+  .party-card { position: relative; border: 1.5px solid var(--Border); border-radius: 14px; padding: 14px; display: flex; align-items: center; gap: 12px; margin: 6px 0 16px; }
+  .party-badge { position: absolute; top: -11px; right: 14px; background: #EDEDF0; color: var(--On-Surface-Low); font-family: 'Switzer', sans-serif; font-size: 9.5px; font-weight: 700; letter-spacing: 0.6px; padding: 4px 9px; border-radius: 6px; }
+  .party-avatar { width: 44px; height: 44px; border-radius: 50%; background: #FFF; border: 1px solid var(--Border); display: flex; align-items: center; justify-content: center; flex-shrink: 0; overflow: hidden; }
+  .party-avatar img { width: 30px; height: 30px; object-fit: contain; }
+  .party-info { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 3px; }
+  .party-name { font-family: 'Switzer', sans-serif; font-size: 15px; font-weight: 700; color: var(--On-Surface); }
+  .party-sub { font-family: 'Switzer', sans-serif; font-size: 12.5px; color: var(--On-Surface-Low); }
+  .sum-row { display: flex; align-items: center; justify-content: space-between; padding: 13px 2px; border-bottom: 1px solid #F0F0F3; }
+  .sum-row.total { border-bottom: none; }
+  .sum-key { font-family: 'Switzer', sans-serif; font-size: 13px; color: var(--On-Surface-Low); }
+  .sum-val { font-family: 'Switzer', sans-serif; font-size: 13.5px; font-weight: 700; color: var(--On-Surface); }
+  .sum-row.total .sum-val { color: var(--Primary); font-size: 15px; }
+  .sum-edit { display: flex; align-items: center; gap: 8px; }
+  .edit-amt { width: 28px; height: 28px; border: none; border-radius: 8px; background: var(--Primary-Light); display: flex; align-items: center; justify-content: center; cursor: pointer; }
+  .edit-amt svg { width: 14px; height: 14px; stroke: var(--Primary); stroke-width: 2.2; fill: none; }
+  .sheet-actions { display: flex; gap: 12px; margin-top: 18px; }
+  .sheet-btn { flex: 1; height: 50px; border-radius: 12px; background: #FFF; cursor: pointer; font-family: 'Switzer', sans-serif; font-size: 14.5px; font-weight: 500; transition: background 0.15s, transform 0.12s; }
+  .sheet-btn:active { transform: scale(0.98); }
+  .sheet-btn.cancel { border: 1.5px solid var(--Border); color: var(--On-Surface-Low); }
+  .sheet-btn.confirm { border: none; background: var(--Primary); color: #FFF; font-weight: 600; box-shadow: 0 4px 14px rgba(254,53,61,0.25); }
+
+  /* ── Withdrawal method: each option its own white card (like DSTV Services);
+     tapping it goes on straight away ── */
+  .options { background: none; box-shadow: none; padding: 0; display: flex; flex-direction: column; gap: 12px; }
+  .option, .option:last-child { background: #FFF; border: 1px solid #EFEFF2; border-radius: 16px; padding: 16px 14px; gap: 14px; box-shadow: 0 4px 14px rgba(15,23,42,0.05); transition: transform 0.12s, box-shadow 0.15s; }
+  .option:hover { box-shadow: 0 6px 18px rgba(15,23,42,0.08); }
+  .option:active { transform: scale(0.99); }
+  .opt-ic { width: 46px; height: 46px; border-radius: 12px; background: #FFF1F2; }
+  .opt-ic svg { stroke: var(--Primary); }
+  .opt-txt { gap: 3px; }
+  .opt-txt b { font-size: 16px; font-weight: 700; }
+  .opt-txt small { font-size: 13px; }
+  .opt-chev { width: 20px; height: 20px; stroke: var(--Primary); stroke-width: 2.4; fill: none; flex-shrink: 0; }
+
+  .scan-btn { width: 100%; height: 52px; border: none; border-radius: 14px; background: var(--On-Surface); color: #FFF; display: flex; align-items: center; justify-content: center; gap: 10px; font-family: 'Poppins', sans-serif; font-size: 15px; font-weight: 500; cursor: pointer; box-shadow: 0 4px 16px rgba(0,0,0,0.18); transition: transform .15s, background .15s; }
+  .scan-btn:hover { background: #000; }
+  .scan-btn:active { transform: scale(0.98); }
+  .scan-btn .qr-ic { width: 24px; height: 20px; flex-shrink: 0; }
+  .kb-open .bottom-bar { display: none; }   /* nothing docked above the keyboard */
+</style>
+<link rel="stylesheet" href="styles/field-error.css">
+<link rel="stylesheet" href="styles/device.css">
+</head>
+<body>
+<div class="phone-frame">
+  <div class="app-content">
+
+    <div class="status-bar">
+      <span class="time">10:00</span>
+      <div class="status-icons">
+        <svg viewBox="0 0 24 24" fill="none"><path d="M1 9l2 2c4.97-4.97 13.03-4.97 18 0l2-2C16.93 2.93 7.08 2.93 1 9z" fill="#1C1C21"/><path d="M5 13l2 2c2.76-2.76 7.24-2.76 10 0l2-2C15.14 9.14 8.87 9.14 5 13z" fill="#1C1C21"/><path d="M9 17l2 2c1.1-1.1 2.9-1.1 4 0l2-2c-2.21-2.21-5.79-2.21-8 0z" fill="#1C1C21"/></svg>
+        <svg viewBox="0 0 24 24" fill="none"><rect x="2" y="6" width="4" height="12" rx="1" fill="#1C1C21"/><rect x="8" y="4" width="4" height="14" rx="1" fill="#1C1C21"/><rect x="14" y="2" width="4" height="16" rx="1" fill="#1C1C21"/><rect x="20" y="0" width="4" height="18" rx="1" fill="#1C1C21" opacity="0.3"/></svg>
+        <svg viewBox="0 0 28 14" fill="none"><rect x="0" y="1" width="22" height="12" rx="2.5" stroke="#1C1C21" stroke-width="1.5"/><rect x="2" y="3" width="16" height="8" rx="1" fill="#1C1C21"/><rect x="24" y="4" width="2" height="6" rx="1" fill="#1C1C21"/></svg>
+      </div>
+    </div>
+
+    <div class="header-nav">
+      <button class="back-btn" onclick="window.location.href='More Services.html'" aria-label="Back">
+        <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+      </button>
+      <span class="header-title">Withdraw Cash</span>
+      <div style="width:36px;"></div>
+    </div>
+
+    <div class="scroll">
+
+      <!-- Amount first: it travels with you to whichever withdrawal point you pick -->
+      <div class="card">
+        <div class="field-label">Select Amount</div>
+        <div class="amounts">
+          <button class="chip" data-amount="500"><span class="amt-val">500</span></button>
+          <button class="chip" data-amount="1000"><span class="amt-val">1,000</span></button>
+          <button class="chip" data-amount="2000"><span class="amt-val">2,000</span></button>
+          <button class="chip" data-amount="3000"><span class="amt-val">3,000</span></button>
+          <button class="chip" data-amount="5000"><span class="amt-val">5,000</span></button>
+          <button class="chip" data-amount="10000"><span class="amt-val">10,000</span></button>
+        </div>
+
+        <label class="field-label amount-label" for="amount">Enter Amount</label>
+        <div class="field" id="amountField">
+          <input id="amount" type="text" inputmode="numeric" value="1,000" placeholder="Enter amount" autocomplete="off" aria-label="Withdrawal amount">
+          <span class="suffix">ETB</span>
+          <button class="clear-btn" onclick="clearAmount()" aria-label="Clear amount"><svg viewBox="0 0 24 24" stroke-linecap="round"><path d="M6 6l12 12M18 6 6 18"/></svg></button>
+        </div>
+        <div class="field-error" id="amountMsg">
+          <span class="fe-ic"><svg viewBox="0 0 24 24"><path d="M17 7 7 17M7 7l10 10"/></svg></span>
+          <span class="fe-txt">Enter an amount to continue.</span>
+        </div>
+        <div class="balance-hint"><b>Balance:</b> 12,580.00 ETB</div>
+
+      </div>
+
+      <!-- Then where to withdraw it -->
+      <span class="section-title">Withdrawal method</span>
+      <div class="options" id="options">
+        <button class="option" data-method="agent" onclick="go('agent')">
+          <span class="opt-ic"><svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7V5a2 2 0 0 1 2-2h2"/><path d="M17 3h2a2 2 0 0 1 2 2v2"/><path d="M21 17v2a2 2 0 0 1-2 2h-2"/><path d="M7 21H5a2 2 0 0 1-2-2v-2"/><circle cx="12" cy="10" r="3"/><path d="M7 17.5c1-2 2.8-3 5-3s4 1 5 3"/></svg></span>
+          <span class="opt-txt"><b>Withdraw at Agent</b><small>Visit a nearby M-PESA agent</small></span>
+          <svg class="opt-chev" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+        </button>
+        <button class="option" data-method="atm" onclick="go('atm')">
+          <span class="opt-ic"><svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="7" rx="2"/><path d="M6 10v9a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2v-9"/><path d="M13.5 13.5h-2.25a1.25 1.25 0 0 0 0 2.5h1.5a1.25 1.25 0 0 1 0 2.5H10.5"/><path d="M12 12.5v1M12 18.5v1"/></svg></span>
+          <span class="opt-txt"><b>Withdraw at ATM</b><small>Cardless cash at any ATM</small></span>
+          <svg class="opt-chev" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+        </button>
+      </div>
+
+    </div>
+
+    <div class="bottom-bar">
+      <!-- Scan QR where Continue used to be: Agent / ATM go on by themselves -->
+      <button class="scan-btn" id="scanBtn" onclick="scanQr()" aria-label="Scan agent QR code">
+        <svg class="qr-ic" viewBox="0 0 30 24" aria-hidden="true"><path opacity="0.4" d="M18.3496 4.99023C19.1562 4.99023 19.9311 5.30798 20.4951 5.87402C21.0631 6.44538 21.3783 7.21286 21.377 8.01172V9.67188C21.3703 9.86669 21.2114 10.025 21.0127 10.0303H8.31934C8.12204 10.0237 7.96298 9.86536 7.95898 9.67188V8.01172C7.94433 6.3579 9.29922 5.00742 10.9844 4.99023H18.3496ZM21.5918 0.000976562C24.521 0.00107957 26.9022 2.33565 26.9023 5.20801V7.68359C26.9021 8.23253 26.4489 8.67964 25.8877 8.67969C25.3278 8.67969 24.8733 8.23256 24.873 7.68359V5.20801C24.8729 3.43392 23.401 1.99034 21.5918 1.99023H19.4678C18.9079 1.99023 18.4533 1.5461 18.4531 0.99707C18.4531 0.446627 18.9078 0.000976562 19.4678 0.000976562H21.5918ZM9.90332 0C10.4633 0 10.9179 0.44574 10.918 0.996094C10.918 1.54523 10.4647 1.99121 9.90332 1.99121L7.73145 1.99219C5.92887 1.99491 4.46191 3.43516 4.46191 5.2041V7.68262C4.46191 8.23175 4.00629 8.67871 3.44629 8.67871C2.8863 8.6787 2.43164 8.23175 2.43164 7.68262V5.2041C2.43164 2.33813 4.80914 0.0035915 7.73047 0.000976562L9.90234 0H9.90332Z" fill="currentColor"/><path d="M28.3187 12.0551H1.016C0.456 12.0551 0 12.5009 0 13.0513C0 13.6005 0.456 14.045 1.016 14.045H2.43067V18.7964C2.43067 21.6623 4.80933 23.9962 7.73067 23.9988L9.90267 24.0001C10.464 24.0001 10.9173 23.5542 10.9187 23.0038C10.9187 22.4546 10.464 22.0088 9.904 22.0088L7.73333 22.0075C5.92933 22.0049 4.46133 20.5654 4.46133 18.7964V14.045H7.95867V15.3669C7.94533 17.0208 9.29867 18.3727 10.984 18.3884H18.3493C20.036 18.3727 21.3893 17.0208 21.376 15.3669V14.045H24.8733V18.7911C24.8733 20.5667 23.4013 22.0088 21.592 22.0088H19.468C18.9067 22.0088 18.452 22.4546 18.452 23.0038C18.452 23.5542 18.9067 24.0001 19.468 24.0001H21.592C24.52 24.0001 26.9027 21.6649 26.9027 18.7911V14.045H28.3187C28.8787 14.045 29.3333 13.6005 29.3333 13.0513C29.3333 12.5009 28.8787 12.0551 28.3187 12.0551Z" fill="currentColor"/></svg>
+        Scan QR
+      </button>
+    </div>
+  </div>
+
+
+  <!-- Withdraw at ATM: pick the bank ATM, then confirm — all in one bottom sheet -->
+  <div class="sheet-overlay" id="atmSheet" onclick="if(event.target===this)closeAtm()">
+    <div class="sheet">
+      <div class="sheet-grip"></div>
+
+      <div class="step" id="atmPick">
+        <div class="sheet-title">Select Bank ATM</div>
+        <div id="bankList"></div>
+      </div>
+
+      <div class="step" id="atmConfirm" hidden>
+        <button class="sheet-back" onclick="atmStep('pick')" aria-label="Change bank"><svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg></button>
+        <div class="sheet-title">Confirmation</div>
+        <div class="party-card">
+          <span class="party-badge">ATM</span>
+          <div class="party-avatar"><img id="cfLogo" src="" alt=""></div>
+          <div class="party-info">
+            <span class="party-name" id="cfName"></span>
+            <span class="party-sub" id="cfSub"></span>
+          </div>
+        </div>
+        <div class="sum-row"><span class="sum-key">Withdrawal Amount:</span><span class="sum-edit"><span class="sum-val" id="cfAmount"></span><button class="edit-amt" onclick="editAmount()" aria-label="Edit amount"><svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg></button></span></div>
+        <div class="sum-row"><span class="sum-key">Fee:</span><span class="sum-val" id="cfFee"></span></div>
+        <div class="sum-row total"><span class="sum-key">Total:</span><span class="sum-val" id="cfTotal"></span></div>
+        <div class="sheet-actions">
+          <button class="sheet-btn cancel" onclick="closeAtm()">Cancel</button>
+          <button class="sheet-btn confirm" onclick="confirmAtm()">Confirm</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  const $ = id => document.getElementById(id);
+  const input = $('amount');
+  const digits = v => Number(String(v).replace(/[^0-9]/g, ''));
+  const fmt = n => n ? n.toLocaleString('en-US') : '';
+
+  function clearError() { $('amountField').classList.remove('err'); $('amountMsg').classList.remove('show'); }
+
+  // Quick amounts fill the field; a typed amount lights up its chip if it matches one
+  document.querySelectorAll('.chip').forEach(b => b.onclick = () => {
+    input.value = fmt(Number(b.dataset.amount));
+    syncChips();
+    clearError();
+  });
+  function syncChips() {
+    const n = digits(input.value);
+    document.querySelectorAll('.chip').forEach(x => x.classList.toggle('selected', Number(x.dataset.amount) === n));
+  }
+  input.addEventListener('input', () => {
+    input.value = fmt(digits(input.value));
+    syncChips();
+    clearError();
+  });
+  function clearAmount() { input.value = ''; syncChips(); input.focus(); }
+
+  // Withdraw at Agent / ATM: tapping the card goes straight on with the amount
+  let method = null;
+  function go(m) { method = m; next(); }
+
+  syncChips();   // light up the chip matching the starting amount
+
+  // Coming back via Change on the next screen: keep the amount that was picked
+  try {
+    const prev = JSON.parse(sessionStorage.getItem('withdrawData') || '{}');
+    if (prev.from === 'Withdraw Cash - Amount First.html' && prev.amount) { input.value = fmt(Number(prev.amount)); syncChips(); }
+  } catch (e) {}
+
+  // Scan QR: needs only the amount; opens the camera, and after a scan the
+  // confirmation shows straight away with this amount
+  function scanQr() {
+    const amount = digits(input.value);
+    if (!amount) { amountError('Enter an amount to continue.'); return; }
+    sessionStorage.setItem('withdrawData', JSON.stringify({
+      method: 'agent', methodLabel: 'Merchant QR Code', entry: 'qr',
+      amount, from: 'Withdraw Cash - Amount First.html', time: new Date().toLocaleTimeString()
+    }));
+    location.href = 'Withdraw Cash - Agent Locator.html';
+  }
+
+  // The on-screen keyboard lifts the page with bottom padding; while it's up,
+  // the Scan QR bar steps aside
+  const appContent = document.querySelector('.app-content');
+  const syncKb = () => document.querySelector('.phone-frame').classList.toggle('kb-open', parseFloat(appContent.style.paddingBottom) > 0);
+  new MutationObserver(syncKb).observe(appContent, { attributes: true, attributeFilter: ['style'] });
+
+  /* ── Withdraw at ATM (same banks, limits and fee table as the ATM screen) ── */
+  const ATMS = {
+    cbe:    { key: 'cbe',    name: 'CBE ATM',               bank: 'Commercial Bank of Ethiopia', loc: 'Bole Medhanialem',   logo: 'assets/banks logo/cbe-logo.png' },
+    boa:    { key: 'boa',    name: 'Bank of Abyssinia ATM', bank: 'Bank of Abyssinia',           loc: 'Dembel City Center', logo: 'assets/banks logo/abyssinya-bank.png' },
+    awash:  { key: 'awash',  name: 'Awash Bank ATM',        bank: 'Awash Bank',                  loc: 'Bole Airport Road',  logo: 'assets/banks logo/awass-bank.png' },
+    dashen: { key: 'dashen', name: 'Dashen Bank ATM',       bank: 'Dashen Bank',                 loc: 'Kazanchis',          logo: 'assets/banks logo/dashen-bank.png' }
+  };
+  const ATM_MIN = 10, ATM_MAX = 10000, BALANCE = 12580;
+  const money = n => Number(n).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+  function atmFee(n) { return n <= 0 ? 0 : n <= 2000 ? 7 : n <= 5000 ? 15 : n <= 8000 ? 30 : 45; }
+  let atm = null;
+
+  $('bankList').innerHTML = Object.values(ATMS).map(a => `
+    <button class="bank" onclick="pickAtm('${a.key}')">
+      <span class="bank-logo"><img src="${a.logo}" alt=""></span>
+      <span class="bank-txt"><b>${a.name}</b></span>
+      <svg class="chev" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+    </button>`).join('');
+
+  function amountError(msg) {
+    $('amountMsg').querySelector('.fe-txt').textContent = msg;
+    $('amountField').classList.add('err');
+    $('amountMsg').classList.add('show');
+  }
+  function atmStep(step) {
+    $('atmPick').hidden = step !== 'pick';
+    $('atmConfirm').hidden = step !== 'confirm';
+  }
+  function openAtm(amount) {
+    atmStep('pick');
+    $('atmSheet').classList.add('show');
+  }
+  function closeAtm() { $('atmSheet').classList.remove('show'); }
+  // Edit on the amount: back to the Custom Amount field, ready to type
+  function editAmount() { closeAtm(); setTimeout(() => { input.focus(); input.select(); }, 300); }
+  function pickAtm(key) {
+    atm = ATMS[key];
+    const amount = digits(input.value), fee = atmFee(amount);
+    $('cfLogo').src = atm.logo;
+    $('cfName').textContent = atm.name;
+    $('cfSub').textContent = atm.bank;
+    $('cfAmount').textContent = money(amount) + ' ETB';
+    $('cfFee').textContent = money(fee) + ' ETB';
+    $('cfTotal').textContent = money(amount + fee) + ' ETB';
+    atmStep('confirm');
+  }
+  // Confirm: same hand-off the ATM screen makes, straight to PIN
+  function confirmAtm() {
+    if (!atm) return;
+    const amount = digits(input.value), fee = atmFee(amount);
+    sessionStorage.setItem('withdrawData', JSON.stringify({
+      method: 'atm', methodLabel: 'ATM Cardless',
+      atm, atmName: atm.name, atmBank: atm.bank, atmLoc: atm.loc,
+      amount, fee, total: amount + fee, note: '',
+      from: 'Withdraw Cash - Amount First.html',
+      time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+    }));
+    location.href = 'Withdraw Cash - Enter PIN.html';
+  }
+  document.addEventListener('keydown', e => { if (e.key === 'Escape') closeAtm(); });
+
+  function next() {
+    const amount = digits(input.value);
+    if (!amount) { amountError('Enter an amount to continue.'); return; }
+    if (method === 'atm') {
+      if (amount < ATM_MIN) { amountError('Minimum withdrawal is ' + ATM_MIN + ' ETB.'); return; }
+      if (amount > ATM_MAX) { amountError('Maximum ATM withdrawal is ' + ATM_MAX.toLocaleString('en-US') + ' ETB.'); return; }
+      if (amount > BALANCE) { amountError('Amount exceeds your available balance.'); return; }
+      openAtm(amount);
+      return;
+    }
+    sessionStorage.setItem('withdrawData', JSON.stringify({
+      method: method === 'agent' ? 'agent' : method,
+      methodLabel: method === 'agent' ? 'Merchant Short Code' : method === 'atm' ? 'ATM Cardless' : 'Merchant QR Code',
+      amount, from: 'Withdraw Cash - Amount First.html', time: new Date().toLocaleTimeString()
+    }));
+    if (method === 'agent') location.href = 'Withdraw Cash - Agent Short Code Locate.html';
+    else if (method === 'atm') location.href = 'Withdraw Cash - ATM Locator.html';
+    else location.href = 'Withdraw Cash - Agent Short Code Locate.html?tab=nearby';
+  }
+</script>
+<script src="components/keyboard.js"></script>
+<script src="test-scenarios-data.js"></script>
+<script src="test-scenarios.js"></script>
+</body>
+</html>

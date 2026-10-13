@@ -1,0 +1,546 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>M-PESA Lehulum Login</title>
+<style>
+  @import url("styles/component-keypad.css");
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@400;500;600&display=swap');
+  @import url('https://api.fontshare.com/v2/css?f[]=switzer@400,500,600,700&display=swap');
+
+  :root {
+    --Primary: #FE353D;
+    --Button: #DE3341;
+    --On-Surface: #1C1C21;
+    --On-Surface-Low: #7C7C87;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Inter', sans-serif;
+    background: transparent;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    padding: 20px;
+  }
+
+  .phone-frame {
+    width: 360px;
+    height: 780px;
+    background: #F1F1F1;
+    border-radius: 30px;
+    overflow: hidden;
+    position: relative;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
+  }
+
+  .app-content {
+    height: 100%;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+  }
+  .app-content::-webkit-scrollbar { width: 0; }
+
+  /* ===== RED HEADER ===== */
+  .header {
+    position: relative;
+    height: 262px;
+    flex-shrink: 0;
+    background: linear-gradient(160deg, #A41016 0%, #C41520 35%, #E21B25 70%, #D7151F 100%);
+    border-radius: 0 0 24px 24px;
+    overflow: visible;
+  }
+  .header .pattern {
+    position: absolute;
+    inset: 0;
+    border-radius: 0 0 24px 24px;
+    background-image: url('assets/M-PESA-pattern.svg');
+    background-size: 490px;
+    background-position: right -250px top -270px;
+    background-repeat: no-repeat;
+    opacity: 0.2;
+    mix-blend-mode: overlay;
+    pointer-events: none;
+  }
+
+  .status-bar {
+    position: relative;
+    z-index: 5;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 14px 24px 8px;
+  }
+  .status-bar .time { font-size: 14px; font-weight: 600; color: #FFF; }
+  .status-icons { display: flex; gap: 6px; }
+  .status-icons svg { width: 16px; height: 16px; }
+
+  /* Language */
+  .lang-wrap { position: relative; z-index: 20; margin: 4px 0 0 22px; width: max-content; }
+  .lang-btn {
+    display: flex; align-items: center; gap: 8px;
+    padding: 6px 8px; border-radius: 8px; cursor: pointer;
+    background: none; border: none; color: #FFF;
+  }
+  .lang-btn:hover { background: rgba(255,255,255,0.1); }
+  .lang-btn img { width: 22px; height: 22px; }
+  .lang-btn .label {
+    font-family: 'Switzer', sans-serif; font-size: 12px; letter-spacing: 0.24px; text-transform: uppercase;
+  }
+  .lang-btn svg { width: 14px; height: 14px; transition: transform 0.25s; }
+  .lang-btn.open svg { transform: rotate(180deg); }
+
+  .lang-menu {
+    position: absolute; top: calc(100% + 6px); left: 0; width: 160px;
+    background: #FFF; border-radius: 12px; box-shadow: 0 8px 24px rgba(0,0,0,0.15);
+    overflow: hidden; opacity: 0; transform: translateY(-8px); pointer-events: none;
+    transition: all 0.2s ease;
+  }
+  .lang-menu.show { opacity: 1; transform: none; pointer-events: all; }
+  .lang-menu div {
+    padding: 12px 16px; font-size: 13px; font-weight: 500; color: var(--On-Surface); cursor: pointer;
+  }
+  .lang-menu div:hover { background: #F5F5F5; }
+  .lang-menu div.active { background: #FFF1F2; color: var(--Primary); font-weight: 600; }
+
+  .logo {
+    position: absolute; top: 96px; left: 50%; transform: translateX(-50%); z-index: 2;
+  }
+  .logo img { height: 42px; width: auto; display: block; }
+
+  .user {
+    position: absolute; bottom: 24px; left: 50%; transform: translateX(-50%);
+    display: flex; align-items: center; gap: 14px; z-index: 3;
+  }
+  .user .avatar {
+    width: 64px; height: 64px; border-radius: 50%; overflow: hidden; flex-shrink: 0;
+    border: 2.5px solid #FFF; box-shadow: 0 4px 12px rgba(0,0,0,0.2); background: #EEE;
+  }
+  .user .avatar img { width: 100%; height: 100%; object-fit: cover; }
+  .user .details { color: #FFF; font-family: 'Switzer', sans-serif; display: flex; flex-direction: column; gap: 1px; }
+  .user .welcome { font-size: 14px; letter-spacing: 0.5px; }
+  .user .name { font-size: 20px; font-weight: 700; letter-spacing: 0.5px; white-space: nowrap; }
+  .user .phone { font-size: 13px; letter-spacing: 0.28px; }
+
+  /* ===== BODY ===== */
+  .main {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    padding: 16px 16px 0;
+  }
+
+  .pin-label {
+    display: flex; align-items: center; justify-content: center; gap: 8px;
+    font-family: 'Switzer', sans-serif; font-size: 14px; font-weight: 500; color: var(--On-Surface);
+  }
+  .pin-label svg { width: 15px; height: 15px; stroke: var(--On-Surface-Low); }
+
+  .pin-boxes { display: flex; gap: 25px; margin-top: 16px; }
+  .pin-box {
+    flex: 1; height: 62px; border-radius: 12px;
+    background: #F7F8FA; border: 1.5px solid #E6E7EB;
+    display: flex; align-items: center; justify-content: center;
+    transition: border-color 0.18s, background 0.18s;
+  }
+  .pin-box.active { border-color: var(--Primary); background: #FFF6F6; }
+  .pin-box .caret {
+    display: none; width: 2px; height: 26px; background: var(--Primary); border-radius: 1px;
+    animation: blink 1.05s step-end infinite;
+  }
+  .pin-box.active .caret { display: block; }
+  .pin-box .dot { display: none; width: 12px; height: 12px; border-radius: 50%; background: var(--On-Surface); }
+  .pin-box.filled .dot { display: block; }
+  @keyframes blink { 50% { opacity: 0; } }
+
+  .field-error { margin-top: 10px; }
+
+  .main .keypad { margin-top: 20px; padding: 16px 16px; row-gap: 8px; }
+  .main .key { font-weight: 400; color: #55555E; }
+
+  .continue-btn {
+    width: 100%; height: 48px; margin-top: auto; margin-bottom: 0;
+    border: none; border-radius: 12px;
+    background: var(--Button); color: #FFF;
+    font-family: 'Poppins', sans-serif; font-size: 15px; font-weight: 500;
+    cursor: pointer; transition: background 0.2s, transform 0.1s;
+  }
+  .continue-btn:hover { background: #C92C39; }
+  .continue-btn:active { transform: scale(0.98); }
+  .continue-btn:disabled { background: #E0E0E0; color: #7C7C87; cursor: default; }
+
+  .footer {
+    display: flex; align-items: center; justify-content: center; gap: 12px;
+    padding: 16px 0 14px;
+    font-size: 11px; white-space: nowrap;
+  }
+  .footer a { display: flex; align-items: center; gap: 4px; cursor: pointer; text-decoration: none; color: var(--On-Surface-Low); }
+  .footer a:hover { color: var(--On-Surface); }
+  .footer .forgot { color: var(--Primary); font-weight: 500; }
+  .footer .forgot:hover { color: var(--Primary); opacity: 0.75; }
+  .footer .sep { width: 1px; height: 12px; background: #D0D0D0; }
+  .footer svg { width: 13px; height: 13px; stroke: currentColor; fill: none; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+
+  /* Fingerprint key (left of 0) */
+  .key.bio-key svg {
+    width: 28px; height: 28px; fill: none; stroke: var(--Primary);
+    stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round;
+  }
+  .key.bio-key:hover { background: rgba(254,53,61,0.05); }
+
+  /* ===== BIOMETRIC PROMPT ===== */
+  .bio-overlay {
+    position: absolute; inset: 0; z-index: 50;
+    background: rgba(0,0,0,0.45);
+    display: flex; align-items: flex-end;
+    opacity: 0; pointer-events: none; transition: opacity 0.25s;
+  }
+  .bio-overlay.show { opacity: 1; pointer-events: all; }
+  .bio-sheet {
+    width: 100%; background: #FFF; border-radius: 24px 24px 0 0;
+    padding: 12px 24px 20px; text-align: center;
+    transform: translateY(100%); transition: transform 0.32s cubic-bezier(0.2, 0.8, 0.2, 1);
+  }
+  .bio-overlay.show .bio-sheet { transform: none; }
+  .bio-grip { width: 40px; height: 4px; border-radius: 2px; background: #DDDDE2; margin: 0 auto 18px; }
+  .bio-sheet img { height: 26px; filter: brightness(0) saturate(100%) invert(27%) sepia(95%) saturate(4200%) hue-rotate(347deg) brightness(97%); }
+  .bio-title { font-family: 'Switzer', sans-serif; font-size: 18px; font-weight: 600; color: var(--On-Surface); margin-top: 12px; }
+  .bio-sub { font-size: 13px; color: var(--On-Surface-Low); margin-top: 4px; }
+
+  .bio-tabs { display: inline-flex; background: #F1F1F4; border-radius: 10px; padding: 3px; margin-top: 16px; }
+  .bio-tabs button {
+    border: none; background: none; padding: 7px 14px; border-radius: 8px; cursor: pointer;
+    font-family: 'Inter', sans-serif; font-size: 12px; font-weight: 500; color: var(--On-Surface-Low);
+  }
+  .bio-tabs button.active { background: #FFF; color: var(--On-Surface); box-shadow: 0 1px 4px rgba(0,0,0,0.08); }
+
+  .bio-sensor {
+    position: relative; width: 84px; height: 84px; margin: 20px auto 0; border-radius: 50%;
+    border: none; background: #FFF1F2; cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    transition: background 0.25s;
+  }
+  .bio-sensor svg { width: 46px; height: 46px; fill: none; stroke: var(--Primary); stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; }
+  .bio-sensor .ic-check { display: none; stroke: #FFF; stroke-width: 2.6; }
+  .bio-sensor::after {
+    content: ''; position: absolute; inset: -6px; border-radius: 50%;
+    border: 2px solid var(--Primary); opacity: 0;
+  }
+  .bio-sensor.scanning::after { animation: bioPulse 1s ease-out infinite; }
+  .bio-sensor.ok { background: #16A34A; }
+  .bio-sensor.ok svg { display: none; }
+  .bio-sensor.ok .ic-check { display: block; }
+  .bio-sensor.ok::after { animation: none; }
+  @keyframes bioPulse { 0% { opacity: 0.6; transform: scale(0.9); } 100% { opacity: 0; transform: scale(1.25); } }
+
+  .bio-status { font-size: 13px; color: var(--On-Surface-Low); margin-top: 14px; min-height: 18px; }
+  .bio-status.ok { color: #16A34A; font-weight: 500; }
+
+  .bio-pin-btn {
+    width: 100%; height: 44px; margin-top: 18px; border-radius: 12px; cursor: pointer;
+    border: 1.5px solid #E6E7EB; background: #FFF; color: var(--On-Surface);
+    font-family: 'Poppins', sans-serif; font-size: 14px; font-weight: 500;
+  }
+  .bio-pin-btn:hover { background: #F7F8FA; }
+
+  @media (max-height: 700px) {
+    .pin-box { height: 54px; }
+    .main .key { height: 44px; }
+  }
+</style>
+<link rel="stylesheet" href="styles/field-error.css">
+<link rel="stylesheet" href="styles/device.css">
+</head>
+<body>
+
+<div class="phone-frame">
+  <div class="app-content">
+
+    <div class="header">
+      <div class="pattern"></div>
+
+      <div class="status-bar">
+        <span class="time">10:00</span>
+        <div class="status-icons">
+          <svg viewBox="0 0 24 24"><path d="M2 22h20V2z" fill="#FFF"/></svg>
+          <svg viewBox="0 0 24 24"><path d="M12 21 1 8a16 16 0 0 1 22 0z" fill="#FFF"/></svg>
+          <svg viewBox="0 0 24 24"><rect x="7" y="3" width="10" height="19" rx="2" fill="#FFF"/></svg>
+        </div>
+      </div>
+
+      <div class="lang-wrap">
+        <button class="lang-btn" id="langBtn" type="button">
+          <img src="assets/change_language_icon.svg" alt="">
+          <span class="label" id="langLabel">English</span>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+        </button>
+        <div class="lang-menu" id="langMenu">
+          <div class="active">English</div>
+          <div>አማርኛ</div>
+          <div>Afaan Oromoo</div>
+          <div>ትግርኛ</div>
+          <div>Soomaali</div>
+        </div>
+      </div>
+
+      <div class="logo"><img src="assets/M-PESA-white-logo.svg" alt="M-PESA Lehulum"></div>
+
+      <div class="user">
+        <div class="avatar"><img src="assets/avatars/avatar-1.png" alt=""></div>
+        <div class="details">
+          <span class="welcome">Welcome Back,</span>
+          <span class="name">Zemedkun Kidane</span>
+          <span class="phone">+25177 00 24 23</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="main">
+      <div class="pin-label">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>
+        Enter Your M-PESA PIN
+      </div>
+
+      <div class="pin-boxes">
+        <div class="pin-box"><span class="caret"></span><span class="dot"></span></div>
+        <div class="pin-box"><span class="caret"></span><span class="dot"></span></div>
+        <div class="pin-box"><span class="caret"></span><span class="dot"></span></div>
+        <div class="pin-box"><span class="caret"></span><span class="dot"></span></div>
+      </div>
+      <div class="field-error" id="pinError"><span class="fe-ic"><svg viewBox="0 0 24 24"><path d="M17 7 7 17M7 7l10 10"/></svg></span><span class="fe-txt"></span></div>
+
+      <div class="keypad">
+        <button class="key" onclick="kp('1')">1</button>
+        <button class="key" onclick="kp('2')">2</button>
+        <button class="key" onclick="kp('3')">3</button>
+        <button class="key" onclick="kp('4')">4</button>
+        <button class="key" onclick="kp('5')">5</button>
+        <button class="key" onclick="kp('6')">6</button>
+        <button class="key" onclick="kp('7')">7</button>
+        <button class="key" onclick="kp('8')">8</button>
+        <button class="key" onclick="kp('9')">9</button>
+        <button class="key bio-key" onclick="openBio()" aria-label="Sign in with fingerprint or Face ID">
+          <svg viewBox="0 0 24 24"><path d="M12 10a2 2 0 0 0-2 2c0 1.02-.1 2.51-.26 4"/><path d="M14 13.12c0 2.38 0 6.38-1 8.88"/><path d="M17.29 21.02c.12-.6.43-2.3.5-3.02"/><path d="M2 12a10 10 0 0 1 18-6"/><path d="M2 16h.01"/><path d="M21.8 16c.2-2 .131-5.354 0-6"/><path d="M5 19.5C5.5 18 6 15 6 12a6 6 0 0 1 .34-2"/><path d="M8.65 22c.21-.66.45-1.32.57-2"/><path d="M9 6.8a6 6 0 0 1 9 5.2v2"/></svg>
+        </button>
+        <button class="key" onclick="kp('0')">0</button>
+        <button class="key backspace" onclick="kpDel()" aria-label="Delete">
+          <svg viewBox="0 0 24 24"><path d="M21 4H8l-7 8 7 8h13a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2z"/><path d="m18 9-6 6M12 9l6 6"/></svg>
+        </button>
+      </div>
+
+      <button class="continue-btn" id="continueBtn" disabled>Continue</button>
+
+      <div class="footer">
+        <a class="forgot" href="Forgot-PIN.html">Forgot PIN?</a>
+        <span class="sep"></span>
+        <a><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M9.1 9a3 3 0 0 1 5.8 1c0 2-3 3-3 3M12 17h.01"/></svg>Contact Us</a>
+        <a><svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6M16 13H8M16 17H8"/></svg>Terms and Conditions</a>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Biometric sign-in prompt (opens on load and from the fingerprint key) -->
+  <div class="bio-overlay" id="bioOverlay" onclick="if (event.target === this) closeBio()">
+    <div class="bio-sheet" role="dialog" aria-modal="true" aria-labelledby="bioTitle">
+      <div class="bio-grip"></div>
+      <img src="assets/M-PESA-white-logo.svg" alt="M-PESA">
+      <div class="bio-title" id="bioTitle">Sign in to M-PESA</div>
+      <div class="bio-sub">Zemedkun Kidane · +25177 00 24 23</div>
+
+      <div class="bio-tabs">
+        <button class="active" data-mode="finger" onclick="setBioMode('finger')">Fingerprint</button>
+        <button data-mode="face" onclick="setBioMode('face')">Face ID</button>
+      </div>
+
+      <button class="bio-sensor" id="bioSensor" onclick="scanBio()" aria-label="Scan">
+        <svg class="ic-finger" viewBox="0 0 24 24"><path d="M12 10a2 2 0 0 0-2 2c0 1.02-.1 2.51-.26 4"/><path d="M14 13.12c0 2.38 0 6.38-1 8.88"/><path d="M17.29 21.02c.12-.6.43-2.3.5-3.02"/><path d="M2 12a10 10 0 0 1 18-6"/><path d="M2 16h.01"/><path d="M21.8 16c.2-2 .131-5.354 0-6"/><path d="M5 19.5C5.5 18 6 15 6 12a6 6 0 0 1 .34-2"/><path d="M8.65 22c.21-.66.45-1.32.57-2"/><path d="M9 6.8a6 6 0 0 1 9 5.2v2"/></svg>
+        <svg class="ic-face" viewBox="0 0 24 24" style="display:none"><path d="M3 7V5a2 2 0 0 1 2-2h2M17 3h2a2 2 0 0 1 2 2v2M21 17v2a2 2 0 0 1-2 2h-2M7 21H5a2 2 0 0 1-2-2v-2"/><path d="M8 14s1.5 2 4 2 4-2 4-2"/><path d="M9 9h.01M15 9h.01"/></svg>
+        <svg class="ic-check" viewBox="0 0 24 24"><path d="M5 12.5 10 17l9-10"/></svg>
+      </button>
+      <div class="bio-status" id="bioStatus">Touch the fingerprint sensor</div>
+
+      <button class="bio-pin-btn" onclick="closeBio()">Use PIN instead</button>
+    </div>
+  </div>
+</div>
+
+<script src="pin-feedback.js"></script>
+<script>
+  // ===== Language =====
+  const langBtn = document.getElementById('langBtn');
+  const langMenu = document.getElementById('langMenu');
+  langBtn.addEventListener('click', e => {
+    e.stopPropagation();
+    langMenu.classList.toggle('show');
+    langBtn.classList.toggle('open');
+  });
+  langMenu.querySelectorAll('div').forEach(opt => opt.addEventListener('click', () => {
+    langMenu.querySelectorAll('div').forEach(o => o.classList.remove('active'));
+    opt.classList.add('active');
+    document.getElementById('langLabel').textContent = opt.textContent;
+  }));
+  document.addEventListener('click', () => {
+    langMenu.classList.remove('show');
+    langBtn.classList.remove('open');
+  });
+
+  // ===== PIN =====
+  const CORRECT_PIN = '1234'; // demo PIN — any other 4 digits is rejected
+  const MAX_ATTEMPTS = 3;
+  let pin = '';
+  const boxes = Array.from(document.querySelectorAll('.pin-box'));
+  const continueBtn = document.getElementById('continueBtn');
+  const pinError = document.getElementById('pinError');
+
+  function refresh() {
+    boxes.forEach((b, i) => {
+      b.classList.toggle('filled', i < pin.length);
+      b.classList.toggle('active', i === pin.length);
+    });
+    continueBtn.disabled = pin.length !== 4;
+  }
+
+  function kp(d) {
+    if (pinFeedback.busy || pin.length >= 4 || bioOverlay.classList.contains('show')) return;
+    pin += d;
+    pinError.classList.remove('show');
+    refresh();
+  }
+
+  function kpDel() {
+    if (pinFeedback.busy) return;
+    pin = pin.slice(0, -1);
+    refresh();
+  }
+
+  document.addEventListener('keydown', e => {
+    if (e.key >= '0' && e.key <= '9') kp(e.key);
+    else if (e.key === 'Backspace') kpDel();
+    else if (e.key === 'Enter') submitPin();
+  });
+
+  function submitPin() {
+    if (pin.length !== 4 || pinFeedback.busy) return;
+
+    if (pin === CORRECT_PIN) {
+      pinFeedback(true, () => {
+        sessionStorage.removeItem('pinAttempts');
+        signIn();
+      });
+      return;
+    }
+
+    const attempts = parseInt(sessionStorage.getItem('pinAttempts') || '0', 10) + 1;
+    sessionStorage.setItem('pinAttempts', String(attempts));
+
+    pinFeedback(false, () => {
+      if (attempts >= MAX_ATTEMPTS) {
+        window.location.href = 'PIN-Locked.html';
+        return;
+      }
+      const remaining = MAX_ATTEMPTS - attempts;
+      pinError.querySelector('.fe-txt').textContent = remaining === 1
+        ? 'Incorrect PIN. Last attempt before lock.'
+        : `Incorrect PIN. ${remaining} attempts remaining.`;
+      pinError.classList.add('show');
+      pin = '';
+      refresh();
+    });
+  }
+
+  continueBtn.addEventListener('click', submitPin);
+  refresh();
+
+  // Signed in: go back to the Home screen that asked for the PIN (or the main Home)
+  function signIn() {
+    sessionStorage.setItem('lehulumAuth', '1');
+    const next = sessionStorage.getItem('lehulumReturn') || 'Lehulum Home.html';
+    sessionStorage.removeItem('lehulumReturn');
+    window.location.href = next;
+  }
+
+  // ===== Biometric sign-in =====
+  // Only offered once the user has turned fingerprint on in FingerPrint Login Setup
+  // (saved as localStorage.fingerprintEnabled). For demos, ?fingerprint=on / off sets it.
+  function storageGet(k) { try { return localStorage.getItem(k); } catch (e) { return null; } }
+  function storageSet(k, v) { try { localStorage.setItem(k, v); } catch (e) {} }
+  const fpParam = new URLSearchParams(location.search).get('fingerprint');
+  if (fpParam === 'on') storageSet('fingerprintEnabled', 'true');
+  if (fpParam === 'off') storageSet('fingerprintEnabled', 'false');
+  const BIO_ENROLLED = storageGet('fingerprintEnabled') === 'true';
+
+  const bioKey = document.querySelector('.bio-key');
+  if (!BIO_ENROLLED) {
+    bioKey.className = 'key empty';
+    bioKey.innerHTML = '';
+    bioKey.removeAttribute('onclick');
+    bioKey.removeAttribute('aria-label');
+  }
+
+  // Prototype only: tapping the sensor stands in for a successful fingerprint / face match.
+  const bioOverlay = document.getElementById('bioOverlay');
+  const bioSensor = document.getElementById('bioSensor');
+  const bioStatus = document.getElementById('bioStatus');
+  const BIO_HINT = { finger: 'Touch the fingerprint sensor', face: 'Look at your phone to sign in' };
+  let bioMode = 'finger';
+  let bioBusy = false;
+
+  function setBioMode(mode) {
+    if (bioBusy) return;
+    bioMode = mode;
+    document.querySelectorAll('.bio-tabs button').forEach(b => b.classList.toggle('active', b.dataset.mode === mode));
+    bioSensor.querySelector('.ic-finger').style.display = mode === 'finger' ? '' : 'none';
+    bioSensor.querySelector('.ic-face').style.display = mode === 'face' ? '' : 'none';
+    bioStatus.textContent = BIO_HINT[mode];
+  }
+
+  function openBio() {
+    if (pinFeedback.busy) return;
+    bioBusy = false;
+    bioSensor.classList.remove('scanning', 'ok');
+    bioStatus.classList.remove('ok');
+    setBioMode(bioMode);
+    bioOverlay.classList.add('show');
+  }
+
+  function closeBio() {
+    if (bioBusy) return;
+    bioOverlay.classList.remove('show');
+  }
+
+  function scanBio() {
+    if (bioBusy) return;
+    bioBusy = true;
+    bioSensor.classList.add('scanning');
+    bioStatus.textContent = bioMode === 'finger' ? 'Scanning…' : 'Recognising your face…';
+    setTimeout(() => {
+      bioSensor.classList.remove('scanning');
+      bioSensor.classList.add('ok');
+      bioStatus.classList.add('ok');
+      bioStatus.textContent = bioMode === 'finger' ? 'Fingerprint recognised' : 'Face recognised';
+      setTimeout(() => {
+        sessionStorage.removeItem('pinAttempts');
+        signIn();
+      }, 700);
+    }, 1100);
+  }
+
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Escape') closeBio();
+  });
+
+  // Ask for biometrics as soon as the screen opens (enrolled users only)
+  if (BIO_ENROLLED) setTimeout(openBio, 250);
+</script>
+
+<script src="figma-export.js"></script>
+<script src="test-scenarios-data.js"></script>
+<script src="test-scenarios.js"></script>
+</body>
+</html>

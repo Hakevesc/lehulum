@@ -266,6 +266,8 @@
   function continuePayment() {
     const amount = validateAmount();
     if (!policy || amount === null) return;
+    SavedAccounts.remember('insuranceSavedAccounts', { number: policy.number, customer: policy.name,
+      tag: company.name, logo: company.logo, extra: { company } });
     sessionStorage.setItem('billPaymentData', JSON.stringify({
       plan: 'insurance',
       planLabel: '',
@@ -301,6 +303,25 @@
   function goBack() { window.location.href = 'Bill Payment_Insurance Company.html'; }
 </script>
 
+<script src="components/saved-accounts.js"></script>
+<script>
+  // Saved policies: tap one to switch to its insurer and look the policy up again
+  SavedAccounts.mount({
+    key: 'insuranceSavedAccounts',
+    host: document.querySelector('.scroll'),
+    logo: company.logo,
+    onPick: a => {
+      if (a.extra && a.extra.company) {
+        company = a.extra.company;
+        sessionStorage.setItem('insuranceCompany', JSON.stringify(company));
+        $('companyName').textContent = company.name;
+        $('companyLogo').src = company.logo;
+      }
+      $('policyInput').value = a.number;
+      onPolicyInput();
+    }
+  });
+</script>
 <script src="figma-export.js"></script>
 <script src="test-scenarios-data.js"></script>
 <script src="test-scenarios.js"></script>

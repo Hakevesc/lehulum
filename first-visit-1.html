@@ -29,13 +29,17 @@
     box-shadow: 0 20px 60px rgba(0,0,0,0.25);
   }
 
-  /* Full-cover background image */
-  .bg-image {
+  /* Full-cover background photos, one per slide, crossfading */
+  .slide-bg {
     position: absolute; inset: 0;
-    width: 100%; height: 100%;
-    object-fit: cover; object-position: center top;
+    background-size: cover; background-position: center top;
+    opacity: 0; transition: opacity 0.6s ease;
     z-index: 0;
   }
+  .slide-bg.active { opacity: 1; }
+  .welcome-text { transition: opacity 0.28s ease; min-height: 118px; }
+  .screen { touch-action: pan-y; }
+  .dot { cursor: pointer; }
 
   /* Gradient overlays */
   .overlay-top {
@@ -136,8 +140,11 @@
 
 <div class="phone-frame">
 
-  <!-- Full-cover background photo -->
-  <img class="bg-image" src="assets/first-visit-1.jpg" alt="">
+  <!-- Full-cover background photos (one per slide) -->
+  <div class="slide-bg active" style="background-image: url('assets/first-visit-1.jpg')"></div>
+  <div class="slide-bg" style="background-image: url('assets/first-visit-2.jpg')"></div>
+  <div class="slide-bg" style="background-image: url('assets/first-visit-3.jpg')"></div>
+  <div class="slide-bg" style="background-image: url('assets/first-visit-4.jpg')"></div>
 
   <!-- Gradient overlays -->
   <div class="overlay-top"></div>
@@ -179,9 +186,9 @@
     <!-- Welcome text + dots + buttons -->
     <div class="bottom-content">
 
-      <div class="welcome-text">
-        <h1>Welcome to<br>M-PESA Lehulum</h1>
-        <p>Your all-in-one mobile money app,<br>made just for you.</p>
+      <div class="welcome-text" id="slideText">
+        <h1 id="slideTitle">Welcome to<br>M-PESA Lehulum</h1>
+        <p id="slideDesc">Your all-in-one mobile money app,<br>made just for you.</p>
       </div>
 
       <div class="pagination">
@@ -192,14 +199,59 @@
       </div>
 
       <div class="buttons">
-        <a href="first-visit-2.html" class="btn btn-primary">Get Started</a>
-        <a href="M-PESA No. Login.html" class="btn btn-secondary">Sign In</a>
+        <a href="Signup.html" class="btn btn-primary">Get Started</a>
+        <a href="Lehulum Login.html" class="btn btn-secondary">Sign In</a>
       </div>
 
     </div>
   </div>
 
 </div>
+
+<script>
+  // Welcome slideshow: auto-advances, swipe (or drag) to change, tap a dot to jump.
+  const SLIDES = [
+    { title: 'Welcome to<br>M-PESA Lehulum', desc: 'Your all-in-one mobile money app,<br>made just for you.' },
+    { title: 'Send Money<br>Instantly',      desc: 'Transfer ETB to anyone, anywhere in seconds.<br>No fees, no hassle.' },
+    { title: 'Stay Connected<br>Always',     desc: 'Buy voice, data, and SMS bundles<br>for yourself or others instantly.' },
+    { title: 'Skip the<br>Queue',            desc: 'Pay your electricity, water, and other<br>utility bills directly from your phone.' }
+  ];
+  const bgs = [...document.querySelectorAll('.slide-bg')];
+  const dots = [...document.querySelectorAll('.pagination .dot')];
+  const textEl = document.getElementById('slideText');
+  let current = 0, timer = null;
+
+  function goTo(i) {
+    i = (i + SLIDES.length) % SLIDES.length;
+    if (i === current) return schedule();
+    bgs[current].classList.remove('active');
+    bgs[i].classList.add('active');
+    dots.forEach((d, k) => d.classList.toggle('active', k === i));
+    textEl.style.opacity = '0';
+    setTimeout(() => {
+      document.getElementById('slideTitle').innerHTML = SLIDES[i].title;
+      document.getElementById('slideDesc').innerHTML = SLIDES[i].desc;
+      textEl.style.opacity = '1';
+    }, 280);
+    current = i;
+    schedule();
+  }
+  function schedule() { clearTimeout(timer); timer = setTimeout(() => goTo(current + 1), 3500); }
+
+  dots.forEach((d, k) => d.addEventListener('click', () => goTo(k)));
+
+  // Swipe / drag anywhere on the photo (not on the buttons)
+  let x0 = null;
+  const screen = document.querySelector('.screen');
+  screen.addEventListener('pointerdown', e => { if (!e.target.closest('.btn')) x0 = e.clientX; });
+  screen.addEventListener('pointerup', e => {
+    if (x0 === null) return;
+    const dx = e.clientX - x0; x0 = null;
+    if (Math.abs(dx) > 40) goTo(current + (dx < 0 ? 1 : -1));
+  });
+
+  schedule();
+</script>
 
 <script src="figma-export.js"></script>
 <script src="test-scenarios-data.js"></script>

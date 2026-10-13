@@ -1,0 +1,56 @@
+{
+  "templates": [
+    {
+      "templateId": "bill-payment",
+      "name": "Bill Payment",
+      "description": "Select a biller, enter account, amount, and PIN.",
+      "icon": "receipt",
+      "keywords": ["bill", "payment", "utility", "electricity", "water", "internet"],
+      "components": [
+        { "componentId": "header-nav", "props": { "title": "Pay Bill" } },
+        { "componentId": "input-field", "props": { "label": "Account Number", "placeholder": "Enter account number" } },
+        { "componentId": "input-field", "props": { "label": "Amount", "placeholder": "ETB 0.00", "type": "number" } },
+        { "componentId": "primary-button", "props": { "label": "Continue" } }
+      ]
+    },
+    {
+      "templateId": "send-money",
+      "name": "Send Money",
+      "description": "Enter recipient phone number and amount to transfer.",
+      "icon": "send",
+      "keywords": ["send", "money", "transfer", "phone", "recipient"],
+      "components": [
+        { "componentId": "header-nav", "props": { "title": "Send Money" } },
+        { "componentId": "input-field", "props": { "label": "Phone Number", "placeholder": "251 000 000 000", "type": "tel" } },
+        { "componentId": "input-field", "props": { "label": "Amount", "placeholder": "ETB 0.00", "type": "number" } },
+        { "componentId": "primary-button", "props": { "label": "Send" } }
+      ]
+    },
+    {
+      "templateId": "auth-login",
+      "name": "Login",
+      "description": "Enter M-PESA number and PIN to login.",
+      "icon": "smartphone",
+      "keywords": ["login", "signin", "auth", "pin", "access"],
+      "components": [
+        { "componentId": "header-nav", "props": { "title": "Login" } },
+        { "componentId": "input-field", "props": { "label": "M-PESA Number", "placeholder": "251 000 000 000", "type": "tel" } },
+        { "componentId": "input-field", "props": { "label": "PIN", "placeholder": "Enter PIN", "type": "password" } },
+        { "componentId": "primary-button", "props": { "label": "Login" } }
+      ]
+    },
+    {
+      "templateId": "transaction-history",
+      "name": "Transaction History",
+      "description": "List recent transactions with dates and amounts.",
+      "icon": "receipt",
+      "keywords": ["history", "transactions", "list", "statement"],
+      "components": [
+        { "componentId": "header-nav", "props": { "title": "Transaction History" } },
+        { "componentId": "card", "props": { "title": "Today", "subtitle": "Airtime Top-up -50.00 Br" } },
+        { "componentId": "card", "props": { "title": "Yesterday", "subtitle": "Salary +1,000.00 Br" } },
+        { "componentId": "card", "props": { "title": "Jul 14, 2026", "subtitle": "London Cafe -350.00 Br" } }
+      ]
+    }
+  ]
+}

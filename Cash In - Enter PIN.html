@@ -200,10 +200,11 @@
   refresh();
 
   function goBack() {
+    if (data.back) { window.location.href = data.back; return; }   // Amount First routes say where Back goes
     // The short-code screen captures code and amount together, so it owns the back step.
     if (data.method === 'code') window.location.href = 'Cash In - Merchant Short Code.html';
-    else if (data.method === 'nearby') window.location.href = 'Cash In - Agent Nearby.html';
-    else window.location.href = 'Cash In - Agent Nearby.html';
+    else if (data.method === 'nearby') window.location.href = 'Cash In - Agent Short Code Locate.html?tab=nearby';
+    else window.location.href = 'Cash In - Agent Short Code Locate.html?tab=nearby';
   }
 
   function genVoucher() {

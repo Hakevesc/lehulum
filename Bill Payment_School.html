@@ -519,6 +519,10 @@
   function continuePayment() {
     if (!picked) return;
     const student = picked.student, selectedFee = picked.fee;
+    // Remember how this student was found so a saved row repeats the same lookup
+    SavedAccounts.remember('schoolSavedAccounts', route === 'phone'
+      ? { number: '+251 ' + $('phoneInput').value, customer: student.name, tag: 'Phone', extra: { route, phone: $('phoneInput').value } }
+      : { number: student.id, customer: student.name, tag: 'School Code', extra: { route, code: $('codeInput').value, id: $('studentInput').value } });
     const amount = selectedFee.amount;
     sessionStorage.setItem('billPaymentData', JSON.stringify({
       plan: 'school',
@@ -563,6 +567,28 @@
   $('accCode').classList.add('open');
 </script>
 
+<script src="components/saved-accounts.js"></script>
+<script>
+  // Saved students: tap one to reopen its lookup (phone, or school code + ID) pre-filled
+  SavedAccounts.mount({
+    key: 'schoolSavedAccounts',
+    host: document.querySelector('.scroll'),
+    logo: provider.logo,
+    onPick: a => {
+      const x = a.extra || {};
+      if (x.route === 'phone') {
+        if (open !== 'phone') toggle('phone');
+        $('phoneInput').value = x.phone;
+        onPhoneInput();
+      } else {
+        if (open !== 'code') toggle('code');
+        $('codeInput').value = x.code || '';
+        $('studentInput').value = x.id || '';
+        onCodeInput();
+      }
+    }
+  });
+</script>
 <script src="figma-export.js"></script>
 <script src="test-scenarios-data.js"></script>
 <script src="test-scenarios.js"></script>

@@ -207,6 +207,7 @@
 
   function continuePayment() {
     if (!booking) return;
+    SavedAccounts.remember('airlinesSavedAccounts', { number: booking.prn, customer: booking.name, tag: 'PNR' });
     sessionStorage.setItem('billPaymentData', JSON.stringify({
       plan: 'airlines',
       planLabel: '',
@@ -241,6 +242,15 @@
   function goBack() { window.location.href = 'Pay Bill.html'; }
 </script>
 
+<script src="components/saved-accounts.js"></script>
+<script>
+  SavedAccounts.mount({
+    key: 'airlinesSavedAccounts',
+    host: document.querySelector('.scroll'),
+    logo: 'assets/bill pay logos/ethiopia_airlines_logo.png',
+    onPick: a => { $('prnInput').value = a.number; onPrnInput(); }
+  });
+</script>
 <script src="figma-export.js"></script>
 <script src="test-scenarios-data.js"></script>
 <script src="test-scenarios.js"></script>

@@ -101,9 +101,21 @@
         <input class="search-input" type="text" placeholder="Search services, categories or brands..." oninput="filterServices(this.value)">
       </div>
 
+      <!-- Promo banner: right under the search bar -->
+      <div class="promo-banner" onclick="window.location.href='Pay Merchant.html'">
+        <div style="position: relative; z-index: 2;">
+          <h3>Buy AI Credits<br>with M-PESA</h3>
+          <p>Pay &amp; redeem on Dala platform</p>
+        </div>
+        <button class="promo-cta" onclick="event.stopPropagation(); window.location.href='Pay Merchant.html'">
+          Buy Credits
+          <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+        </button>
+      </div>
+
       <div class="services-grid" id="servicesGrid">
 
-        <div class="service-tile" data-name="withdraw cash out agent atm" onclick="window.location.href='Withdraw Cash.html'">
+        <div class="service-tile" data-name="withdraw cash out agent atm" onclick="window.location.href='Withdraw Cash - Amount First.html'">
           <div class="tile-icon"><span class="msi">payments</span></div>
           <span class="tile-label">Withdraw</span>
         </div>
@@ -156,18 +168,6 @@
       </div>
 
       <div class="empty-state" id="emptyState">No services match your search.</div>
-
-      <!-- Promo banner -->
-      <div class="promo-banner" onclick="window.location.href='Pay Merchant.html'">
-        <div style="position: relative; z-index: 2;">
-          <h3>Buy AI Credits<br>with M-PESA</h3>
-          <p>Pay &amp; redeem on Dala platform</p>
-        </div>
-        <button class="promo-cta" onclick="event.stopPropagation(); window.location.href='Pay Merchant.html'">
-          Buy Credits
-          <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
-        </button>
-      </div>
 
     </div>
   </div>

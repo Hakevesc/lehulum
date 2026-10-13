@@ -506,11 +506,11 @@
   }
 
   function goToWallet() {
-    window.location.href = 'Lehulum Home.html';
+    sessionStorage.setItem('lehulumAuth', '1'); window.location.href = 'Lehulum Home.html';
   }
 
   function goBack() {
-    window.location.href = 'Lehulum Home.html';
+    sessionStorage.setItem('lehulumAuth', '1'); window.location.href = 'Lehulum Home.html';
   }
 
   function showToast(msg) {

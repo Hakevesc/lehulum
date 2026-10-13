@@ -1,0 +1,1097 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>M-PESA App · QR Home Option 3</title>
+<script>
+  // Home needs a signed-in session: send anyone who hasn't entered their PIN (or used biometrics) to the login screen.
+  if (sessionStorage.getItem('lehulumAuth') !== '1') {
+    sessionStorage.setItem('lehulumReturn', decodeURIComponent(location.pathname.split('/').pop()));
+    location.replace('Lehulum Login.html');
+  }
+</script>
+
+<!-- ============================================================
+     Design System & Component Styles
+     Import order matters: design-tokens → base → components
+     ============================================================ -->
+<link rel="stylesheet" href="styles/design-tokens.css">
+<link rel="stylesheet" href="styles/base.css">
+<link rel="stylesheet" href="styles/component-status-bar.css">
+<link rel="stylesheet" href="styles/component-welcome-bar.css">
+<link rel="stylesheet" href="styles/component-balance-card.css">
+<link rel="stylesheet" href="styles/component-actions.css">
+<link rel="stylesheet" href="styles/component-banner-slider.css">
+<link rel="stylesheet" href="styles/component-transactions.css">
+<link rel="stylesheet" href="styles/component-qr-popup.css">
+<link rel="stylesheet" href="styles/component-announcement.css">
+
+<style>
+  /* ---------- Banner ad story ----------
+     Tapping a home banner opens a full-screen story: round close (X), step dots,
+     the picture in a rounded card, a big bold title, a grey line, and a
+     black pill with that slide's service action. Slides still
+     advance on their own; tap left/right to move, hold to pause. */
+  .banner-slide { cursor: pointer; }
+  .story { position: absolute; inset: 0; z-index: 200; overflow: hidden; background: #FFFFFF; opacity: 0; visibility: hidden; transform: scale(0.96); transition: opacity 0.22s ease, transform 0.22s ease, visibility 0.22s; }
+  .story.show { opacity: 1; visibility: visible; transform: none; }
+  .story-back { position: absolute; top: 18px; left: 16px; width: 44px; height: 44px; border: 0; border-radius: 50%; background: #F1F1F4; z-index: 4; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+  .story-back svg { width: 20px; height: 20px; stroke: #1C1C21; stroke-width: 2.4; fill: none; stroke-linecap: round; stroke-linejoin: round; }
+  .story-dots { position: absolute; top: 36px; left: 0; right: 0; display: flex; justify-content: center; align-items: center; gap: 5px; z-index: 3; pointer-events: none; }
+  .story-dots span { width: 7px; height: 7px; border-radius: 4px; background: #D3D3DA; transition: width 0.25s ease, background 0.25s ease; }
+  .story-dots span.on { width: 20px; background: #1C1C21; }
+  .story-slide { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; padding: 84px 24px 120px; }
+  .story-slide .pic { position: relative; width: 100%; flex: 1; min-height: 0; max-height: 360px; border-radius: 28px; overflow: hidden; background: #FFF; box-shadow: 0 18px 44px rgba(15,23,42,0.12), 0 2px 8px rgba(15,23,42,0.05); animation: storyIn 0.4s ease; }
+  .story-slide .pic img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: center 35%; display: block; }
+  .story-slide .txt { text-align: center; color: #1C1C21; margin-top: 34px; animation: storyIn 0.45s ease; }
+  .story-slide h2 { font-family: 'Switzer', 'Inter', sans-serif; font-size: 40px; font-weight: 800; line-height: 1.0; letter-spacing: -1.2px; }
+  .story-slide p { margin: 14px auto 0; max-width: 270px; font-family: 'Switzer', 'Inter', sans-serif; font-size: 16px; line-height: 1.4; color: #8A8A94; }
+  @keyframes storyIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
+  .story-tap { position: absolute; top: 76px; bottom: 110px; border: 0; background: none; z-index: 2; cursor: pointer; }
+  .story-tap.prev { left: 0; width: 33%; }
+  .story-tap.next { right: 0; width: 67%; }
+  .story-cta { position: absolute; left: 50%; bottom: 36px; transform: translateX(-50%); height: 56px; padding: 0 26px 0 30px; border: 0; border-radius: 28px; background: #FE353D; color: #FFFFFF; font-family: 'Poppins', 'Inter', sans-serif; font-size: 16px; font-weight: 600; z-index: 4; cursor: pointer; display: flex; align-items: center; gap: 8px; white-space: nowrap; box-shadow: 0 10px 24px rgba(254,53,61,0.32); }
+  .story-cta svg { width: 18px; height: 18px; stroke: currentColor; stroke-width: 2.4; fill: none; stroke-linecap: round; stroke-linejoin: round; }
+  .story-cta:active { transform: translateX(-50%) scale(0.97); }
+</style>
+
+
+<style>
+  /* Home actions: 6 tiles show as the usual 3 x 2 grid. With 7-8 tiles the grid
+     turns into 4 per row at the same height (smaller icons and labels). */
+  .actions.actions-8:has(> :nth-child(7)) { grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 4px 0; padding: 10px 4px; }
+  .actions.actions-8:has(> :nth-child(7)) .primary-action { height: 112px; gap: 6px; padding: 0 2px; }
+  .actions.actions-8:has(> :nth-child(7)) .icon-container { width: 44px; height: 44px; }
+  .actions.actions-8:has(> :nth-child(7)) .icon-container img { width: 36px !important; height: 36px !important; }
+  .actions.actions-8:has(> :nth-child(7)) .label { font-size: 12.5px; line-height: 1.2; min-height: 30px; }
+</style>
+
+<style>
+  /* ---------- QR hero (replaces the red balance card) ----------
+     The customer's own payment QR sits front and centre: a merchant can scan
+     it straight away, and tapping it opens the camera to scan & pay. */
+  .qr-hero { background: #FFF; border-radius: 24px; padding: 16px 16px 14px; margin-bottom: 12px;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.05); display: flex; flex-direction: column; gap: 12px; }
+  /* Main balance + Add Money on the red M-PESA gradient, inset in the white card */
+  .qr-hero { padding: 8px; }
+  .qr-hero > .qh-qr { margin-top: 10px; }
+  .qr-hero > .qh-caption:last-child { margin-bottom: 8px; }
+  .qh-balance { position: relative; overflow: hidden; display: flex; align-items: center; justify-content: space-between; gap: 10px;
+    padding: 16px 16px 16px 18px; border-radius: 18px; background: linear-gradient(135deg, #A41016 0%, #C41520 45%, #D7151F 100%); }
+  .qh-balance::before { content: ''; position: absolute; top: -60px; right: -40px; width: 200px; height: 200px; border-radius: 50%; background: rgba(255,255,255,0.05); pointer-events: none; }
+  .qh-balance > * { position: relative; }
+  .qh-balance .lbl { font-family: 'Switzer', 'Inter', sans-serif; font-size: 14px; color: #FFF; display: flex; align-items: center; gap: 8px; }
+  .qh-balance .amt { font-family: 'Switzer', 'Inter', sans-serif; font-size: 24px; font-weight: 700; color: #FFF; letter-spacing: 1px; margin-top: 6px; }
+  .qh-eye { width: 26px; height: 26px; border: 0; border-radius: 50%; background: rgba(255,255,255,0.15); cursor: pointer; display: flex; align-items: center; justify-content: center; }
+  .qh-eye svg { width: 15px; height: 15px; }
+  .qh-add { flex-shrink: 0; display: flex; align-items: center; gap: 10px; height: 46px; padding: 0 16px 0 10px; border: 0; border-radius: 14px;
+    background: #1C1C21; color: #FFF; font-family: 'Inter', sans-serif; font-size: 15px; font-weight: 400; cursor: pointer; }
+  .qh-add:active { transform: scale(0.97); }
+  .qh-add .pl { width: 26px; height: 26px; border-radius: 7px; background: rgba(255,255,255,0.18); display: flex; align-items: center; justify-content: center; }
+  .qh-add svg { width: 12px; height: 12px; }
+
+  .qh-qr { position: relative; align-self: center; width: 232px; height: 232px; border: 0; background: none; cursor: pointer; padding: 16px; }
+  .qh-qr::before, .qh-qr::after, .qh-qr .c1, .qh-qr .c2 { content: ''; position: absolute; width: 34px; height: 34px; border: 4px solid #FE353D; }
+  .qh-qr::before { top: 0; left: 0; border-right: 0; border-bottom: 0; border-radius: 14px 0 0 0; }
+  .qh-qr::after  { top: 0; right: 0; border-left: 0; border-bottom: 0; border-radius: 0 14px 0 0; }
+  .qh-qr .c1     { bottom: 0; left: 0; border-right: 0; border-top: 0; border-radius: 0 0 0 14px; }
+  .qh-qr .c2     { bottom: 0; right: 0; border-left: 0; border-top: 0; border-radius: 0 0 14px 0; }
+  .qh-qr img.code { width: 100%; height: 100%; display: block; image-rendering: pixelated; }
+  .qh-qr .badge { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); width: 50px; height: 50px; border-radius: 12px;
+    background: #FFF; box-shadow: 0 0 0 4px #FFF; display: flex; align-items: center; justify-content: center; }
+  .qh-qr .badge img { width: 42px; height: auto; }
+  .qh-qr:active { transform: scale(0.98); }
+  .qh-qr .scanline { position: absolute; left: 18px; right: 18px; height: 2px; top: 18px; background: linear-gradient(90deg, transparent, #FE353D, transparent);
+    opacity: 0.55; animation: qhScan 2.6s ease-in-out infinite; }
+  @keyframes qhScan { 0%, 100% { top: 18px; } 50% { top: calc(100% - 20px); } }
+
+  .qh-caption { text-align: center; }
+  .qh-caption .t { font-family: 'Switzer', 'Inter', sans-serif; font-size: 15px; font-weight: 600; color: #1C1C21; display: inline-flex; align-items: center; gap: 6px; }
+  .qh-caption .t svg { width: 16px; height: 16px; stroke: #FE353D; }
+  .qh-caption .s { font-size: 12px; color: #7C7C87; margin-top: 3px; }
+  .qh-links { display: flex; justify-content: center; gap: 8px; }
+  .qh-links button { border: 1px solid #ECECEF; background: #FAFAFB; border-radius: 16px; height: 30px; padding: 0 12px; cursor: pointer;
+    font-family: 'Inter', sans-serif; font-size: 11.5px; font-weight: 500; color: #1C1C21; display: flex; align-items: center; gap: 5px; }
+  .qh-links svg { width: 13px; height: 13px; stroke: #FE353D; fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+</style>
+
+<style>
+  .o3 { display: flex; gap: 10px; margin-bottom: 12px; align-items: stretch; }
+  .o3-left { flex: 1; min-width: 0; display: flex; flex-direction: column; }
+  .o3-card { flex: 1; display: flex; flex-direction: column; justify-content: flex-start; position: relative; overflow: hidden; border-radius: 18px; padding: 10px 12px 12px; color: #FFF;
+    background: linear-gradient(135deg, #E8141F 0%, #C41520 60%, #A41016 100%); box-shadow: 0 6px 16px rgba(196,21,32,0.25); }
+  .o3-card::before { content: ''; position: absolute; top: -60px; right: -60px; width: 180px; height: 180px; border-radius: 50%; background: rgba(255,255,255,0.06); pointer-events: none; }
+  .o3-card > * { position: relative; }
+  .o3-top { display: flex; align-items: center; gap: 6px; }   /* eye sits right after the label */
+  .o3-top .lbl { font-family: 'Switzer', 'Inter', sans-serif; font-size: 11px; font-weight: 500; letter-spacing: 0.8px; text-transform: uppercase; opacity: 0.9; }
+  .o3-eye { width: 26px; height: 26px; border: 0; background: none; cursor: pointer; display: flex; align-items: center; justify-content: center; margin: -4px 0; }
+  .o3-eye svg { width: 18px; height: 18px; }
+  .o3-amt { font-family: 'Switzer', 'Inter', sans-serif; font-size: 23px; font-weight: 700; margin-top: 2px; white-space: nowrap; letter-spacing: 0.2px; }
+  .o3-amt small { font-size: 13px; font-weight: 600; }
+  .o3-amt .cur { margin-right: 4px; opacity: 0.9; }
+  .o3-rule { height: 1px; background: rgba(255,255,255,0.25); margin: 9px 0 8px; }
+  .o3-subs { display: flex; align-items: center; }
+  .o3-sub { flex: 1; min-width: 0; display: flex; align-items: center; justify-content: space-between; gap: 6px; }
+  .o3-sub + .o3-sub { justify-content: flex-end; }
+  .o3-sub svg { width: 18px; height: 18px; flex-shrink: 0; }
+  .o3-sub .k { font-size: 12px; opacity: 0.9; white-space: nowrap; }
+  .o3-sub .v { font-family: 'Switzer', 'Inter', sans-serif; font-size: 12px; font-weight: 700; white-space: nowrap; }
+  .o3-vsep { width: 1px; height: 26px; background: rgba(255,255,255,0.25); margin: 0 6px; }
+  .o3-add { height: 38px; margin-top: auto; border: 0; border-radius: 12px; background: #1C1C21; box-shadow: 0 3px 8px rgba(0,0,0,0.2); color: #FFF; cursor: pointer;
+    display: flex; align-items: center; justify-content: center; gap: 8px; font-family: 'Inter', sans-serif; font-size: 15px; font-weight: 500; }
+  .o3-add svg { width: 16px; height: 16px; }
+  .o3-add:active { transform: scale(0.98); }
+  /* Always a square: width is a share of the row and the height follows it;
+     the red card stretches so the balance column matches the QR */
+  .o3-qr { flex: 0 0 47%; aspect-ratio: 1 / 1; align-self: center; padding: 8px; border: 2px solid #1C1C21; border-radius: 18px; background: #FFF; cursor: pointer; }
+  .o3-qr svg { width: 100%; height: 100%; display: block; }
+  .o3-qr:active { transform: scale(0.98); }
+</style>
+<link rel="stylesheet" href="styles/device.css">
+<style>
+  /* Phones: the device draws its own status bar, so drop the extra top padding above the greeting */
+  @media (max-width: 480px) { .app-content { padding-top: 2px; } }
+</style>
+</head>
+<body>
+
+<div id="app"></div>
+
+<script src="https://unpkg.com/lucide@latest"></script>
+<!-- Shared announcement registry (must load before the app script) -->
+<script src="announcements.js"></script>
+
+<script>
+  // ============================================================
+  // Listen for test scenario popups from parent (index.html)
+  // ============================================================
+  window.addEventListener('message', function(event) {
+    // Only accept messages from the same origin
+    if (event.data && event.data.type === 'showTestPopup') {
+      showTestPopupInline(event.data.html, event.data.css || '');
+    }
+
+    // Re-trigger an announcement surface on demand (index.html test panel)
+    if (event.data && event.data.type === 'showAnnouncement') {
+      const variant = event.data.variant;
+      if (variant === 'popup')   showAnnouncementModal();
+      if (variant === 'tooltip') showAnnouncementTip();
+      if (variant === 'strip') {
+        const el = document.getElementById('annStrip');
+        if (el) { el.classList.remove('ann-hidden'); el.scrollIntoView({ block: 'center' }); }
+      }
+    }
+  });
+
+  function showTestPopupInline(html, css) {
+    // Remove any previous test popup
+    const existing = document.getElementById('testPopupInline');
+    if (existing) existing.remove();
+
+    const container = document.createElement('div');
+    container.id = 'testPopupInline';
+    container.innerHTML = (css ? `<style>${css}</style>` : '') + html;
+    document.body.appendChild(container);
+  }
+</script>
+<script>
+  // ============================================================
+  // Component Templates - each component's HTML as a template string
+  // Edit the corresponding file in components/ then rebuild here
+  // Edit the corresponding CSS in styles/component-*.css
+  // ============================================================
+
+  const componentTemplates = {
+    phone: `
+      <div class="phone-frame">
+        <div id="statusBarContainer"></div>
+        <div class="app-content">
+          <div id="welcomeAppBarContainer"></div>
+          <div id="announcementStripContainer"></div>
+          <div id="balanceCardContainer"></div>
+          <div id="actionsContainer"></div>
+          <div id="bannerSliderContainer"></div>
+          <div id="recentTransactionsContainer"></div>
+        </div>
+        <div id="qrPopupContainer"></div>
+        <div id="announcementTipContainer"></div>
+        <div id="announcementModalContainer"></div>
+
+        <!-- Banner ad story: Close, step dots, picture card, title, Next -->
+        <div class="story" id="story" aria-hidden="true">
+          <button class="story-back" onclick="closeStory()" aria-label="Close">
+            <svg viewBox="0 0 24 24"><path d="M18 6 6 18M6 6l12 12"/></svg>
+          </button>
+          <div class="story-dots" id="storyDots"></div>
+          <div class="story-slide" id="storySlide"></div>
+          <button class="story-tap prev" onclick="storyStep(-1)" aria-label="Previous"></button>
+          <button class="story-tap next" onclick="storyStep(1)" aria-label="Next"></button>
+          <button class="story-cta" id="storyCta"></button>
+        </div>
+      </div>
+    `,
+
+    statusBar: `
+      <div class="status-bar">
+        <span class="time">10:00</span>
+        <div class="status-icons">
+          <svg viewBox="0 0 24 24" fill="none"><path d="M1 9l2 2c4.97-4.97 13.03-4.97 18 0l2-2C16.93 2.93 7.08 2.93 1 9z" fill="#1C1C21"/><path d="M5 13l2 2c2.76-2.76 7.24-2.76 10 0l2-2C15.14 9.14 8.87 9.14 5 13z" fill="#1C1C21"/><path d="M9 17l2 2c1.1-1.1 2.9-1.1 4 0l2-2c-2.21-2.21-5.79-2.21-8 0z" fill="#1C1C21"/></svg>
+          <svg viewBox="0 0 24 24" fill="none"><rect x="2" y="6" width="4" height="12" rx="1" fill="#1C1C21"/><rect x="8" y="4" width="4" height="14" rx="1" fill="#1C1C21"/><rect x="14" y="2" width="4" height="16" rx="1" fill="#1C1C21"/><rect x="20" y="0" width="4" height="18" rx="1" fill="#1C1C21" opacity="0.3"/></svg>
+          <svg viewBox="0 0 28 14" fill="none"><rect x="0" y="1" width="22" height="12" rx="2.5" stroke="#1C1C21" stroke-width="1.5"/><rect x="2" y="3" width="16" height="8" rx="1" fill="#1C1C21"/><rect x="24" y="4" width="2" height="6" rx="1" fill="#1C1C21"/></svg>
+        </div>
+      </div>
+    `,
+
+    welcomeAppBar: `
+      <div class="welcome-app-bar">
+        <div class="leading-icon" onclick="window.location.href='Account Detail.html'" style="cursor:pointer">
+          <div class="avatar"><span>AM</span></div>
+        </div>
+        <div class="title" onclick="window.location.href='Account Detail.html'" style="cursor:pointer"><span>Good Morning, Aster 👋</span></div>
+        <div class="trailing-icon" id="bellIcon" onclick="window.location.href='Notification Center.html'" style="cursor:pointer">
+          <span class="ann-bell-badge" id="annBellBadge"></span>
+          <div class="icon-button">
+            <div class="container">
+              <div class="state-layer">
+                <svg viewBox="0 0 24 24" fill="none"><path d="M12 22C13.1 22 14 21.1 14 20H10C10 21.1 10.9 22 12 22Z" stroke="#1C1C21" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M18 16V11C18 7.93 16.36 5.36 13.5 4.68V4C13.5 3.17 12.83 2.5 12 2.5C11.17 2.5 10.5 3.17 10.5 4V4.68C7.63 5.36 6 7.92 6 11V16L4 18V19H20V18L18 16Z" stroke="#1C1C21" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    `,
+
+    balanceCard: `
+      <div class="o3" id="balanceCard">
+        <div class="o3-left">
+          <div class="o3-card">
+            <div class="o3-top">
+              <span class="lbl">Main Balance</span>
+              <button class="o3-eye" id="eyeBtn" title="Show balance"><span id="eyeIcon"><svg viewBox="0 0 24 24" fill="none"><path d="M12 4.5C7 4.5 2.73 7.61 1 12C2.73 16.39 7 19.5 12 19.5C17 19.5 21.27 16.39 23 12C21.27 7.61 17 4.5 12 4.5Z" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/><circle cx="12" cy="12" r="3" stroke="white" stroke-width="1.8"/></svg></span></button>
+            </div>
+            <div class="o3-amt"><small class="cur">ETB</small><span id="mainBalance" data-value="12,580.00">* * * * *</span></div>
+            <div class="o3-rule"></div>
+            <div class="o3-subs">
+              <div class="o3-sub">
+                <span class="k">Errif Balance</span><span class="v">ETB <span id="errifBalance" data-value="3,450.00">* * *</span></span>
+              </div>
+            </div>
+            <button class="o3-add" onclick="window.location.href='Cash In - Amount First.html'">
+              <svg viewBox="0 0 24 24" fill="none" stroke="#FFF" stroke-width="2.2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>
+              Add Money
+            </button>
+          </div>
+        </div>
+        <button class="o3-qr" onclick="window.location.href='Scan QR.html'" aria-label="My payment QR. Tap to scan and pay">
+          <svg id="heroQrSvg" viewBox="0 0 100 100" aria-hidden="true"></svg>
+        </button>
+      </div>
+    `,
+
+    actions: `
+      <div class="actions actions-8">
+        <div class="primary-action" onclick="window.location.href='Send Money Menu.html'" style="cursor:pointer">
+          <div class="icon-container">
+            <img src="assets/Transfer Money.svg" alt="Transfer Money" style="width:40px;height:40px;object-fit:contain;">
+          </div>
+          <span class="label">Transfer<br>Money</span>
+        </div>
+        <div class="primary-action" onclick="window.location.href='Pay Bill.html'" style="cursor:pointer">
+          <div class="icon-container">
+            <img src="assets/Bill Payment.svg" alt="Make Payments" style="width:40px;height:40px;object-fit:contain;">
+          </div>
+          <span class="label">Make<br>Payments</span>
+        </div>
+        <div class="primary-action" onclick="window.location.href='Credit & Saving.html?tab=credit'" style="cursor:pointer">
+          <div class="icon-container">
+            <img src="assets/Credit.svg" alt="Get Credit" style="width:40px;height:40px;object-fit:contain;">
+          </div>
+          <span class="label">Get<br>Credit</span>
+        </div>
+        <div class="primary-action" onclick="window.location.href='Credit & Saving.html?tab=saving'" style="cursor:pointer">
+          <div class="icon-container">
+            <img src="assets/Saving.svg" alt="My Savings" style="width:40px;height:40px;object-fit:contain;">
+          </div>
+          <span class="label">My<br>Savings</span>
+        </div>
+        <div class="primary-action" onclick="window.location.href='Airtime_Buy.html'" style="cursor:pointer">
+          <div class="icon-container">
+            <img src="assets/Airtime Package.svg" alt="Airtime/Data" style="width:40px;height:40px;object-fit:contain;">
+          </div>
+          <span class="label">Airtime/<br>Data</span>
+        </div>
+        <div class="primary-action" onclick="window.location.href='More Services.html'" style="cursor:pointer">
+          <div class="icon-container">
+            <img src="assets/More Services.svg" alt="More Services" style="width:40px;height:40px;object-fit:contain;">
+          </div>
+          <span class="label">More<br>Services</span>
+        </div>
+      </div>
+    `,
+
+    // See components/banner-slider.html for the HTML template
+    bannerSlider: `
+      <div class="banner-slider">
+        <div class="banner-slides-container" id="bannerSlidesContainer">
+          <!-- Banner 1 -->
+          <div class="banner-slide active" data-index="0" onclick="openStory('all')">
+            <div class="banner-image">
+              <img src="assets/banner-ads-1.png" alt="M-PESA Banner 1">
+              <div class="banner-overlay"></div>
+            </div>
+            <div class="banner-content">
+              <h3 class="banner-title">Do it all with M-PESA</h3>
+              <p class="banner-subtitle">Make payments quickly and conveniently.</p>
+            </div>
+          </div>
+          
+          <!-- Banner 2 -->
+          <div class="banner-slide" data-index="1" onclick="openStory('send')">
+            <div class="banner-image">
+              <img src="assets/banner-ads-2.png" alt="M-PESA Banner 2">
+              <div class="banner-overlay"></div>
+            </div>
+            <div class="banner-content">
+              <h3 class="banner-title">Send Money Anywhere</h3>
+              <p class="banner-subtitle">Transfer to any M-PESA user instantly.</p>
+            </div>
+          </div>
+          
+          <!-- Banner 3 -->
+          <div class="banner-slide" data-index="2" onclick="openStory('bills')">
+            <div class="banner-image">
+              <img src="assets/banner-ads-3.png" alt="M-PESA Banner 3">
+              <div class="banner-overlay"></div>
+            </div>
+            <div class="banner-content">
+              <h3 class="banner-title">Pay Bills Easily</h3>
+              <p class="banner-subtitle">Settle your utilities and services in seconds.</p>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Navigation Dots -->
+        <div class="banner-dots" id="bannerDots">
+          <span class="dot active" data-index="0"></span>
+          <span class="dot" data-index="1"></span>
+          <span class="dot" data-index="2"></span>
+        </div>
+      </div>
+    `,
+
+    recentTransactions: `
+      <div class="recent-transactions">
+        <div class="header">
+          <span class="transactions-title">Transactions</span>
+          <span class="see-all" onclick="window.location.href='Transaction History.html'" style="cursor:pointer">See all</span>
+        </div>
+        <div class="transactions-list">
+          <div class="transaction-card">
+            <div class="left">
+              <div class="logo"><img src="assets/banks logo/cbe-logo.png" alt="CBE" onerror="this.style.display='none'"></div>
+              <div class="name-type">
+                <span class="name">Aster Mequanent</span>
+                <span class="type">Bank</span>
+              </div>
+            </div>
+            <div class="right">
+              <span class="amount positive">+220.00</span>
+              <span class="date">Today</span>
+            </div>
+          </div>
+          <div class="transaction-card">
+            <div class="left">
+              <div class="logo"><img src="assets/banks logo/M-PESA-logo-icon.png" alt="M-PESA" onerror="this.style.display='none'"></div>
+              <div class="name-type">
+                <span class="name">Henok Chala</span>
+                <span class="type">Airtime</span>
+              </div>
+            </div>
+            <div class="right">
+              <span class="amount negative">-1,020.00</span>
+              <span class="date">Today</span>
+            </div>
+          </div>
+          <div class="transaction-card">
+            <div class="left">
+              <div class="logo"><img src="assets/banks logo/M-PESA-logo-icon.png" alt="M-PESA" onerror="this.style.display='none'"></div>
+              <div class="name-type">
+                <span class="name">Henok Chala</span>
+                <span class="type">Airtime</span>
+              </div>
+            </div>
+            <div class="right">
+              <span class="amount negative">-50.00</span>
+              <span class="date">Today</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    `,
+
+    qrPopup: `
+      <div class="qr-fab-wrapper" id="qrFabWrapper">
+
+        <!-- Backdrop (click to close) -->
+        <div class="qr-fab-backdrop" id="qrFabBackdrop"></div>
+
+        <!-- Action items -->
+        <div class="qr-fab-menu" id="qrFabMenu">
+
+          <!-- My QR Code -->
+          <div class="qr-fab-item" id="qrActionMyQR" role="button" tabindex="0" aria-label="My QR Code">
+            <span class="qr-fab-label">My QR Code</span>
+            <div class="qr-fab-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="#FE353D" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="3" y="3" width="7" height="7" rx="1"/>
+                <rect x="14" y="3" width="7" height="7" rx="1"/>
+                <rect x="3" y="14" width="7" height="7" rx="1"/>
+                <rect x="14" y="14" width="3" height="3"/>
+                <rect x="18" y="14" width="3" height="3"/>
+                <rect x="14" y="18" width="3" height="3"/>
+                <rect x="18" y="18" width="3" height="3"/>
+              </svg>
+            </div>
+          </div>
+
+          <!-- Scan QR Code -->
+          <div class="qr-fab-item" id="qrActionScan" role="button" tabindex="0" aria-label="Scan QR Code">
+            <span class="qr-fab-label">Scan QR Code</span>
+            <div class="qr-fab-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="#FE353D" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M3 7V5a2 2 0 0 1 2-2h2"/>
+                <path d="M17 3h2a2 2 0 0 1 2 2v2"/>
+                <path d="M21 17v2a2 2 0 0 1-2 2h-2"/>
+                <path d="M7 21H5a2 2 0 0 1-2-2v-2"/>
+                <line x1="7" y1="12" x2="17" y2="12"/>
+              </svg>
+            </div>
+          </div>
+
+          <!-- Verify Receipt -->
+          <div class="qr-fab-item" id="qrActionVerify" role="button" tabindex="0" aria-label="Verify Receipt">
+            <span class="qr-fab-label">Verify Receipt</span>
+            <div class="qr-fab-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="#FE353D" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                <polyline points="14 2 14 8 20 8"/>
+                <polyline points="9 15 11 17 15 13"/>
+              </svg>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Main FAB button -->
+        <button class="qr-popup" id="qrFabBtn" title="QR Actions" aria-label="Open QR actions" aria-expanded="false">
+          <div class="frame-2061">
+            <img src="assets/qr-scan.svg" alt="QR Scan" onerror="this.style.display='none'; this.parentElement.innerHTML = '<svg width=\\'30\\' height=\\'30\\' viewBox=\\'0 0 24 24\\' fill=\\'none\\' stroke=\\'white\\' stroke-width=\\'2\\' stroke-linecap=\\'round\\' stroke-linejoin=\\'round\\'><rect x=\\'3\\' y=\\'3\\' width=\\'7\\' height=\\'7\\'/><rect x=\\'14\\' y=\\'3\\' width=\\'7\\' height=\\'7\\'/><rect x=\\'14\\' y=\\'14\\' width=\\'7\\' height=\\'7\\'/><rect x=\\'3\\' y=\\'14\\' width=\\'7\\' height=\\'7\\'/><line x1=\\'6.5\\' y1=\\'6.5\\' x2=\\'6.51\\' y2=\\'6.5\\'/><line x1=\\'17.5\\' y1=\\'6.5\\' x2=\\'17.51\\' y2=\\'6.5\\'/><line x1=\\'17.5\\' y1=\\'17.5\\' x2=\\'17.51\\' y2=\\'17.5\\'/><line x1=\\'6.5\\' y1=\\'17.5\\' x2=\\'6.51\\' y2=\\'17.5\\'/></svg>';">
+          </div>
+        </button>
+
+      </div>
+    `
+  };
+
+  // ============================================================
+  // Announcements shown on the home screen, read from the shared
+  // registry in announcements.js (already prioritised, expired
+  // entries filtered out).
+  // ============================================================
+  const activeAnnouncements = window.MPESA_ANN ? window.MPESA_ANN.active() : [];
+
+  // The strip carries the top-priority item flagged for the home strip;
+  // the modal promotes the top campaign/offer.
+  const stripItem = activeAnnouncements.find(a => a.homeStrip);
+  const modalItem = activeAnnouncements.find(a => a.homePopup) || activeAnnouncements.find(a => a.type !== 'notice' && a.id !== 'sys-maintenance') || activeAnnouncements[0];
+
+  const annExpiryLabel = days =>
+    (days > 0 ? window.MPESA_ANN.expiryLabel(days) : null);
+
+  // Component registry: which template goes into which container
+  const componentMap = [
+    { container: 'statusBarContainer', template: 'statusBar' },
+    { container: 'welcomeAppBarContainer', template: 'welcomeAppBar' },
+    { container: 'balanceCardContainer', template: 'balanceCard' },
+    { container: 'actionsContainer', template: 'actions' },
+    { container: 'bannerSliderContainer', template: 'bannerSlider' },
+    { container: 'recentTransactionsContainer', template: 'recentTransactions' }
+  ];
+
+  function renderApp() {
+    // 1. Render phone frame with placeholder containers
+    document.getElementById('app').innerHTML = componentTemplates.phone;
+
+    // 2. Render each component into its container
+    componentMap.forEach(({ container, template }) => {
+      const el = document.getElementById(container);
+      if (el) el.innerHTML = componentTemplates[template];
+    });
+
+    // 3. Initialize Lucide icons
+    if (typeof lucide !== 'undefined' && lucide.createIcons) {
+      lucide.createIcons();
+    }
+
+    // 4. Initialize eye toggle
+    const eyeBtn = document.getElementById('eyeBtn');
+    const eyeIcon = document.getElementById('eyeIcon');
+    const balanceCard = document.getElementById('balanceCard');
+    const mainBalance = document.getElementById('mainBalance');
+    const rewardBalance = document.getElementById('rewardBalance');
+    const errifBalance = document.getElementById('errifBalance');
+
+    if (eyeBtn && eyeIcon && mainBalance) {
+      let isVisible = false;
+
+      const eyeOffSvg = '<svg viewBox="0 0 24 24" fill="none"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 19.5C7 19.5 2.73 16.39 1 12C2.73 7.61 7 4.5 12 4.5C14.12 4.5 16.07 5.2 17.62 6.38" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M15 12C15 13.66 13.66 15 12 15C10.34 15 9 13.66 9 12C9 10.34 10.34 9 12 9" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><line x1="1" y1="1" x2="23" y2="23" stroke="white" stroke-width="1.5" stroke-linecap="round"/></svg>';
+      const eyeOnSvg = '<svg viewBox="0 0 24 24" fill="none"><path d="M12 4.5C7 4.5 2.73 7.61 1 12C2.73 16.39 7 19.5 12 19.5C17 19.5 21.27 16.39 23 12C21.27 7.61 17 4.5 12 4.5Z" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><circle cx="12" cy="12" r="3" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+
+      eyeBtn.addEventListener('click', function() {
+        isVisible = !isVisible;
+        if (isVisible) {
+          // Whole part large, currency and decimals small: ETB 12,580.00
+          const [whole, dec] = mainBalance.dataset.value.split('.');
+          mainBalance.innerHTML = whole + (dec ? '<small class="dec">.' + dec + '</small>' : '');
+          if (rewardBalance) rewardBalance.textContent = rewardBalance.dataset.value;
+          if (errifBalance) errifBalance.textContent = errifBalance.dataset.value;
+          balanceCard.classList.add('balance-visible');
+          eyeIcon.innerHTML = eyeOffSvg;
+          eyeBtn.title = 'Hide balances';
+        } else {
+          mainBalance.textContent = '* * * * * *';
+          if (rewardBalance) rewardBalance.textContent = '* * * *';
+          if (errifBalance) errifBalance.textContent = '* * * *';
+          balanceCard.classList.remove('balance-visible');
+          eyeIcon.innerHTML = eyeOnSvg;
+          eyeBtn.title = 'Show balances';
+        }
+      });
+    }
+
+    // 5. Initialize Banner Slider
+    initBannerSlider();
+    initStory();
+
+    // 6. Initialize QR FAB Speed-dial
+    initQrFab();
+
+    // 7. Initialize announcement entry points (strip / tooltip / popup)
+    initAnnouncements();
+  }
+
+  // ============================================================
+  // Announcement entry points
+  //   strip   — always visible, sits under the welcome bar
+  //   tooltip — anchored to the bell, auto-shows then auto-hides
+  //   popup   — once per session, promotes the top campaign
+  // ============================================================
+  function initAnnouncements() {
+    if (!activeAnnouncements.length) return;
+
+    renderAnnouncementStrip();
+    renderAnnouncementTip();
+    renderAnnouncementModal();
+
+    const badge = document.getElementById('annBellBadge');
+    if (badge) badge.textContent = activeAnnouncements.length;
+
+    // Tooltip appears shortly after load, then retreats on its own.
+    setTimeout(showAnnouncementTip, 900);
+    // Popup waits until the tooltip has cleared, and only once per session.
+    if (!sessionStorage.getItem('mpesa.annPopupSeen')) {
+      setTimeout(() => {
+        sessionStorage.setItem('mpesa.annPopupSeen', '1');
+        showAnnouncementModal();
+      }, 1800);
+    }
+  }
+
+  /* ---------- 1. inline info strip ---------- */
+  function renderAnnouncementStrip() {
+    const host = document.getElementById('announcementStripContainer');
+    if (!host || !stripItem) return;
+    host.innerHTML = `
+      <div class="ann-strip tone-${stripItem.type}" id="annStrip" onclick="openAnnouncements('${stripItem.id}')">
+        <div class="ann-strip-icon" style="background:${stripItem.iconBg}">${stripItem.glyph}</div>
+        <div class="ann-strip-body">
+          <span class="ann-strip-title">${stripItem.title}</span>
+          <span class="ann-strip-sub">${stripItem.short}</span>
+        </div>
+        <button class="ann-strip-close" aria-label="Dismiss"
+                onclick="event.stopPropagation();dismissAnnouncementStrip()">&times;</button>
+      </div>`;
+  }
+
+  function dismissAnnouncementStrip() {
+    const el = document.getElementById('annStrip');
+    if (el) el.classList.add('ann-hidden');
+  }
+
+  /* ---------- 2. bell tooltip ---------- */
+  function renderAnnouncementTip() {
+    const host = document.getElementById('announcementTipContainer');
+    if (!host) return;
+    const n = activeAnnouncements.length;
+    const tipLead = stripItem || activeAnnouncements.find(a => a.id !== 'sys-maintenance') || activeAnnouncements[0];
+    const tipText = tipLead && tipLead.short ? `${tipLead.short}. ` : '';
+    host.innerHTML = `
+      <div class="ann-tip ann-hidden" id="annTip" onclick="openAnnouncements()">
+        <div class="ann-tip-arrow" id="annTipArrow"></div>
+        <div class="ann-tip-head">
+          <div class="ann-tip-glyph">📣</div>
+          <span class="ann-tip-title">${n} new announcement${n > 1 ? 's' : ''}</span>
+          <button class="ann-tip-close" aria-label="Dismiss"
+                  onclick="event.stopPropagation();hideAnnouncementTip()">&times;</button>
+        </div>
+        <div class="ann-tip-text">${tipText}Tap to see all offers and notices.</div>
+        <span class="ann-tip-link">View announcements &rsaquo;</span>
+      </div>`;
+  }
+
+  // Anchored to the live position of the bell so it stays correct
+  // regardless of frame padding or status-bar height.
+  function positionAnnouncementTip() {
+    const tip = document.getElementById('annTip');
+    const bell = document.getElementById('bellIcon');
+    const frame = document.querySelector('.phone-frame');
+    const arrow = document.getElementById('annTipArrow');
+    if (!tip || !bell || !frame) return;
+
+    const f = frame.getBoundingClientRect();
+    const b = bell.getBoundingClientRect();
+
+    const right = Math.max(10, f.right - b.right - 4);
+    tip.style.top = (b.bottom - f.top + 10) + 'px';
+    tip.style.right = right + 'px';
+
+    // Point the arrow at the centre of the bell.
+    if (arrow) {
+      const tipRect = tip.getBoundingClientRect();
+      const bellCentreFromTipRight = tipRect.right - (b.left + b.width / 2);
+      arrow.style.right = Math.min(tip.offsetWidth - 20, Math.max(10, bellCentreFromTipRight - 8)) + 'px';
+    }
+  }
+
+  function showAnnouncementTip() {
+    const tip = document.getElementById('annTip');
+    if (!tip) return;
+    tip.classList.remove('ann-hidden');
+    positionAnnouncementTip();
+    clearTimeout(showAnnouncementTip._t);
+    showAnnouncementTip._t = setTimeout(hideAnnouncementTip, 6000);
+  }
+
+  function hideAnnouncementTip() {
+    const tip = document.getElementById('annTip');
+    if (tip) tip.classList.add('ann-hidden');
+  }
+
+  /* ---------- 3. popup modal ---------- */
+  function renderAnnouncementModal() {
+    const host = document.getElementById('announcementModalContainer');
+    if (!host || !modalItem) return;
+    const expiry = annExpiryLabel(modalItem.expiresInDays);
+    const hasImg = !!modalItem.popupImage;
+    host.innerHTML = `
+      <div class="ann-modal ann-hidden" id="annModal"
+           onclick="if(event.target===this)hideAnnouncementModal()">
+        <div class="ann-modal-card">
+          <div class="ann-modal-art ${hasImg ? 'has-image' : ''}" style="background:${modalItem.gradient || 'linear-gradient(175deg, #DE2B35 0%, #B31922 100%)'}">
+            <div class="ann-modal-wave-bg"></div>
+            <span class="ann-modal-badge">${modalItem.badge}</span>
+            <button class="ann-modal-close" aria-label="Close" onclick="hideAnnouncementModal()">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="18" y1="6" x2="6" y2="18"></line>
+                <line x1="6" y1="6" x2="18" y2="18"></line>
+              </svg>
+            </button>
+            ${hasImg ? `
+              <div class="ann-modal-img-wrap">
+                <img class="ann-modal-img" src="${modalItem.popupImage}" alt="${modalItem.title}">
+              </div>
+            ` : `
+              <div class="ann-art-circle a1"></div>
+              <div class="ann-art-circle a2"></div>
+              <span class="ann-art-glyph">${modalItem.glyph}</span>
+            `}
+            <svg class="ann-modal-bottom-curve" viewBox="0 0 320 24" fill="none" preserveAspectRatio="none">
+              <path d="M0,24 Q160,0 320,24 L320,24 L0,24 Z" fill="#FFFFFF"/>
+            </svg>
+          </div>
+          <div class="ann-modal-body">
+            <h2 class="ann-modal-title">${modalItem.popupTitleHtml || modalItem.title}</h2>
+            <p class="ann-modal-text">${modalItem.popupDesc || (modalItem.body || modalItem.desc).split('\n\n')[0]}</p>
+            ${expiry ? `
+              <div class="ann-modal-expiry">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                  <circle cx="12" cy="13" r="8"></circle>
+                  <path d="M12 9v4l2 2"></path>
+                  <path d="M5 3L2 6"></path>
+                  <path d="M22 6l-3-3"></path>
+                  <path d="M12 2v3"></path>
+                </svg>
+                <span>${expiry}</span>
+              </div>
+            ` : ''}
+            <div class="ann-modal-actions">
+              <button class="ann-btn primary"
+                      onclick="announcementCta('${modalItem.cta.href}','${modalItem.id}')">
+                ${modalItem.cta.label}
+              </button>
+              <button class="ann-btn secondary" onclick="hideAnnouncementModal()">
+                ${(modalItem.ghostCta && modalItem.ghostCta.label) || 'Maybe Later'}
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>`;
+  }
+
+  function showAnnouncementModal() {
+    hideAnnouncementTip();
+    const m = document.getElementById('annModal');
+    if (m) m.classList.remove('ann-hidden');
+  }
+
+  function hideAnnouncementModal() {
+    const m = document.getElementById('annModal');
+    if (m) m.classList.add('ann-hidden');
+  }
+
+  /* ---------- shared navigation ---------- */
+  // Redirection rule: a CTA with a journey goes straight there,
+  // otherwise the customer lands on the Announcements screen.
+  function announcementCta(href, id) {
+    if (href) { window.location.href = href; return; }
+    openAnnouncements(id);
+  }
+
+  function openAnnouncements(id) {
+    window.location.href = id
+      ? 'Announcement Detail.html?id=' + encodeURIComponent(id)
+      : 'Announcement.html';
+  }
+
+  // Banner ad story: each banner opens a short story. Slides advance on
+  // their own (5 s); tap right for next, left for previous, hold to pause.
+  const STORIES = {
+    all: {
+      cta: 'Get started', go: 'More Services.html',
+      slides: [
+        { title: 'Do it all with <span style="white-space:nowrap">M-PESA</span>', text: 'Send, pay, buy airtime and settle bills, all from one app.', img: 'assets/stories/all-1.jpg', cta: 'Explore Services', go: 'More Services.html' },
+        { title: 'Pay in a scan', text: 'Scan the merchant QR and pay in seconds, no cash needed.', img: 'assets/stories/all-2.jpg', cta: 'Pay Merchant', go: 'Pay Merchant.html' },
+        { title: 'Everything in one place', text: 'Airtime, packages, bills and transfers, right where you need them.', img: 'assets/stories/all-3.jpg', cta: 'Buy Airtime', go: 'Airtime_Buy.html' }
+      ]
+    },
+    send: {
+      cta: 'Send money', go: 'Send Money Menu.html',
+      slides: [
+        { title: 'Send money anywhere', text: 'Transfer to any M-PESA user instantly, day or night.', img: 'assets/stories/send-1.jpg', cta: 'Send Money', go: 'Send Money Menu.html' },
+        { title: 'Straight to the bank', text: 'Move money from your wallet to any bank account in seconds.', img: 'assets/stories/send-2.jpg', cta: 'Send to Bank', go: 'Transfer_Select Bank.html' }
+      ]
+    },
+    bills: {
+      cta: 'Pay a bill', go: 'Pay Bill.html',
+      slides: [
+        { title: 'Pay bills easily', text: 'Electricity, water and DSTV, settled from your sofa.', img: 'assets/stories/bills-1.jpg', cta: 'Pay Bill', go: 'Pay Bill.html' },
+        { title: 'School fees, sorted', text: 'Pay school fees on time without queuing at the bank.', img: 'assets/stories/bills-2.jpg', cta: 'Pay School Fees', go: 'Bill Payment_School.html' },
+        { title: 'A receipt every time', text: 'Get an instant receipt for every bill you pay.', img: 'assets/stories/bills-3.jpg', cta: 'Pay Bill', go: 'Pay Bill.html' }
+      ]
+    }
+  };
+  const STORY_MS = 5000;
+  let story = null, storyAt = 0, storyT0 = 0, storyLeft = STORY_MS, storyTimer = 0, storyHeld = false;
+
+  function openStory(key) {
+    story = STORIES[key];
+    if (!story) return;
+    document.getElementById('storyDots').innerHTML = story.slides.map(() => '<span></span>').join('');
+    document.getElementById('story').classList.add('show');
+    showStorySlide(0);
+  }
+
+  function closeStory() {
+    clearTimeout(storyTimer);
+    document.getElementById('story').classList.remove('show');
+    story = null;
+  }
+
+  function showStorySlide(i) {
+    storyAt = i;
+    const sl = story.slides[i];
+    document.getElementById('storySlide').innerHTML =
+      '<div class="pic"><img src="' + sl.img + '" alt=""></div>' +
+      '<div class="txt"><h2>' + sl.title + '</h2><p>' + sl.text + '</p></div>';
+    document.querySelectorAll('#storyDots span').forEach((d, k) => d.classList.toggle('on', k === i));
+    // Black pill: each slide's own service action (falls back to the story's)
+    const s = story, label = sl.cta || s.cta, target = sl.go || s.go;
+    const cta = document.getElementById('storyCta');
+    cta.innerHTML = label + '<svg viewBox=\"0 0 24 24\"><path d=\"M9 6l6 6-6 6\"/></svg>';
+    cta.onclick = () => { window.location.href = target; };
+    storyLeft = STORY_MS;
+    storyT0 = performance.now();
+    clearTimeout(storyTimer);
+    storyTimer = setTimeout(() => tickStory(performance.now()), 40);
+  }
+
+  function tickStory(now) {
+    if (!story) return;
+    if (storyHeld) { storyT0 = now - (STORY_MS - storyLeft); storyTimer = setTimeout(() => tickStory(performance.now()), 40); return; }
+    const done = Math.min(1, (now - storyT0) / STORY_MS);
+    storyLeft = STORY_MS * (1 - done);
+    if (done >= 1) { storyStep(1); return; }
+    storyTimer = setTimeout(() => tickStory(performance.now()), 40);
+  }
+
+  function storyStep(d) {
+    if (!story) return;
+    const n = storyAt + d;
+    if (n >= story.slides.length) { closeStory(); return; }
+    showStorySlide(Math.max(0, n));
+  }
+
+  function initStory() {
+    const el = document.getElementById('story');
+    if (!el) return;
+    el.addEventListener('pointerdown', e => { if (!e.target.closest('.story-cta, .story-back')) storyHeld = true; });
+    ['pointerup', 'pointerleave', 'pointercancel'].forEach(t => el.addEventListener(t, () => { storyHeld = false; }));
+  }
+
+  // Banner Slider Functionality
+  function initBannerSlider() {
+    const slides = document.querySelectorAll('.banner-slide');
+    const dots = document.querySelectorAll('.banner-dot, .dot');
+    let currentSlide = 0;
+    let slideInterval;
+
+    function goToSlide(index) {
+      slides.forEach((slide, i) => {
+        slide.classList.remove('active');
+        if (dots[i]) dots[i].classList.remove('active');
+      });
+      
+      slides[index].classList.add('active');
+      if (dots[index]) dots[index].classList.add('active');
+      currentSlide = index;
+    }
+
+    function nextSlide() {
+      const next = (currentSlide + 1) % slides.length;
+      goToSlide(next);
+    }
+
+    function startAutoSlide() {
+      slideInterval = setInterval(nextSlide, 4000);
+    }
+
+    function stopAutoSlide() {
+      clearInterval(slideInterval);
+    }
+
+    dots.forEach((dot, index) => {
+      dot.addEventListener('click', () => {
+        goToSlide(index);
+        stopAutoSlide();
+        startAutoSlide();
+      });
+    });
+
+    let touchStartX = 0;
+    let touchEndX = 0;
+    const sliderContainer = document.getElementById('bannerSlidesContainer');
+    
+    if (sliderContainer) {
+      sliderContainer.addEventListener('touchstart', (e) => {
+        touchStartX = e.changedTouches[0].screenX;
+        stopAutoSlide();
+      }, {passive: true});
+
+      sliderContainer.addEventListener('touchend', (e) => {
+        touchEndX = e.changedTouches[0].screenX;
+        handleSwipe();
+        startAutoSlide();
+      }, {passive: true});
+    }
+
+    function handleSwipe() {
+      const swipeThreshold = 50;
+      const diff = touchStartX - touchEndX;
+      
+      if (Math.abs(diff) > swipeThreshold) {
+        if (diff > 0) {
+          nextSlide();
+        } else {
+          const prev = (currentSlide - 1 + slides.length) % slides.length;
+          goToSlide(prev);
+        }
+      }
+    }
+
+    startAutoSlide();
+
+    const bannerSlider = document.querySelector('.banner-slider');
+    if (bannerSlider) {
+      bannerSlider.addEventListener('mouseenter', stopAutoSlide);
+      bannerSlider.addEventListener('mouseleave', startAutoSlide);
+    }
+  }
+
+  // QR FAB Speed-Dial Functionality
+  function initQrFab() {
+    const wrapper = document.getElementById('qrFabWrapper');
+    const btn = document.getElementById('qrFabBtn');
+    const backdrop = document.getElementById('qrFabBackdrop');
+    if (!wrapper || !btn) return;
+
+    let isOpen = false;
+
+    function openMenu() {
+      isOpen = true;
+      wrapper.classList.add('open');
+      btn.setAttribute('aria-expanded', 'true');
+    }
+
+    function closeMenu() {
+      isOpen = false;
+      wrapper.classList.remove('open');
+      btn.setAttribute('aria-expanded', 'false');
+    }
+
+    btn.addEventListener('click', function(e) {
+      e.stopPropagation();
+      isOpen ? closeMenu() : openMenu();
+    });
+
+    if (backdrop) {
+      backdrop.addEventListener('click', closeMenu);
+    }
+
+    const myQrEl = document.getElementById('qrActionMyQR');
+    if (myQrEl) {
+      myQrEl.addEventListener('click', function() {
+        closeMenu();
+        window.location.href = 'My QR Code.html';
+      });
+    }
+
+    const scanEl = document.getElementById('qrActionScan');
+    if (scanEl) {
+      scanEl.addEventListener('click', function() {
+        closeMenu();
+        window.location.href = 'Scan QR.html';
+      });
+    }
+
+    const verifyEl = document.getElementById('qrActionVerify');
+    if (verifyEl) {
+      verifyEl.addEventListener('click', function() {
+        closeMenu();
+        window.location.href = 'Verify Receipt.html';
+      });
+    }
+
+    document.addEventListener('keydown', function(e) {
+      if (e.key === 'Escape' && isOpen) closeMenu();
+    });
+  }
+
+  if (document.readyState === 'complete' || document.readyState === 'interactive') {
+    renderApp();
+  } else {
+    document.addEventListener('DOMContentLoaded', renderApp);
+  }
+</script>
+
+
+<!-- Export to Figma button (shared exporter) -->
+<script src="assets/qrcode.min.js"></script>
+<script>
+  function drawStyledQR(svg, text) {
+    if (!svg || typeof QRCode !== 'function') return;
+    const holder = document.createElement('div');
+    holder.style.cssText = 'position:absolute;left:-9999px;top:-9999px;';
+    document.body.appendChild(holder);
+    const q = new QRCode(holder, { text, width: 64, height: 64, correctLevel: QRCode.CorrectLevel.H });
+    const m = q._oQRCode, n = m.getModuleCount();
+    holder.remove();
+
+    const c = 100 / n, NS = 'http://www.w3.org/2000/svg';
+    const inFinder = (r, k) => (r < 7 && k < 7) || (r < 7 && k >= n - 7) || (r >= n - 7 && k < 7);
+    const mid = n / 2, hole = n * 0.17;   // centre kept clear for the label
+    const inHole = (r, k) => Math.abs(r + 0.5 - mid) < hole && Math.abs(k + 0.5 - mid) < hole * 1.05;
+    let dots = '';
+    for (let r = 0; r < n; r++) for (let k = 0; k < n; k++) {
+      if (!m.isDark(r, k) || inFinder(r, k) || inHole(r, k)) continue;
+      dots += `<rect x="${k * c}" y="${r * c}" width="${c + 0.05}" height="${c + 0.05}"/>`;   // square modules, like a standard QR
+    }
+    const finder = (x, y) => `
+      <rect x="${(x + 0.5) * c}" y="${(y + 0.5) * c}" width="${6 * c}" height="${6 * c}" rx="${2 * c}" fill="none" stroke="#FE353D" stroke-width="${c}"/>
+      <rect x="${(x + 2) * c}" y="${(y + 2) * c}" width="${3 * c}" height="${3 * c}" rx="${1 * c}" fill="#FE353D"/>`;
+    const bw = hole * 2 * c * 1.05, bh = hole * 2 * c * 0.86;
+    svg.innerHTML =
+      `<g fill="#141B2D" shape-rendering="crispEdges">${dots}</g>` + finder(0, 0) + finder(n - 7, 0) + finder(0, n - 7) +
+      `<rect x="${50 - bw / 2}" y="${50 - bh / 2}" width="${bw}" height="${bh}" rx="4" fill="#FFF"/>` +
+      `<text x="50" y="${50 - 1.2}" text-anchor="middle" font-family="Switzer, Inter, sans-serif" font-size="6.6" font-weight="700" fill="#FE353D">TAP</text>` +
+      `<text x="50" y="${50 + 6}" text-anchor="middle" font-family="Switzer, Inter, sans-serif" font-size="5.4" font-weight="700" fill="#141B2D">TO SCAN</text>`;
+  }
+
+  // Balance cards: swipe on touch (native scroll-snap), drag with the mouse; dots follow.
+  // Slide 1 = main balance + Add Money, slide 2 = reward + Errif balances.
+  function initBalanceSlider() {
+    const sl = document.getElementById('balSlider');
+    const dots = [...document.querySelectorAll('#balDots span')];
+    if (!sl) return;
+    const step = () => sl.clientWidth + 10;               // slide width + gap
+    const page = () => Math.round(sl.scrollLeft / step());
+    const go = i => sl.scrollTo({ left: i * step(), behavior: 'smooth' });
+    sl.addEventListener('scroll', () => dots.forEach((d, i) => d.classList.toggle('on', i === page())));
+    dots.forEach((d, i) => d.addEventListener('click', () => go(i)));
+
+    let x0 = null, s0 = 0, moved = false;
+    sl.addEventListener('pointerdown', e => {
+      if (e.pointerType !== 'mouse') return;               // touch uses native scrolling
+      x0 = e.clientX; s0 = sl.scrollLeft; moved = false;
+    });
+    window.addEventListener('pointermove', e => {
+      if (x0 === null) return;
+      const dx = e.clientX - x0;
+      if (Math.abs(dx) > 4) { moved = true; sl.classList.add('dragging'); sl.scrollLeft = s0 - dx; }
+    });
+    window.addEventListener('pointerup', e => {
+      if (x0 === null) return;
+      const dx = e.clientX - x0; x0 = null;
+      if (!moved) return;
+      sl.classList.remove('dragging');
+      const from = Math.round(s0 / step());
+      go(Math.max(0, Math.min(dots.length - 1, from + (dx < -40 ? 1 : dx > 40 ? -1 : 0))));
+    });
+    // A drag shouldn't also press Add Money or the eye
+    sl.addEventListener('click', e => { if (moved) { e.stopPropagation(); e.preventDefault(); moved = false; } }, true);
+  }
+  document.addEventListener('DOMContentLoaded', () => initBalanceSlider());
+
+  // Banner ad beside the QR: next slide every 4s
+  document.addEventListener('DOMContentLoaded', () => {
+    const ad = document.getElementById('stpAd');
+    if (!ad) return;
+    const slides = [...ad.querySelectorAll('.slide')], dots = [...ad.querySelectorAll('.ad-dots i')];
+    let i = 0;
+    setInterval(() => {
+      i = (i + 1) % slides.length;
+      slides.forEach((s, k) => s.classList.toggle('on', k === i));
+      dots.forEach((d, k) => d.classList.toggle('on', k === i));
+    }, 4000);
+  });
+</script>
+<script>
+  // Aster's receive-payment code (what a merchant scans to collect); runs after renderApp
+  document.addEventListener('DOMContentLoaded', () =>
+    drawStyledQR(document.getElementById('heroQrSvg'), 'MPESA-ET|PAY|251770024123|Aster Mequanent'));
+</script>
+<script src="figma-export.js"></script>
+<script src="test-scenarios-data.js"></script>
+<script src="test-scenarios.js"></script>
+</body>
+</html>

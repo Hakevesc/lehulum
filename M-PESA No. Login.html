@@ -753,7 +753,7 @@
 
     if (pin === CORRECT_PIN) {
       sessionStorage.removeItem('pinAttempts');
-      window.location.href = 'Lehulum Home.html';
+      sessionStorage.setItem('lehulumAuth', '1'); window.location.href = 'Lehulum Home.html';
       return;
     }
 

@@ -4,6 +4,13 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>M-PESA App</title>
+<script>
+  // Home needs a signed-in session: send anyone who hasn't entered their PIN (or used biometrics) to the login screen.
+  if (sessionStorage.getItem('lehulumAuth') !== '1') {
+    sessionStorage.setItem('lehulumReturn', decodeURIComponent(location.pathname.split('/').pop()));
+    location.replace('Lehulum Login.html');
+  }
+</script>
 
 <!-- ============================================================
      Design System & Component Styles
@@ -22,30 +29,44 @@
 
 <style>
   /* ---------- Banner ad story ----------
-     Tapping a home banner opens it as a full-screen story: progress bars on
-     top, a big headline, the picture, and one call to action at the foot. */
+     Tapping a home banner opens a full-screen story: round close (X), step dots,
+     the picture in a rounded card, a big bold title, a grey line, and a
+     black pill with that slide's service action. Slides still
+     advance on their own; tap left/right to move, hold to pause. */
   .banner-slide { cursor: pointer; }
-  .story { position: absolute; inset: 0; z-index: 200; overflow: hidden; background: #FFFFFF; opacity: 0; visibility: hidden; transform: scale(0.96); transition: opacity 0.22s ease, transform 0.22s ease, visibility 0.22s; }
+  .story { position: absolute; inset: 0; z-index: 200; overflow: hidden; background: #000; opacity: 0; visibility: hidden; transform: scale(0.96); transition: opacity 0.22s ease, transform 0.22s ease, visibility 0.22s; }
+  .story::before { content: ''; position: absolute; inset: 8px; border-radius: 28px; background: #FFF; box-shadow: 0 -8px 22px rgba(0,0,0,0.12); }
   .story.show { opacity: 1; visibility: visible; transform: none; }
-  .story-bars { position: absolute; top: 14px; left: 14px; right: 14px; display: flex; gap: 5px; z-index: 3; }
-  .story-bars span { flex: 1; height: 3px; border-radius: 2px; background: rgba(28, 28, 33, 0.15); overflow: hidden; }
-  .story-bars i { display: block; height: 100%; width: 0; background: #1C1C21; }
-  .story-x { position: absolute; top: 30px; right: 12px; width: 40px; height: 40px; border: 0; background: none; z-index: 4; cursor: pointer; display: flex; align-items: center; justify-content: center; }
-  .story-x svg { width: 24px; height: 24px; stroke: #1C1C21; stroke-width: 2.2; fill: none; stroke-linecap: round; }
-  .story-slide { position: absolute; inset: 0; display: flex; flex-direction: column; }
-  .story-slide .txt { padding: 88px 24px 0; text-align: center; color: #1C1C21; animation: storyIn 0.35s ease; }
-  .story-slide h2 { font-family: 'Switzer', 'Inter', sans-serif; font-size: 34px; font-weight: 800; line-height: 1.02; letter-spacing: -0.5px; text-transform: uppercase; }
-  .story-slide p { margin-top: 14px; font-size: 15.5px; line-height: 1.4; color: #3A3A42; }
-  .story-slide .pic { position: relative; flex: 1; min-height: 0; margin: 14px 0 96px; animation: storyIn 0.45s ease; }
-  .story-slide .pic img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; object-position: center bottom; display: block; mix-blend-mode: multiply; /* melts the picture's off-white backdrop into the page */ }
+  .story-back { position: absolute; top: 33px; left: calc(2% + 14px); width: 44px; height: 44px; border: 0; border-radius: 50%; background: #F1F1F4; z-index: 4; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+  .story-back svg { width: 20px; height: 20px; stroke: #1C1C21; stroke-width: 2.4; fill: none; stroke-linecap: round; stroke-linejoin: round; }
+  .story-dots { position: absolute; top: 54px; left: 2%; right: 2%; display: flex; justify-content: center; align-items: center; gap: 5px; z-index: 3; pointer-events: none; }
+  .story-dots span { width: 7px; height: 7px; border-radius: 4px; background: #D3D3DA; transition: width 0.25s ease, background 0.25s ease; }
+  .story-dots span.on { width: 28px; background: #FE353D; }
+  .story-slide { position: absolute; inset: 8px; z-index: 1; display: flex; flex-direction: column; align-items: center; padding: 93px 18px 120px; }
+  .story-slide .pic { position: relative; width: 100%; flex: 1; min-height: 0; max-height: 360px; border-radius: 28px; overflow: hidden; background: #FFF; box-shadow: 0 18px 44px rgba(15,23,42,0.12), 0 2px 8px rgba(15,23,42,0.05); animation: storyIn 0.4s ease; }
+  .story-slide .pic img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: center 35%; display: block; }
+  .story-slide .txt { text-align: center; color: #1C1C21; margin-top: 34px; animation: storyIn 0.45s ease; }
+  .story-slide h2 { font-family: 'Switzer', 'Inter', sans-serif; font-size: 40px; font-weight: 800; line-height: 1.0; letter-spacing: -1.2px; }
+  .story-slide p { margin: 14px auto 0; max-width: 270px; font-family: 'Switzer', 'Inter', sans-serif; font-size: 16px; line-height: 1.4; color: #8A8A94; }
   @keyframes storyIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
-  .story-tap { position: absolute; top: 70px; bottom: 100px; border: 0; background: none; z-index: 2; cursor: pointer; }
+  .story-tap { position: absolute; top: 76px; bottom: 110px; border: 0; background: none; z-index: 2; cursor: pointer; }
   .story-tap.prev { left: 0; width: 33%; }
   .story-tap.next { right: 0; width: 67%; }
-  .story-cta { position: absolute; left: 24px; right: 24px; bottom: 28px; height: 54px; border: 0; border-radius: 27px; background: #FE353D; color: #FFFFFF; font-family: 'Poppins', 'Inter', sans-serif; font-size: 16px; font-weight: 600; z-index: 4; cursor: pointer; box-shadow: 0 8px 20px rgba(254, 53, 61, 0.3); }
-  .story-cta:active { transform: scale(0.98); }
+  .story-cta { position: absolute; left: 50%; bottom: 36px; transform: translateX(-50%); height: 56px; padding: 0 26px 0 30px; border: 0; border-radius: 28px; background: #FE353D; color: #FFFFFF; font-family: 'Poppins', 'Inter', sans-serif; font-size: 16px; font-weight: 600; z-index: 4; cursor: pointer; display: flex; align-items: center; gap: 8px; white-space: nowrap; box-shadow: 0 10px 24px rgba(254,53,61,0.32); }
+  .story-cta svg { width: 18px; height: 18px; stroke: currentColor; stroke-width: 2.4; fill: none; stroke-linecap: round; stroke-linejoin: round; }
+  .story-cta:active { transform: translateX(-50%) scale(0.97); }
 </style>
 
+
+<style>
+  /* Home actions: 6 tiles show as the usual 3 x 2 grid. With 7-8 tiles the grid
+     turns into 4 per row at the same height (smaller icons and labels). */
+  .actions.actions-8:has(> :nth-child(7)) { grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 4px 0; padding: 10px 4px; }
+  .actions.actions-8:has(> :nth-child(7)) .primary-action { height: 112px; gap: 6px; padding: 0 2px; }
+  .actions.actions-8:has(> :nth-child(7)) .icon-container { width: 44px; height: 44px; }
+  .actions.actions-8:has(> :nth-child(7)) .icon-container img { width: 36px !important; height: 36px !important; }
+  .actions.actions-8:has(> :nth-child(7)) .label { font-size: 12.5px; line-height: 1.2; min-height: 30px; }
+</style>
 <link rel="stylesheet" href="styles/device.css">
 <style>
   /* Phones: the device draws its own status bar, so drop the extra top padding above the greeting */
@@ -116,12 +137,12 @@
         <div id="announcementTipContainer"></div>
         <div id="announcementModalContainer"></div>
 
-        <!-- Banner ad story: full screen, slides with progress bars, one call to action -->
+        <!-- Banner ad story: Close, step dots, picture card, title, Next -->
         <div class="story" id="story" aria-hidden="true">
-          <div class="story-bars" id="storyBars"></div>
-          <button class="story-x" onclick="closeStory()" aria-label="Close">
-            <svg viewBox="0 0 24 24"><path d="M5.5 5.5 18.5 18.5M18.5 5.5 5.5 18.5"/></svg>
+          <button class="story-back" onclick="closeStory()" aria-label="Close">
+            <svg viewBox="0 0 24 24"><path d="M18 6 6 18M6 6l12 12"/></svg>
           </button>
+          <div class="story-dots" id="storyDots"></div>
           <div class="story-slide" id="storySlide"></div>
           <button class="story-tap prev" onclick="storyStep(-1)" aria-label="Previous"></button>
           <button class="story-tap next" onclick="storyStep(1)" aria-label="Next"></button>
@@ -168,7 +189,7 @@
               <div class="header"><span class="label">Main Balance (ETB)</span></div>
               <div class="amount" id="mainBalance" data-value="12,580.00">* * * * * *</div>
             </div>
-            <button class="add-money-btn" onclick="window.location.href='Cash In.html'">
+            <button class="add-money-btn" onclick="window.location.href='Cash In - Amount First.html'">
               <div class="plus-icon">
                 <svg viewBox="0 0 12 12" fill="none"><path d="M6 1V11M1 6H11" stroke="white" stroke-width="1.5" stroke-linecap="round"/></svg>
               </div>
@@ -194,37 +215,40 @@
       </div>
     `,
 
+    // Ordered by how often each is used. Six tiles in the usual 3 x 2 grid for
+    // now; the grid switches itself to 4 per row once a 7th or 8th tile is
+    // added, keeping the same height, so the home page doesn't change shape.
     actions: `
-      <div class="actions">
-        <div class="primary-action" onclick="window.location.href='Pay Merchant.html'" style="cursor:pointer">
-          <div class="icon-container">
-            <img src="assets/Merchant Payemnt.svg" alt="Merchant Payment" style="width:40px;height:40px;object-fit:contain;">
-          </div>
-          <span class="label">Merchant<br>Payment</span>
-        </div>
-        <div class="primary-action" onclick="window.location.href='Pay Bill.html'" style="cursor:pointer">
-          <div class="icon-container">
-            <img src="assets/Bill Payment.svg" alt="Bill Payment" style="width:40px;height:40px;object-fit:contain;">
-          </div>
-          <span class="label">Bill<br>Payment</span>
-        </div>
-        <div class="primary-action" onclick="window.location.href='Credit & Saving.html'" style="cursor:pointer">
-          <div class="icon-container">
-            <img src="assets/Credit Saving.svg" alt="Credit & Saving" style="width:40px;height:40px;object-fit:contain;">
-          </div>
-          <span class="label">Credit &<br>Saving</span>
-        </div>
+      <div class="actions actions-8">
         <div class="primary-action" onclick="window.location.href='Send Money Menu.html'" style="cursor:pointer">
           <div class="icon-container">
             <img src="assets/Transfer Money.svg" alt="Transfer Money" style="width:40px;height:40px;object-fit:contain;">
           </div>
           <span class="label">Transfer<br>Money</span>
         </div>
+        <div class="primary-action" onclick="window.location.href='Pay Bill.html'" style="cursor:pointer">
+          <div class="icon-container">
+            <img src="assets/Bill Payment.svg" alt="Make Payments" style="width:40px;height:40px;object-fit:contain;">
+          </div>
+          <span class="label">Make<br>Payments</span>
+        </div>
+        <div class="primary-action" onclick="window.location.href='Credit & Saving.html?tab=credit'" style="cursor:pointer">
+          <div class="icon-container">
+            <img src="assets/Credit.svg" alt="Get Credit" style="width:40px;height:40px;object-fit:contain;">
+          </div>
+          <span class="label">Get<br>Credit</span>
+        </div>
+        <div class="primary-action" onclick="window.location.href='Credit & Saving.html?tab=saving'" style="cursor:pointer">
+          <div class="icon-container">
+            <img src="assets/Saving.svg" alt="My Savings" style="width:40px;height:40px;object-fit:contain;">
+          </div>
+          <span class="label">My<br>Savings</span>
+        </div>
         <div class="primary-action" onclick="window.location.href='Airtime_Buy.html'" style="cursor:pointer">
           <div class="icon-container">
-            <img src="assets/Airtime Package.svg" alt="Airtime/Package" style="width:40px;height:40px;object-fit:contain;">
+            <img src="assets/Airtime Package.svg" alt="Airtime/Data" style="width:40px;height:40px;object-fit:contain;">
           </div>
-          <span class="label">Airtime/<br>Package</span>
+          <span class="label">Airtime/<br>Data</span>
         </div>
         <div class="primary-action" onclick="window.location.href='More Services.html'" style="cursor:pointer">
           <div class="icon-container">
@@ -684,24 +708,24 @@
     all: {
       cta: 'Get started', go: 'More Services.html',
       slides: [
-        { title: 'Do it all with <span style="white-space:nowrap">M-PESA</span>', text: 'Send, pay, buy airtime and settle bills, all from one app.', img: 'assets/stories/all-1.jpg' },
-        { title: 'Pay in a scan', text: 'Scan the merchant QR and pay in seconds, no cash needed.', img: 'assets/stories/all-2.jpg' },
-        { title: 'Everything in one place', text: 'Airtime, packages, bills and transfers, right where you need them.', img: 'assets/stories/all-3.jpg' }
+        { title: 'Do it all with <span style="white-space:nowrap">M-PESA</span>', text: 'Send, pay, buy airtime and settle bills, all from one app.', img: 'assets/stories/all-1.jpg', cta: 'Explore Services', go: 'More Services.html' },
+        { title: 'Pay in a scan', text: 'Scan the merchant QR and pay in seconds, no cash needed.', img: 'assets/stories/all-2.jpg', cta: 'Pay Merchant', go: 'Pay Merchant.html' },
+        { title: 'Everything in<br>one place', text: 'Airtime, packages, bills and transfers, right where you need them.', img: 'assets/stories/all-3.jpg', cta: 'Buy Airtime', go: 'Airtime_Buy.html' }
       ]
     },
     send: {
       cta: 'Send money', go: 'Send Money Menu.html',
       slides: [
-        { title: 'Send money anywhere', text: 'Transfer to any M-PESA user instantly, day or night.', img: 'assets/stories/send-1.jpg' },
-        { title: 'Straight to the bank', text: 'Move money from your wallet to any bank account in seconds.', img: 'assets/stories/send-2.jpg' }
+        { title: 'Send money anywhere', text: 'Transfer to any M-PESA user instantly, day or night.', img: 'assets/stories/send-1.jpg', cta: 'Send Money', go: 'Send Money Menu.html' },
+        { title: 'Straight to the bank', text: 'Move money from your wallet to any bank account in seconds.', img: 'assets/stories/send-2.jpg', cta: 'Send to Bank', go: 'Transfer_Select Bank.html' }
       ]
     },
     bills: {
       cta: 'Pay a bill', go: 'Pay Bill.html',
       slides: [
-        { title: 'Pay bills easily', text: 'Electricity, water and DSTV, settled from your sofa.', img: 'assets/stories/bills-1.jpg' },
-        { title: 'School fees, sorted', text: 'Pay school fees on time without queuing at the bank.', img: 'assets/stories/bills-2.jpg' },
-        { title: 'A receipt every time', text: 'Get an instant receipt for every bill you pay.', img: 'assets/stories/bills-3.jpg' }
+        { title: 'Pay bills easily', text: 'Electricity, water and DSTV, settled from your sofa.', img: 'assets/stories/bills-1.jpg', cta: 'Pay Bill', go: 'Pay Bill.html' },
+        { title: 'School fees, sorted', text: 'Pay school fees on time without queuing at the bank.', img: 'assets/stories/bills-2.jpg', cta: 'Pay School Fees', go: 'Bill Payment_School.html' },
+        { title: 'A receipt every time', text: 'Get an instant receipt for every bill you pay.', img: 'assets/stories/bills-3.jpg', cta: 'Pay Bill', go: 'Pay Bill.html' }
       ]
     }
   };
@@ -711,10 +735,7 @@
   function openStory(key) {
     story = STORIES[key];
     if (!story) return;
-    document.getElementById('storyBars').innerHTML = story.slides.map(() => '<span><i></i></span>').join('');
-    const s = story;
-    document.getElementById('storyCta').textContent = s.cta;
-    document.getElementById('storyCta').onclick = () => { window.location.href = s.go; };
+    document.getElementById('storyDots').innerHTML = story.slides.map(() => '<span></span>').join('');
     document.getElementById('story').classList.add('show');
     showStorySlide(0);
   }
@@ -729,9 +750,14 @@
     storyAt = i;
     const sl = story.slides[i];
     document.getElementById('storySlide').innerHTML =
-      '<div class="txt"><h2>' + sl.title + '</h2><p>' + sl.text + '</p></div>' +
-      '<div class="pic"><img src="' + sl.img + '" alt=""></div>';
-    document.querySelectorAll('#storyBars i').forEach((b, k) => { b.style.width = k < i ? '100%' : '0'; });
+      '<div class="pic"><img src="' + sl.img + '" alt=""></div>' +
+      '<div class="txt"><h2>' + sl.title + '</h2><p>' + sl.text + '</p></div>';
+    document.querySelectorAll('#storyDots span').forEach((d, k) => d.classList.toggle('on', k === i));
+    // Black pill: each slide's own service action (falls back to the story's)
+    const s = story, label = sl.cta || s.cta, target = sl.go || s.go;
+    const cta = document.getElementById('storyCta');
+    cta.innerHTML = label + '<svg viewBox=\"0 0 24 24\"><path d=\"M9 6l6 6-6 6\"/></svg>';
+    cta.onclick = () => { window.location.href = target; };
     storyLeft = STORY_MS;
     storyT0 = performance.now();
     clearTimeout(storyTimer);
@@ -743,7 +769,6 @@
     if (storyHeld) { storyT0 = now - (STORY_MS - storyLeft); storyTimer = setTimeout(() => tickStory(performance.now()), 40); return; }
     const done = Math.min(1, (now - storyT0) / STORY_MS);
     storyLeft = STORY_MS * (1 - done);
-    document.querySelectorAll('#storyBars i')[storyAt].style.width = (done * 100) + '%';
     if (done >= 1) { storyStep(1); return; }
     storyTimer = setTimeout(() => tickStory(performance.now()), 40);
   }
@@ -758,7 +783,7 @@
   function initStory() {
     const el = document.getElementById('story');
     if (!el) return;
-    el.addEventListener('pointerdown', e => { if (!e.target.closest('.story-cta, .story-x')) storyHeld = true; });
+    el.addEventListener('pointerdown', e => { if (!e.target.closest('.story-cta, .story-back')) storyHeld = true; });
     ['pointerup', 'pointerleave', 'pointercancel'].forEach(t => el.addEventListener(t, () => { storyHeld = false; }));
   }
 

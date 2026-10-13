@@ -59,16 +59,6 @@
   @keyframes spin { to { transform: rotate(360deg); } }
 
   /* ── Frequent transactions ── */
-  .frequent-card { background: #FFF; border-radius: 16px; padding: 16px; box-shadow: 0 2px 8px rgba(0,0,0,0.04); display: flex; flex-direction: column; gap: 10px; flex-shrink: 0; }
-  .frequent-title { font-family: 'Switzer', sans-serif; font-size: 15px; font-weight: 700; color: var(--On-Surface); }
-  .frequent-list { display: flex; flex-direction: column; gap: 4px; }
-  .frequent-item { display: flex; align-items: center; gap: 12px; padding: 8px 0; cursor: pointer; border-radius: 10px; transition: background 0.15s; }
-  .frequent-item:hover { background: #FAFAFA; }
-  .frequent-item .logo { width: 44px; height: 44px; border-radius: 50%; background: #FFF; display: flex; align-items: center; justify-content: center; overflow: hidden; flex-shrink: 0; box-shadow: 0 2px 6px rgba(0,0,0,0.14); }
-  .frequent-item .logo img { width: 100%; height: 100%; object-fit: contain; }
-  .frequent-item .info { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px; }
-  .frequent-item .nm { font-family: 'Switzer', sans-serif; font-size: 14px; font-weight: 500; color: var(--On-Surface); }
-  .frequent-item .sub { font-family: 'Switzer', sans-serif; font-size: 12px; color: var(--On-Surface-Low); }
   .chev { width: 18px; height: 18px; stroke: var(--Primary); stroke-width: 2.4; fill: none; flex-shrink: 0; }
 
   .bottom-bar { flex-shrink: 0; padding: 10px 16px 18px; background: var(--Background); }
@@ -123,11 +113,6 @@
         </div>
       </div>
 
-      <div class="frequent-card">
-        <span class="frequent-title">Frequent Transactions</span>
-        <div class="frequent-list" id="frequentList"></div>
-      </div>
-
     </div>
 
     <div class="bottom-bar">
@@ -147,7 +132,6 @@
     '7043928119': { name: 'Yonas Abebe',          package: 'Compact Plus', addons: 'Add-Ons', due: 980 }
   };
 
-  const FREQUENT = ['7043928115', '7043928116', '7043928117', '7043928118', '7043928119'];
   const CARD_LEN = 10;
   const LOGO = 'assets/bill pay logos/dstv_logo.png';
 
@@ -155,19 +139,6 @@
 
   let subscriber = null;
   let lookupTimer = null;
-
-  $('frequentList').innerHTML = FREQUENT.map(num => {
-    const c = CARDS[num];
-    if (!c) return '';
-    return '<div class="frequent-item" onclick="useFrequent(\'' + num + '\')">' +
-      '<span class="logo"><img src="' + LOGO + '" alt=""></span>' +
-      '<span class="info">' +
-        '<span class="nm">' + c.name + '</span>' +
-        '<span class="sub">' + num + '</span>' +
-      '</span>' +
-      '<svg class="chev" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>' +
-    '</div>';
-  }).join('');
 
   function resetLookup() {
     subscriber = null;
@@ -205,15 +176,6 @@
     }, 1200);
   }
 
-  function useFrequent(num) {
-    // The card is already known — skip the lookup and jump to the account screen.
-    const c = CARDS[num];
-    if (!c) return;
-    subscriber = Object.assign({ account: num }, c);
-    sessionStorage.setItem('dstvSubscriber', JSON.stringify(subscriber));
-    window.location.href = 'Bill Payment_DSTV.html';
-  }
-
   function updateBtn() {
     const ok = !!subscriber;
     $('continueBtn').classList.toggle('active', ok);
@@ -222,6 +184,7 @@
 
   function continueToServices() {
     if (!subscriber) return;
+    SavedAccounts.remember('dstvSavedAccounts', { number: subscriber.account, customer: subscriber.name, tag: 'Smart Card' });
     sessionStorage.setItem('dstvSubscriber', JSON.stringify(subscriber));
     window.location.href = 'Bill Payment_DSTV.html';
   }
@@ -229,6 +192,16 @@
   function goBack() { window.location.href = 'Pay Bill.html'; }
 </script>
 
+<script src="components/saved-accounts.js"></script>
+<script>
+  // Saved smart cards (replaces the old fixed "Frequent Transactions" list)
+  SavedAccounts.mount({
+    key: 'dstvSavedAccounts',
+    host: document.querySelector('.scroll'),
+    logo: LOGO,
+    onPick: a => { $('cardInput').value = a.number; onCardInput(); }
+  });
+</script>
 <script src="figma-export.js"></script>
 <script src="test-scenarios-data.js"></script>
 <script src="test-scenarios.js"></script>

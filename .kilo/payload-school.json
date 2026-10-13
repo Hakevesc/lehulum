@@ -1,0 +1,32 @@
+{
+  "plan": "school",
+  "planLabel": "",
+  "biller": {
+    "name": "Addise Abebe Academy",
+    "fullName": "Addise Abebe Academy",
+    "category": "Education",
+    "abbr": "AAA",
+    "logo": "assets/bill pay logos/webirr.png"
+  },
+  "account": "STU-04521",
+  "customerName": "Derartu Tulu Andegna",
+  "rows": [
+    { "key": "School Name", "value": "Addise Abebe Academy" },
+    { "key": "School Code", "value": "AAA-001" },
+    { "key": "Fee Type", "value": "School Fee - 30,000.00 Br" }
+  ],
+  "receiptRows": [
+    { "key": "School Code", "value": "AAA-001" },
+    { "key": "Student ID", "value": "STU-04521" },
+    { "key": "Fee Type", "value": "School Fee - 30,000.00 Br" }
+  ],
+  "txType": "School Payment",
+  "payAmount": "30000.00",
+  "fullAmount": "30000.00",
+  "fee": "2.00",
+  "serviceFee": "2.00",
+  "vat": "5.00",
+  "total": "30002.00",
+  "payAccount": "main",
+  "payerName": "Abebeb Bikila Maraton"
+}

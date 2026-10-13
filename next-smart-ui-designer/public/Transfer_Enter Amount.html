@@ -1,0 +1,494 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Transfer to Bank - Account</title>
+<style>
+    @import url("styles/component-keypad.css");
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@400;500;600&display=swap');
+  @import url('https://api.fontshare.com/v2/css?f[]=switzer@400,500,600,700&display=swap');
+
+  :root {
+    --Primary: #FE353D;
+    --Primary-Dark: #C41520;
+    --Primary-Darker: #A41016;
+    --Primary-Light: #FFF1F2;
+    --On-Surface: #1C1C21;
+    --On-Surface-Low: #7C7C87;
+    --Surface-Container: #FCFCFC;
+    --Gray-0: #FFF;
+    --On-Primary: #FFF1F2;
+    --Success: #1FC83B;
+    --Success-Light: #E8F9EC;
+    --Border: #E8E8EC;
+    --Background: #F5F5F5;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Inter', sans-serif;
+    background: transparent;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    padding: 20px;
+  }
+
+  .phone-frame {
+    width: 360px;
+    height: 780px;
+    background: var(--Background);
+    border-radius: 30px;
+    overflow: hidden;
+    position: relative;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
+  }
+
+  .app-content {
+    height: 100%;
+    overflow-y: auto;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+  }
+  .app-content::-webkit-scrollbar { width: 0; }
+
+  /* Status Bar (like Lehulum Home) */
+  .status-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    padding: 14px 24px 8px;
+    background: var(--Background);
+  }
+  .status-bar .time { font-size: 14px; font-weight: 600; color: var(--On-Surface); }
+  .status-icons { display: flex; align-items: center; gap: 6px; }
+  .status-icons svg { width: 18px; height: 18px; }
+
+  /* Header Navigation (like Manage Statement) */
+  .header-nav {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 8px 16px 12px;
+    background: var(--Background);
+  }
+
+  .back-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .back-btn:hover { background: rgba(0,0,0,0.05); }
+  .back-btn svg {
+    width: 22px;
+    height: 22px;
+    stroke: var(--On-Surface);
+    stroke-width: 1.8px;
+  }
+
+  .header-title {
+    color: var(--On-Surface);
+    font-family: 'Switzer', sans-serif;
+    font-size: 17px;
+    font-weight: 500;
+    letter-spacing: 0.3px;
+    flex: 1;
+    text-align: center;
+  }
+
+  /* Main Content */
+  .main-content {
+    padding: 16px 20px 20px;
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    width: 100%;
+    gap: 14px;
+  }
+
+  /* ===== RECIPIENT CARD (bank already chosen; resolves as account is entered) ===== */
+  .recipient-card {
+    background: #FFF;
+    border-radius: 16px;
+    padding: 14px 16px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+    border: 1.5px solid var(--Border);
+    transition: border-color 0.25s;
+  }
+  .recipient-card.resolved { border-color: var(--Success); }
+
+  .recipient-avatar {
+    width: 46px;
+    height: 46px;
+    border-radius: 50%;
+    background: #E8E8EC;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    transition: background 0.25s;
+  }
+  .recipient-avatar svg { width: 22px; height: 22px; stroke: var(--On-Surface-Low); stroke-width: 2; transition: stroke 0.25s; }
+  .recipient-card.resolved .recipient-avatar { background: var(--Success-Light); }
+  .recipient-card.resolved .recipient-avatar svg { stroke: var(--Success); }
+
+  .recipient-info { flex: 1; display: flex; flex-direction: column; gap: 3px; min-width: 0; }
+
+  .recipient-name {
+    color: var(--On-Surface-Low);
+    font-family: 'Switzer', sans-serif;
+    font-size: 15px;
+    font-weight: 600;
+    letter-spacing: 0.2px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    transition: color 0.25s;
+  }
+  .recipient-card.resolved .recipient-name { color: var(--On-Surface); }
+
+  .recipient-sub {
+    color: var(--On-Surface-Low);
+    font-family: 'Switzer', sans-serif;
+    font-size: 12px;
+    font-weight: 400;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .recipient-card.resolved .recipient-sub { color: var(--Success); font-weight: 600; }
+
+  .recipient-sub .check {
+    display: none;
+    width: 14px;
+    height: 14px;
+    stroke: var(--Success);
+    stroke-width: 3;
+    flex-shrink: 0;
+  }
+  .recipient-card.resolved .recipient-sub .check { display: inline-block; }
+
+  .recipient-bank-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 10px;
+    overflow: hidden;
+    background: #F5F5F5;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+  .recipient-bank-icon img { width: 100%; height: 100%; object-fit: contain; padding: 4px; }
+  .recipient-bank-icon svg { width: 22px; height: 22px; stroke: var(--On-Surface-Low); stroke-width: 2; }
+
+  /* Account Number Input */
+  .account-input-wrapper {
+    height: 52px;
+    background: #FFF;
+    border-radius: 14px;
+    padding: 0 16px;
+    display: flex;
+    align-items: center;
+    border: 1.5px solid var(--Border);
+    transition: all 0.2s;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+  }
+  .account-input-wrapper:focus-within {
+    border-color: var(--Primary);
+    box-shadow: 0 4px 12px rgba(254, 53, 61, 0.15);
+  }
+
+  .account-input {
+    flex: 1;
+    border: none;
+    background: transparent;
+    font-family: 'Switzer', sans-serif;
+    font-size: 18px;
+    font-weight: 500;
+    color: var(--On-Surface);
+    outline: none;
+    letter-spacing: 1px;
+  }
+  .account-input::placeholder { color: var(--On-Surface-Low); font-weight: 400; letter-spacing: 0; }
+
+  /* Fetching State */
+  .fetching-state {
+    display: none;
+    align-items: center;
+    gap: 10px;
+    padding: 2px;
+    color: var(--On-Surface-Low);
+    font-family: 'Switzer', sans-serif;
+    font-size: 13px;
+    font-weight: 400;
+  }
+  .fetching-state.show { display: flex; }
+
+  .spinner {
+    width: 16px;
+    height: 16px;
+    border: 2px solid var(--Border);
+    border-top-color: var(--Primary);
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* Bottom Section (pushes keypad + button to bottom) */
+  .bottom-section {
+    margin-top: auto;
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* Continue Button */
+  .continue-btn {
+    height: 52px;
+    border-radius: 14px;
+    border: none;
+    background: #E0E0E0;
+    color: var(--On-Surface-Low);
+    font-family: 'Poppins', sans-serif;
+    font-size: 15px;
+    font-weight: 500;
+    cursor: not-allowed;
+    transition: all 0.2s;
+    margin-top: 14px;
+  }
+  .continue-btn.active {
+    background: var(--Primary);
+    color: #FFF;
+    cursor: pointer;
+    box-shadow: 0 4px 16px rgba(254, 53, 61, 0.25);
+  }
+  .continue-btn.active:hover {
+    background: #E5303A;
+    box-shadow: 0 6px 20px rgba(254, 53, 61, 0.35);
+    transform: translateY(-1px);
+  }
+  .continue-btn.active:active { transform: scale(0.98) translateY(0); }
+</style>
+</head>
+<body>
+
+<div class="phone-frame">
+  <div class="app-content">
+
+    <!-- Status Bar (like Lehulum Home) -->
+    <div class="status-bar">
+      <span class="time">10:00</span>
+      <div class="status-icons">
+        <svg viewBox="0 0 24 24" fill="none"><path d="M1 9l2 2c4.97-4.97 13.03-4.97 18 0l2-2C16.93 2.93 7.08 2.93 1 9z" fill="#1C1C21"/><path d="M5 13l2 2c2.76-2.76 7.24-2.76 10 0l2-2C15.14 9.14 8.87 9.14 5 13z" fill="#1C1C21"/><path d="M9 17l2 2c1.1-1.1 2.9-1.1 4 0l2-2c-2.21-2.21-5.79-2.21-8 0z" fill="#1C1C21"/></svg>
+        <svg viewBox="0 0 24 24" fill="none"><rect x="2" y="6" width="4" height="12" rx="1" fill="#1C1C21"/><rect x="8" y="4" width="4" height="14" rx="1" fill="#1C1C21"/><rect x="14" y="2" width="4" height="16" rx="1" fill="#1C1C21"/><rect x="20" y="0" width="4" height="18" rx="1" fill="#1C1C21" opacity="0.3"/></svg>
+        <svg viewBox="0 0 28 14" fill="none"><rect x="0" y="1" width="22" height="12" rx="2.5" stroke="#1C1C21" stroke-width="1.5"/><rect x="2" y="3" width="16" height="8" rx="1" fill="#1C1C21"/><rect x="24" y="4" width="2" height="6" rx="1" fill="#1C1C21"/></svg>
+      </div>
+    </div>
+
+    <!-- Header Navigation (like Manage Statement) -->
+    <div class="header-nav">
+      <button class="back-btn" onclick="goBack()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M19 12H5M12 19l-7-7 7-7"/>
+        </svg>
+      </button>
+      <span class="header-title">Transfer to Bank</span>
+      <div style="width: 36px;"></div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+
+      <!-- Recipient Card (bank is already chosen; name resolves as account is entered) -->
+      <div class="recipient-card" id="recipientCard">
+        <div class="recipient-avatar">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+            <circle cx="12" cy="7" r="4"/>
+          </svg>
+        </div>
+        <div class="recipient-info">
+          <span class="recipient-name" id="recipientName">Recipient name</span>
+          <span class="recipient-sub" id="recipientSub">
+            <svg class="check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+            <span id="recipientSubText">Enter account number</span>
+          </span>
+        </div>
+        <div class="recipient-bank-icon" id="recipientBankIcon">
+          <img id="recipientBankLogo" src="assets/banks logo/awass-bank.png" alt="Awash Bank" onerror="this.style.display='none'">
+        </div>
+      </div>
+
+      <!-- Account Number Input -->
+      <div class="account-input-wrapper">
+        <input type="tel" class="account-input" id="accountInput" placeholder="Account Number" maxlength="15" oninput="handleAccountInput()">
+      </div>
+
+      <!-- Fetching State -->
+      <div class="fetching-state" id="fetchingState">
+        <div class="spinner"></div>
+        <span>Fetching account name…</span>
+      </div>
+
+      <!-- Bottom Section: keypad + button at bottom -->
+      <div class="bottom-section">
+
+        <div class="keypad">
+          <button class="key" onclick="pressKey('1')">1</button>
+          <button class="key" onclick="pressKey('2')">2</button>
+          <button class="key" onclick="pressKey('3')">3</button>
+          <button class="key" onclick="pressKey('4')">4</button>
+          <button class="key" onclick="pressKey('5')">5</button>
+          <button class="key" onclick="pressKey('6')">6</button>
+          <button class="key" onclick="pressKey('7')">7</button>
+          <button class="key" onclick="pressKey('8')">8</button>
+          <button class="key" onclick="pressKey('9')">9</button>
+          <button class="key empty"></button>
+          <button class="key" onclick="pressKey('0')">0</button>
+          <button class="key delete" onclick="deleteKey()">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M21 4H8l-7 8 7 8h13a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2z"></path>
+              <line x1="18" y1="9" x2="12" y2="15"></line>
+              <line x1="12" y1="9" x2="18" y2="15"></line>
+            </svg>
+          </button>
+        </div>
+
+        <!-- Continue Button -->
+        <button class="continue-btn" id="continueBtn" onclick="continueTransfer()" disabled>Continue</button>
+
+      </div>
+
+    </div>
+
+  </div>
+</div>
+
+<script>
+  let accountResolved = false;
+  let resolvedName = '';
+  let maskedAccount = '';
+  let typingTimeout;
+  let bankInfo = { name: 'Awash Bank', logo: 'assets/banks logo/awass-bank.png' };
+
+  const sampleNames = ['Kidist Birhanu', 'Abel Tesfaye', 'Marta Solomon', 'Yonas Girma', 'Hanna Bekele', 'Samuel Desta'];
+
+  // ── Account entry & resolution ──
+  function handleAccountInput() {
+    const input = document.getElementById('accountInput');
+    const fetchingState = document.getElementById('fetchingState');
+    clearTimeout(typingTimeout);
+
+    // Editing the account resets the resolved state
+    if (accountResolved) {
+      accountResolved = false;
+      document.getElementById('recipientCard').classList.remove('resolved');
+      document.getElementById('recipientName').textContent = 'Recipient name';
+      document.getElementById('recipientSubText').textContent = bankInfo.name;
+      checkContinueButton();
+    }
+
+    if (input.value.length >= 8) {
+      typingTimeout = setTimeout(() => {
+        fetchingState.classList.add('show');
+        setTimeout(() => {
+          fetchingState.classList.remove('show');
+          showAccountFound(input.value);
+        }, 1200);
+      }, 600);
+    } else {
+      checkContinueButton();
+    }
+  }
+
+  function showAccountFound(accountValue) {
+    accountResolved = true;
+    resolvedName = sampleNames[Math.floor(Math.random() * sampleNames.length)];
+    maskedAccount = '****' + accountValue.slice(-4);
+
+    const card = document.getElementById('recipientCard');
+    card.classList.add('resolved');
+    document.getElementById('recipientName').textContent = resolvedName;
+    document.getElementById('recipientSubText').textContent = bankInfo.name + ' • ' + maskedAccount;
+    checkContinueButton();
+  }
+
+  function checkContinueButton() {
+    const btn = document.getElementById('continueBtn');
+    if (accountResolved) {
+      btn.classList.add('active');
+      btn.disabled = false;
+    } else {
+      btn.classList.remove('active');
+      btn.disabled = true;
+    }
+  }
+
+  // ── Keypad fills the account number ──
+  function pressKey(key) {
+    const input = document.getElementById('accountInput');
+    if (input.value.length < 15) { input.value += key; handleAccountInput(); }
+  }
+
+  function deleteKey() {
+    const input = document.getElementById('accountInput');
+    input.value = input.value.slice(0, -1);
+    handleAccountInput();
+  }
+
+  // ── Continue → carry recipient, enter amount on the next screen ──
+  function continueTransfer() {
+    if (!accountResolved) return;
+    sessionStorage.setItem('sendTarget', JSON.stringify({
+      name: bankInfo.name,
+      logo: bankInfo.logo,
+      type: 'bank',
+      holder: resolvedName,
+      account: maskedAccount
+    }));
+    window.location.href = 'Transfer_Enter PIN.html';
+  }
+
+  function goBack() { console.log('Navigate back'); }
+
+  // ── Load the bank chosen earlier (Send Money modal) ──
+  function loadTarget() {
+    let target = null;
+    try { target = JSON.parse(sessionStorage.getItem('sendTarget') || 'null'); } catch (e) {}
+    if (target && target.type === 'bank') {
+      bankInfo = { name: target.name, logo: target.logo };
+    }
+    const logo = document.getElementById('recipientBankLogo');
+    if (logo) { logo.src = bankInfo.logo; logo.alt = bankInfo.name; logo.style.display = ''; }
+    document.getElementById('recipientSubText').textContent = bankInfo.name;
+  }
+
+  // Initialize
+  loadTarget();
+  checkContinueButton();
+</script>
+
+
+<!-- Export to Figma button (shared exporter) -->
+<script src="figma-export.js"></script>
+</body>
+</html>

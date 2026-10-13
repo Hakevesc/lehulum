@@ -154,6 +154,17 @@
   .sheet-btn.cancel:hover { background: #FAFAFA; }
   .sheet-btn.confirm { border: 1.5px solid var(--Primary); color: var(--Primary); font-weight: 600; }
   .sheet-btn.confirm:hover { background: #FFF5F5; }
+  /* Amount carried from Amount First, shown under the bank picker */
+  #amtBlock, #noteBlock { display: flex; flex-direction: column; gap: 8px; }
+  #amtBlock[hidden], #noteBlock[hidden] { display: none; }
+  .carried { display: flex; align-items: center; justify-content: space-between; margin-top: 6px; padding: 12px 14px; background: var(--Field); border: 1.5px solid var(--Border); border-radius: 12px; }
+  .carried[hidden] { display: none; }
+  .carried small { display: block; font-family: 'Switzer', sans-serif; font-size: 12px; color: var(--On-Surface-Low); }
+  .carried b { font-family: 'Switzer', sans-serif; font-size: 17px; font-weight: 700; color: var(--On-Surface); }
+  .carried button { border: none; background: #FFF1F2; color: var(--Primary); font-family: 'Switzer', sans-serif; font-size: 12.5px; font-weight: 600; border-radius: 10px; padding: 7px 12px; cursor: pointer; }
+  /* Edit the amount: pencil icon, same as the edit buttons elsewhere */
+  .carried button { width: 32px; height: 32px; padding: 0; border: none; border-radius: 9px; background: #FFF1F2; display: flex; align-items: center; justify-content: center; cursor: pointer; }
+  .carried button svg { width: 15px; height: 15px; stroke: var(--Primary); stroke-width: 2.2; fill: none; }
 </style>
 <link rel="stylesheet" href="styles/field-error.css">
 <link rel="stylesheet" href="styles/device.css">
@@ -172,7 +183,7 @@
     </div>
 
     <div class="header-nav">
-      <button class="back-btn" onclick="window.location.href='Withdraw Cash.html'">
+      <button class="back-btn" onclick="goBack()">
         <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
       </button>
       <span class="header-title">Withdraw Cash</span>
@@ -193,31 +204,39 @@
           <div class="bank-list" id="bankList"></div>
         </div>
 
+        <!-- From Amount First the amount is already set: show it, no Amount / Note fields -->
+        <div class="carried" id="carried" hidden>
+          <span><small>Withdrawal amount</small><b id="carriedAmt"></b></span>
+          <button onclick="goBack()" aria-label="Edit amount" title="Edit amount"><svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg></button>
+        </div>
+        <div id="amtBlock">
         <span class="field-label">Amount</span>
         <div class="field">
           <input id="amt" type="text" inputmode="decimal" placeholder="e.g. 120 ETB" oninput="onAmountInput(this)">
           <span class="suffix">ETB</span>
         </div>
         <div class="balance-hint" id="balanceHint"><b>Balance:</b> 12,580.00 ETB</div>
+        </div>
         <div class="field-error" id="amtMsg">
           <span class="fe-ic"><svg viewBox="0 0 24 24"><path d="M17 7 7 17M7 7l10 10"/></svg></span>
           <span class="fe-txt" id="amtMsgTxt"></span>
         </div>
 
+        <div id="noteBlock">
         <span class="field-label">Note (Optional)</span>
         <div class="field">
           <input id="note" type="text" placeholder="e.g. Rent money" maxlength="40">
         </div>
+        </div>
       </div>
 
       <div class="recent-card">
-        <span class="recent-title">Recent</span>
+        <span class="recent-title">Frequent Banks</span>
         <div class="recent-list">
           <div class="recent-item" onclick="useRecent('cbe')">
             <div class="recent-avatar"><img src="assets/banks logo/cbe-logo.png" alt="CBE"></div>
             <div class="recent-info">
               <span class="recent-name">CBE ATM</span>
-              <span class="recent-sub">Bole Medhanialem</span>
             </div>
             <svg class="chev" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
           </div>
@@ -225,7 +244,6 @@
             <div class="recent-avatar"><img src="assets/banks logo/abyssinya-bank.png" alt="Bank of Abyssinia"></div>
             <div class="recent-info">
               <span class="recent-name">Bank of Abyssinia ATM</span>
-              <span class="recent-sub">Dembel City Center</span>
             </div>
             <svg class="chev" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
           </div>
@@ -233,7 +251,6 @@
             <div class="recent-avatar"><img src="assets/banks logo/awass-bank.png" alt="Awash Bank"></div>
             <div class="recent-info">
               <span class="recent-name">Awash Bank ATM</span>
-              <span class="recent-sub">Bole Airport Road</span>
             </div>
             <svg class="chev" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
           </div>
@@ -360,7 +377,7 @@
     updateBtn();
   }
 
-  function useRecent(key) { pickBank(key); $('amt').focus(); }
+  function useRecent(key) { pickBank(key); if (!carried) $('amt').focus(); }
 
   /* ── Amount ── */
   function onAmountInput(el) {
@@ -409,7 +426,7 @@
     const fee = computeFee(amount);
     $('cfLogo').src = atm.logo;
     $('cfName').textContent = atm.name;
-    $('cfSub').textContent = atm.bank + ' • ' + atm.loc;
+    $('cfSub').textContent = atm.bank;
     $('cfAmount').textContent = fmt(amount) + ' ETB';
     $('cfFee').textContent = fmt(fee) + ' ETB';
     $('cfTotal').textContent = fmt(amount + fee) + ' ETB';
@@ -435,11 +452,30 @@
       amount: amount,
       fee: fee,
       total: amount + fee,
-      note: $('note').value.trim(),
+      note: carried ? '' : $('note').value.trim(),
+      from: origin,
       time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
     }));
     window.location.href = 'Withdraw Cash - Enter PIN.html';
   }
+
+  // Where this screen was opened from; Amount First hands over the amount
+  let origin = 'Withdraw Cash.html', carried = false;
+  try {
+    const d = JSON.parse(sessionStorage.getItem('withdrawData') || '{}');
+    if (d.from) origin = d.from;
+    if (d.from === 'Withdraw Cash - Amount First.html' && Number(d.amount) > 0) {
+      carried = true;
+      $('amt').value = String(d.amount);
+      $('carriedAmt').textContent = Number(d.amount).toLocaleString('en-US') + ' ETB';
+      $('carried').hidden = false;
+      $('amtBlock').hidden = true;
+      $('noteBlock').hidden = true;
+      validateAmount();   // a too-large amount still shows its error under the row
+      updateBtn();
+    }
+  } catch (e) { /* no hand-over: the normal Amount / Note fields stay */ }
+  function goBack() { window.location.href = origin; }
 </script>
 <script src="test-scenarios-data.js"></script>
 <script src="test-scenarios.js"></script>

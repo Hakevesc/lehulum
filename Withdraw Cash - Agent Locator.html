@@ -389,6 +389,8 @@
     $('qrDetSub').textContent = 'Merchant Short Code: ' + a.code;
     $('qrDetectOverlay').dataset.code = a.code;
     $('camHint').textContent = 'QR code detected';
+    // From Amount First the amount is known: skip the detected sheet, straight to Confirmation
+    if (carriedAmount) { confirmAgentDetected(); return; }
     $('qrDetectOverlay').classList.add('show');
   }
 
@@ -410,12 +412,24 @@
     scanned = true;
     $('rescanBtn').hidden = false;
     lockAgent(a);
+    // Amount already chosen on Amount First: fill it and confirm right away
+    if (carriedAmount) { amountEl().value = String(carriedAmount); validateAmount(); updateBtn(); continueFlow(); return; }
     $('amtCode').focus();
   }
 
   /* ── Where this flow started (Withdraw Cash or its Enhanced copy) ── */
-  let origin = 'Withdraw Cash.html';
-  try { origin = JSON.parse(sessionStorage.getItem('withdrawData') || '{}').from || origin; } catch (e) {}
+  let origin = 'Withdraw Cash.html', carriedAmount = 0;
+  try {
+    const d0 = JSON.parse(sessionStorage.getItem('withdrawData') || '{}');
+    origin = d0.from || origin;
+    if (d0.from === 'Withdraw Cash - Amount First.html' && Number(d0.amount) > 0) carriedAmount = Number(d0.amount);
+  } catch (e) {}
+  // Amount First flow has no note
+  if (carriedAmount) {
+    const nf = $('noteCode').closest('.field');
+    nf.style.display = 'none';
+    if (nf.previousElementSibling) nf.previousElementSibling.style.display = 'none';
+  }
   function goBack() { window.location.href = origin; }
 
   // Edit: back to the short code entry with this agent's code already filled in
@@ -428,7 +442,8 @@
     agent = a;
     $('agentAbbr').textContent = a.abbr;
     $('agentName').textContent = a.name;
-    $('agentSub').textContent = a.code + (a.dist ? ' · ' + a.dist : '');
+    // a scanned agent is right in front of you: short code only, no distance
+    $('agentSub').textContent = a.code + (a.dist && !scanned ? ' · ' + a.dist : '');
     $('agentRow').hidden = false;
     updateBtn();
     renderRecent();
@@ -551,7 +566,8 @@
       amount: amt,
       fee: fee,
       total: amt + fee,
-      note: $('noteCode').value.trim(),
+      note: carriedAmount ? '' : $('noteCode').value.trim(),
+      from: origin,
       time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
     }));
     window.location.href = 'Withdraw Cash - Enter PIN.html';

@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 140 72" fill="none">
+  <rect width="140" height="72" rx="8" fill="#F5F5F5"/>
+  <text x="70" y="44" text-anchor="middle" font-family="Inter, sans-serif" font-size="26" font-weight="800" fill="#1C1C21">0.00</text>
+  <text x="70" y="58" text-anchor="middle" font-family="Inter, sans-serif" font-size="9" font-weight="600" fill="#7C7C87">ETB</text>
+</svg>

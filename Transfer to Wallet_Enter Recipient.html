@@ -107,16 +107,16 @@
   .suggest-sub { font-family: 'Switzer', sans-serif; font-size: 12px; color: var(--On-Surface-Low); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 
   /* ── Recent card ── */
-  .recent-card { background: #FFF; border-radius: 16px; padding: 16px; box-shadow: 0 2px 8px rgba(0,0,0,0.04); display: flex; flex-direction: column; gap: 10px; }
+  .recent-card { background: #FFF; border-radius: 16px; padding: 14px 16px; box-shadow: 0 2px 8px rgba(0,0,0,0.04); display: flex; flex-direction: column; gap: 12px; overflow: hidden; flex-shrink: 0; }
   .recent-title { font-family: 'Switzer', sans-serif; font-size: 14px; font-weight: 600; color: var(--On-Surface); letter-spacing: 0.2px; }
-  .recent-list { display: flex; flex-direction: column; gap: 4px; }
-  .recent-item { display: flex; align-items: center; gap: 12px; padding: 7px 0; cursor: pointer; border-radius: 10px; transition: background 0.15s; }
-  .recent-item:hover { background: #FAFAFA; }
-  .recent-avatar { width: 40px; height: 40px; border-radius: 50%; overflow: hidden; flex-shrink: 0; background: #FFF; border: 1px solid #ECECEC; display: flex; align-items: center; justify-content: center; }
-  .recent-avatar img { width: 28px; height: 28px; object-fit: contain; }
-  .recent-info { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px; }
-  .recent-name { font-family: 'Switzer', sans-serif; font-size: 14px; font-weight: 500; color: var(--On-Surface); }
-  .recent-sub { font-family: 'Switzer', sans-serif; font-size: 12px; color: var(--On-Surface-Low); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .recent-row { display: flex; gap: 14px; overflow-x: auto; scrollbar-width: none; margin: 0 -16px; padding: 2px 16px; }
+  .recent-row::-webkit-scrollbar { display: none; }
+  .recent-person { flex: 0 0 auto; width: 58px; display: flex; flex-direction: column; align-items: center; gap: 6px; cursor: pointer; border: 0; background: none; padding: 0; }
+  .recent-person .ph { width: 52px; height: 52px; border-radius: 50%; overflow: hidden; background: #EDEDF2; border: 2px solid transparent;
+    display: flex; align-items: center; justify-content: center; font-family: 'Switzer', sans-serif; font-size: 15px; font-weight: 700; color: var(--On-Surface-Low); transition: border-color 0.15s; }
+  .recent-person .ph img { width: 100%; height: 100%; object-fit: cover; }
+  .recent-person.on .ph { border-color: var(--Primary); }
+  .recent-person .nm { font-family: 'Switzer', sans-serif; font-size: 12px; color: var(--On-Surface); max-width: 58px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
   .chev { width: 18px; height: 18px; stroke: var(--Primary); stroke-width: 2.4; fill: none; flex-shrink: 0; }
 
   /* ── Bottom button ── */
@@ -203,6 +203,12 @@
 
     <div class="scroll">
 
+      <!-- Recent sent: people you sent to lately, swipe sideways, tap to fill the number -->
+      <div class="recent-card">
+        <span class="recent-title">Recent Sent</span>
+        <div class="recent-row" id="recentList"></div>
+      </div>
+
       <div class="form-card">
         <!-- Selected wallet — tapping anywhere on the row reopens the picker -->
         <div class="wallet-row" onclick="openSheet()">
@@ -234,7 +240,7 @@
         </div>
         <div class="status-chip bad" id="phoneBad">
           <span class="ic"><svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M17 7 7 17M7 7l10 10"/></svg></span>
-          <span>Invalid phone number</span>
+          <span id="phoneBadText">Invalid phone number</span>
         </div>
 
         <span class="field-label">Amount</span>
@@ -249,11 +255,6 @@
         <div class="field">
           <input id="reasonInput" type="text" maxlength="40" placeholder="payment reason" autocomplete="off">
         </div>
-      </div>
-
-      <div class="recent-card">
-        <span class="recent-title">Recent</span>
-        <div class="recent-list" id="recentList"></div>
       </div>
 
     </div>
@@ -337,15 +338,32 @@
 
   // Numbers the lookup resolves against — anything else comes back invalid.
   const DIRECTORY = [
-    { number: '915965211', name: 'Abebe Bikila Maraton' },
-    { number: '911223344', name: 'Aster Mequanent' },
-    { number: '922334455', name: 'Solomon Zewde' },
-    { number: '933445566', name: 'Bekele Bikila' },
-    { number: '944556677', name: 'Kidist Birhanu' },
-    { number: '955667788', name: 'Abebech Gobena' }
+    { number: '915965211', name: 'Abebe Bikila Maraton', photo: 'assets/avatars/avatar-1.png' },
+    { number: '911223344', name: 'Aster Mequanent',      photo: 'assets/avatars/avatar-2.png' },
+    { number: '922334455', name: 'Solomon Zewde',        photo: 'assets/avatars/avatar-3.png' },
+    { number: '933445566', name: 'Bekele Bikila',        photo: 'assets/avatars/avatar-4.png' },
+    { number: '944556677', name: 'Kidist Birhanu',       photo: 'assets/avatars/avatar-5.png' },
+    { number: '955667788', name: 'Abebech Gobena',       photo: 'assets/avatars/avatar-6.png' }
   ];
 
-  const RECENT = ['911223344', '922334455', '933445566'];
+  // M-PESA (Safaricom) numbers start with 7, so M-PESA has its own people and recents
+  const MPESA_DIRECTORY = [
+    { number: '711223344', name: 'Aster Mequanent',      photo: 'assets/avatars/avatar-2.png' },
+    { number: '722334455', name: 'Solomon Zewde',        photo: 'assets/avatars/avatar-3.png' },
+    { number: '744556677', name: 'Kidist Birhanu',       photo: 'assets/avatars/avatar-5.png' },
+    { number: '733445566', name: 'Bekele Bikila',        photo: 'assets/avatars/avatar-4.png' },
+    { number: '755667788', name: 'Abebech Gobena',       photo: 'assets/avatars/avatar-6.png' },
+    { number: '715965211', name: 'Abebe Bikila Maraton', photo: 'assets/avatars/avatar-1.png' }
+  ];
+
+  // Most recent first
+  const RECENT = ['911223344', '922334455', '944556677', '933445566', '955667788', '915965211'];
+  const MPESA_RECENT = ['711223344', '722334455', '744556677', '733445566', '755667788', '715965211'];
+
+  // Everything below reads the people / recents for the wallet that is selected
+  const isMpesa = () => wallet.key === 'mpesa';
+  const dir = () => isMpesa() ? MPESA_DIRECTORY : DIRECTORY;
+  const recents = () => isMpesa() ? MPESA_RECENT : RECENT;
 
   const MIN_AMT = 5, MAX_AMT = 75000, BALANCE = 20000, FEE = 5;
 
@@ -361,12 +379,15 @@
   let lookupTimer = null;
 
   /* ── Wallet picker ── */
-  function openSheet() { $('walletSearch').value = ''; renderWallets(); $('sheetOverlay').classList.add('show'); }
+  function openSheet() {
+    $('walletSearch').value = ''; renderWallets(); $('sheetOverlay').classList.add('show');
+  }
   function closeSheet() { $('sheetOverlay').classList.remove('show'); }
 
   function renderWallets() {
     const q = $('walletSearch').value.trim().toLowerCase();
-    const list = WALLETS.filter(w => w.name.toLowerCase().includes(q));
+    // M-PESA has its own row on the Send Money menu; the picker lists other wallets only
+    const list = WALLETS.filter(w => w.key !== 'mpesa' && w.name.toLowerCase().includes(q));
     $('walletGrid').innerHTML = list.length
       ? list.map(w =>
           '<div class="wallet-tile" onclick="pickWallet(\'' + w.key + '\')">' +
@@ -382,6 +403,7 @@
     wallet = w;
     $('walletName').textContent = w.name;
     $('walletLogo').src = w.logo;
+    $('phoneInput').placeholder = w.key === 'mpesa' ? '7XX XXX XXX' : '9XX XXX XXX';
     closeSheet();
     renderRecent();
     // A different wallet invalidates the name already resolved against the old one.
@@ -400,7 +422,7 @@
 
   function renderContacts() {
     const q = $('contactSearch').value.trim().toLowerCase();
-    const list = DIRECTORY.filter(d => d.name.toLowerCase().includes(q) || d.number.includes(q));
+    const list = dir().filter(d => d.name.toLowerCase().includes(q) || d.number.includes(q));
     $('contactList').innerHTML = list.length
       ? list.map(d =>
           '<div class="suggest-item" onclick="pickContact(\'' + d.number + '\')">' +
@@ -431,6 +453,16 @@
     clearTimeout(lookupTimer);
     resetLookup();
     renderSuggestions(raw);
+    $('phoneBadText').textContent = 'Invalid phone number';
+
+    // M-PESA only sends to M-PESA numbers, which are +251 7…
+    if (isMpesa() && /^\d/.test(raw) && raw[0] !== '7') {
+      $('phoneBadText').textContent = 'M-PESA numbers start with 7';
+      $('phoneBad').classList.add('show');
+      $('phoneField').classList.add('err');
+      $('suggest').classList.remove('show');
+      return;
+    }
 
     // A full local number resolves; a partial one or a name search just keeps
     // the suggestions open.
@@ -438,7 +470,7 @@
 
     $('phoneLoading').classList.add('show');
     lookupTimer = setTimeout(() => {
-      const hit = DIRECTORY.find(d => d.number === raw);
+      const hit = dir().find(d => d.number === raw);
       $('phoneLoading').classList.remove('show');
       if (hit) {
         holder = hit;
@@ -456,7 +488,7 @@
     const box = $('suggest');
     if (!raw) { box.classList.remove('show'); return; }
     const q = raw.toLowerCase();
-    const hits = DIRECTORY.filter(d => d.number.startsWith(raw) || d.name.toLowerCase().includes(q));
+    const hits = dir().filter(d => d.number.startsWith(raw) || d.name.toLowerCase().includes(q));
     // An exact match is already shown by the lookup chip, so drop the redundant row.
     const list = hits.filter(d => d.number !== raw);
     if (!list.length) { box.classList.remove('show'); return; }
@@ -476,6 +508,7 @@
     $('phoneInput').value = number;
     onPhoneInput();
     $('suggest').classList.remove('show');
+    renderRecent();
   }
 
   /* ── Amount ── */
@@ -531,22 +564,20 @@
     $('continueBtn').disabled = !ok;
   }
 
-  /* ── Recent ── */
+  /* ── Recent sent ── */
   function renderRecent() {
-    $('recentList').innerHTML = RECENT.map(num => {
-      const d = DIRECTORY.find(x => x.number === num);
+    const typed = $('phoneInput').value;
+    $('recentList').innerHTML = recents().map(num => {
+      const d = dir().find(x => x.number === num);
       if (!d) return '';
-      return '<div class="recent-item" onclick="pickNumber(\'' + d.number + '\')">' +
-        '<span class="recent-avatar"><img src="' + wallet.logo + '" alt=""></span>' +
-        '<span class="recent-info">' +
-          '<span class="recent-name">' + d.name + '</span>' +
-          '<span class="recent-sub">' + mask(d.number) + '</span>' +
-        '</span>' +
-        '<svg class="chev" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>' +
-      '</div>';
+      return '<button class="recent-person' + (typed === d.number ? ' on' : '') + '" onclick="pickNumber(\'' + d.number + '\')" type="button">' +
+        '<span class="ph">' + (d.photo ? '<img src="' + d.photo + '" alt="">' : initials(d.name)) + '</span>' +
+        '<span class="nm">' + d.name.split(' ')[0] + '</span>' +
+      '</button>';
     }).join('');
   }
   renderRecent();
+  $('phoneInput').addEventListener('input', renderRecent);   // ring follows the typed number
 
   /* ── Continue → confirmation sheet ── */
   function continueTransfer() {

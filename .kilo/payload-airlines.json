@@ -1,0 +1,31 @@
+{
+  "plan": "airlines",
+  "planLabel": "",
+  "biller": {
+    "name": "Ethiopian Airlines",
+    "fullName": "Ethiopian Airlines",
+    "category": "Travel",
+    "abbr": "EA",
+    "logo": "assets/bill pay logos/ethiopia_airlines_logo.png"
+  },
+  "account": "88120",
+  "customerName": "Hanna Bekele Tadesse",
+  "rows": [
+    { "key": "Business Name",    "value": "Airlines" },
+    { "key": "Current Package",  "value": "Sheba Economy" },
+    { "key": "Add-Ons",          "value": "Extra Baggage" }
+  ],
+  "receiptRows": [
+    { "key": "PRN Code",        "value": "88120" },
+    { "key": "Current Package", "value": "Sheba Economy" },
+    { "key": "Add-Ons",         "value": "Extra Baggage" }
+  ],
+  "txType": "Airline Payment",
+  "payAmount": "4750.00",
+  "fee": "2.00",
+  "serviceFee": "2.00",
+  "vat": "0.00",
+  "total": "4752.00",
+  "payAccount": "main",
+  "payerName": "Abebeb Bikila Maraton"
+}
