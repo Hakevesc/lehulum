@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PayPal · Link Account</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@400;500;600&display=swap');
+  @import url('https://api.fontshare.com/v2/css?f[]=switzer@400,500,600,700,800&display=swap');
+
+  /* Link PayPal (Super App flow): PayPal's own pages open in an in-app browser —
+     Log in, or Sign up + verify email — then the consent to connect M-PESA.
+     Back in M-PESA: the name check and "PayPal linked". */
+  :root {
+    --Primary: #FE353D;
+    --Primary-Light: #FFF1F2;
+    --On-Surface: #1C1C21;
+    --On-Surface-Low: #7C7C87;
+    --Background: #F5F5F5;
+    --PP: #003087;
+    --PP-Btn: #0070E0;
+    --PP-Line: #CBD2D6;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'Inter', sans-serif; background: transparent; display: flex; justify-content: center; align-items: center; min-height: 100vh; padding: 20px; }
+  button, input, select { font-family: inherit; }
+  .phone-frame { width: 360px; height: 780px; background: #FFF; border-radius: 30px; overflow: hidden; position: relative; box-shadow: 0 20px 60px rgba(0,0,0,0.15); display: flex; flex-direction: column; }
+  .app-content { height: 100%; display: flex; flex-direction: column; }
+
+  .status-bar { display: flex; justify-content: space-between; align-items: center; padding: 14px 24px 8px; background: #F5F5F5; flex-shrink: 0; }
+  .status-bar .time { font-size: 14px; font-weight: 600; color: var(--On-Surface); }
+  .status-icons { display: flex; align-items: center; gap: 6px; }
+  .status-icons svg { width: 18px; height: 18px; }
+
+  /* In-app browser bar: who owns the page */
+  .web-bar { flex-shrink: 0; display: flex; align-items: center; gap: 10px; padding: 8px 12px 10px; background: #F5F5F5; border-bottom: 1px solid #E8E8EC; }
+  .web-bar button { width: 34px; height: 34px; border: none; border-radius: 50%; background: transparent; display: flex; align-items: center; justify-content: center; cursor: pointer; }
+  .web-bar button:hover { background: rgba(0,0,0,0.05); }
+  .web-bar button svg { width: 20px; height: 20px; stroke: var(--On-Surface); stroke-width: 1.9; fill: none; }
+  .url { flex: 1; min-width: 0; display: flex; flex-direction: column; align-items: center; }
+  .url b { display: flex; align-items: center; gap: 5px; font-family: 'Switzer', sans-serif; font-size: 13px; font-weight: 600; color: var(--On-Surface); }
+  .url b svg { width: 12px; height: 12px; stroke: #16A34A; stroke-width: 2.4; fill: none; }
+  .url small { font-family: 'Switzer', sans-serif; font-size: 11px; color: var(--On-Surface-Low); }
+
+  .page { flex: 1; min-height: 0; overflow-y: auto; scrollbar-width: none; display: none; flex-direction: column; padding: 26px 24px 20px; font-family: 'Inter', sans-serif; }
+  .page::-webkit-scrollbar { width: 0; }
+  .page.show { display: flex; }
+  /* Keep every block at its own height: the page scrolls instead of squashing buttons */
+  .page > * { flex-shrink: 0; }
+  .pp-logo { height: 26px; width: auto; align-self: center; }
+  .pp-h { margin-top: 22px; font-size: 21px; font-weight: 600; color: #001C64; text-align: center; }
+  .pp-sub { margin-top: 6px; font-size: 13px; line-height: 1.5; color: #545D68; text-align: center; }
+  .pp-partner { margin: 10px auto 0; padding: 3px 10px; border-radius: 999px; background: #F1F3F6; font-size: 11.5px; color: #545D68; }
+  .pp-partner b { color: #001C64; }
+
+  .pp-field { margin-top: 14px; }
+  .pp-field label { display: block; margin-bottom: 6px; font-size: 12.5px; font-weight: 500; color: #2C2E2F; }
+  .pp-input { width: 100%; height: 50px; border: 1px solid var(--PP-Line); border-radius: 6px; padding: 0 14px; font-size: 15px; color: #2C2E2F; outline: none; background: #FFF; }
+  .pp-input:focus { border-color: var(--PP-Btn); box-shadow: 0 0 0 3px rgba(0,112,224,0.15); }
+  .pp-input.err { border-color: #D20000; }
+  .pp-err { display: none; margin-top: 5px; font-size: 12px; color: #D20000; }
+  .pp-err.show { display: block; }
+  .pp-row2 { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 10px; }
+  .pp-link { align-self: flex-start; margin-top: 10px; border: none; background: none; font-size: 13px; font-weight: 600; color: var(--PP-Btn); cursor: pointer; padding: 0; }
+  .pp-btn { margin-top: 20px; width: 100%; height: 48px; min-height: 48px; display: flex; align-items: center; justify-content: center; line-height: 1; border: none; border-radius: 999px; background: var(--PP-Btn); color: #FFF; font-size: 15px; font-weight: 600; cursor: pointer; }
+  .pp-btn:active { transform: scale(0.99); }
+  .pp-btn.ghost { margin-top: 10px; background: #FFF; color: #001C64; border: 1.5px solid #001C64; }
+  .pp-or { margin: 18px 0 0; display: flex; align-items: center; gap: 10px; font-size: 12px; color: #6C7378; }
+  .pp-or::before, .pp-or::after { content: ''; flex: 1; height: 1px; background: #E6E9EB; }
+  .pp-foot { margin-top: auto; padding-top: 22px; display: flex; justify-content: center; gap: 16px; font-size: 11.5px; color: #6C7378; }
+  .pp-sec { margin-top: 18px; font-size: 12px; font-weight: 600; letter-spacing: 0.3px; color: #2C2E2F; text-transform: uppercase; }
+
+  /* Consent */
+  .consent-head { display: flex; align-items: center; justify-content: center; gap: 12px; margin-top: 18px; }
+  .consent-head span { width: 46px; height: 46px; border-radius: 13px; display: flex; align-items: center; justify-content: center; }
+  .consent-head .a { background: #EAF2FF; } .consent-head .a img { width: 21px; }
+  .consent-head .b { background: #FFF; border: 1px solid #EFEFF2; overflow: hidden; } .consent-head .b img { width: 100%; height: 100%; object-fit: cover; }
+  .consent-head svg { width: 20px; height: 20px; stroke: #9DA3A6; stroke-width: 2; fill: none; }
+  .perm { margin-top: 18px; border: 1px solid #E6E9EB; border-radius: 10px; padding: 4px 14px; }
+  .perm-item { display: flex; gap: 12px; padding: 12px 0; }
+  .perm-item + .perm-item { border-top: 1px solid #EEF0F2; }
+  .perm-item svg { width: 18px; height: 18px; stroke: var(--PP-Btn); stroke-width: 2; fill: none; flex-shrink: 0; margin-top: 1px; }
+  .perm-item b { display: block; font-size: 13px; font-weight: 600; color: #2C2E2F; }
+  .perm-item small { display: block; margin-top: 2px; font-size: 12px; line-height: 1.45; color: #6C7378; }
+
+  /* Verify email */
+  .mail-ic { margin: 26px auto 0; width: 72px; height: 72px; border-radius: 50%; background: #EAF2FF; display: flex; align-items: center; justify-content: center; }
+  .mail-ic svg { width: 34px; height: 34px; stroke: var(--PP-Btn); stroke-width: 1.8; fill: none; }
+
+  /* ── Back in M-PESA: linked ── */
+  .done { flex: 1; display: none; flex-direction: column; background: var(--Background); }
+  .done.show { display: flex; }
+  .done-body { flex: 1; display: flex; flex-direction: column; align-items: center; text-align: center; padding: 60px 24px 0; }
+  .ok { width: 64px; height: 64px; border-radius: 18px; background: #E6F4E4; border: 1.5px solid #4CAF50; display: flex; align-items: center; justify-content: center; }
+  .ok svg { width: 30px; height: 30px; stroke: #43A047; stroke-width: 3; fill: none; }
+  /* Animated link icon */
+  .link-anim { position: relative; }
+  .link-anim .lk { position: absolute; left: 50%; top: 50%; width: 30px; height: 30px; margin: -15px 0 0 -15px; stroke: #43A047; stroke-width: 2.4; fill: none; }
+  .link-anim .lk-a { transform: translate(9px, -9px); opacity: 0; }
+  .link-anim .lk-b { transform: translate(-9px, 9px); opacity: 0; }
+  .link-anim.play .lk-a { animation: lkA 0.7s cubic-bezier(.3,1.4,.5,1) 0.15s forwards; }
+  .link-anim.play .lk-b { animation: lkB 0.7s cubic-bezier(.3,1.4,.5,1) 0.15s forwards; }
+  .link-anim.play { animation: lkPulse 0.5s ease 0.8s; }
+  .lk-badge { position: absolute; right: -8px; bottom: -8px; width: 24px; height: 24px; border-radius: 50%; background: #43A047; border: 2.5px solid var(--Background); display: flex; align-items: center; justify-content: center; transform: scale(0); }
+  .lk-badge svg { width: 13px; height: 13px; stroke: #FFF; stroke-width: 3.2; fill: none; stroke-dasharray: 24; stroke-dashoffset: 24; }
+  .link-anim.play .lk-badge { animation: lkPop 0.4s cubic-bezier(.3,1.6,.5,1) 0.95s forwards; }
+  .link-anim.play .lk-badge svg { animation: lkDraw 0.35s ease 1.2s forwards; }
+  @keyframes lkA { from { transform: translate(9px, -9px); opacity: 0; } 40% { opacity: 1; } to { transform: translate(0, 0); opacity: 1; } }
+  @keyframes lkB { from { transform: translate(-9px, 9px); opacity: 0; } 40% { opacity: 1; } to { transform: translate(0, 0); opacity: 1; } }
+  @keyframes lkPulse { 50% { transform: scale(1.08); box-shadow: 0 0 0 10px rgba(67,160,71,0.12); } }
+  @keyframes lkPop { to { transform: scale(1); } }
+  @keyframes lkDraw { to { stroke-dashoffset: 0; } }
+  @media (prefers-reduced-motion: reduce) {
+    .link-anim .lk { opacity: 1 !important; transform: none !important; animation: none !important; }
+    .lk-badge { transform: scale(1) !important; animation: none !important; }
+    .lk-badge svg { stroke-dashoffset: 0 !important; animation: none !important; }
+  }
+  .done h2 { margin-top: 18px; font-family: 'Switzer', sans-serif; font-size: 20px; font-weight: 700; color: var(--On-Surface); }
+  .done p { margin-top: 8px; font-family: 'Switzer', sans-serif; font-size: 13px; line-height: 1.55; color: var(--On-Surface-Low); }
+  .match { margin-top: 22px; width: 100%; background: #FFF; border-radius: 16px; padding: 4px 16px; box-shadow: 0 4px 14px rgba(15,23,42,0.05); text-align: left; }
+  .match-row { display: flex; justify-content: space-between; align-items: center; padding: 12px 0; font-family: 'Switzer', sans-serif; font-size: 12.5px; color: #55555E; }
+  .match-row + .match-row { border-top: 1px solid #ECECEF; }
+  .match-row b { font-weight: 700; color: var(--On-Surface); }
+  .match-row .tick { display: inline-flex; align-items: center; gap: 4px; color: #16A34A; font-weight: 700; }
+  .match-row .tick svg { width: 13px; height: 13px; stroke: currentColor; stroke-width: 3; fill: none; }
+  .done .bottom-bar { padding: 10px 16px 18px; }
+  .btn-primary { width: 100%; height: 52px; border: none; border-radius: 14px; background: var(--Primary); color: #FFF; font-family: 'Poppins', sans-serif; font-size: 15px; font-weight: 500; cursor: pointer; box-shadow: 0 4px 16px rgba(254,53,61,0.25); }
+
+  .busy { position: absolute; inset: 0; z-index: 130; background: rgba(255,255,255,0.96); display: none; flex-direction: column; align-items: center; justify-content: center; gap: 14px; font-size: 14px; color: #2C2E2F; text-align: center; padding: 0 40px; }
+  .busy.show { display: flex; }
+  .spinner { width: 38px; height: 38px; border-radius: 50%; border: 3.5px solid #D6E2F7; border-top-color: var(--PP-Btn); animation: spin 0.8s linear infinite; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+</style>
+<link rel="stylesheet" href="styles/device.css">
+</head>
+<body>
+<div class="phone-frame">
+  <div class="app-content" id="app">
+
+    <div class="status-bar">
+      <span class="time">10:00</span>
+      <div class="status-icons">
+        <svg viewBox="0 0 24 24" fill="none"><path d="M1 9l2 2c4.97-4.97 13.03-4.97 18 0l2-2C16.93 2.93 7.08 2.93 1 9z" fill="#1C1C21"/><path d="M5 13l2 2c2.76-2.76 7.24-2.76 10 0l2-2C15.14 9.14 8.87 9.14 5 13z" fill="#1C1C21"/><path d="M9 17l2 2c1.1-1.1 2.9-1.1 4 0l2-2c-2.21-2.21-5.79-2.21-8 0z" fill="#1C1C21"/></svg>
+        <svg viewBox="0 0 24 24" fill="none"><rect x="2" y="6" width="4" height="12" rx="1" fill="#1C1C21"/><rect x="8" y="4" width="4" height="14" rx="1" fill="#1C1C21"/><rect x="14" y="2" width="4" height="16" rx="1" fill="#1C1C21"/><rect x="20" y="0" width="4" height="18" rx="1" fill="#1C1C21" opacity="0.3"/></svg>
+        <svg viewBox="0 0 28 14" fill="none"><rect x="0" y="1" width="22" height="12" rx="2.5" stroke="#1C1C21" stroke-width="1.5"/><rect x="2" y="3" width="16" height="8" rx="1" fill="#1C1C21"/><rect x="24" y="4" width="2" height="6" rx="1" fill="#1C1C21"/></svg>
+      </div>
+    </div>
+
+    <!-- In-app browser: PayPal's pages -->
+    <div class="web-bar" id="webBar">
+      <button onclick="cancelLink()" aria-label="Close"><svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18M6 6l12 12"/></svg></button>
+      <span class="url"><b><svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg>paypal.com</b><small>Secure connection</small></span>
+      <button onclick="stepBack()" aria-label="Back"><svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg></button>
+    </div>
+
+    <!-- 1. Log in -->
+    <section class="page show" id="pLogin">
+      <img class="pp-logo" src="assets/PayPal-Logo-Black.png" alt="PayPal">
+      <h1 class="pp-h">Log in to your PayPal account</h1>
+      <span class="pp-partner">to link with <b>M-PESA Ethiopia</b></span>
+      <div class="pp-field">
+        <label for="lgEmail">Email or mobile number</label>
+        <input class="pp-input" id="lgEmail" type="text" autocomplete="off">
+        <div class="pp-err" id="lgEmailErr">Enter your email or mobile number.</div>
+      </div>
+      <div class="pp-field">
+        <label for="lgPass">Password</label>
+        <input class="pp-input" id="lgPass" type="password" autocomplete="off">
+        <div class="pp-err" id="lgPassErr">Please enter your password.</div>
+      </div>
+      <button class="pp-link" type="button">Forgot password?</button>
+      <button class="pp-btn" onclick="login()">Log In</button>
+      <div class="pp-or">or</div>
+      <button class="pp-btn ghost" onclick="show('pSignup')">Sign Up</button>
+      <div class="pp-foot"><span>Contact Us</span><span>Privacy</span><span>Legal</span></div>
+    </section>
+
+    <!-- 2. Sign up -->
+    <section class="page" id="pSignup">
+      <img class="pp-logo" src="assets/PayPal-Logo-Black.png" alt="PayPal">
+      <h1 class="pp-h">Let's set up your PayPal account</h1>
+      <span class="pp-partner">in partnership with <b>M-PESA Ethiopia</b></span>
+      <p class="pp-sec">Personal information</p>
+      <div class="pp-field"><label for="suCountry">Country / Region</label>
+        <select class="pp-input" id="suCountry"><option>Ethiopia</option><option>Kenya</option><option>Tanzania</option><option>Uganda</option></select></div>
+      <div class="pp-row2">
+        <div class="pp-field"><label for="suFirst">First name</label><input class="pp-input req" id="suFirst" type="text" autocomplete="off"><div class="pp-err">Required</div></div>
+        <div class="pp-field"><label for="suLast">Last name</label><input class="pp-input req" id="suLast" type="text" autocomplete="off"><div class="pp-err">Required</div></div>
+      </div>
+      <div class="pp-field"><label for="suEmail">Email</label><input class="pp-input req" id="suEmail" type="email" autocomplete="off"><div class="pp-err">Required</div></div>
+      <div class="pp-field"><label for="suDob">Date of birth</label><input class="pp-input req" id="suDob" type="text" placeholder="DD/MM/YYYY" autocomplete="off"><div class="pp-err">Required</div></div>
+      <div class="pp-field"><label for="suPhone">Phone number</label><input class="pp-input" id="suPhone" type="text" value="+251 712 *** *78" readonly></div>
+      <p class="pp-sec">Address</p>
+      <div class="pp-field"><label for="suAddr">Address line 1</label><input class="pp-input req" id="suAddr" type="text" autocomplete="off"><div class="pp-err">Required</div></div>
+      <div class="pp-row2">
+        <div class="pp-field"><label for="suCity">City</label><input class="pp-input req" id="suCity" type="text" autocomplete="off"><div class="pp-err">Required</div></div>
+        <div class="pp-field"><label for="suPost">Postal code</label><input class="pp-input" id="suPost" type="text" autocomplete="off"></div>
+      </div>
+      <button class="pp-btn" onclick="signup()">Continue</button>
+    </section>
+
+    <!-- 3. Verify email (after sign up) -->
+    <section class="page" id="pVerify">
+      <img class="pp-logo" src="assets/PayPal-Logo-Black.png" alt="PayPal">
+      <span class="mail-ic"><svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 6 9-6"/></svg></span>
+      <h1 class="pp-h">Verify your email</h1>
+      <p class="pp-sub">We sent a verification link to <b id="vfEmail">your inbox</b>. Open it to confirm your email, then continue.</p>
+      <button class="pp-btn" onclick="show('pConsent')">I've Verified, Continue</button>
+      <button class="pp-link" style="align-self:center" type="button">Resend email</button>
+    </section>
+
+    <!-- 4. Consent -->
+    <section class="page" id="pConsent">
+      <img class="pp-logo" src="assets/PayPal-Logo-Black.png" alt="PayPal">
+      <div class="consent-head">
+        <span class="a"><img src="assets/paypal-icon.svg" alt=""></span>
+        <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M7 7h12l-3-3M17 17H5l3 3"/></svg>
+        <span class="b"><img src="assets/wallets/M-PESA-logo-icon.png" alt=""></span>
+      </div>
+      <h1 class="pp-h">Connect your PayPal account to M-PESA Ethiopia</h1>
+      <div class="perm">
+        <div class="perm-item"><svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg><span><b>Receive personal info</b><small>Account type, account number only, creation date, verification status, age range and Payer ID</small></span></div>
+        <div class="perm-item"><svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="6" width="18" height="13" rx="2"/><path d="M3 10h18"/></svg><span><b>Show your PayPal balance</b><small>Access your PayPal balance and display it to you in M-PESA</small></span></div>
+        <div class="perm-item"><svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12l7 7 7-7"/></svg><span><b>Transfer funds to M-PESA</b><small>Move money from your PayPal account into your own M-PESA wallet</small></span></div>
+      </div>
+      <button class="pp-btn" onclick="connect()">Agree and Connect</button>
+      <button class="pp-btn ghost" onclick="cancelLink()">Cancel</button>
+    </section>
+
+    <!-- Back in M-PESA -->
+    <section class="done" id="pDone">
+      <div class="done-body">
+        <!-- Animated link: the two halves slide together, then the tick pops in -->
+        <span class="ok link-anim" id="linkAnim" aria-hidden="true">
+          <svg class="lk lk-a" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.5.5l3-3a5 5 0 0 0-7-7l-1.7 1.7"/></svg>
+          <svg class="lk lk-b" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M14 11a5 5 0 0 0-7.5-.5l-3 3a5 5 0 0 0 7 7l1.7-1.7"/></svg>
+          <span class="lk-badge"><svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></span>
+        </span>
+        <h2 id="doneTitle">PayPal Linked</h2>
+        <p id="doneText">Your PayPal account is now linked to your M-PESA account.</p>
+        <div class="match">
+          <div class="match-row"><span>PayPal account</span><b id="doneEmail">as•••••@gmail.com</b></div>
+          <div class="match-row"><span>M-PESA account</span><b>Aster Mequanent · 0712 *** *78</b></div>
+          <div class="match-row"><span>Name check</span><span class="tick"><svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>Names match</span></div>
+        </div>
+      </div>
+      <div class="bottom-bar"><button class="btn-primary" onclick="location.href='PayPal.html?linked=1'">Done</button></div>
+    </section>
+  </div>
+
+  <div class="busy" id="busy"><span class="spinner"></span><span id="busyTxt">Connecting…</span></div>
+</div>
+
+<script>
+  const $ = id => document.getElementById(id);
+  let trail = ['pLogin'];
+  let createdAccount = false;
+  function show(id) {
+    document.querySelectorAll('.page, .done').forEach(p => p.classList.remove('show'));
+    $(id).classList.add('show');
+    $('webBar').style.display = id === 'pDone' ? 'none' : '';
+    if (trail[trail.length - 1] !== id) trail.push(id);
+    document.activeElement && document.activeElement.blur();
+  }
+  function stepBack() {
+    if (trail.length <= 1) { cancelLink(); return; }
+    trail.pop();
+    const id = trail[trail.length - 1];
+    document.querySelectorAll('.page, .done').forEach(p => p.classList.remove('show'));
+    $(id).classList.add('show');
+  }
+  function cancelLink() { location.href = 'PayPal.html'; }
+  function busy(text, ms, then) { $('busyTxt').textContent = text; $('busy').classList.add('show'); setTimeout(() => { $('busy').classList.remove('show'); then(); }, ms); }
+
+  // Log in: both fields required (prototype — any values work)
+  function login() {
+    let ok = true;
+    [['lgEmail', 'lgEmailErr'], ['lgPass', 'lgPassErr']].forEach(([f, e]) => {
+      const bad = !$(f).value.trim();
+      $(f).classList.toggle('err', bad); $(e).classList.toggle('show', bad); if (bad) ok = false;
+    });
+    if (!ok) return;
+    const em = $('lgEmail').value.trim();
+    $('doneEmail').textContent = mask(em);
+    busy('Logging in…', 900, () => show('pConsent'));
+  }
+  // Sign up: required fields, then verify email
+  function signup() {
+    let ok = true;
+    document.querySelectorAll('#pSignup .req').forEach(i => {
+      const bad = !i.value.trim();
+      i.classList.toggle('err', bad);
+      const err = i.parentElement.querySelector('.pp-err'); if (err) err.classList.toggle('show', bad);
+      if (bad) ok = false;
+    });
+    if (!ok) return;
+    createdAccount = true;
+    $('vfEmail').textContent = $('suEmail').value.trim();
+    $('doneEmail').textContent = mask($('suEmail').value.trim());
+    busy('Creating your PayPal account…', 1100, () => show('pVerify'));
+  }
+  const mask = v => v.includes('@') ? v.slice(0, 2) + '•••••' + v.slice(v.indexOf('@')) : v.slice(0, 4) + ' *** ' + v.slice(-2);
+
+  // Agree and Connect → name check → linked
+  function connect() {
+    busy('Connecting to M-PESA…', 900, () => busy('Checking the PayPal name matches your M-PESA name…', 1100, () => {
+      try { sessionStorage.setItem('paypalLinked', '1'); sessionStorage.setItem('paypalEmail', $('doneEmail').textContent); } catch (e) {}
+      if (createdAccount) {
+        $('doneTitle').textContent = 'Account Created & Linked';
+        $('doneText').textContent = 'Your PayPal account has been created and linked to your M-PESA account.';
+      }
+      show('pDone');
+      requestAnimationFrame(() => $('linkAnim').classList.add('play'));
+    }));
+  }
+  document.querySelectorAll('.pp-input').forEach(i => i.addEventListener('input', () => {
+    i.classList.remove('err'); const e = i.parentElement.querySelector('.pp-err'); if (e) e.classList.remove('show');
+  }));
+  $('lgPass').addEventListener('keydown', e => { if (e.key === 'Enter') login(); });
+</script>
+<script src="components/keyboard.js"></script>
+<!-- Export to Figma button (shared exporter) -->
+<script src="figma-export.js"></script>
+<script src="test-scenarios-data.js"></script>
+<script src="test-scenarios.js"></script>
+</body>
+</html>

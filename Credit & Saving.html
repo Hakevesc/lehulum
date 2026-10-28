@@ -4,132 +4,86 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Saving &amp; Credit — M-PESA</title>
+<!-- Same components as the Home screen: balance card and the white actions grid -->
+<link rel="stylesheet" href="styles/design-tokens.css">
+<link rel="stylesheet" href="styles/base.css">
+<link rel="stylesheet" href="styles/component-status-bar.css">
+<link rel="stylesheet" href="styles/component-balance-card.css">
+<link rel="stylesheet" href="styles/component-actions.css">
+<link rel="stylesheet" href="styles/component-transactions.css">
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
   @import url('https://api.fontshare.com/v2/css?f[]=switzer@400,500,600,700,800&display=swap');
-  :root {
-    --Primary:#FE353D; --Primary-Dark:#C41520; --Primary-Darker:#A41016; --Primary-Light:#FFF1F2;
-    --On-Surface:#1C1C21; --On-Surface-Low:#7C7C87; --Border:#EAEAEF;
-    --Background:#F4F4F8; --Surface:#FFFFFF;
-    --Success:#1FC83B; --Success-Light:#E8F9EC;
-    --Warning:#F59E0B; --Warning-Light:#FEF3C7;
-    --Info:#3B82F6; --Info-Light:#EFF6FF;
-    --Purple:#8B5CF6; --Purple-Light:#EDE9FE;
-    --Red-Gradient:linear-gradient(180deg,#A41016 0%,#ED1C24 100%);
-    --Blue-Gradient:linear-gradient(180deg,#1E3A8A 0%,#2F6BEA 100%);
-    --Font:'Switzer','Inter',sans-serif;
-  }
-  *{margin:0;padding:0;box-sizing:border-box;}
-  body{font-family:var(--Font);background:var(--Red-Gradient);display:flex;justify-content:center;align-items:center;min-height:100vh;padding:20px;}
-  .phone-frame{width:360px;height:780px;background:var(--Background);border-radius:30px;overflow:hidden;box-shadow:0 24px 64px rgba(0,0,0,.22);display:flex;flex-direction:column;position:relative;}
 
-  /* STATUS + HEADER */
-  .status-bar{display:flex;justify-content:space-between;align-items:center;padding:14px 24px 6px;background:var(--Background);flex-shrink:0;}
-  .status-bar .time{font-size:14px;font-weight:600;color:var(--On-Surface);}
-  .status-icons{display:flex;align-items:center;gap:6px;}
-  .status-icons svg{width:18px;height:18px;}
-  .header-nav{display:flex;align-items:center;justify-content:space-between;padding:2px 16px 10px;background:var(--Background);flex-shrink:0;}
-  .icon-btn{width:36px;height:36px;border-radius:50%;background:transparent;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:background .2s;position:relative;}
-  .icon-btn:hover{background:rgba(0,0,0,.05);}
-  .icon-btn svg{width:22px;height:22px;stroke:var(--On-Surface);stroke-width:1.8;fill:none;stroke-linecap:round;stroke-linejoin:round;}
-  .icon-btn .dot{position:absolute;top:7px;right:8px;width:7px;height:7px;border-radius:50%;background:var(--Primary);border:1.5px solid var(--Background);}
-  .header-title{color:var(--On-Surface);font-size:17px;font-weight:500;letter-spacing:.3px;flex:1;text-align:center;}
-  .scroll-content{flex:1;overflow-y:auto;padding:12px 16px 22px;display:flex;flex-direction:column;gap:14px;}
-  .scroll-content::-webkit-scrollbar{width:0;}
-  .scroll-content>*{flex-shrink:0;}
+  /* Saving & Credit, laid out like Home: the red balance card (total savings,
+     active credit, Errif), then four quick actions — Term Loan, Start
+     Saving, Over Draft, My Activity — then active accounts and the challenge banner. */
+  :root { --Font: 'Switzer', 'Inter', sans-serif; }
+  body { font-family: var(--Font); }
+  .app-content { display: flex; flex-direction: column; }
+  .app-content > * { flex-shrink: 0; }
 
-  /* 1. BALANCE SLIDER */
-  .balance-slider{display:flex;gap:10px;overflow-x:auto;scroll-snap-type:x mandatory;scroll-behavior:smooth;padding-right:26px;-ms-overflow-style:none;scrollbar-width:none;}
-  .balance-slider::-webkit-scrollbar{display:none;}
-  .balance-slide{flex:0 0 100%;scroll-snap-align:start;}
-  .bal-card{height:162px;border-radius:24px;padding:16px;position:relative;overflow:hidden;display:flex;flex-direction:column;justify-content:space-between;cursor:pointer;}
-  .bal-card.savings{background:var(--Red-Gradient);box-shadow:0 8px 24px rgba(164,16,22,.26);}
-  .bal-card.credit{background:var(--Blue-Gradient);box-shadow:0 8px 24px rgba(30,58,138,.30);}
-  .bal-pattern{position:absolute;inset:0;opacity:.18;background:url('assets/M-PESA-pattern.svg') no-repeat right -90px top -90px;background-size:300px;mix-blend-mode:overlay;pointer-events:none;}
-  .bal-card::after{content:'';position:absolute;bottom:-90px;left:-50px;width:210px;height:210px;border-radius:50%;background:rgba(0,0,0,.10);pointer-events:none;}
-  .bal-top{display:flex;align-items:flex-start;justify-content:space-between;gap:10px;position:relative;z-index:1;}
-  .bal-label{color:rgba(255,255,255,.72);font-size:11px;font-weight:500;letter-spacing:.2px;margin-bottom:7px;}
-  .bal-amount{color:#FFF;font-size:26px;font-weight:700;line-height:1.1;letter-spacing:-.6px;}
-  .bal-amount .unit{font-size:13px;font-weight:500;opacity:.75;margin-left:2px;}
-  .bal-chip{width:32px;height:32px;flex-shrink:0;border:none;border-radius:50%;background:rgba(255,255,255,.16);cursor:pointer;display:flex;align-items:center;justify-content:center;transition:background .2s;}
-  .bal-chip:hover{background:rgba(255,255,255,.28);}
-  .bal-chip svg{width:16px;height:16px;stroke:#FFF;fill:none;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round;}
-  .bal-bottom{display:flex;align-items:center;gap:12px;position:relative;z-index:1;padding-top:12px;border-top:1px solid rgba(255,255,255,.18);}
-  .bal-stat{flex:1;min-width:0;}
-  .bal-stat+.bal-stat{border-left:1px solid rgba(255,255,255,.18);padding-left:12px;}
-  .bal-stat-lbl{color:rgba(255,255,255,.62);font-size:10px;margin-bottom:4px;}
-  .bal-stat-val{color:#FFF;font-size:14px;font-weight:600;white-space:nowrap;}
-  .bal-go{width:28px;height:28px;flex-shrink:0;border-radius:50%;background:rgba(255,255,255,.18);display:flex;align-items:center;justify-content:center;}
-  .bal-go svg{width:13px;height:13px;stroke:#FFF;fill:none;stroke-width:2.4;stroke-linecap:round;stroke-linejoin:round;}
-  .slider-dots{display:flex;justify-content:center;align-items:center;gap:6px;}
-  .dot-i{width:6px;height:6px;border-radius:3px;background:#D9D9E1;border:none;padding:0;cursor:pointer;transition:width .25s,background .25s;}
-  .dot-i.active{width:18px;background:var(--Primary);}
+  .header-nav { display: flex; align-items: center; justify-content: space-between; padding: 0 0 12px; }
+  .icon-btn { width: 36px; height: 36px; border-radius: 50%; background: transparent; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; position: relative; }
+  .icon-btn:hover { background: rgba(0,0,0,0.05); }
+  .icon-btn svg { width: 22px; height: 22px; stroke: var(--On-Surface, #1C1C21); stroke-width: 1.8; fill: none; stroke-linecap: round; stroke-linejoin: round; }
+  .icon-btn .dot { position: absolute; top: 7px; right: 8px; width: 7px; height: 7px; border-radius: 50%; background: var(--Primary, #FE353D); border: 1.5px solid #F5F5F5; }
+  .header-title { color: var(--On-Surface, #1C1C21); font-size: 17px; font-weight: 500; letter-spacing: 0.3px; flex: 1; text-align: center; }
 
-  /* 2. QUICK ACCESS */
-  .quick-access{background:var(--Surface);border-radius:22px;padding:15px 14px 16px;box-shadow:0 2px 10px rgba(0,0,0,.05);}
-  .qa-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;}
-  .qa-title{font-size:12px;font-weight:700;color:var(--On-Surface);letter-spacing:.6px;text-transform:uppercase;}
-  .qa-arrow{width:26px;height:26px;border-radius:50%;background:var(--Background);display:flex;align-items:center;justify-content:center;cursor:pointer;border:none;transition:background .2s;}
-  .qa-arrow:hover{background:var(--Border);}
-  .qa-arrow svg{width:14px;height:14px;stroke:var(--On-Surface-Low);fill:none;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round;}
-  .qa-grid{display:flex;}
-  .qa-item{flex:1;display:flex;flex-direction:column;align-items:center;gap:8px;cursor:pointer;transition:transform .2s;position:relative;}
-  .qa-item+.qa-item::before{content:'';position:absolute;left:0;top:6px;bottom:16px;width:1px;background:var(--Border);}
-  .qa-item:hover{transform:translateY(-2px);}
-  .qa-icon{width:48px;height:48px;border-radius:50%;display:flex;align-items:center;justify-content:center;}
-  .qa-icon svg{width:21px;height:21px;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;}
-  .qa-icon{background:rgba(254,53,61,.10);}
-  .qa-icon svg{stroke:var(--Primary);}
-  .qa-label{font-size:10.5px;font-weight:500;color:var(--On-Surface);text-align:center;line-height:1.3;}
+  /* Four quick actions in one row (Home's tiles, sized for 4 across) */
+  .actions.actions-4 { grid-template-columns: repeat(4, minmax(0, 1fr)); column-gap: 2px; padding: 18px 8px 16px; }
+  .actions.actions-4 .label { font-size: 12.5px; }
 
-  /* 3. SECTION HEADER */
-  .section-hdr{display:flex;align-items:center;justify-content:space-between;padding:0 2px;}
-  .section-title{color:var(--On-Surface);font-size:14px;font-weight:600;letter-spacing:.2px;}
-  .see-all-btn{color:var(--Primary);font-size:12px;font-weight:500;cursor:pointer;border:none;background:none;font-family:var(--Font);padding:0;transition:opacity .2s;}
-  .see-all-btn:hover{opacity:.7;}
+  /* Section header + active accounts */
+  .section-hdr { display: flex; align-items: center; justify-content: space-between; padding: 0 2px; margin: 4px 0 10px; }
+  .section-title { color: var(--On-Surface, #1C1C21); font-size: 15px; font-weight: 600; }
+  .see-all-btn { display: inline-flex; align-items: center; gap: 2px; color: var(--Primary, #FE353D); font-size: 12.5px; font-weight: 600; cursor: pointer; border: none; background: none; font-family: var(--Font); padding: 0; }
+  .see-all-btn svg { width: 14px; height: 14px; stroke: currentColor; stroke-width: 2.4; fill: none; stroke-linecap: round; stroke-linejoin: round; }
+  .accounts-row { display: flex; gap: 10px; margin-bottom: 14px; }
+  .account-card { flex: 1; min-width: 0; border-radius: 20px; padding: 14px 14px 12px; background: #FFF; box-shadow: 0 4px 16px rgba(15,23,42,0.06); cursor: pointer; display: flex; flex-direction: column; align-items: flex-start; }
+  .account-card:active { transform: scale(0.98); }
+  .ac-icon { width: 44px; height: 44px; border-radius: 13px; background: #FFF1F2; display: flex; align-items: center; justify-content: center; }
+  .ac-icon img { width: 28px; height: 28px; display: block; }
+  .ac-label { margin-top: 12px; font-size: 13px; font-weight: 500; color: var(--On-Surface-Low, #7C7C87); white-space: nowrap; }
+  .ac-amount { margin-top: 4px; font-size: 19px; font-weight: 700; color: var(--On-Surface, #1C1C21); white-space: nowrap; letter-spacing: -0.2px; }
+  .ac-amount .unit { font-size: 11.5px; font-weight: 500; color: var(--On-Surface-Low, #7C7C87); margin-left: 4px; }
+  .ac-divider { align-self: stretch; height: 1px; background: rgba(0,0,0,0.07); margin: 12px 0 10px; }
+  .ac-sub { align-self: stretch; display: flex; align-items: center; gap: 6px; font-size: 12px; color: #55555E; }
+  .ac-sub span { flex: 1; }
+  .ac-sub svg { width: 15px; height: 15px; fill: none; stroke-width: 1.9; stroke-linecap: round; stroke-linejoin: round; }
+  .ac-sub .doc { stroke: #8A8A94; }
+  .ac-sub .chev { stroke: #55555E; stroke-width: 2.2; }
 
-  /* 4. ACTIVE ACCOUNTS */
-  .accounts-row{display:flex;gap:10px;}
-  .account-card{flex:1;min-width:0;border-radius:18px;padding:13px;box-shadow:0 2px 10px rgba(0,0,0,.05);cursor:pointer;transition:transform .2s;display:flex;flex-direction:column;gap:8px;}
-  .account-card:hover{transform:translateY(-2px);}
-  .account-card.savings{background:linear-gradient(145deg,#F3FCF5 0%,#FFFFFF 65%);}
-  .account-card.credit{background:linear-gradient(145deg,#F2F7FF 0%,#FFFFFF 65%);}
-  .ac-top{display:flex;align-items:center;gap:8px;}
-  .ac-icon{width:28px;height:28px;border-radius:9px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
-  .ac-icon svg{width:16px;height:16px;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;}
-  .ac-icon.savings{background:rgba(31,200,59,.16);} .ac-icon.savings svg{stroke:#16A34A;}
-  .ac-icon.credit{background:rgba(59,130,246,.16);} .ac-icon.credit svg{stroke:var(--Info);}
-  .ac-label{font-size:10.5px;font-weight:500;color:var(--On-Surface-Low);white-space:nowrap;}
-  .ac-amount{font-size:13px;font-weight:700;color:var(--On-Surface);letter-spacing:-.2px;white-space:nowrap;}
-  .ac-amount .unit{font-size:9.5px;font-weight:500;color:var(--On-Surface-Low);}
-  .ac-divider{height:1px;background:rgba(0,0,0,.07);}
-  .ac-sub{font-size:10.5px;color:var(--On-Surface-Low);display:flex;align-items:center;justify-content:space-between;}
-  .ac-sub svg{width:13px;height:13px;stroke:var(--On-Surface-Low);fill:none;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round;}
+  /* Save & Plan: icon, label, chevron in the balance card's dark button */
+  .add-money-btn .sp-ic { width: 17px; height: 17px; flex-shrink: 0; }
+  .add-money-btn .sp-chev { width: 13px; height: 13px; flex-shrink: 0; margin-left: -1px; }
+  .add-money-btn span { font-weight: 500; }
 
-  /* 5. CHALLENGE BANNER */
-  .challenge-banner{border-radius:22px;height:118px;overflow:hidden;position:relative;cursor:pointer;box-shadow:0 4px 16px rgba(0,0,0,.14);transition:transform .2s;}
-  .challenge-banner:hover{transform:translateY(-2px);}
-  .cb-image{position:absolute;inset:0;background:url('assets/banner-ads-1.png') center/cover no-repeat;}
-  .cb-overlay{position:absolute;inset:0;background:linear-gradient(90deg,rgba(26,26,33,.92) 0%,rgba(26,26,33,.68) 48%,rgba(26,26,33,.12) 100%);}
-  .cb-content{position:relative;z-index:2;padding:14px 16px;height:100%;display:flex;flex-direction:column;justify-content:center;}
-  .cb-badge{display:inline-flex;padding:3px 8px;border-radius:20px;background:var(--Primary);color:#FFF;font-size:9px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;margin-bottom:6px;align-self:flex-start;}
-  .cb-title{color:#FFF;font-size:15px;font-weight:700;margin-bottom:3px;max-width:190px;}
-  .cb-sub{color:rgba(255,255,255,.72);font-size:10.5px;max-width:168px;}
-  .cb-cta{position:absolute;right:14px;bottom:14px;z-index:3;display:inline-flex;align-items:center;gap:5px;padding:8px 14px;border-radius:20px;background:var(--Primary);color:#FFF;border:none;cursor:pointer;font-size:11px;font-weight:700;font-family:var(--Font);text-transform:uppercase;box-shadow:0 4px 14px rgba(254,53,61,.35);transition:background .2s;}
-  .cb-cta:hover{background:var(--Primary-Dark);}
+  /* Challenge banner */
+  .challenge-banner { border-radius: 22px; height: 118px; overflow: hidden; position: relative; cursor: pointer; box-shadow: 0 4px 16px rgba(0,0,0,0.12); margin-bottom: 16px; }
+  .cb-image { position: absolute; inset: 0; background: url('assets/banner-ads-1.png') center/cover no-repeat; }
+  .cb-overlay { position: absolute; inset: 0; background: linear-gradient(90deg, rgba(26,26,33,0.92) 0%, rgba(26,26,33,0.68) 48%, rgba(26,26,33,0.12) 100%); }
+  .cb-content { position: relative; z-index: 2; padding: 14px 16px; height: 100%; display: flex; flex-direction: column; justify-content: center; }
+  .cb-badge { display: inline-flex; padding: 3px 8px; border-radius: 20px; background: var(--Primary, #FE353D); color: #FFF; font-size: 9px; font-weight: 700; letter-spacing: 0.5px; text-transform: uppercase; margin-bottom: 6px; align-self: flex-start; }
+  .cb-title { color: #FFF; font-size: 15px; font-weight: 700; margin-bottom: 3px; }
+  .cb-sub { color: rgba(255,255,255,0.72); font-size: 10.5px; max-width: 168px; }
+  .cb-cta { position: absolute; right: 14px; bottom: 14px; z-index: 3; padding: 8px 14px; border-radius: 20px; background: var(--Primary, #FE353D); color: #FFF; border: none; cursor: pointer; font-size: 11px; font-weight: 700; font-family: var(--Font); text-transform: uppercase; box-shadow: 0 4px 14px rgba(254,53,61,0.35); }
 
-  /* TOAST */
-  .toast{position:fixed;bottom:90px;left:50%;transform:translateX(-50%) translateY(20px);background:var(--On-Surface);color:#FFF;padding:12px 24px;border-radius:12px;font-size:13px;font-weight:500;opacity:0;pointer-events:none;transition:all .3s ease;z-index:1000;box-shadow:0 4px 16px rgba(0,0,0,.2);white-space:nowrap;}
-  .toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+  /* History: Home's transaction list, saving & credit activity only */
+  .recent-transactions { margin-bottom: 8px; }
+  .transaction-card .logo.sc { background: #FFF1F2; }
+  .transaction-card .logo.sc img { width: 22px; height: 22px; }
+
+  .toast { position: absolute; bottom: 40px; left: 50%; transform: translateX(-50%) translateY(20px); background: #1C1C21; color: #FFF; padding: 11px 18px; border-radius: 12px; font-size: 13px; font-weight: 500; opacity: 0; pointer-events: none; transition: all 0.3s ease; z-index: 1000; white-space: nowrap; }
+  .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
 </style>
 <link rel="stylesheet" href="styles/device.css">
+<style>@media (max-width: 480px) { .app-content { padding-top: 2px; } }</style>
 </head>
 <body>
 <div class="phone-frame">
-
-  <!-- STATUS BAR -->
   <div class="status-bar">
-    <span class="time">9:41</span>
+    <span class="time">10:00</span>
     <div class="status-icons">
       <svg viewBox="0 0 24 24" fill="none"><path d="M1 9l2 2c4.97-4.97 13.03-4.97 18 0l2-2C16.93 2.93 7.08 2.93 1 9z" fill="#1C1C21"/><path d="M5 13l2 2c2.76-2.76 7.24-2.76 10 0l2-2C15.14 9.14 8.87 9.14 5 13z" fill="#1C1C21"/><path d="M9 17l2 2c1.1-1.1 2.9-1.1 4 0l2-2c-2.21-2.21-5.79-2.21-8 0z" fill="#1C1C21"/></svg>
       <svg viewBox="0 0 24 24" fill="none"><rect x="2" y="6" width="4" height="12" rx="1" fill="#1C1C21"/><rect x="8" y="4" width="4" height="14" rx="1" fill="#1C1C21"/><rect x="14" y="2" width="4" height="16" rx="1" fill="#1C1C21"/><rect x="20" y="0" width="4" height="18" rx="1" fill="#1C1C21" opacity="0.3"/></svg>
@@ -137,128 +91,88 @@
     </div>
   </div>
 
-  <!-- HEADER -->
-  <div class="header-nav">
-    <button class="icon-btn" onclick="window.location.href='Lehulum Home.html'" aria-label="Back">
-      <svg viewBox="0 0 24 24"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
-    </button>
-    <span class="header-title">Saving &amp; Credit</span>
-    <button class="icon-btn" onclick="window.location.href='Notification Center.html'" aria-label="Notifications">
-      <svg viewBox="0 0 24 24"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
-      <span class="dot"></span>
-    </button>
-  </div>
+  <div class="app-content">
+    <div class="header-nav">
+      <button class="icon-btn" onclick="location.href='Lehulum Home.html'" aria-label="Back"><svg viewBox="0 0 24 24"><path d="M19 12H5M12 19l-7-7 7-7"/></svg></button>
+      <span class="header-title">Saving &amp; Credit</span>
+      <button class="icon-btn" onclick="location.href='Notification Center.html'" aria-label="Notifications"><svg viewBox="0 0 24 24"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg><span class="dot"></span></button>
+    </div>
 
-  <!-- CONTENT -->
-  <div class="scroll-content">
-
-    <!-- 1. BALANCE SLIDER (swipe for credit) -->
-    <div class="balance-slider" id="balSlider">
-
-      <div class="balance-slide">
-        <div class="bal-card savings" onclick="showToast('Savings overview coming soon')">
-          <div class="bal-pattern"></div>
-          <div class="bal-top">
-            <div>
-              <div class="bal-label">Total Savings (ETB)</div>
-              <div class="bal-amount"><span id="savingsAmt">30,000.00</span><span class="unit">ETB</span></div>
-            </div>
-            <button class="bal-chip" id="eyeBtn" onclick="event.stopPropagation();toggleBalance()" aria-label="Toggle balance">
-              <svg viewBox="0 0 24 24" id="eyeIcon"><path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5C21.27 7.61 17 4.5 12 4.5z"/><circle cx="12" cy="12" r="3"/></svg>
+    <!-- Balance card: same as Home -->
+    <div class="balance-card-wrapper">
+      <div class="balance-card" id="balanceCard">
+        <div class="balance-card-top">
+          <div class="main-balance">
+            <div class="header"><span class="label">Total Savings (ETB)</span></div>
+            <div class="amount" id="mainBalance" data-value="30,000.00">* * * * * *</div>
+          </div>
+          <button class="add-money-btn" onclick="location.href='Coming Soon.html?f=Saving&back=Credit%20%26%20Saving.html'">
+            <svg class="sp-ic" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="6" width="18" height="14" rx="3"/><path d="M3 10h18"/><path d="M16 15h2"/><path d="M7 6V4.5A1.5 1.5 0 0 1 8.5 3h7A1.5 1.5 0 0 1 17 4.5V6"/></svg>
+            <span>Save &amp; Plan</span>
+            <svg class="sp-chev" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg>
+          </button>
+        </div>
+        <div class="balance-card-bottom">
+          <div class="other-balance">
+            <span class="header-label">Active Credit</span>
+            <span class="amount" id="creditBalance" data-value="10,000.00">****</span>
+          </div>
+          <div class="other-balance">
+            <span class="header-label">Errif Balance</span>
+            <span class="amount" id="errifBalance" data-value="3,450.00">****</span>
+          </div>
+          <div class="hide-unhide">
+            <button class="eye-btn" id="eyeBtn" title="Show balances">
+              <svg id="eyeIcon" viewBox="0 0 24 24" fill="none"><path d="M12 4.5C7 4.5 2.73 7.61 1 12C2.73 16.39 7 19.5 12 19.5C17 19.5 21.27 16.39 23 12C21.27 7.61 17 4.5 12 4.5Z" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><circle cx="12" cy="12" r="3" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
             </button>
           </div>
-          <div class="bal-bottom">
-            <div class="bal-stat"><div class="bal-stat-lbl">Pending</div><div class="bal-stat-val" id="pendAmt">5,000.00ETB</div></div>
-            <div class="bal-stat"><div class="bal-stat-lbl">Available</div><div class="bal-stat-val" id="availAmt">25,000.00ETB</div></div>
-            <span class="bal-go"><svg viewBox="0 0 24 24"><path d="M9 18l6-6-6-6"/></svg></span>
-          </div>
-        </div>
-      </div>
-
-      <div class="balance-slide">
-        <div class="bal-card credit" onclick="showToast('Credit overview coming soon')">
-          <div class="bal-pattern"></div>
-          <div class="bal-top">
-            <div>
-              <div class="bal-label">Total Credit (ETB)</div>
-              <div class="bal-amount">10,000.00<span class="unit">ETB</span></div>
-            </div>
-            <span class="bal-chip" aria-hidden="true">
-              <svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
-            </span>
-          </div>
-          <div class="bal-bottom">
-            <div class="bal-stat"><div class="bal-stat-lbl">Due Date</div><div class="bal-stat-val">Jun 30, 2026</div></div>
-            <div class="bal-stat"><div class="bal-stat-lbl">Time Left</div><div class="bal-stat-val">30 Days</div></div>
-            <span class="bal-go"><svg viewBox="0 0 24 24"><path d="M9 18l6-6-6-6"/></svg></span>
-          </div>
-        </div>
-      </div>
-
-    </div>
-    <div class="slider-dots" id="balDots">
-      <button class="dot-i active" onclick="goSlide(0)" aria-label="Savings"></button>
-      <button class="dot-i" onclick="goSlide(1)" aria-label="Credit"></button>
-    </div>
-
-    <!-- 2. QUICK ACCESS -->
-    <div class="quick-access">
-      <div class="qa-header">
-        <span class="qa-title">Quick Access</span>
-        <button class="qa-arrow" onclick="showToast('All saving &amp; credit services')" aria-label="See all"><svg viewBox="0 0 24 24"><path d="M9 18l6-6-6-6"/></svg></button>
-      </div>
-      <div class="qa-grid">
-        <div class="qa-item" onclick="showToast('New saving pocket')">
-          <div class="qa-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg></div>
-          <span class="qa-label">New<br>Savings</span>
-        </div>
-        <div class="qa-item" onclick="showToast('Your saving pockets')">
-          <div class="qa-icon"><svg viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></div>
-          <span class="qa-label">View<br>Pockets</span>
-        </div>
-        <div class="qa-item" onclick="window.location.href='Bill Payment_Overdraft Offer.html'">
-          <div class="qa-icon"><svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></div>
-          <span class="qa-label">Eriff<br>Loan</span>
-        </div>
-        <div class="qa-item" onclick="window.location.href='Transaction History.html'">
-          <div class="qa-icon"><svg viewBox="0 0 24 24"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg></div>
-          <span class="qa-label">My<br>Activity</span>
         </div>
       </div>
     </div>
 
-    <!-- 3. ACTIVE ACCOUNTS -->
+    <!-- Quick actions: Home's white tiles, four across -->
+    <div class="actions actions-4">
+      <div class="primary-action" onclick="location.href='Term Loan.html'">
+        <div class="icon-container"><img src="assets/Credit.svg" alt="Term Loan"></div>
+        <span class="label">Term<br>Loan</span>
+      </div>
+      <div class="primary-action" onclick="location.href='Coming Soon.html?f=Start%20Saving&back=Credit%20%26%20Saving.html'">
+        <div class="icon-container"><img src="assets/Saving.svg" alt="Start Saving"></div>
+        <span class="label">Start<br>Saving</span>
+      </div>
+      <div class="primary-action" onclick="location.href='Bill Payment_Overdraft Offer.html'">
+        <div class="icon-container"><img src="assets/Overdraft.svg" alt="Over Draft"></div>
+        <span class="label">Over<br>Draft</span>
+      </div>
+      <div class="primary-action" onclick="location.href='Transaction History.html'">
+        <div class="icon-container"><img src="assets/My Activity.svg" alt="My Activity"></div>
+        <span class="label">My<br>Activity</span>
+      </div>
+    </div>
+
+    <!-- Active accounts -->
     <div class="section-hdr">
       <span class="section-title">Active Accounts</span>
-      <button class="see-all-btn" onclick="showToast('All accounts coming soon')">See All</button>
+      <button class="see-all-btn" onclick="location.href='Active Accounts.html'">See all <svg viewBox="0 0 24 24"><path d="M9 18l6-6-6-6"/></svg></button>
     </div>
     <div class="accounts-row">
-      <div class="account-card savings" onclick="showToast('Active savings accounts')">
-        <div class="ac-top">
-          <div class="ac-icon savings"><svg viewBox="0 0 24 24"><path d="M21 12V7H5a2 2 0 0 1 0-4h14v4"/><path d="M3 5v14a2 2 0 0 0 2 2h16v-5"/><path d="M18 12a2 2 0 0 0 0 4h4v-4h-4z"/></svg></div>
-          <div style="min-width:0;">
-            <div class="ac-label">Active Savings</div>
-            <div class="ac-amount">30,000.00<span class="unit">ETB</span></div>
-          </div>
-        </div>
+      <div class="account-card" onclick="location.href='Active Accounts.html'">
+        <div class="ac-icon"><img src="assets/Saving.svg" alt=""></div>
+        <div class="ac-label">Active Savings</div>
+        <div class="ac-amount">30,000.00<span class="unit">ETB</span></div>
         <div class="ac-divider"></div>
-        <div class="ac-sub"><span>2 Accounts</span><svg viewBox="0 0 24 24"><path d="M9 18l6-6-6-6"/></svg></div>
+        <div class="ac-sub"><svg class="doc" viewBox="0 0 24 24"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5M9 13h6M9 17h4"/></svg><span>2 Accounts</span><svg class="chev" viewBox="0 0 24 24"><path d="M9 18l6-6-6-6"/></svg></div>
       </div>
-
-      <div class="account-card credit" onclick="showToast('Active credit accounts')">
-        <div class="ac-top">
-          <div class="ac-icon credit"><svg viewBox="0 0 24 24"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/><path d="M6 15h4"/></svg></div>
-          <div style="min-width:0;">
-            <div class="ac-label">Active Credit</div>
-            <div class="ac-amount">10,000.00<span class="unit">ETB</span></div>
-          </div>
-        </div>
+      <div class="account-card" onclick="location.href='Active Accounts.html?tab=credit'">
+        <div class="ac-icon"><img src="assets/Credit Card Plus.svg" alt=""></div>
+        <div class="ac-label">Active Credit</div>
+        <div class="ac-amount">10,000.00<span class="unit">ETB</span></div>
         <div class="ac-divider"></div>
-        <div class="ac-sub"><span>2 Accounts</span><svg viewBox="0 0 24 24"><path d="M9 18l6-6-6-6"/></svg></div>
+        <div class="ac-sub"><svg class="doc" viewBox="0 0 24 24"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5M9 13h6M9 17h4"/></svg><span>2 Accounts</span><svg class="chev" viewBox="0 0 24 24"><path d="M9 18l6-6-6-6"/></svg></div>
       </div>
     </div>
 
-    <!-- 4. M-PESA CHALLENGE -->
+    <!-- M-PESA challenge -->
     <div class="challenge-banner" onclick="showToast('Challenge details coming soon')">
       <div class="cb-image"></div>
       <div class="cb-overlay"></div>
@@ -270,34 +184,66 @@
       </div>
     </div>
 
-  </div><!-- /scroll-content -->
+    <!-- History: latest saving & credit activity (same list as Home) -->
+    <div class="recent-transactions">
+      <div class="header">
+        <span class="transactions-title">History</span>
+        <span class="see-all" onclick="location.href='Transaction History.html'" style="cursor:pointer">See all</span>
+      </div>
+      <div class="transactions-list">
+        <div class="transaction-card">
+          <div class="left">
+            <div class="logo sc"><img src="assets/Saving.svg" alt=""></div>
+            <div class="name-type"><span class="name">Saved to Goal Pocket</span><span class="type">Saving</span></div>
+          </div>
+          <div class="right"><span class="amount positive">+2,000.00</span><span class="date">Today</span></div>
+        </div>
+        <div class="transaction-card">
+          <div class="left">
+            <div class="logo sc"><img src="assets/Overdraft.svg" alt=""></div>
+            <div class="name-type"><span class="name">Errif Repayment</span><span class="type">Over Draft</span></div>
+          </div>
+          <div class="right"><span class="amount negative">-1,150.00</span><span class="date">Today</span></div>
+        </div>
+        <div class="transaction-card" onclick="location.href='Term Loan - Details.html'" style="cursor:pointer">
+          <div class="left">
+            <div class="logo sc"><img src="assets/Credit.svg" alt=""></div>
+            <div class="name-type"><span class="name">Term Loan Disbursed</span><span class="type">Term Loan</span></div>
+          </div>
+          <div class="right"><span class="amount positive">+5,000.00</span><span class="date">Yesterday</span></div>
+        </div>
+        <div class="transaction-card">
+          <div class="left">
+            <div class="logo sc"><img src="assets/Saving.svg" alt=""></div>
+            <div class="name-type"><span class="name">Interest Earned</span><span class="type">Saving</span></div>
+          </div>
+          <div class="right"><span class="amount positive">+45.30</span><span class="date">12 Oct</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="toast" id="toast"></div>
+</div>
 
-</div><!-- /phone-frame -->
-
-<div class="toast" id="toast"></div>
 <script>
-  const slider=document.getElementById('balSlider');
-  const dots=[...document.querySelectorAll('#balDots .dot-i')];
-  const step=()=>document.querySelector('.balance-slide').offsetWidth+10;
-  function goSlide(i){slider.scrollTo({left:i*step(),behavior:'smooth'});}
-  // Home has separate Credit and Saving tiles: ?tab=credit opens on the credit card
-  if (new URLSearchParams(location.search).get('tab') === 'credit') requestAnimationFrame(() => slider.scrollTo({ left: step() }));
-  slider.addEventListener('scroll',()=>{
-    const i=Math.round(slider.scrollLeft/step());
-    dots.forEach((d,n)=>d.classList.toggle('active',n===i));
-  });
-  function showToast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2500);}
-  let balHidden=false;
-  function toggleBalance(){
-    balHidden=!balHidden;
-    const icon=document.getElementById('eyeIcon');
-    document.getElementById('savingsAmt').textContent=balHidden?'* * * * *':'30,000.00';
-    document.getElementById('pendAmt').textContent=balHidden?'* * *ETB':'5,000.00ETB';
-    document.getElementById('availAmt').textContent=balHidden?'* * *ETB':'25,000.00ETB';
-    icon.innerHTML=balHidden
-      ?`<path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94" stroke-linecap="round" stroke-linejoin="round"/><path d="M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19" stroke-linecap="round" stroke-linejoin="round"/><line x1="1" y1="1" x2="23" y2="23" stroke-linecap="round"/>`
-      :`<path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5C21.27 7.61 17 4.5 12 4.5z"/><circle cx="12" cy="12" r="3"/>`;
-  }
+  function showToast(msg) { const t = document.getElementById('toast'); t.textContent = msg; t.classList.add('show'); setTimeout(() => t.classList.remove('show'), 2200); }
+  // Eye toggle — same behaviour as Home (balances hidden until tapped)
+  (function () {
+    const btn = document.getElementById('eyeBtn'), icon = document.getElementById('eyeIcon'), card = document.getElementById('balanceCard');
+    const main = document.getElementById('mainBalance'), credit = document.getElementById('creditBalance'), errif = document.getElementById('errifBalance');
+    const off = '<path d="M17.94 17.94A10.07 10.07 0 0 1 12 19.5C7 19.5 2.73 16.39 1 12C2.73 7.61 7 4.5 12 4.5C14.12 4.5 16.07 5.2 17.62 6.38" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M15 12C15 13.66 13.66 15 12 15C10.34 15 9 13.66 9 12C9 10.34 10.34 9 12 9" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><line x1="1" y1="1" x2="23" y2="23" stroke="white" stroke-width="1.5" stroke-linecap="round"/>';
+    const on = icon.innerHTML;
+    let shown = false;
+    btn.addEventListener('click', () => {
+      shown = !shown;
+      main.textContent = shown ? main.dataset.value : '* * * * * *';
+      credit.textContent = shown ? credit.dataset.value : '****';
+      errif.textContent = shown ? errif.dataset.value : '****';
+      card.classList.toggle('balance-visible', shown);
+      icon.innerHTML = shown ? off : on;
+      btn.title = shown ? 'Hide balances' : 'Show balances';
+    });
+  })();
 </script>
 <script src="figma-export.js"></script>
 <script src="test-scenarios-data.js"></script>

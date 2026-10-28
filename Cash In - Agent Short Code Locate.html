@@ -3,11 +3,15 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Cash In at Agent</title>
+<title>Cash-In at Agent</title>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@400;500;600&display=swap');
   @import url('https://api.fontshare.com/v2/css?f[]=switzer@400,500,600,700&display=swap');
 
+  /* Cash-In at Agent (same layout as Withdraw at Agent). Enter Code: type the
+     merchant short code (looked up) and the amount, or pick a frequent agent.
+     Near By (Find a Merchant): the map with the nearest agents. Continue opens
+     the confirmation sheet, Confirm goes to the PIN. */
   :root {
     --Primary: #FE353D;
     --Primary-Light: #FFF1F2;
@@ -19,6 +23,7 @@
   }
   * { margin: 0; padding: 0; box-sizing: border-box; }
   body { font-family: 'Inter', sans-serif; background: transparent; display: flex; justify-content: center; align-items: center; min-height: 100vh; padding: 20px; }
+  button, input { font-family: inherit; }
   .phone-frame { width: 360px; height: 780px; background: var(--Background); border-radius: 30px; overflow: hidden; position: relative; box-shadow: 0 20px 60px rgba(0,0,0,0.15); display: flex; flex-direction: column; }
   .app-content { height: 100%; display: flex; flex-direction: column; }
 
@@ -33,70 +38,78 @@
   .back-btn svg { width: 22px; height: 22px; stroke: var(--On-Surface); stroke-width: 1.8px; fill: none; }
   .header-title { color: var(--On-Surface); font-family: 'Switzer', sans-serif; font-size: 17px; font-weight: 500; letter-spacing: 0.3px; flex: 1; text-align: center; }
 
-  .card { background: #FFF; border-radius: 16px; padding: 16px; box-shadow: 0 4px 14px rgba(15,23,42,0.05); }
-  .field-label { display: block; font-family: 'Switzer', sans-serif; font-size: 14px; font-weight: 600; color: var(--On-Surface); margin-bottom: 8px; }
-  .field { height: 52px; background: var(--Field); border: 1.5px solid var(--Border); border-radius: 14px; padding: 0 8px 0 14px; display: flex; align-items: center; gap: 8px; transition: border-color 0.2s, box-shadow 0.2s, background 0.2s; }
-  .field:focus-within { border-color: var(--Primary); background: #FFF; box-shadow: 0 4px 12px rgba(254,53,61,0.12); }
-  .field.err { border-color: var(--Primary); background: #FFF; }
-  .field input { flex: 1; min-width: 0; border: none; outline: none; background: transparent; font-family: 'Switzer', sans-serif; font-size: 16px; font-weight: 700; letter-spacing: 0.4px; color: var(--On-Surface); }
-  .field input::placeholder { color: var(--On-Surface-Low); font-size: 15px; font-weight: 400; letter-spacing: 0; }
-  .suffix { font-family: 'Switzer', sans-serif; font-size: 13px; font-weight: 600; color: var(--On-Surface-Low); }
-
-  .btn-primary { width: 100%; height: 52px; border: none; border-radius: 14px; background: var(--Primary); color: #FFF; font-family: 'Poppins', sans-serif; font-size: 15px; font-weight: 500; cursor: pointer; box-shadow: 0 4px 16px rgba(254,53,61,0.25); transition: background 0.2s, transform 0.12s; }
-  .btn-primary:active { transform: scale(0.98); }
-  .btn-primary:disabled { background: #E0E0E0; color: var(--On-Surface-Low); box-shadow: none; cursor: not-allowed; }
-  .chev { width: 20px; height: 20px; stroke: var(--On-Surface-Low); stroke-width: 2; fill: none; flex-shrink: 0; }
-  .section-title { font-family: 'Switzer', sans-serif; font-size: 14px; font-weight: 600; color: var(--On-Surface); letter-spacing: 0.2px; }
-
   .body { flex: 1; min-height: 0; display: flex; flex-direction: column; padding: 0 16px 16px; gap: 12px; }
 
-  /* Amount carried over from the previous screen; Change goes back to it */
-  .amount-card { background: #FFF; border-radius: 16px; padding: 12px 14px 10px; box-shadow: 0 4px 14px rgba(15,23,42,0.05); flex-shrink: 0; }
-  .amount-row { display: flex; align-items: center; justify-content: space-between; }
-  .amount-row small { display: block; font-family: 'Switzer', sans-serif; font-size: 12px; color: var(--On-Surface-Low); }
-  .amount-row b { font-family: 'Switzer', sans-serif; font-size: 17px; font-weight: 700; color: var(--On-Surface); }
-  .amount-row button { border: none; background: var(--Primary-Light); color: var(--Primary); font-family: 'Switzer', sans-serif; font-size: 12.5px; font-weight: 600; border-radius: 10px; padding: 7px 12px; cursor: pointer; }
-
-  /* Short Code | Nearby switch */
-  .tabs { height: 44px; display: grid; grid-template-columns: 1fr 1fr; padding: 4px; background: #EAEAEE; border-radius: 14px; flex-shrink: 0; }
-  .tab { border: none; border-radius: 10px; background: transparent; color: var(--On-Surface-Low); font-family: 'Switzer', sans-serif; font-size: 14px; font-weight: 600; cursor: pointer; transition: all 0.15s; }
-  .tab.active { background: #FFF; color: var(--Primary); box-shadow: 0 2px 8px rgba(15,23,42,0.08); }
+  /* Enter Code | Near By: white pill, the active tab solid red */
+  .tabs { height: 50px; display: grid; grid-template-columns: 1fr 1fr; gap: 4px; padding: 4px; background: #FFF; border-radius: 25px; flex-shrink: 0; box-shadow: 0 2px 10px rgba(15,23,42,0.05); }
+  .tab { border: none; border-radius: 21px; background: transparent; color: var(--On-Surface-Low); font-family: 'Switzer', sans-serif; font-size: 14px; font-weight: 600; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; transition: background 0.15s, color 0.15s; }
+  .tab svg { width: 19px; height: 19px; stroke: currentColor; stroke-width: 1.9; fill: none; }
+  .tab#shortTab svg { stroke: var(--On-Surface-Low); }
+  .tab#nearbyTab svg { stroke: var(--Primary); }
+  .tab.active { background: var(--Primary); color: #FFF; box-shadow: 0 4px 12px rgba(254,53,61,0.3); }
+  .tab.active svg { stroke: #FFF !important; }
+  /* Merchant found (looked up, picked on the map or scanned): no tabs */
+  .found .tabs { display: none; }
 
   .panel { display: none; flex: 1; min-height: 0; flex-direction: column; gap: 12px; }
   .panel.active { display: flex; }
 
-  /* Short code lookup — same chips as the other short code lookups */
-  .status-chip { display: none; align-items: center; gap: 10px; border-radius: 12px; padding: 13px 14px; margin-top: 10px; font-family: 'Switzer', sans-serif; font-size: 14px; font-weight: 500; }
+  .card { background: #FFF; border-radius: 16px; padding: 16px; box-shadow: 0 4px 14px rgba(15,23,42,0.05); flex-shrink: 0; }
+  .field-label { display: block; font-family: 'Switzer', sans-serif; font-size: 15px; font-weight: 500; color: var(--On-Surface); margin-bottom: 10px; }
+  .field { height: 54px; background: var(--Field); border: 1.5px solid var(--Border); border-radius: 12px; padding: 0 14px; display: flex; align-items: center; gap: 8px; transition: border-color 0.2s, box-shadow 0.2s, background 0.2s; }
+  .field:focus-within { border-color: var(--Primary); background: #FFF; box-shadow: 0 4px 12px rgba(254,53,61,0.12); }
+  .field.err { border-color: var(--Primary); background: #FFF; }
+  .field input { flex: 1; min-width: 0; border: none; outline: none; background: transparent; font-family: 'Switzer', sans-serif; font-size: 16px; font-weight: 700; letter-spacing: 0.4px; color: var(--On-Surface); }
+  .field input::placeholder { color: var(--On-Surface-Low); font-size: 15px; font-weight: 400; letter-spacing: 0; }
+  .amount-block { margin-top: 16px; }
+  .amount-block:first-child { margin-top: 0; }
+  .balance { margin-top: 8px; font-family: 'Switzer', sans-serif; font-size: 12px; color: var(--On-Surface-Low); }
+  .balance b { font-weight: 600; color: var(--On-Surface); }
+
+  /* Short code lookup */
+  .status-chip { display: none; align-items: center; gap: 10px; border-radius: 12px; padding: 12px 14px; margin-top: 10px; font-family: 'Switzer', sans-serif; font-size: 12.5px; font-weight: 500; }
   .status-chip.show { display: flex; }
   .status-chip .ic { width: 24px; height: 24px; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
   .status-chip .ic svg { width: 13px; height: 13px; stroke-width: 3; fill: none; }
   .status-chip.loading { background: #F1F1F4; color: var(--On-Surface-Low); }
   .status-chip.loading .ic { border: 2.5px dashed #1FC83B; animation: spin 1.6s linear infinite; }
-  .status-chip.ok { background: #EEF9F0; color: var(--On-Surface); }
-  .status-chip.ok .ic { border: 1.8px solid #1FC83B; }
-  .status-chip.ok .ic svg { stroke: #1FC83B; }
-  .status-chip.ok small { display: block; font-size: 12px; color: var(--On-Surface-Low); margin-top: 1px; }
   .status-chip.bad { background: #FDECEC; color: var(--Primary); }
   .status-chip.bad .ic { width: 26px; height: 26px; border-radius: 8px; border: 1.8px solid var(--Primary); }
   .status-chip.bad .ic svg { stroke: var(--Primary); }
   @keyframes spin { to { transform: rotate(360deg); } }
-  #shortPanel .btn-primary { margin-top: auto; flex-shrink: 0; }
-  #shortPanel .card, #shortPanel .amount-card { flex-shrink: 0; }
 
-  /* Frequent agents under the short code card — same rows as the Frequent lists */
+  /* The merchant once found (or scanned): edit, or scan again */
+  .merchant { display: flex; align-items: center; gap: 12px; background: #FFF; border-radius: 16px; padding: 14px; box-shadow: 0 4px 14px rgba(15,23,42,0.05); flex-shrink: 0; }
+  .merchant[hidden] { display: none; }
+  .m-av { width: 42px; height: 42px; border-radius: 12px; background: var(--Primary-Light); color: var(--Primary); display: flex; align-items: center; justify-content: center; font-family: 'Switzer', sans-serif; font-size: 14px; font-weight: 700; flex-shrink: 0; }
+  .m-info { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 3px; }
+  .m-info b { font-family: 'Switzer', sans-serif; font-size: 15px; font-weight: 700; color: var(--On-Surface); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .m-info small { font-family: 'Switzer', sans-serif; font-size: 12.5px; color: var(--On-Surface-Low); }
+  /* Picked on the map: bold Code label and a pencil to pick another agent */
+  .merchant.nearby .m-code-lbl { font-weight: 700; color: var(--On-Surface); }
+  .m-btn[hidden] { display: none; }
+  .m-btn { width: 36px; height: 36px; border: none; border-radius: 10px; background: transparent; display: flex; align-items: center; justify-content: center; cursor: pointer; flex-shrink: 0; }
+  .m-btn:hover { background: var(--Primary-Light); }
+  .m-btn svg { width: 22px; height: 22px; stroke: var(--Primary); stroke-width: 1.9; fill: none; }
+
+  /* Frequent agents under the card; tapping one fills the merchant */
   .freq { flex: 0 1 auto; min-height: 0; display: flex; flex-direction: column; gap: 8px; }
-  .freq-list { flex: 0 1 auto; min-height: 0; overflow-y: auto; scrollbar-width: none; background: #FFF; border-radius: 16px; padding: 2px 14px; box-shadow: 0 4px 14px rgba(15,23,42,0.05); }
+  .found .freq { display: none; }
+  .freq h2 { margin: 2px 2px 0; font-family: 'Switzer', sans-serif; font-size: 15px; font-weight: 600; color: var(--On-Surface); }
+  .freq-list { min-height: 0; overflow-y: auto; scrollbar-width: none; background: #FFF; border-radius: 16px; padding: 4px 14px; box-shadow: 0 4px 14px rgba(15,23,42,0.05); }
   .freq-list::-webkit-scrollbar { width: 0; }
-  .freq-item { width: 100%; display: flex; align-items: center; gap: 12px; padding: 10px 0; border: none; border-bottom: 1px solid #F1F1F4; background: none; text-align: left; cursor: pointer; font-family: inherit; }
-  .freq-item:last-child { border-bottom: none; }
-  .freq-av { width: 40px; height: 40px; border-radius: 50%; overflow: hidden; flex-shrink: 0; border: 1px solid #ECECEC; }
-  .freq-av img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .freq-row { width: 100%; display: flex; align-items: center; gap: 12px; padding: 10px 0; border: none; background: none; text-align: left; cursor: pointer; font-family: inherit; }
+  .freq-av { width: 42px; height: 42px; border-radius: 12px; background: var(--Primary-Light); color: var(--Primary); display: flex; align-items: center; justify-content: center; font-family: 'Switzer', sans-serif; font-size: 14px; font-weight: 700; flex-shrink: 0; }
   .freq-info { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px; }
-  .freq-info b { font-family: 'Switzer', sans-serif; font-size: 14px; font-weight: 600; color: var(--On-Surface); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .freq-info b { font-family: 'Switzer', sans-serif; font-size: 14.5px; font-weight: 500; color: var(--On-Surface); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
   .freq-info small { font-family: 'Switzer', sans-serif; font-size: 12px; color: var(--On-Surface-Low); }
+  .freq-tag { flex-shrink: 0; padding: 3px 9px; border-radius: 999px; background: #EDEDF0; color: #55555E; font-family: 'Switzer', sans-serif; font-size: 11px; font-weight: 500; }
 
-  /* Nearby: the same map as Find an Agent, then the agents you used recently */
-  .map-view { position: relative; flex: 1; min-height: 150px; overflow: hidden; border-radius: 18px; background: #E8EEEC; border: 1px solid #E2E8F0; }
+  .btn-primary { width: 100%; height: 52px; border: none; border-radius: 14px; background: var(--Primary); color: #FFF; font-family: 'Poppins', sans-serif; font-size: 15px; font-weight: 500; cursor: pointer; box-shadow: 0 4px 16px rgba(254,53,61,0.25); transition: background 0.2s, transform 0.12s; margin-top: auto; flex-shrink: 0; }
+  .btn-primary:active { transform: scale(0.98); }
+  .btn-primary:disabled { background: #E0E0E0; color: var(--On-Surface-Low); box-shadow: none; cursor: not-allowed; }
+
+  /* ── Near By (Find a Merchant): the map, the white card at its foot ── */
   .map-svg-bg { position: absolute; inset: 0; width: 100%; height: 100%; }
   .map-text-label { position: absolute; font-family: 'Switzer', sans-serif; pointer-events: none; }
   .map-text-label.bole { left: 28px; top: 22px; font-size: 12px; font-weight: 600; color: #475569; }
@@ -107,56 +120,54 @@
   .map-marker { position: absolute; display: flex; flex-direction: column; align-items: center; transform: translate(-50%, -85%); cursor: pointer; z-index: 10; background: none; border: none; padding: 0; }
   .map-marker.active { z-index: 25; }
   .map-marker.active .pin-bubble { transform: scale(1.18); }
-  .pin-bubble { position: relative; width: 32px; height: 39px; display: flex; align-items: center; justify-content: center; filter: drop-shadow(0 4px 6px rgba(225,29,37,0.35)); transition: transform 0.2s; }
+  .pin-bubble { position: relative; width: 30px; height: 37px; display: flex; align-items: center; justify-content: center; filter: drop-shadow(0 4px 6px rgba(225,29,37,0.35)); transition: transform 0.2s; }
   .pin-bubble svg { position: absolute; inset: 0; width: 100%; height: 100%; }
   .pin-num { position: relative; font-family: 'Switzer', sans-serif; font-size: 13px; font-weight: 700; color: #FFF; margin-top: -7px; }
-  .pin-label { margin-top: 3px; background: #FFF; border-radius: 9px; padding: 3px 8px; font-family: 'Switzer', sans-serif; font-size: 10px; font-weight: 700; color: var(--On-Surface); white-space: nowrap; max-width: 100px; overflow: hidden; text-overflow: ellipsis; box-shadow: 0 2px 6px rgba(0,0,0,0.18); }
+  .pin-label { margin-top: 3px; background: #FFF; border-radius: 7px; padding: 4px 9px 3px; display: flex; flex-direction: column; align-items: center; box-shadow: 0 2px 6px rgba(0,0,0,0.16); }
+  .pin-label b { font-family: 'Switzer', sans-serif; font-size: 9.5px; font-weight: 700; color: var(--On-Surface); white-space: nowrap; max-width: 96px; overflow: hidden; text-overflow: ellipsis; }
+  .pin-label small { font-family: 'Switzer', sans-serif; font-size: 7.5px; color: var(--On-Surface-Low); text-transform: uppercase; }
   .you { position: absolute; left: 49%; top: 46%; width: 24px; height: 24px; transform: translate(-50%, -50%); border-radius: 50%; background: #1D6AE5; border: 2px solid #FFF; box-shadow: 0 0 0 10px rgba(37,99,235,0.18); color: #FFF; font-family: 'Switzer', sans-serif; font-size: 8.5px; font-weight: 700; display: flex; align-items: center; justify-content: center; pointer-events: none; }
-  .av { width: 40px; height: 40px; border-radius: 50%; background: var(--Primary-Light); color: var(--Primary); display: flex; align-items: center; justify-content: center; font-family: 'Switzer', sans-serif; font-size: 13.5px; font-weight: 700; flex-shrink: 0; }
 
-  .recent { flex-shrink: 0; display: flex; flex-direction: column; gap: 8px; }
-  .recent-list { background: #FFF; border-radius: 16px; padding: 2px 14px; box-shadow: 0 4px 14px rgba(15,23,42,0.05); }
-  .recent-item { width: 100%; display: flex; align-items: center; gap: 12px; padding: 10px 0; border: none; border-bottom: 1px solid #F1F1F4; background: none; text-align: left; cursor: pointer; font-family: inherit; }
-  .recent-item:last-child { border-bottom: none; }
-  .recent-info { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px; }
-  .recent-info b { font-family: 'Switzer', sans-serif; font-size: 14px; font-weight: 600; color: var(--On-Surface); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-  .recent-info small { font-family: 'Switzer', sans-serif; font-size: 12px; color: var(--On-Surface-Low); }
-
-  /* ── Full-screen map (tap the Nearby map, a pin or a recent agent): the same
-     bottom card as Find an Agent — nearby list, or the picked agent with
-     Call / Directions / Continue and a round Back button above it ── */
-  .map-view { cursor: pointer; }
-  .fm { position: absolute; inset: 0; z-index: 90; background: #E8EEEC; opacity: 0; visibility: hidden; transition: opacity 0.22s, visibility 0.22s; }
-  .fm.show { opacity: 1; visibility: visible; }
+  .fm { position: relative; flex: 1; min-height: 0; border-radius: 16px; overflow: hidden; border: 1px solid #E2E8F0; background: #E8EEEC; }
   .fm-map { position: absolute; inset: 0; }
   .fm-safe { position: absolute; left: 0; right: 0; top: 0; bottom: 40%; transition: bottom 0.25s ease; }
-  .fm-recenter { position: absolute; right: 14px; bottom: 14px; width: 40px; height: 40px; border: none; border-radius: 50%; background: #FFF; box-shadow: 0 2px 8px rgba(0,0,0,0.18); display: flex; align-items: center; justify-content: center; cursor: pointer; z-index: 15; }
+  .fm-recenter { position: absolute; right: 12px; bottom: 12px; width: 38px; height: 38px; border: none; border-radius: 50%; background: #FFF; box-shadow: 0 2px 8px rgba(0,0,0,0.18); display: flex; align-items: center; justify-content: center; cursor: pointer; z-index: 15; }
   .fm-recenter svg { width: 20px; height: 20px; stroke: #0F172A; stroke-width: 2; fill: none; }
-  .fm-panel { position: absolute; left: 12px; right: 12px; bottom: 12px; z-index: 40; background: #FFF; border-radius: 22px; padding: 10px 16px 16px; box-shadow: 0 10px 30px rgba(15,23,42,0.18), 0 2px 6px rgba(15,23,42,0.08); }
-  .fm-back { position: absolute; top: -54px; left: 0; width: 42px; height: 42px; border: none; border-radius: 50%; background: #FFF; box-shadow: 0 4px 14px rgba(15,23,42,0.18); display: flex; align-items: center; justify-content: center; cursor: pointer; }
-  .fm-back:active { transform: scale(0.94); }
+  .fm-panel { position: absolute; left: 0; right: 0; bottom: 0; z-index: 40; background: #FFF; border-radius: 22px 22px 16px 16px; padding: 10px 16px 14px; box-shadow: 0 -6px 24px rgba(15,23,42,0.12); }
+  .fm-back { display: none; position: absolute; top: -52px; left: 10px; width: 40px; height: 40px; border: none; border-radius: 50%; background: #FFF; box-shadow: 0 4px 14px rgba(15,23,42,0.18); align-items: center; justify-content: center; cursor: pointer; }
+  .fm.has-agent .fm-back { display: flex; }
   .fm-back svg { width: 18px; height: 18px; stroke: var(--On-Surface); stroke-width: 2; fill: none; }
-  .fm-grip { width: 44px; height: 4px; border-radius: 2px; background: #D8D8DE; margin: 0 auto 12px; }
-  .fm-loc { display: flex; align-items: center; gap: 12px; padding: 12px 14px; border: 1px solid #ECECF0; border-radius: 16px; }
-  .fm-loc svg { width: 21px; height: 21px; stroke: var(--On-Surface); stroke-width: 1.9; fill: none; flex-shrink: 0; }
+  .fm-grip { width: 40px; height: 4px; border-radius: 2px; background: #D8D8DE; margin: 0 auto 12px; }
+  .fm-loc { display: flex; align-items: center; gap: 12px; padding: 8px 8px 8px 14px; border: 1px solid #ECECF0; border-radius: 16px; }
+  .fm-loc > svg { width: 21px; height: 21px; stroke: var(--On-Surface); stroke-width: 1.9; fill: none; flex-shrink: 0; }
+  .fm-loc > span { flex: 1; min-width: 0; }
   .fm-loc b { display: block; font-family: 'Switzer', sans-serif; font-size: 14.5px; font-weight: 700; color: var(--On-Surface); }
   .fm-loc small { font-family: 'Switzer', sans-serif; font-size: 11.5px; color: #8C8C99; }
-  #fmRows { margin-top: 6px; }
-  .fm-row { width: 100%; display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 12px 2px; border: none; border-bottom: 1px solid #F1F1F4; background: none; text-align: left; cursor: pointer; font-family: inherit; }
-  .fm-row:last-child { border-bottom: none; }
+  .fm-loc.searching { border-color: var(--Primary); box-shadow: 0 4px 14px rgba(254,53,61,0.12); }
+  .fm-loc-input { flex: 1; min-width: 0; height: 40px; border: none; outline: none; background: transparent; font-family: 'Switzer', sans-serif; font-size: 14px; font-weight: 500; color: var(--On-Surface); }
+  .fm-search { width: 40px; height: 40px; border: none; border-radius: 50%; background: var(--Primary); display: flex; align-items: center; justify-content: center; cursor: pointer; flex-shrink: 0; box-shadow: 0 3px 10px rgba(254,53,61,0.32); }
+  .fm-search svg { width: 18px; height: 18px; stroke: #FFF; stroke-width: 2.4; fill: none; }
+  #fmRows { margin-top: 4px; }
+  .fm-row { width: 100%; display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 11px 2px; border: none; background: none; text-align: left; cursor: pointer; font-family: inherit; }
   .fm-row-l { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
-  .fm-row-l b { font-family: 'Switzer', sans-serif; font-size: 14px; font-weight: 600; color: var(--On-Surface); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-  .fm-row-l small { font-family: 'Switzer', sans-serif; font-size: 12px; color: var(--On-Surface-Low); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-  .fm-row-d { font-family: 'Switzer', sans-serif; font-size: 12.5px; font-weight: 600; color: var(--On-Surface); flex-shrink: 0; }
+  .fm-row-l b { font-family: 'Switzer', sans-serif; font-size: 14px; font-weight: 500; color: var(--On-Surface); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .fm-row-l small { font-family: 'Switzer', sans-serif; font-size: 12px; color: #7C869A; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .fm-row-d { font-family: 'Switzer', sans-serif; font-size: 13px; color: var(--On-Surface); flex-shrink: 0; }
+  .fm-area { width: 100%; display: flex; align-items: center; gap: 14px; padding: 11px 2px; border: none; border-bottom: 1px solid #F1F1F4; background: none; text-align: left; cursor: pointer; font-family: inherit; }
+  .fm-area:last-child { border-bottom: none; }
+  .fm-area i { width: 18px; height: 18px; border-radius: 50%; border: 2px solid #CBD5E1; flex-shrink: 0; }
+  .fm-area b { display: block; font-family: 'Switzer', sans-serif; font-size: 14px; font-weight: 600; color: var(--On-Surface); }
+  .fm-area small { font-family: 'Switzer', sans-serif; font-size: 12px; color: var(--On-Surface-Low); }
+  .fm-empty { font-family: 'Switzer', sans-serif; font-size: 12.5px; color: var(--On-Surface-Low); padding: 12px 2px; }
+  /* A picked agent: details and Call / Directions / Continue */
   .fm-agent { display: flex; align-items: center; gap: 12px; padding-bottom: 14px; }
-  .fm-av { width: 52px; height: 52px; border-radius: 50%; background: var(--Primary-Light); color: var(--Primary); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+  .fm-av { width: 50px; height: 50px; border-radius: 14px; background: var(--Primary-Light); color: var(--Primary); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
   .fm-av svg { width: 24px; height: 24px; stroke: currentColor; stroke-width: 1.9; fill: none; }
   .fm-info { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 4px; }
   .fm-info > b { font-family: 'Switzer', sans-serif; font-size: 16px; font-weight: 700; color: var(--On-Surface); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-  .fm-info small { font-family: 'Switzer', sans-serif; font-size: 12px; color: var(--On-Surface-Low); margin-top: -2px; }
+  .fm-info small { font-family: 'Switzer', sans-serif; font-size: 12px; color: var(--On-Surface-Low); }
   .fm-info small b { font-weight: 600; color: var(--On-Surface); letter-spacing: 0.3px; }
   .fm-meta { display: flex; align-items: center; gap: 8px; font-family: 'Switzer', sans-serif; font-size: 12px; color: var(--On-Surface-Low); }
-  .fm-meta svg { width: 13px; height: 13px; stroke: currentColor; stroke-width: 2; fill: none; margin-right: -4px; }
   .fm-status { display: inline-flex; align-items: center; gap: 5px; padding: 3px 9px; border-radius: 999px; font-size: 11px; font-weight: 600; background: #E8F9EE; color: #167C2A; }
   .fm-status::before { content: ''; width: 6px; height: 6px; border-radius: 50%; background: currentColor; }
   .fm-status.closed { background: #F1F1F4; color: var(--On-Surface-Low); }
@@ -168,41 +179,34 @@
   .fm-btn.outline { border: 1.5px solid var(--Border); background: #FFF; color: var(--Primary); }
   .fm-btn.solid { border: none; background: var(--Primary); color: #FFF; box-shadow: 0 4px 14px rgba(254,53,61,0.3); }
 
-  /* ── Nearby tab = Find an Agent: the map fills the tab, the white card sits
-     at its foot (location + nearest agents, or the picked agent) ── */
-  .fm { position: relative; inset: auto; flex: 1; min-height: 0; z-index: auto; border-radius: 18px; overflow: hidden; border: 1px solid #E2E8F0; opacity: 1; visibility: visible; }
-  .fm-panel { left: 10px; right: 10px; bottom: 10px; }
-  .fm-back { display: none; }
-  .fm.has-agent .fm-back { display: flex; }
-  .fm-loc { padding: 10px 10px 10px 14px; }
-  .fm-loc > span { flex: 1; min-width: 0; }
-  .fm-star { width: 40px; height: 40px; border: none; border-radius: 50%; background: var(--Primary); display: flex; align-items: center; justify-content: center; cursor: pointer; flex-shrink: 0; box-shadow: 0 3px 10px rgba(254,53,61,0.32); }
-  .fm-star:active { transform: scale(0.94); }
-  .fm-star svg { width: 18px; height: 18px; stroke: #FFF; stroke-width: 2.2; fill: none; }
-  /* Search: the location card becomes a field; the list shows matching areas */
-  .fm-loc-input { flex: 1; min-width: 0; height: 40px; border: none; outline: none; background: transparent; font-family: 'Switzer', sans-serif; font-size: 14px; font-weight: 500; color: var(--On-Surface); }
-  .fm-loc-input::placeholder { color: #94A3B8; font-weight: 400; }
-  .fm-loc.searching { border-color: var(--Primary); box-shadow: 0 4px 14px rgba(254,53,61,0.12); }
-  .fm-area { width: 100%; display: flex; align-items: center; gap: 14px; padding: 12px 2px; border: none; border-bottom: 1px solid #F1F1F4; background: none; text-align: left; cursor: pointer; font-family: inherit; }
-  .fm-area:last-child { border-bottom: none; }
-  .fm-area i { width: 18px; height: 18px; border-radius: 50%; border: 2px solid #CBD5E1; flex-shrink: 0; }
-  .fm-area b { display: block; font-family: 'Switzer', sans-serif; font-size: 14px; font-weight: 600; color: var(--On-Surface); }
-  .fm-area small { font-family: 'Switzer', sans-serif; font-size: 12px; color: var(--On-Surface-Low); }
-  .fm-empty { font-family: 'Switzer', sans-serif; font-size: 12.5px; color: var(--On-Surface-Low); padding: 12px 2px; }
-  #shortPanel .amount-card { margin-bottom: 0; }
-  /* Nearby map runs the full width of the phone and down to its bottom edge */
-  #nearbyPanel { margin: 0 -16px -16px; }
-  #nearbyPanel .fm { border-radius: 0; border: none; border-top: 1px solid #E2E8F0; }
-  #nearbyPanel .fm-panel { left: 12px; right: 12px; bottom: 14px; }
-  /* Edit the amount: pencil icon, same as the edit buttons elsewhere */
-  .amount-row button { width: 32px; height: 32px; padding: 0; border: none; border-radius: 9px; background: #FFF1F2; display: flex; align-items: center; justify-content: center; cursor: pointer; }
-  .amount-row button svg { width: 15px; height: 15px; stroke: var(--Primary); stroke-width: 2.2; fill: none; }
+  /* ── Confirmation sheet ── */
+  .scrim { position: absolute; inset: 0; z-index: 100; background: rgba(0,0,0,0.42); opacity: 0; visibility: hidden; transition: opacity 0.22s, visibility 0.22s; }
+  .scrim.show { opacity: 1; visibility: visible; }
+  .sheet { position: absolute; left: 0; right: 0; bottom: 0; z-index: 101; background: #FFF; border-radius: 28px 28px 0 0; padding: 10px 16px 24px; transform: translateY(100%); transition: transform 0.28s cubic-bezier(.2,.8,.2,1); }
+  .sheet.show { transform: translateY(0); }
+  .sheet-grip { width: 40px; height: 4px; border-radius: 2px; background: #D8D8DE; margin: 0 auto 18px; }
+  .cf-merchant { position: relative; display: flex; align-items: center; gap: 12px; border: 1px solid #E6E6EA; border-radius: 16px; padding: 14px; }
+  .cf-ic { width: 42px; height: 42px; border-radius: 50%; background: var(--Primary-Light); color: var(--Primary); display: flex; align-items: center; justify-content: center; flex-shrink: 0; font-family: 'Switzer', sans-serif; font-size: 14px; font-weight: 700; }
+  .cf-merchant b { display: block; font-family: 'Switzer', sans-serif; font-size: 15px; font-weight: 700; color: var(--On-Surface); }
+  .cf-merchant small { font-family: 'Switzer', sans-serif; font-size: 12.5px; color: var(--On-Surface-Low); }
+  .cf-badge { position: absolute; top: -11px; right: 14px; padding: 4px 10px; border-radius: 999px; background: #EDEDF0; color: #3A3A42; font-family: 'Switzer', sans-serif; font-size: 10px; font-weight: 700; letter-spacing: 0.5px; }
+  .cf-rows { margin: 10px 0 20px; }
+  .cf-row { display: flex; align-items: center; justify-content: space-between; padding: 15px 0; border-bottom: 1px solid #EFEFF2; font-family: 'Switzer', sans-serif; }
+  .cf-row:last-child { border-bottom: none; }
+  .cf-row span { font-size: 12.5px; color: #55555E; }
+  .cf-row b { font-size: 12.5px; font-weight: 700; color: var(--On-Surface); }
+  .cf-row b.red { font-size: 14px; color: var(--Primary); }
+  .cf-actions { display: flex; gap: 12px; }
+  .cf-btn { flex: 1; height: 52px; border-radius: 14px; background: #FFF; font-family: 'Poppins', sans-serif; font-size: 15px; font-weight: 500; cursor: pointer; }
+  .cf-btn:active { transform: scale(0.98); }
+  .cf-btn.cancel { border: 1.5px solid #E0E0E4; color: #55555E; }
+  .cf-btn.confirm { border: 1.5px solid var(--Primary); color: var(--Primary); }
 </style>
 <link rel="stylesheet" href="styles/device.css">
 </head>
 <body>
 <div class="phone-frame">
-  <div class="app-content">
+  <div class="app-content" id="app">
 
     <div class="status-bar">
       <span class="time">10:00</span>
@@ -217,49 +221,61 @@
       <button class="back-btn" onclick="goBack()" aria-label="Back">
         <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
       </button>
-      <span class="header-title">Cash In at Agent</span>
+      <span class="header-title" id="hdrTitle">Cash-In At Agent</span>
       <div style="width:36px;"></div>
     </div>
 
     <div class="body">
       <div class="tabs" role="tablist">
-        <button class="tab active" id="shortTab" role="tab" onclick="showTab('short')">Short Code</button>
-        <button class="tab" id="nearbyTab" role="tab" onclick="showTab('nearby')">Nearby</button>
+        <button class="tab active" id="shortTab" role="tab" onclick="showTab('short')">
+          <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><rect x="3.5" y="3.5" width="17" height="17" rx="3"/><path d="M10 9l-3 3 3 3M14 9l3 3-3 3"/></svg>
+          Enter Code
+        </button>
+        <button class="tab" id="nearbyTab" role="tab" onclick="showTab('nearby')">
+          <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s7-5.7 7-11a7 7 0 1 0-14 0c0 5.3 7 11 7 11z"/><circle cx="12" cy="10" r="2.5"/></svg>
+          Near By
+        </button>
       </div>
 
-      <!-- Short code: type the code shown at the agent's counter -->
+      <!-- Enter Code: the short code shown at the agent's counter, then the amount -->
       <section class="panel active" id="shortPanel">
-        <!-- Amount from the previous screen; Change goes back to it -->
-        <div class="amount-card">
-          <div class="amount-row">
-            <span><small>Cash-in amount</small><b id="amountText">1,000 ETB</b></span>
-            <button onclick="goBack()" aria-label="Edit amount" title="Edit amount"><svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg></button>
-          </div>
+        <div class="merchant" id="merchant" hidden>
+          <span class="m-av" id="mAv"></span>
+          <span class="m-info"><b id="mName"></b><small><span class="m-code-lbl">Code:</span> <span id="mCode"></span></small></span>
+          <button class="m-btn" id="mEdit" onclick="changeNearby()" aria-label="Change agent" title="Change agent" hidden><svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg></button>
+          <button class="m-btn" id="mScan" onclick="rescan()" aria-label="Scan merchant QR" title="Scan merchant QR"><svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M3 8V6a3 3 0 0 1 3-3h2M16 3h2a3 3 0 0 1 3 3v2M21 16v2a3 3 0 0 1-3 3h-2M8 21H6a3 3 0 0 1-3-3v-2"/><path d="M3 12h18"/><path d="M7 8h10v2M7 16h10v-2"/></svg></button>
         </div>
+
         <div class="card">
-          <label class="field-label" for="code">Merchant Short Code</label>
-          <div class="field" id="codeField">
-            <input id="code" type="text" inputmode="numeric" maxlength="6" placeholder="Enter short code" autocomplete="off" onkeydown="if(event.key==='Enter')continueWithCode()">
+          <div id="codeBlock">
+            <label class="field-label" for="code">Enter Merchant Short Code:</label>
+            <div class="field" id="codeField">
+              <input id="code" type="text" inputmode="numeric" maxlength="6" placeholder="e.g. 452929" autocomplete="off">
+            </div>
+            <div class="status-chip loading" id="codeLoading"><span class="ic"></span><span>Looking Up Merchant Short Code:</span></div>
+            <div class="status-chip bad" id="codeBad">
+              <span class="ic"><svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M17 7 7 17M7 7l10 10"/></svg></span>
+              <span>Invalid merchant short code</span>
+            </div>
           </div>
-          <div class="status-chip loading" id="codeLoading"><span class="ic"></span><span>Looking Up Short Code</span></div>
-          <div class="status-chip ok" id="codeOk">
-            <span class="ic"><svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></span>
-            <span><span id="codeOkName"></span><small id="codeOkSub"></small></span>
-          </div>
-          <div class="status-chip bad" id="codeBad">
-            <span class="ic"><svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M17 7 7 17M7 7l10 10"/></svg></span>
-            <span>Invalid merchant short code</span>
+          <div class="amount-block">
+            <label class="field-label" for="amount">Amount</label>
+            <div class="field">
+              <input id="amount" type="text" inputmode="decimal" placeholder="e.g. 120 ETB" autocomplete="off">
+            </div>
+            <div class="balance"><b>Balance:</b> 20,000.00 ETB</div>
           </div>
         </div>
-        <!-- Frequent agents: tapping one fills its short code and looks it up -->
+
         <div class="freq">
-          <span class="section-title">Frequent</span>
+          <h2>Frequent</h2>
           <div class="freq-list" id="freqList"></div>
         </div>
-        <button class="btn-primary" id="continueBtn" disabled onclick="continueWithCode()">Continue</button>
+
+        <button class="btn-primary" id="continueBtn" disabled onclick="openConfirm()">Continue</button>
       </section>
 
-      <!-- Nearby: the Find an Agent map — tap a pin or an agent for Call / Directions / Continue -->
+      <!-- Near By (Find a Merchant): tap a pin or an agent for Call / Directions / Continue -->
       <section class="panel" id="nearbyPanel">
         <div class="fm" id="fm">
     <div class="fm-map" id="fmMap">
@@ -315,38 +331,56 @@
           <span>Bole International<br>Airport</span>
         </div>
           </div>
-    <div class="fm-safe" id="fmSafe">
-      <div id="fmPins"></div>
-      <div class="you" id="fmYou">You</div>
-      <button class="fm-recenter" onclick="recenter()" aria-label="Re-center map"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="7"/><line x1="12" y1="2" x2="12" y2="5"/><line x1="12" y1="19" x2="12" y2="22"/><line x1="2" y1="12" x2="5" y2="12"/><line x1="19" y1="12" x2="22" y2="12"/><circle cx="12" cy="12" r="2.2" fill="#0F172A"/></svg></button>
-    </div>
-    <div class="fm-panel" id="fmPanel">
-      <button class="fm-back" onclick="fmBack()" aria-label="Back"><svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg></button>
-      <div class="fm-grip"></div>
-      <!-- Nothing picked: where you are and the agents nearest to you -->
-      <div id="fmList">
-        <div class="fm-loc"><svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s7-5.7 7-11a7 7 0 1 0-14 0c0 5.3 7 11 7 11z"/><circle cx="12" cy="10" r="2.5"/></svg><span id="fmLocText"><b id="fmLocName">Bole, Addis Ababa</b><small id="fmLocSub">Using your location</small></span><input class="fm-loc-input" id="fmLocInput" type="text" placeholder="Search area in Addis Ababa..." autocomplete="off" hidden oninput="renderRows()" onkeydown="if(event.key==='Enter')pickTypedArea()"><button class="fm-star" id="fmSearchBtn" onclick="toggleAreaSearch()" title="Search area" aria-label="Search area"><svg viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><line x1="16.5" y1="16.5" x2="21" y2="21"/></svg></button></div>
-        <div id="fmRows"></div>
-      </div>
-      <!-- A picked agent: details and Call / Directions / Continue -->
-      <div id="fmAgent" hidden>
-        <div class="fm-agent">
-          <span class="fm-av"><svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l1.5-5h15L21 9"/><path d="M3 9h18v1a3 3 0 0 1-6 0 3 3 0 0 1-6 0 3 3 0 0 1-6 0z"/><path d="M5 12.5V20h14v-7.5"/><path d="M10 20v-4h4v4"/></svg></span>
-          <span class="fm-info">
-            <b id="fmName"></b>
-            <small>Merchant Short Code: <b id="fmCode"></b></small>
-            <span class="fm-meta"><span class="fm-status" id="fmStatus">Open</span><svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s7-5.7 7-11a7 7 0 1 0-14 0c0 5.3 7 11 7 11z"/><circle cx="12" cy="10" r="2.5"/></svg><span id="fmDist"></span></span>
-          </span>
+          <div class="fm-safe" id="fmSafe">
+            <div id="fmPins"></div>
+            <div class="you" id="fmYou">You</div>
+            <button class="fm-recenter" onclick="recenter()" aria-label="Re-center map"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="7"/><line x1="12" y1="2" x2="12" y2="5"/><line x1="12" y1="19" x2="12" y2="22"/><line x1="2" y1="12" x2="5" y2="12"/><line x1="19" y1="12" x2="22" y2="12"/><circle cx="12" cy="12" r="2.2" fill="#0F172A"/></svg></button>
+          </div>
+          <div class="fm-panel" id="fmPanel">
+            <button class="fm-back" onclick="fmClear()" aria-label="Back"><svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg></button>
+            <div class="fm-grip"></div>
+            <div id="fmList">
+              <div class="fm-loc"><svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s7-5.7 7-11a7 7 0 1 0-14 0c0 5.3 7 11 7 11z"/><circle cx="12" cy="10" r="2.5"/></svg><span id="fmLocText"><b id="fmLocName">Bole, Addis Ababa</b><small id="fmLocSub">Using your location</small></span><input class="fm-loc-input" id="fmLocInput" type="text" placeholder="Search area in Addis Ababa..." autocomplete="off" hidden oninput="renderRows()" onkeydown="if(event.key==='Enter')pickTypedArea()"><button class="fm-search" onclick="toggleAreaSearch()" aria-label="Search area"><svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><line x1="16.5" y1="16.5" x2="21" y2="21"/></svg></button></div>
+              <div id="fmRows"></div>
+            </div>
+            <div id="fmAgent" hidden>
+              <div class="fm-agent">
+                <span class="fm-av"><svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l1.5-5h15L21 9"/><path d="M3 9h18v1a3 3 0 0 1-6 0 3 3 0 0 1-6 0 3 3 0 0 1-6 0z"/><path d="M5 12.5V20h14v-7.5"/><path d="M10 20v-4h4v4"/></svg></span>
+                <span class="fm-info">
+                  <b id="fmName"></b>
+                  <small>Merchant Short Code: <b id="fmCode"></b></small>
+                  <span class="fm-meta"><span class="fm-status" id="fmStatus">Open</span><span id="fmDist"></span></span>
+                </span>
+              </div>
+              <div class="fm-actions">
+                <button class="fm-btn call" onclick="callAgent()" aria-label="Call agent"><svg viewBox="0 0 24 24"><path d="M21 16.9v2.5a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 1.1 3.7 2 2 0 0 1 3.1 1.5h2.5a2 2 0 0 1 2 1.7c.1 1 .4 1.9.7 2.8a2 2 0 0 1-.5 2.1L6.7 9.3a16 16 0 0 0 6 6l1.2-1.1a2 2 0 0 1 2.1-.5c.9.3 1.8.6 2.8.7a2 2 0 0 1 1.7 2z"/></svg></button>
+                <button class="fm-btn outline" onclick="directions()">Directions</button>
+                <button class="fm-btn solid" onclick="fmContinue()">Continue</button>
+              </div>
+            </div>
+          </div>
         </div>
-        <div class="fm-actions">
-          <button class="fm-btn call" onclick="callAgent()" aria-label="Call agent"><svg viewBox="0 0 24 24"><path d="M21 16.9v2.5a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 1.1 3.7 2 2 0 0 1 3.1 1.5h2.5a2 2 0 0 1 2 1.7c.1 1 .4 1.9.7 2.8a2 2 0 0 1-.5 2.1L6.7 9.3a16 16 0 0 0 6 6l1.2-1.1a2 2 0 0 1 2.1-.5c.9.3 1.8.6 2.8.7a2 2 0 0 1 1.7 2z"/></svg></button>
-          <button class="fm-btn outline" onclick="directions()">Directions</button>
-          <button class="fm-btn solid" onclick="fmContinue()">Continue</button>
-        </div>
-      </div>
+      </section>
     </div>
   </div>
-      </section>
+
+  <!-- Confirmation: merchant, account, fee and amount; Confirm goes to the PIN -->
+  <div class="scrim" id="scrim" onclick="closeConfirm()"></div>
+  <div class="sheet" id="sheet" role="dialog" aria-label="Confirm cash-in">
+    <div class="sheet-grip"></div>
+    <div class="cf-merchant">
+      <span class="cf-badge">MERCHANT</span>
+      <span class="cf-ic" id="cfAv"></span>
+      <span><b id="cfName"></b><small>Code: <span id="cfCode"></span></small></span>
+    </div>
+    <div class="cf-rows">
+      <div class="cf-row"><span>Account Type:</span><b>Main account</b></div>
+      <div class="cf-row"><span>Fee:</span><b id="cfFee">0.00 ETB</b></div>
+      <div class="cf-row"><span>Cash-In Amount:</span><b class="red" id="cfAmount"></b></div>
+    </div>
+    <div class="cf-actions">
+      <button class="cf-btn cancel" onclick="closeConfirm()">Cancel</button>
+      <button class="cf-btn confirm" onclick="confirmWithdraw()">Confirm</button>
     </div>
   </div>
 </div>
@@ -354,93 +388,151 @@
 <script>
   const $ = id => document.getElementById(id);
   const AGENTS = {
-    '323217': { id: 1, abbr: 'BM', name: 'Betty Merhat Agency', dist: '0.8 km', open: true,  x: '36%', y: '30%' },
-    '562394': { id: 2, abbr: 'KR', name: 'Kebede Retails', dist: '1.2 km', open: true,  x: '74%', y: '34%' },
-    '778901': { id: 3, abbr: 'MS', name: 'Meskerem Agent Services', dist: '2.1 km', open: false, x: '70%', y: '78%' },
-    '204411': { id: 4, abbr: 'BM', name: 'Bole Mini-Mart', dist: '2.6 km', open: true,  x: '22%', y: '62%' }
+    '323217': { id: 1, abbr: 'BM', name: 'Betty Merhat Agency', dist: '0.8 km', open: true,  x: '30%', y: '26%', addr: 'Bole Medhanialem, Addis Ababa' },
+    '562394': { id: 2, abbr: 'KR', name: 'Kebede Retails', dist: '1.2 km', open: true,  x: '72%', y: '30%', addr: 'Bole Airport Road, Addis Ababa' },
+    '778901': { id: 3, abbr: 'MS', name: 'Meskerem Agent Services', dist: '2.1 km', open: false, x: '74%', y: '76%', addr: 'Mekanisa, Addis Ababa' },
+    '204411': { id: 4, abbr: 'BM', name: 'Bole Mini-Mart', dist: '2.6 km', open: true,  x: '28%', y: '70%', addr: 'Dembel City Center, Addis Ababa' },
+    '452929': { id: 5, abbr: 'AJ', name: 'AM Juice & Coffee', dist: '3.0 km', open: true,  x: '52%', y: '18%', addr: 'Kazanchis, Addis Ababa', hidden: true }
   };
+  const MAX_CASH_IN = 100000, FEE = 0;   // Cash-In is free; 10 – 100,000 ETB per transaction
+  const fmt = n => Number(n).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 
   let d = {};
   try { d = JSON.parse(sessionStorage.getItem('cashInData') || '{}'); } catch (e) {}
-  $('amountText').textContent = Number(d.amount || 1000).toLocaleString('en-US') + ' ETB';
-  function goBack() { location.href = d.from || 'Cash In - Amount First.html'; }
+  const params = new URLSearchParams(location.search);
+  const fromQr = params.get('entry') === 'qr' || d.entry === 'qr';
+  // Back: from the found merchant to Enter Code (or Near By, if picked there); otherwise to the Cash In screen
+  function goBack() {
+    if (merchant && !fromQr) {
+      const wasNearby = $('merchant').classList.contains('nearby');
+      editMerchant();
+      if (wasNearby) showTab('nearby');
+      return;
+    }
+    location.href = 'Cash In.html';
+  }
 
   function showTab(tab) {
     ['short', 'nearby'].forEach(t => {
       $(t + 'Tab').classList.toggle('active', t === tab);
       $(t + 'Panel').classList.toggle('active', t === tab);
     });
-    if (tab === 'nearby' && typeof syncSafe === 'function') requestAnimationFrame(syncSafe);
+    $('hdrTitle').textContent = tab === 'nearby' ? 'Find a Merchant' : 'Cash-In At Agent';
+    if (tab === 'nearby') requestAnimationFrame(syncSafe);
   }
-  const startTab = new URLSearchParams(location.search).get('tab');
-  if (startTab === 'nearby' || startTab === 'locate') showTab('nearby');
 
-  // Short code lookup: "Looking Up" chip, then the agent (green) or Invalid (red)
-  let found = null, timer = null;
-  $('code').addEventListener('input', e => lookup(e.target));
-  function lookup(el) {
+  // ── The merchant: looked up from the code, picked on the map, or scanned ──
+  let merchant = null;
+  function setMerchant(code, via) {
+    const a = AGENTS[code];
+    $('merchant').classList.toggle('nearby', via === 'nearby');
+    $('mEdit').hidden = false;
+    $('mScan').hidden = true;
+    merchant = { code, name: a.name, abbr: a.abbr };
+    $('mAv').textContent = a.abbr;
+    $('mName').textContent = a.name;
+    $('mCode').textContent = code;
+    $('merchant').hidden = false;
+    $('codeBlock').hidden = true;
+    $('app').classList.add('found');
+    showTab('short');
+    validate();
+  }
+  function editMerchant() {
+    merchant = null;
+    $('merchant').hidden = true;
+    $('codeBlock').hidden = false;
+    $('app').classList.remove('found');
+    $('code').value = '';
+    ['codeLoading', 'codeBad'].forEach(id => $(id).classList.remove('show'));
+    $('codeField').classList.remove('err');
+    validate();
+    $('code').focus();
+  }
+  // Pencil: back to Enter Code, or to Near By when the agent was picked on the map
+  function changeNearby() {
+    const wasNearby = $('merchant').classList.contains('nearby');
+    editMerchant();
+    if (wasNearby) showTab('nearby');
+  }
+  function rescan() { editMerchant(); }
+
+  // Short code lookup: "Looking Up" chip for a moment, then the merchant screen or Invalid
+  let timer = null;
+  $('code').addEventListener('input', e => {
+    const el = e.target;
     el.value = el.value.replace(/\D/g, '').slice(0, 6);
     clearTimeout(timer);
-    ['codeLoading', 'codeOk', 'codeBad'].forEach(id => $(id).classList.remove('show'));
+    ['codeLoading', 'codeBad'].forEach(id => $(id).classList.remove('show'));
     $('codeField').classList.remove('err');
-    found = null; $('continueBtn').disabled = true;
     if (el.value.length < 6) return;
     $('codeLoading').classList.add('show');
     const code = el.value;
     timer = setTimeout(() => {
       $('codeLoading').classList.remove('show');
-      const a = AGENTS[code];
-      if (a) {
-        found = { code, name: a.name };
-        $('codeOkName').textContent = a.name;
-        $('codeOkSub').textContent = code + ' · ' + (a.open ? 'Open now' : 'Closed');
-        $('codeOk').classList.add('show');
-        $('continueBtn').disabled = false;
-      } else {
-        $('codeBad').classList.add('show');
-        $('codeField').classList.add('err');
-      }
-    }, 900);
+      if (AGENTS[code]) { setMerchant(code); $('amount').focus(); }
+      else { $('codeBad').classList.add('show'); $('codeField').classList.add('err'); }
+    }, 2500);
+  });
+
+  // Amount: digits with thousands separators, up to the balance
+  const amountValue = () => Number($('amount').value.replace(/,/g, '')) || 0;
+  $('amount').addEventListener('input', e => {
+    const el = e.target;
+    let v = el.value.replace(/[^\d.]/g, '');
+    const [i, f] = v.split('.');
+    v = (i ? Number(i).toLocaleString('en-US') : '') + (f !== undefined ? '.' + f.slice(0, 2) : '');
+    el.value = v;
+    validate();
+  });
+  $('amount').addEventListener('keydown', e => { if (e.key === 'Enter' && !$('continueBtn').disabled) openConfirm(); });
+  function validate() {
+    const a = amountValue();
+    $('continueBtn').disabled = !(merchant && a >= 10 && a <= MAX_CASH_IN);
   }
-  function continueWithCode() { if (found) finish(found.code, found.name); }
 
-  // Frequent: the agents used most for cash in
-  const FREQUENT = [['323217', 'avatar-3.png'], ['562394', 'avatar-1.png'], ['778901', 'avatar-5.png'], ['204411', 'avatar-4.png']];
-  const spaced = c => c.slice(0, 3) + ' ' + c.slice(3);
-  $('freqList').innerHTML = FREQUENT.map(([code, img]) => {
-    const a = AGENTS[code];
-    return `<button class="freq-item" onclick="useFrequent('${code}')">
-      <span class="freq-av"><img src="assets/avatars/${img}" alt=""></span>
-      <span class="freq-info"><b>${a.name}</b><small>${a.dist} &bull; Code: ${spaced(code)}</small></span>
-      <svg class="chev" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
-    </button>`;
-  }).join('');
-  function useFrequent(code) { $('code').value = code; lookup($('code')); }
+  // ── Confirmation sheet ──
+  function openConfirm() {
+    if ($('continueBtn').disabled) return;
+    document.activeElement && document.activeElement.blur();
+    $('cfAv').textContent = merchant.abbr;
+    $('cfName').textContent = merchant.name;
+    $('cfCode').textContent = merchant.code;
+    $('cfFee').textContent = fmt(FEE) + ' ETB';
+    $('cfAmount').textContent = fmt(amountValue()) + ' ETB';
+    $('scrim').classList.add('show');
+    $('sheet').classList.add('show');
+  }
+  function closeConfirm() { $('scrim').classList.remove('show'); $('sheet').classList.remove('show'); }
+  document.addEventListener('keydown', e => { if (e.key === 'Escape') closeConfirm(); });
+  function confirmWithdraw() {
+    const amount = amountValue();
+    const nearby = $('merchant').classList.contains('nearby');
+    sessionStorage.setItem('cashInData', JSON.stringify({
+      method: nearby ? 'nearby' : 'code', methodLabel: nearby ? 'Agent Locator' : 'Merchant Short Code', entry: 'code',
+      agent: { abbr: merchant.abbr, name: merchant.name, code: merchant.code },
+      agentCode: merchant.code, agentName: merchant.name,
+      amount, fee: FEE, total: amount + FEE, back: 'Cash In - Agent Short Code Locate.html', time: new Date().toLocaleTimeString()
+    }));
+    location.href = 'Cash In - Enter PIN.html';
+  }
 
-  // Nearby: numbered pins with name labels, same look as Find an Agent
+  // ── Near By: numbered pins with name + distance, the nearest agents below ──
   const PIN = '<svg viewBox="0 0 28 34" fill="none"><path d="M14 0C6.268 0 0 6.268 0 14c0 9.8 14 20 14 20s14-10.2 14-20c0-7.732-6.268-14-14-14z" fill="#FE353D"/></svg>';
-  // ── Nearby tab: the Find an Agent map ──
-  const ADDR = {
-    '323217': 'Bole Medhanialem, Addis Ababa',
-    '562394': 'Bole Airport Road, Addis Ababa',
-    '778901': 'Mekanisa, Addis Ababa',
-    '204411': 'Dembel City Center, Addis Ababa'
-  };
+  const MAP_CODES = Object.keys(AGENTS).filter(c => !AGENTS[c].hidden).sort((x, y) => AGENTS[x].id - AGENTS[y].id);
   let fmChosen = null;
-
-  function buildFull() {
-    $('fmPins').innerHTML = Object.entries(AGENTS).map(([code, a]) => `
-      <button class="map-marker" data-code="${code}" style="left:${a.x};top:${a.y}" onclick="event.stopPropagation(); fmSelect('${code}')" aria-label="${a.name}">
-        <span class="pin-bubble">${PIN}<span class="pin-num">${a.id}</span></span>
-        <span class="pin-label">${a.name}</span>
-      </button>`).join('');
-    renderRows();
-    // tapping empty map clears the pick
-    $('fm').addEventListener('click', e => { if (!e.target.closest('.map-marker, .fm-panel, .fm-recenter')) fmClear(); });
-    // pins live in the map area left visible above the card
-    new ResizeObserver(syncSafe).observe($('fmPanel'));
+  $('fmPins').innerHTML = MAP_CODES.map(code => { const a = AGENTS[code]; return `
+    <button class="map-marker" data-code="${code}" style="left:${a.x};top:${a.y}" onclick="event.stopPropagation(); fmSelect('${code}')" aria-label="${a.name}">
+      <span class="pin-bubble">${PIN}<span class="pin-num">${a.id}</span></span>
+      <span class="pin-label"><b>${a.name}</b><small>${a.dist}</small></span>
+    </button>`; }).join('');
+  $('fm').addEventListener('click', e => { if (!e.target.closest('.map-marker, .fm-panel, .fm-recenter')) fmClear(); });
+  new ResizeObserver(syncSafe).observe($('fmPanel'));
+  function syncSafe() {
+    const fr = $('fm').getBoundingClientRect(), pr = $('fmPanel').getBoundingClientRect();
+    if (fr.height) $('fmSafe').style.bottom = Math.max(0, fr.bottom - pr.top + 6) + 'px';
   }
-  // Card list: the nearest agents; while searching, the matching areas
+
   const AREAS = ['Bole', 'Piassa', 'Megenagna', 'Mekanisa', 'Kazanchis', 'CMC', 'Sarbet', 'Gerji'];
   let searchingArea = false;
   function renderRows() {
@@ -448,51 +540,35 @@
       const q = $('fmLocInput').value.trim().toLowerCase();
       const hits = AREAS.filter(a => a.toLowerCase().includes(q)).slice(0, 4);
       $('fmRows').innerHTML = hits.length ? hits.map(a => `<button class="fm-area" onclick="setArea('${a}')"><i></i><span><b>${a}</b><small>Addis Ababa</small></span></button>`).join('')
-        : `<div class="fm-empty">No area matches &ldquo;${$('fmLocInput').value}&rdquo;</div>`;
+        : `<div class="fm-empty">No area matches this search</div>`;
       return;
     }
-    const codes = Object.keys(AGENTS).sort((x, y) => AGENTS[x].id - AGENTS[y].id).slice(0, 3);
-    $('fmRows').innerHTML = codes.map(code => {
-      const a = AGENTS[code];
-      return `<button class="fm-row" onclick="fmSelect('${code}')">
-        <span class="fm-row-l"><b>${a.name}</b><small>${ADDR[code]}</small></span>
+    $('fmRows').innerHTML = MAP_CODES.slice(0, 3).map(code => { const a = AGENTS[code]; return `
+      <button class="fm-row" onclick="fmSelect('${code}')">
+        <span class="fm-row-l"><b>${a.name}</b><small>${a.addr}</small></span>
         <span class="fm-row-d">${a.dist}</span>
-      </button>`;
-    }).join('');
+      </button>`; }).join('');
   }
-  // Search button: the location becomes a field and the list shows areas; again runs the search
   function toggleAreaSearch() {
     if (searchingArea) { pickTypedArea(); return; }
     searchingArea = true;
     document.querySelector('.fm-loc').classList.add('searching');
-    $('fmLocText').hidden = true;
-    $('fmLocInput').hidden = false;
-    $('fmLocInput').value = '';
-    renderRows();
-    $('fmLocInput').focus();
+    $('fmLocText').hidden = true; $('fmLocInput').hidden = false; $('fmLocInput').value = '';
+    renderRows(); $('fmLocInput').focus();
   }
   function pickTypedArea() {
     const q = $('fmLocInput').value.trim().toLowerCase();
     const hit = AREAS.find(a => a.toLowerCase().includes(q));
     if (q && hit) setArea(hit); else endAreaSearch();
   }
-  function setArea(a) {
-    $('fmLocName').textContent = a + ', Addis Ababa';
-    $('fmLocSub').textContent = 'Showing agents near this area';
-    endAreaSearch();
-  }
+  function setArea(a) { $('fmLocName').textContent = a + ', Addis Ababa'; $('fmLocSub').textContent = 'Showing agents near this area'; endAreaSearch(); }
   function endAreaSearch() {
     searchingArea = false;
     document.querySelector('.fm-loc').classList.remove('searching');
-    $('fmLocText').hidden = false;
-    $('fmLocInput').hidden = true;
+    $('fmLocText').hidden = false; $('fmLocInput').hidden = true;
     renderRows();
   }
-
-  function syncSafe() {
-    const fr = $('fm').getBoundingClientRect(), pr = $('fmPanel').getBoundingClientRect();
-    if (fr.height) $('fmSafe').style.bottom = Math.max(0, fr.bottom - pr.top + 6) + 'px';
-  }
+  renderRows();
 
   function fmSelect(code) {
     const a = AGENTS[code];
@@ -502,23 +578,16 @@
     $('fmStatus').textContent = a.open ? 'Open' : 'Closed';
     $('fmStatus').classList.toggle('closed', !a.open);
     $('fmDist').textContent = a.dist;
-    $('fmList').hidden = true;
-    $('fmAgent').hidden = false;
+    $('fmList').hidden = true; $('fmAgent').hidden = false;
     $('fm').classList.add('has-agent');
     document.querySelectorAll('#fmPins .map-marker').forEach(m => m.classList.toggle('active', m.dataset.code === code));
   }
   function fmClear() {
     fmChosen = null;
-    $('fmList').hidden = false;
-    $('fmAgent').hidden = true;
+    $('fmList').hidden = false; $('fmAgent').hidden = true;
     $('fm').classList.remove('has-agent');
     document.querySelectorAll('#fmPins .map-marker.active').forEach(m => m.classList.remove('active'));
   }
-  // Back (shown while an agent is picked) returns to the nearby list
-  function fmBack() { fmClear(); }
-  document.addEventListener('keydown', e => { if (e.key === 'Escape' && fmChosen) fmClear(); });
-  buildFull();
-
   function recenter() {
     const you = $('fmYou');
     you.style.transition = 'transform 0.4s ease';
@@ -527,21 +596,39 @@
   }
   function callAgent() { window.location.href = 'tel:+251700000000'; }
   function directions() {
-    const q = encodeURIComponent(ADDR[fmChosen] || (AGENTS[fmChosen] && AGENTS[fmChosen].name) || 'M-PESA agent');
+    const q = encodeURIComponent((AGENTS[fmChosen] && AGENTS[fmChosen].addr) || 'M-PESA agent');
     window.open('https://www.google.com/maps/search/?api=1&query=' + q, '_blank');
   }
-  // Continue keeps the amount and goes to PIN, same as the short code route
-  function fmContinue() { if (fmChosen) finish(fmChosen, AGENTS[fmChosen].name); }
-
-  // Same hand-off to Enter PIN as before
-  function finish(code, name) {
-    const ag = AGENTS[code] || {};
-    Object.assign(d, { method: 'code', methodLabel: 'Merchant Short Code', entry: 'code', agent: { abbr: ag.abbr, name, code }, agentCode: code, agentName: name, fee: 0, total: Number(d.amount) || 0, back: 'Cash In - Agent Short Code Locate.html' });
-    sessionStorage.setItem('cashInData', JSON.stringify(d));
-    location.href = 'Cash In - Enter PIN.html';
+  // Continue: back to Enter Code with this merchant filled in; the amount comes next
+  function fmContinue() {
+    if (!fmChosen) return;
+    const code = fmChosen;
+    fmClear();
+    setMerchant(code, 'nearby');
+    $('amount').focus();
   }
+
+  // ── Frequent agents: tapping one fills the merchant card ──
+  const FREQUENT = ['323217', '562394', '778901'];
+  const spaced = c => c.slice(0, 3) + ' ' + c.slice(3);
+  $('freqList').innerHTML = FREQUENT.map(code => { const a = AGENTS[code]; return `
+    <button class="freq-row" type="button" onclick="setMerchant('${code}'); $('amount').focus();">
+      <span class="freq-av">${a.abbr}</span>
+      <span class="freq-info"><b>${a.name}</b><small>Short Code: ${spaced(code)} &bull; ${a.dist}</small></span>
+      <span class="freq-tag">Agent</span>
+    </button>`; }).join('');
+
+  // ── Start: scanned QR (merchant filled, no tabs), a frequent agent, or Near By ──
+  if (fromQr) {
+    setMerchant(AGENTS[d.agentCode] ? d.agentCode : '204411');
+  } else if (AGENTS[d.agentCode]) {
+    setMerchant(d.agentCode);
+  }
+  if (!fromQr && (params.get('tab') === 'nearby' || params.get('tab') === 'locate')) showTab('nearby');
 </script>
 <script src="components/keyboard.js"></script>
+<!-- Export to Figma button (shared exporter) -->
+<script src="figma-export.js"></script>
 <script src="test-scenarios-data.js"></script>
 <script src="test-scenarios.js"></script>
 </body>

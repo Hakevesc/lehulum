@@ -1,0 +1,420 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Add Money · Visa Card (Backup)</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@400;500;600&display=swap');
+  @import url('https://api.fontshare.com/v2/css?f[]=switzer@400,500,600,700&display=swap');
+
+  /* Add Money from a Visa card (Bank of Abyssinia / CyberSource): card details and
+     the amount in USD, the ETB you receive, a confirmation sheet, then the card's
+     own security check (one-time code from the bank) and the receipt. */
+  :root {
+    --Primary: #FE353D;
+    --Primary-Light: #FFF1F2;
+    --On-Surface: #1C1C21;
+    --On-Surface-Low: #7C7C87;
+    --Border: #E8E8EC;
+    --Background: #F5F5F5;
+    --Field: #F7F7F9;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'Inter', sans-serif; background: transparent; display: flex; justify-content: center; align-items: center; min-height: 100vh; padding: 20px; }
+  button, input { font-family: inherit; }
+  .phone-frame { width: 360px; height: 780px; background: var(--Background); border-radius: 30px; overflow: hidden; position: relative; box-shadow: 0 20px 60px rgba(0,0,0,0.15); display: flex; flex-direction: column; }
+  .app-content { height: 100%; display: flex; flex-direction: column; }
+
+  .status-bar { display: flex; justify-content: space-between; align-items: center; padding: 14px 24px 8px; background: var(--Background); flex-shrink: 0; }
+  .status-bar .time { font-size: 14px; font-weight: 600; color: var(--On-Surface); }
+  .status-icons { display: flex; align-items: center; gap: 6px; }
+  .status-icons svg { width: 18px; height: 18px; }
+  .header-nav { display: flex; align-items: center; justify-content: space-between; padding: 8px 16px 12px; background: var(--Background); flex-shrink: 0; }
+  .back-btn { width: 36px; height: 36px; border-radius: 50%; background: transparent; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+  .back-btn:hover { background: rgba(0,0,0,0.05); }
+  .back-btn svg { width: 22px; height: 22px; stroke: var(--On-Surface); stroke-width: 1.8px; fill: none; }
+  .header-title { color: var(--On-Surface); font-family: 'Switzer', sans-serif; font-size: 17px; font-weight: 500; letter-spacing: 0.3px; flex: 1; text-align: center; }
+
+  .scroll { flex: 1; min-height: 0; overflow-y: auto; padding: 4px 16px 16px; display: flex; flex-direction: column; gap: 12px; scrollbar-width: none; }
+  .scroll::-webkit-scrollbar { width: 0; }
+
+  /* Card preview: shows what is typed */
+  .vcard { position: relative; overflow: hidden; flex-shrink: 0; height: 168px; border-radius: 18px; padding: 18px 20px; color: #FFF; background: linear-gradient(125deg, #1A2A6C 0%, #233D96 55%, #0F1B4D 100%); box-shadow: 0 10px 24px rgba(26,42,108,0.28); display: flex; flex-direction: column; }
+  .vcard::after { content: ''; position: absolute; right: -50px; top: -60px; width: 200px; height: 200px; border-radius: 50%; background: rgba(255,255,255,0.07); }
+  .vc-top { display: flex; justify-content: space-between; align-items: center; position: relative; z-index: 1; }
+  .vc-bank { display: flex; align-items: center; gap: 8px; font-family: 'Switzer', sans-serif; font-size: 12px; font-weight: 600; }
+  .vc-bank img { width: 26px; height: 26px; border-radius: 7px; background: #FFF; object-fit: contain; padding: 2px; }
+  .vc-visa { font-family: 'Switzer', sans-serif; font-size: 22px; font-weight: 800; font-style: italic; letter-spacing: 0.5px; }
+  .vc-num { margin-top: auto; font-family: 'Switzer', sans-serif; font-size: 19px; font-weight: 600; letter-spacing: 2px; position: relative; z-index: 1; font-variant-numeric: tabular-nums; }
+  .vc-foot { margin-top: 10px; display: flex; justify-content: space-between; font-family: 'Switzer', sans-serif; font-size: 11px; color: rgba(255,255,255,0.75); position: relative; z-index: 1; }
+  .vc-foot b { display: block; margin-top: 2px; font-size: 13px; font-weight: 600; color: #FFF; letter-spacing: 0.5px; text-transform: uppercase; }
+
+  .card { background: #FFF; border-radius: 16px; padding: 16px; box-shadow: 0 4px 14px rgba(15,23,42,0.05); flex-shrink: 0; }
+  .field-label { display: block; font-family: 'Switzer', sans-serif; font-size: 14px; font-weight: 500; color: var(--On-Surface); margin: 14px 0 8px; }
+  .card > .field-label:first-child, .row2 .field-label { margin-top: 0; }
+  .field { height: 52px; background: var(--Field); border: 1.5px solid var(--Border); border-radius: 12px; padding: 0 14px; display: flex; align-items: center; gap: 8px; transition: border-color 0.2s, box-shadow 0.2s, background 0.2s; }
+  .field:focus-within { border-color: var(--Primary); background: #FFF; box-shadow: 0 4px 12px rgba(254,53,61,0.12); }
+  .field.err { border-color: var(--Primary); background: #FFF; }
+  .field.locked { background: #F1F1F4; border-color: #EBEBEF; }
+  .field input { flex: 1; min-width: 0; border: none; outline: none; background: transparent; font-family: 'Switzer', sans-serif; font-size: 15px; font-weight: 600; letter-spacing: 0.3px; color: var(--On-Surface); }
+  .field input::placeholder { color: var(--On-Surface-Low); font-weight: 400; letter-spacing: 0; }
+  .field .suffix { font-family: 'Switzer', sans-serif; font-size: 13px; font-weight: 600; color: var(--On-Surface-Low); }
+  .field .lock { width: 16px; height: 16px; stroke: var(--On-Surface-Low); stroke-width: 2; fill: none; flex-shrink: 0; }
+  .row2 { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 12px; margin-top: 14px; }
+  /* Valid Visa number: green tick in the field */
+  .ok-tick { display: none; width: 20px; height: 20px; stroke: #16A34A; stroke-width: 2.2; fill: none; flex-shrink: 0; }
+  .field.ok .ok-tick { display: block; }
+  .field.ok { border-color: #BFE8CC; }
+  .err-text { display: none; margin-top: 6px; font-family: 'Switzer', sans-serif; font-size: 12px; color: var(--Primary); }
+  .err-text.show { display: block; }
+
+  /* What you get in ETB */
+  .calc { margin-top: 12px; padding: 4px 12px; background: #F7F7F9; border-radius: 12px; }
+  .calc-row { display: flex; justify-content: space-between; align-items: center; padding: 8px 0; font-family: 'Switzer', sans-serif; font-size: 12.5px; color: #55555E; }
+  .calc-row + .calc-row { border-top: 1px solid #ECECEF; }
+  .calc-row b { font-weight: 700; color: var(--On-Surface); font-variant-numeric: tabular-nums; }
+  .calc-row.total b { color: #16A34A; font-size: 14px; }
+  .note { font-family: 'Switzer', sans-serif; font-size: 11.5px; line-height: 1.45; color: #8A8A94; padding: 0 4px; }
+
+  .bottom-bar { flex-shrink: 0; padding: 10px 16px 18px; background: var(--Background); }
+  .btn-primary { width: 100%; height: 52px; border: none; border-radius: 14px; background: var(--Primary); color: #FFF; font-family: 'Poppins', sans-serif; font-size: 15px; font-weight: 500; cursor: pointer; box-shadow: 0 4px 16px rgba(254,53,61,0.25); }
+  .btn-primary:disabled { background: #E0E0E0; color: var(--On-Surface-Low); box-shadow: none; cursor: not-allowed; }
+  /* The bottom button stays visible above the on-screen keyboard */
+
+  /* ── Confirmation sheet ── */
+  .scrim { position: absolute; inset: 0; z-index: 100; background: rgba(0,0,0,0.42); opacity: 0; visibility: hidden; transition: opacity 0.22s, visibility 0.22s; }
+  .scrim.show { opacity: 1; visibility: visible; }
+  .sheet { position: absolute; left: 0; right: 0; bottom: 0; z-index: 101; background: #FFF; border-radius: 28px 28px 0 0; padding: 10px 16px 24px; transform: translateY(100%); transition: transform 0.28s cubic-bezier(.2,.8,.2,1); }
+  .sheet.show { transform: translateY(0); }
+  .sheet-grip { width: 40px; height: 4px; border-radius: 2px; background: #D8D8DE; margin: 0 auto 18px; }
+  .cf-head { position: relative; display: flex; align-items: center; gap: 12px; border: 1px solid #E6E6EA; border-radius: 16px; padding: 14px; }
+  .cf-logo { width: 42px; height: 42px; border-radius: 50%; border: 1px solid #EFEFF2; overflow: hidden; flex-shrink: 0; }
+  .cf-logo img { width: 100%; height: 100%; object-fit: contain; padding: 4px; }
+  .cf-head b { display: block; font-family: 'Switzer', sans-serif; font-size: 15px; font-weight: 700; color: var(--On-Surface); }
+  .cf-head small { font-family: 'Switzer', sans-serif; font-size: 12.5px; color: var(--On-Surface-Low); }
+  .cf-badge { position: absolute; top: -11px; right: 14px; padding: 4px 10px; border-radius: 999px; background: #EDEDF0; color: #3A3A42; font-family: 'Switzer', sans-serif; font-size: 10px; font-weight: 700; letter-spacing: 0.5px; }
+  .cf-rows { margin: 10px 0 20px; }
+  .cf-row { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 13px 0; border-bottom: 1px solid #EFEFF2; font-family: 'Switzer', sans-serif; }
+  .cf-row:last-child { border-bottom: none; }
+  .cf-row span { font-size: 12.5px; color: #55555E; }
+  .cf-row b { font-size: 12.5px; font-weight: 700; color: var(--On-Surface); font-variant-numeric: tabular-nums; }
+  .cf-row b.green { font-size: 14px; color: #16A34A; }
+  .cf-actions { display: flex; gap: 12px; }
+  .cf-btn { flex: 1; height: 52px; border-radius: 14px; background: #FFF; font-family: 'Poppins', sans-serif; font-size: 15px; font-weight: 500; cursor: pointer; }
+  .cf-btn.cancel { border: 1.5px solid #E0E0E4; color: #55555E; }
+  .cf-btn.confirm { border: 1.5px solid var(--Primary); color: var(--Primary); }
+
+  /* ── Card security: one-time code from the bank ── */
+  .otp { position: absolute; inset: 0; z-index: 120; background: var(--Background); display: none; flex-direction: column; }
+  .otp.show { display: flex; }
+  .otp-body { flex: 1; padding: 8px 20px 20px; display: flex; flex-direction: column; align-items: center; text-align: center; }
+  .otp-ic { width: 64px; height: 64px; border-radius: 18px; background: #FFF; border: 1px solid #EFEFF2; display: flex; align-items: center; justify-content: center; margin-top: 18px; }
+  .otp-ic img { width: 44px; height: 44px; object-fit: contain; }
+  .otp-body h2 { margin-top: 16px; font-family: 'Switzer', sans-serif; font-size: 18px; font-weight: 700; color: var(--On-Surface); }
+  .otp-body p { margin-top: 6px; font-family: 'Switzer', sans-serif; font-size: 13px; line-height: 1.5; color: var(--On-Surface-Low); }
+  .otp-body p b { color: var(--On-Surface); }
+  .otp-boxes { margin-top: 22px; display: flex; gap: 8px; }
+  .otp-boxes input { width: 44px; height: 54px; border-radius: 12px; border: 1.5px solid var(--Border); background: #FFF; text-align: center; font-family: 'Switzer', sans-serif; font-size: 20px; font-weight: 700; color: var(--On-Surface); outline: none; }
+  .otp-boxes input:focus { border-color: var(--Primary); box-shadow: 0 4px 12px rgba(254,53,61,0.12); }
+  .otp-boxes.err input { border-color: var(--Primary); }
+  .otp-err { display: none; margin-top: 10px; font-family: 'Switzer', sans-serif; font-size: 12.5px; color: var(--Primary); }
+  .otp-err.show { display: block; }
+  .otp-resend { margin-top: 16px; border: none; background: none; font-family: 'Switzer', sans-serif; font-size: 13px; font-weight: 600; color: var(--Primary); cursor: pointer; }
+  .otp-resend:disabled { color: #A0A0AA; cursor: default; }
+  .otp .bottom-bar { margin-top: auto; }
+
+  /* Processing */
+  .busy { position: absolute; inset: 0; z-index: 130; background: rgba(245,245,245,0.96); display: none; flex-direction: column; align-items: center; justify-content: center; gap: 14px; font-family: 'Switzer', sans-serif; font-size: 14px; color: var(--On-Surface); }
+  .busy.show { display: flex; }
+  .spinner { width: 38px; height: 38px; border-radius: 50%; border: 3.5px solid #F1D3D5; border-top-color: var(--Primary); animation: spin 0.8s linear infinite; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+</style>
+<link rel="stylesheet" href="styles/device.css">
+</head>
+<body>
+<div class="phone-frame">
+  <div class="app-content" id="app">
+
+    <div class="status-bar">
+      <span class="time">10:00</span>
+      <div class="status-icons">
+        <svg viewBox="0 0 24 24" fill="none"><path d="M1 9l2 2c4.97-4.97 13.03-4.97 18 0l2-2C16.93 2.93 7.08 2.93 1 9z" fill="#1C1C21"/><path d="M5 13l2 2c2.76-2.76 7.24-2.76 10 0l2-2C15.14 9.14 8.87 9.14 5 13z" fill="#1C1C21"/><path d="M9 17l2 2c1.1-1.1 2.9-1.1 4 0l2-2c-2.21-2.21-5.79-2.21-8 0z" fill="#1C1C21"/></svg>
+        <svg viewBox="0 0 24 24" fill="none"><rect x="2" y="6" width="4" height="12" rx="1" fill="#1C1C21"/><rect x="8" y="4" width="4" height="14" rx="1" fill="#1C1C21"/><rect x="14" y="2" width="4" height="16" rx="1" fill="#1C1C21"/><rect x="20" y="0" width="4" height="18" rx="1" fill="#1C1C21" opacity="0.3"/></svg>
+        <svg viewBox="0 0 28 14" fill="none"><rect x="0" y="1" width="22" height="12" rx="2.5" stroke="#1C1C21" stroke-width="1.5"/><rect x="2" y="3" width="16" height="8" rx="1" fill="#1C1C21"/><rect x="24" y="4" width="2" height="6" rx="1" fill="#1C1C21"/></svg>
+      </div>
+    </div>
+
+    <div class="header-nav">
+      <button class="back-btn" onclick="location.href='Add Money.html'" aria-label="Back">
+        <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+      </button>
+      <span class="header-title">Add from Visa Card</span>
+      <div style="width:36px;"></div>
+    </div>
+
+    <div class="scroll">
+      <div class="vcard" aria-hidden="true">
+        <div class="vc-top">
+          <span class="vc-bank"><img src="assets/banks logo/abyssinya-bank.png" alt="">Bank of Abyssinia</span>
+          <span class="vc-visa">VISA</span>
+        </div>
+        <div class="vc-num" id="pvNum">•••• •••• •••• ••••</div>
+        <div class="vc-foot">
+          <span>Card holder<b id="pvName">Your name</b></span>
+          <span style="text-align:right">Expires<b id="pvExp">MM/YY</b></span>
+        </div>
+      </div>
+
+      <div class="card">
+        <label class="field-label" for="cardNum">Card Number</label>
+        <div class="field" id="cardField"><input id="cardNum" type="text" inputmode="numeric" autocomplete="off" placeholder="0000 0000 0000 0000" maxlength="23"><svg class="ok-tick" id="cardOk" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" aria-label="Valid Visa card"><circle cx="12" cy="12" r="9"/><path d="m8 12.5 2.8 2.8L16 10"/></svg></div>
+        <div class="err-text" id="cardErr"></div>
+
+        <label class="field-label" for="cardName">Name on Card</label>
+        <div class="field"><input id="cardName" type="text" autocomplete="off" placeholder="As printed on the card"></div>
+
+        <div class="row2">
+          <div>
+            <label class="field-label" for="cardExp">Expiry</label>
+            <div class="field" id="expField"><input id="cardExp" type="text" inputmode="numeric" autocomplete="off" placeholder="MM/YY" maxlength="5"></div>
+          </div>
+          <div>
+            <label class="field-label" for="cardCvv">CVV</label>
+            <div class="field"><input id="cardCvv" type="password" inputmode="numeric" autocomplete="off" placeholder="•••" maxlength="3"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <label class="field-label" for="amount">Amount in USD</label>
+        <div class="field"><input id="amount" type="text" inputmode="decimal" autocomplete="off" placeholder="e.g. 100"><span class="suffix">USD</span></div>
+        <div class="calc">
+          <div class="calc-row"><span>Exchange rate</span><b>1 USD = <span id="rateTxt"></span> ETB</b></div>
+          <div class="calc-row"><span>Fee</span><b id="feeTxt">0.00 ETB</b></div>
+          <div class="calc-row total"><span>You receive</span><b id="getTxt">0.00 ETB</b></div>
+        </div>
+
+        <label class="field-label">To M-PESA Number</label>
+        <div class="field locked">
+          <input type="text" value="Aster Mequanent · 0712 *** *78" readonly aria-label="Your M-PESA number">
+          <svg class="lock" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg>
+        </div>
+      </div>
+      <p class="note">The card is charged in USD by Bank of Abyssinia. The rate shown is a sample; the final rate and amount are shown before you confirm.</p>
+    </div>
+
+    <div class="bottom-bar">
+      <button class="btn-primary" id="continueBtn" disabled onclick="openConfirm()">Continue</button>
+    </div>
+  </div>
+
+  <!-- Confirmation -->
+  <div class="scrim" id="scrim" onclick="closeConfirm()"></div>
+  <div class="sheet" id="sheet" role="dialog" aria-label="Confirm top-up">
+    <div class="sheet-grip"></div>
+    <div class="cf-head">
+      <span class="cf-badge">VISA</span>
+      <span class="cf-logo"><img src="assets/banks logo/abyssinya-bank.png" alt=""></span>
+      <span><b>Visa Card Top-up</b><small id="cfCard">Card •••• 0000</small></span>
+    </div>
+    <div class="cf-rows">
+      <div class="cf-row"><span>To:</span><b>Main account · 0712 *** *78</b></div>
+      <div class="cf-row"><span>Card charged:</span><b id="cfUsd"></b></div>
+      <div class="cf-row"><span>Exchange rate:</span><b id="cfRate"></b></div>
+      <div class="cf-row"><span>Fee:</span><b id="cfFee"></b></div>
+      <div class="cf-row"><span>You receive:</span><b class="green" id="cfGet"></b></div>
+    </div>
+    <div class="cf-actions">
+      <button class="cf-btn cancel" onclick="closeConfirm()">Cancel</button>
+      <button class="cf-btn confirm" onclick="startOtp()">Confirm</button>
+    </div>
+  </div>
+
+  <!-- Card security check -->
+  <div class="otp" id="otp">
+    <div class="status-bar">
+      <span class="time">10:00</span>
+      <div class="status-icons">
+        <svg viewBox="0 0 24 24" fill="none"><rect x="2" y="6" width="4" height="12" rx="1" fill="#1C1C21"/><rect x="8" y="4" width="4" height="14" rx="1" fill="#1C1C21"/><rect x="14" y="2" width="4" height="16" rx="1" fill="#1C1C21"/><rect x="20" y="0" width="4" height="18" rx="1" fill="#1C1C21" opacity="0.3"/></svg>
+        <svg viewBox="0 0 28 14" fill="none"><rect x="0" y="1" width="22" height="12" rx="2.5" stroke="#1C1C21" stroke-width="1.5"/><rect x="2" y="3" width="16" height="8" rx="1" fill="#1C1C21"/><rect x="24" y="4" width="2" height="6" rx="1" fill="#1C1C21"/></svg>
+      </div>
+    </div>
+    <div class="header-nav">
+      <button class="back-btn" onclick="closeOtp()" aria-label="Back">
+        <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+      </button>
+      <span class="header-title">Verify Card</span>
+      <div style="width:36px;"></div>
+    </div>
+    <div class="otp-body">
+      <span class="otp-ic"><img src="assets/banks logo/abyssinya-bank.png" alt="Bank of Abyssinia"></span>
+      <h2>Enter the code from your bank</h2>
+      <p>Bank of Abyssinia sent a 6-digit code to the phone linked to card <b id="otpCard">•••• 0000</b>.</p>
+      <div class="otp-boxes" id="otpBoxes">
+        <input inputmode="numeric" maxlength="1" aria-label="Digit 1"><input inputmode="numeric" maxlength="1" aria-label="Digit 2"><input inputmode="numeric" maxlength="1" aria-label="Digit 3"><input inputmode="numeric" maxlength="1" aria-label="Digit 4"><input inputmode="numeric" maxlength="1" aria-label="Digit 5"><input inputmode="numeric" maxlength="1" aria-label="Digit 6">
+      </div>
+      <div class="otp-err" id="otpErr">Incorrect code. Please try again.</div>
+      <button class="otp-resend" id="resendBtn" disabled onclick="resend()">Resend code in <span id="resendT">30</span>s</button>
+    </div>
+    <div class="bottom-bar">
+      <button class="btn-primary" id="verifyBtn" disabled onclick="verify()">Verify &amp; Add Money</button>
+    </div>
+  </div>
+
+  <div class="busy" id="busy"><span class="spinner"></span><span id="busyTxt">Processing…</span></div>
+</div>
+
+<script>
+  const $ = id => document.getElementById(id);
+  const RATE = 157.50;          // sample USD → ETB rate
+  const FEE_ETB = 0;            // top-up fee (per the approved tariff)
+  const MIN_USD = 1, MAX_USD = 5000;
+  const money = n => Number(n).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+  $('rateTxt').textContent = money(RATE);
+
+  const digits = v => v.replace(/\D/g, '');
+  const usd = () => Number($('amount').value.replace(/,/g, '')) || 0;
+
+  // Card number: a real Visa number — starts with 4, 13 / 16 / 19 digits, passes the Luhn check
+  const VISA_LENGTHS = [13, 16, 19];
+  function luhn(num) {
+    let sum = 0, dbl = false;
+    for (let i = num.length - 1; i >= 0; i--) {
+      let n = +num[i];
+      if (dbl) { n *= 2; if (n > 9) n -= 9; }
+      sum += n; dbl = !dbl;
+    }
+    return sum % 10 === 0;
+  }
+  // '' when valid; otherwise the message to show. `final` = the customer has finished typing.
+  function visaError(d, final) {
+    if (!d) return final ? 'Enter your Visa card number.' : '';
+    if (d[0] !== '4') return "This isn't a Visa card. Visa card numbers start with 4.";
+    if (!VISA_LENGTHS.includes(d.length)) return final || d.length > 19 ? 'A Visa card number has 13, 16 or 19 digits.' : '';
+    if (!luhn(d)) return (final || d.length >= 16) ? "This card number isn't valid. Please check it and try again." : '';
+    return '';
+  }
+  const visaOk = d => VISA_LENGTHS.includes(d.length) && d[0] === '4' && luhn(d);
+  function showCardState(d, final) {
+    const msg = visaError(d, final);
+    $('cardErr').textContent = msg;
+    $('cardErr').classList.toggle('show', !!msg);
+    $('cardField').classList.toggle('err', !!msg);
+    $('cardField').classList.toggle('ok', visaOk(d));
+  }
+  $('cardNum').addEventListener('input', e => {
+    const d = digits(e.target.value).slice(0, 19);
+    e.target.value = d.replace(/(\d{4})(?=\d)/g, '$1 ');
+    const shown = d.length > 16 ? d : d + '•'.repeat(16 - d.length);
+    $('pvNum').textContent = shown.replace(/(.{4})(?=.)/g, '$1 ');
+    showCardState(d, false);
+    validate();
+  });
+  $('cardNum').addEventListener('blur', () => { const d = digits($('cardNum').value); if (d) showCardState(d, true); });
+  $('cardName').addEventListener('input', e => { $('pvName').textContent = e.target.value.trim() || 'Your name'; validate(); });
+  $('cardExp').addEventListener('input', e => {
+    let d = digits(e.target.value).slice(0, 4);
+    if (d.length >= 3) d = d.slice(0, 2) + '/' + d.slice(2);
+    e.target.value = d;
+    $('pvExp').textContent = d || 'MM/YY';
+    validate();
+  });
+  $('cardCvv').addEventListener('input', e => { e.target.value = digits(e.target.value).slice(0, 3); validate(); });
+  $('amount').addEventListener('input', e => {
+    let v = e.target.value.replace(/[^\d.]/g, '');
+    const [i, f] = v.split('.');
+    e.target.value = (i ? Number(i).toLocaleString('en-US') : '') + (f !== undefined ? '.' + f.slice(0, 2) : '');
+    const get = Math.max(0, usd() * RATE - FEE_ETB);
+    $('feeTxt').textContent = money(FEE_ETB) + ' ETB';
+    $('getTxt').textContent = money(get) + ' ETB';
+    validate();
+  });
+
+  function expOk(v) {
+    const m = v.match(/^(\d{2})\/(\d{2})$/); if (!m) return false;
+    const mm = +m[1], yy = 2000 + +m[2]; if (mm < 1 || mm > 12) return false;
+    const now = new Date(); return yy > now.getFullYear() || (yy === now.getFullYear() && mm >= now.getMonth() + 1);
+  }
+  function validate() {
+    const d = digits($('cardNum').value);
+    const ok = visaOk(d) && $('cardName').value.trim().length > 1 &&
+      expOk($('cardExp').value) && $('cardCvv').value.length === 3 && usd() >= MIN_USD && usd() <= MAX_USD;
+    $('continueBtn').disabled = !ok;
+  }
+
+  const last4 = () => digits($('cardNum').value).slice(-4);
+  function openConfirm() {
+    if ($('continueBtn').disabled) return;
+    document.activeElement && document.activeElement.blur();
+    $('cfCard').textContent = 'Card •••• ' + last4();
+    $('cfUsd').textContent = money(usd()) + ' USD';
+    $('cfRate').textContent = '1 USD = ' + money(RATE) + ' ETB';
+    $('cfFee').textContent = money(FEE_ETB) + ' ETB';
+    $('cfGet').textContent = money(usd() * RATE - FEE_ETB) + ' ETB';
+    $('scrim').classList.add('show'); $('sheet').classList.add('show');
+  }
+  function closeConfirm() { $('scrim').classList.remove('show'); $('sheet').classList.remove('show'); }
+
+  // ── Card security: 6-digit code (any code works here except 000000) ──
+  const boxes = [...document.querySelectorAll('#otpBoxes input')];
+  let resendTimer;
+  function startOtp() {
+    closeConfirm();
+    $('otpCard').textContent = '•••• ' + last4();
+    boxes.forEach(b => b.value = '');
+    $('otpErr').classList.remove('show'); $('otpBoxes').classList.remove('err');
+    $('verifyBtn').disabled = true;
+    $('otp').classList.add('show');
+    boxes[0].focus();
+    countdown();
+  }
+  function closeOtp() { $('otp').classList.remove('show'); clearInterval(resendTimer); }
+  function countdown() {
+    let t = 30; $('resendBtn').disabled = true; $('resendBtn').innerHTML = 'Resend code in <span id="resendT">30</span>s';
+    clearInterval(resendTimer);
+    resendTimer = setInterval(() => {
+      t--; if (t > 0) { $('resendT').textContent = t; return; }
+      clearInterval(resendTimer); $('resendBtn').disabled = false; $('resendBtn').textContent = 'Resend code';
+    }, 1000);
+  }
+  function resend() { boxes.forEach(b => b.value = ''); boxes[0].focus(); countdown(); }
+  boxes.forEach((b, i) => {
+    b.addEventListener('input', () => {
+      b.value = digits(b.value).slice(-1);
+      if (b.value && i < 5) boxes[i + 1].focus();
+      $('otpErr').classList.remove('show'); $('otpBoxes').classList.remove('err');
+      $('verifyBtn').disabled = boxes.some(x => !x.value);
+    });
+    b.addEventListener('keydown', e => { if (e.key === 'Backspace' && !b.value && i > 0) boxes[i - 1].focus(); if (e.key === 'Enter' && !$('verifyBtn').disabled) verify(); });
+  });
+  function verify() {
+    const code = boxes.map(b => b.value).join('');
+    if (code === '000000') { $('otpErr').classList.add('show'); $('otpBoxes').classList.add('err'); return; }
+    clearInterval(resendTimer);
+    $('busyTxt').textContent = 'Adding money from your card…';
+    $('busy').classList.add('show');
+    setTimeout(() => {
+      const amountUsd = usd();
+      sessionStorage.setItem('addMoneyData', JSON.stringify({
+        source: 'visa', sourceLabel: 'Visa Card · Bank of Abyssinia', card: '•••• ' + last4(),
+        amountUsd, rate: RATE, fee: FEE_ETB, amount: amountUsd * RATE - FEE_ETB,
+        ref: 'U' + Math.random().toString(36).slice(2, 10).toUpperCase()
+      }));
+      location.href = 'Add Money - Receipt.html';
+    }, 1400);
+  }
+</script>
+<script src="components/keyboard.js"></script>
+<script>
+  // Go / Enter on any field continues once the form is complete
+  document.querySelectorAll('.scroll input').forEach(i => i.addEventListener('keydown', e => {
+    if (e.key === 'Enter' && !$('continueBtn').disabled) { e.preventDefault(); setTimeout(() => openConfirm(), 0); }
+  }));
+</script>
+<!-- Export to Figma button (shared exporter) -->
+<script src="figma-export.js"></script>
+<script src="test-scenarios-data.js"></script>
+<script src="test-scenarios.js"></script>
+</body>
+</html>

@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BeU · Pay with M-PESA</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@400;500;600&display=swap');
+  @import url('https://api.fontshare.com/v2/css?f[]=switzer@400,500,600,700&display=swap');
+
+  /* BeU Delivery order, paid with M-PESA: the merchant, the order reference
+     and amount (filled by BeU), an optional description, then Continue to PIN. */
+  :root {
+    --Primary: #FE353D;
+    --Primary-Light: #FFF1F2;
+    --On-Surface: #1C1C21;
+    --On-Surface-Low: #7C7C87;
+    --Border: #E8E8EC;
+    --Background: #F5F5F5;
+    --Field: #F7F7F9;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'Inter', sans-serif; background: transparent; display: flex; justify-content: center; align-items: center; min-height: 100vh; padding: 20px; }
+  button, input { font-family: inherit; }
+  .phone-frame { width: 360px; height: 780px; background: var(--Background); border-radius: 30px; overflow: hidden; position: relative; box-shadow: 0 20px 60px rgba(0,0,0,0.15); display: flex; flex-direction: column; }
+  .app-content { height: 100%; display: flex; flex-direction: column; }
+
+  .status-bar { display: flex; justify-content: space-between; align-items: center; padding: 14px 24px 8px; background: var(--Background); flex-shrink: 0; }
+  .status-bar .time { font-size: 14px; font-weight: 600; color: var(--On-Surface); }
+  .status-icons { display: flex; align-items: center; gap: 6px; }
+  .status-icons svg { width: 18px; height: 18px; }
+
+  .header-nav { display: flex; align-items: center; justify-content: space-between; padding: 8px 16px 12px; background: var(--Background); flex-shrink: 0; }
+  .back-btn { width: 36px; height: 36px; border-radius: 50%; background: transparent; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: background 0.2s; }
+  .back-btn:hover { background: rgba(0,0,0,0.05); }
+  .back-btn svg { width: 22px; height: 22px; stroke: var(--On-Surface); stroke-width: 1.8px; fill: none; }
+  .header-title { color: var(--On-Surface); font-family: 'Switzer', sans-serif; font-size: 17px; font-weight: 500; letter-spacing: 0.3px; flex: 1; text-align: center; }
+
+  .scroll { flex: 1; min-height: 0; overflow-y: auto; padding: 4px 16px 16px; display: flex; flex-direction: column; gap: 14px; scrollbar-width: none; }
+  .scroll::-webkit-scrollbar { width: 0; }
+
+  /* Merchant: who the order is paid to */
+  .merchant { display: flex; align-items: center; gap: 12px; background: #FFF; border-radius: 16px; padding: 14px; box-shadow: 0 4px 14px rgba(15,23,42,0.05); }
+  .merchant-logo { width: 48px; height: 48px; border-radius: 14px; overflow: hidden; flex-shrink: 0; background: #FFF; border: 1px solid #EFEFF2; }
+  .merchant-logo img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .merchant-info { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px; }
+  .merchant-name { font-family: 'Switzer', sans-serif; font-size: 16px; font-weight: 700; color: var(--On-Surface); }
+  .merchant-sub { font-family: 'Switzer', sans-serif; font-size: 12.5px; color: var(--On-Surface-Low); }
+  .merchant-sub b { font-weight: 600; color: var(--On-Surface); letter-spacing: 0.3px; }
+  .badge { flex-shrink: 0; padding: 4px 9px; border-radius: 6px; background: #EDEDF0; color: var(--On-Surface-Low); font-family: 'Switzer', sans-serif; font-size: 9.5px; font-weight: 700; letter-spacing: 0.6px; }
+
+  /* Order details */
+  .card { background: #FFF; border-radius: 16px; padding: 16px; box-shadow: 0 4px 14px rgba(15,23,42,0.05); display: flex; flex-direction: column; gap: 8px; }
+  .label-row { display: flex; justify-content: space-between; align-items: baseline; margin-top: 6px; }
+  .label-row:first-child { margin-top: 0; }
+  .field-label { font-family: 'Switzer', sans-serif; font-size: 14px; font-weight: 600; color: var(--On-Surface); }
+  .count { font-family: 'Switzer', sans-serif; font-size: 12px; color: var(--On-Surface-Low); font-variant-numeric: tabular-nums; }
+  .field { height: 52px; background: var(--Field); border: 1.5px solid var(--Border); border-radius: 14px; padding: 0 14px; display: flex; align-items: center; gap: 8px; transition: border-color 0.2s, box-shadow 0.2s, background 0.2s; }
+  .field:focus-within { border-color: var(--Primary); background: #FFF; box-shadow: 0 4px 12px rgba(254,53,61,0.12); }
+  .field.locked { background: #F1F1F4; border-color: #EBEBEF; }
+  .field input { flex: 1; min-width: 0; border: none; outline: none; background: transparent; font-family: 'Switzer', sans-serif; font-size: 15px; font-weight: 600; color: var(--On-Surface); letter-spacing: 0.3px; }
+  .field input::placeholder { color: var(--On-Surface-Low); font-weight: 400; letter-spacing: 0; }
+  .field input[readonly] { cursor: default; }
+  .field .suffix { font-family: 'Switzer', sans-serif; font-size: 13px; font-weight: 600; color: var(--On-Surface-Low); }
+  .field .lock { width: 16px; height: 16px; stroke: var(--On-Surface-Low); stroke-width: 2; fill: none; flex-shrink: 0; }
+  .amount-input { font-size: 18px !important; font-weight: 700 !important; }
+  .balance-hint { font-family: 'Switzer', sans-serif; font-size: 12px; color: var(--On-Surface-Low); }
+  .balance-hint b { font-weight: 600; color: var(--On-Surface); }
+
+  /* Bottom: scan (black square, like the app's QR chips) + Continue */
+  .bottom-bar { flex-shrink: 0; display: flex; gap: 10px; padding: 12px 16px 20px; background: var(--Background); }
+  .scan-sq { width: 52px; height: 52px; flex: 0 0 52px; border: none; border-radius: 14px; background: var(--On-Surface); display: flex; align-items: center; justify-content: center; cursor: pointer; }
+  .scan-sq:active { transform: scale(0.96); }
+  .scan-sq img { width: 26px; height: auto; display: block; }
+  .btn-primary { flex: 1; height: 52px; border: none; border-radius: 14px; background: var(--Primary); color: #FFF; font-family: 'Poppins', sans-serif; font-size: 15px; font-weight: 500; cursor: pointer; box-shadow: 0 4px 16px rgba(254,53,61,0.25); transition: transform 0.12s; }
+  .btn-primary:active { transform: scale(0.98); }
+  /* ── Confirmation sheet: merchant, account, business and order numbers, fee, amount ── */
+  .scrim { position: absolute; inset: 0; z-index: 100; background: rgba(0,0,0,0.42); opacity: 0; visibility: hidden; transition: opacity 0.22s, visibility 0.22s; }
+  .scrim.show { opacity: 1; visibility: visible; }
+  .sheet { position: absolute; left: 0; right: 0; bottom: 0; z-index: 101; background: #FFF; border-radius: 28px 28px 0 0; padding: 10px 16px 24px; transform: translateY(100%); transition: transform 0.28s cubic-bezier(.2,.8,.2,1); }
+  .sheet.show { transform: translateY(0); }
+  .sheet-grip { width: 40px; height: 4px; border-radius: 2px; background: #D8D8DE; margin: 0 auto 18px; }
+  .cf-merchant { position: relative; display: flex; align-items: center; gap: 12px; border: 1px solid #E6E6EA; border-radius: 16px; padding: 14px; }
+  .cf-logo { width: 42px; height: 42px; border-radius: 50%; overflow: hidden; flex-shrink: 0; }
+  .cf-logo img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .cf-merchant b { display: block; font-family: 'Switzer', sans-serif; font-size: 15px; font-weight: 700; color: var(--On-Surface); }
+  .cf-merchant small { font-family: 'Switzer', sans-serif; font-size: 12.5px; color: var(--On-Surface-Low); }
+  .cf-merchant small strong { font-weight: 600; color: #55555E; }
+  .cf-badge { position: absolute; top: -11px; right: 14px; padding: 4px 10px; border-radius: 999px; background: #EDEDF0; color: #3A3A42; font-family: 'Switzer', sans-serif; font-size: 10px; font-weight: 700; letter-spacing: 0.5px; }
+  .cf-rows { margin: 10px 0 20px; }
+  .cf-row { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 15px 0; border-bottom: 1px solid #EFEFF2; font-family: 'Switzer', sans-serif; }
+  .cf-row:last-child { border-bottom: none; }
+  .cf-row span { font-size: 12.5px; color: #55555E; }
+  .cf-row b { font-size: 12.5px; font-weight: 700; color: var(--On-Surface); font-variant-numeric: tabular-nums; }
+  .cf-row b.red { font-size: 14px; color: var(--Primary); }
+  .cf-actions { display: flex; gap: 12px; }
+  .cf-btn { flex: 1; height: 52px; border-radius: 14px; background: #FFF; font-family: 'Poppins', sans-serif; font-size: 15px; font-weight: 500; cursor: pointer; }
+  .cf-btn:active { transform: scale(0.98); }
+  .cf-btn.cancel { border: 1.5px solid #E0E0E4; color: #55555E; }
+  .cf-btn.confirm { border: 1.5px solid var(--Primary); color: var(--Primary); }
+</style>
+<link rel="stylesheet" href="styles/device.css">
+</head>
+<body>
+<div class="phone-frame">
+  <div class="app-content">
+
+    <div class="status-bar">
+      <span class="time">10:00</span>
+      <div class="status-icons">
+        <svg viewBox="0 0 24 24" fill="none"><path d="M1 9l2 2c4.97-4.97 13.03-4.97 18 0l2-2C16.93 2.93 7.08 2.93 1 9z" fill="#1C1C21"/><path d="M5 13l2 2c2.76-2.76 7.24-2.76 10 0l2-2C15.14 9.14 8.87 9.14 5 13z" fill="#1C1C21"/><path d="M9 17l2 2c1.1-1.1 2.9-1.1 4 0l2-2c-2.21-2.21-5.79-2.21-8 0z" fill="#1C1C21"/></svg>
+        <svg viewBox="0 0 24 24" fill="none"><rect x="2" y="6" width="4" height="12" rx="1" fill="#1C1C21"/><rect x="8" y="4" width="4" height="14" rx="1" fill="#1C1C21"/><rect x="14" y="2" width="4" height="16" rx="1" fill="#1C1C21"/><rect x="20" y="0" width="4" height="18" rx="1" fill="#1C1C21" opacity="0.3"/></svg>
+        <svg viewBox="0 0 28 14" fill="none"><rect x="0" y="1" width="22" height="12" rx="2.5" stroke="#1C1C21" stroke-width="1.5"/><rect x="2" y="3" width="16" height="8" rx="1" fill="#1C1C21"/><rect x="24" y="4" width="2" height="6" rx="1" fill="#1C1C21"/></svg>
+      </div>
+    </div>
+
+    <div class="header-nav">
+      <button class="back-btn" type="button" onclick="goBack()" aria-label="Back">
+        <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+      </button>
+      <span class="header-title">Pay with M-PESA</span>
+      <div style="width:36px;"></div>
+    </div>
+
+    <div class="scroll">
+
+      <!-- Who the order is paid to -->
+      <div class="merchant">
+        <span class="merchant-logo"><img src="assets/bill pay logos/beu-logo.png" alt="BeU"></span>
+        <span class="merchant-info">
+          <span class="merchant-name">BeU Delivery</span>
+          <span class="merchant-sub">Business Number: <b>3559</b></span>
+        </span>
+        <span class="badge">MERCHANT</span>
+      </div>
+
+      <!-- The order, filled in by BeU; only the description can be typed -->
+      <div class="card">
+        <div class="label-row"><label class="field-label" for="accountNumber">Account Number (Optional)</label><span class="count">20/20</span></div>
+        <div class="field locked">
+          <input id="accountNumber" type="text" value="20261020111800000001" readonly aria-label="Order account number">
+          <svg class="lock" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg>
+        </div>
+
+        <div class="label-row"><span class="field-label">Amount</span></div>
+        <div class="field locked">
+          <input class="amount-input" id="amountValue" type="text" value="754.00" readonly aria-label="Order amount">
+          <span class="suffix">ETB</span>
+        </div>
+        <div class="balance-hint"><b>Balance:</b> 12,580.00 ETB</div>
+
+        <div class="label-row"><label class="field-label" for="description">Description (Optional)</label><span class="count" id="descCount">0/100</span></div>
+        <div class="field">
+          <input id="description" type="text" maxlength="100" placeholder="e.g. Lunch order" autocomplete="off" oninput="document.getElementById('descCount').textContent = this.value.length + '/100'">
+        </div>
+      </div>
+
+    </div>
+
+    <div class="bottom-bar">
+      <button class="scan-sq" type="button" aria-label="Scan QR code" title="Scan QR"><img src="assets/qr-scan.svg" alt=""></button>
+      <button class="btn-primary" type="button" onclick="openConfirm()">Continue</button>
+    </div>
+
+  </div>
+  <!-- Confirmation: check the order before the PIN -->
+  <div class="scrim" id="scrim" onclick="closeConfirm()"></div>
+  <div class="sheet" id="sheet" role="dialog" aria-label="Confirm payment">
+    <div class="sheet-grip"></div>
+    <div class="cf-merchant">
+      <span class="cf-badge">MERCHANT</span>
+      <span class="cf-logo"><img src="assets/bill pay logos/beu-logo.png" alt="BeU"></span>
+      <span><b>BeU Delivery</b><small><strong>Business Number:</strong>&nbsp; 3559</small></span>
+    </div>
+    <div class="cf-rows">
+      <div class="cf-row"><span>Account Type:</span><b>Main account</b></div>
+      <div class="cf-row"><span>Business Number:</span><b>3559</b></div>
+      <div class="cf-row"><span>Account Number:</span><b>20261020111800000001</b></div>
+      <div class="cf-row"><span>Fee:</span><b>0.00 ETB</b></div>
+      <div class="cf-row"><span>Amount:</span><b class="red">754.00 ETB</b></div>
+    </div>
+    <div class="cf-actions">
+      <button class="cf-btn cancel" type="button" onclick="closeConfirm()">Cancel</button>
+      <button class="cf-btn confirm" type="button" onclick="continueToPin()">Confirm</button>
+    </div>
+  </div>
+</div>
+
+<script>
+  function goBack() { window.location.href = 'BeU Delivery.html'; }
+
+  // Continue opens the confirmation sheet; Confirm goes to the PIN
+  function openConfirm() {
+    document.activeElement && document.activeElement.blur();
+    document.getElementById('scrim').classList.add('show');
+    document.getElementById('sheet').classList.add('show');
+  }
+  // The order comes filled from BeU: no form to fill, Cancel goes back to BeU
+  function closeConfirm() { goBack(); }
+  document.addEventListener('keydown', e => { if (e.key === 'Escape') closeConfirm(); });
+  // Open on the confirmation sheet (no slide-in, it is the first thing shown)
+  (function openOnLoad() {
+    const sh = document.getElementById('sheet');
+    sh.style.transition = 'none';
+    document.getElementById('scrim').style.transition = 'none';
+    openConfirm();
+    requestAnimationFrame(() => requestAnimationFrame(() => { sh.style.transition = ''; }));
+  })();
+
+  // The merchant PIN step reads merchantData (logo, title and button label for BeU)
+  function continueToPin() {
+    const merchantData = {
+      name: 'BeU Delivery',
+      abbr: 'BU',
+      total: '754.00',
+      payAmount: '754.00',
+      note: document.getElementById('description').value.trim(),
+      logo: 'assets/bill pay logos/beu-logo.png',
+      title: 'Pay with M-PESA',
+      btnLabel: 'Confirm'
+    };
+    sessionStorage.setItem('merchantData', JSON.stringify(merchantData));
+    sessionStorage.setItem('merchantReturnPage', 'BeU Payment.html');
+    window.location.href = 'Merchant Payment_Enter PIN.html';
+  }
+</script>
+<script src="components/keyboard.js"></script>
+<!-- Export to Figma button (shared exporter) -->
+<script src="figma-export.js"></script>
+<script src="test-scenarios-data.js"></script>
+<script src="test-scenarios.js"></script>
+</body>
+</html>

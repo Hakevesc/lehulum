@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Loan Details</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@400;500;600&display=swap');
+  @import url('https://api.fontshare.com/v2/css?f[]=switzer@400,500,600,700,800&display=swap');
+
+  /* Loan details: lender, product and status; total repayment with due date,
+     days left and instalment; Repay All; repayment progress; instalment history
+     with Repay Now. Repay → confirmation sheet → M-PESA PIN → receipt.
+     ?id=<loan> picks the loan; ?repay=next opens the sheet for the next instalment. */
+  :root {
+    --Primary: #FE353D;
+    --Primary-Light: #FFF1F2;
+    --On-Surface: #1C1C21;
+    --On-Surface-Low: #7C7C87;
+    --Background: #F5F5F5;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'Switzer', 'Inter', sans-serif; background: transparent; display: flex; justify-content: center; align-items: center; min-height: 100vh; padding: 20px; }
+  button { font-family: inherit; }
+  .phone-frame { width: 360px; height: 780px; background: var(--Background); border-radius: 30px; overflow: hidden; position: relative; box-shadow: 0 20px 60px rgba(0,0,0,0.15); display: flex; flex-direction: column; }
+  .app-content { height: 100%; display: flex; flex-direction: column; }
+
+  .status-bar { display: flex; justify-content: space-between; align-items: center; padding: 14px 24px 8px; background: var(--Background); flex-shrink: 0; }
+  .status-bar .time { font-size: 14px; font-weight: 600; color: var(--On-Surface); }
+  .status-icons { display: flex; align-items: center; gap: 6px; }
+  .status-icons svg { width: 18px; height: 18px; }
+  .header-nav { display: flex; align-items: center; justify-content: space-between; padding: 8px 16px 12px; background: var(--Background); flex-shrink: 0; }
+  .icon-btn { width: 36px; height: 36px; border-radius: 50%; background: transparent; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+  .icon-btn:hover { background: rgba(0,0,0,0.05); }
+  .icon-btn svg { width: 22px; height: 22px; stroke: var(--On-Surface); stroke-width: 1.8px; fill: none; stroke-linecap: round; stroke-linejoin: round; }
+  .header-title { color: var(--On-Surface); font-size: 17px; font-weight: 500; letter-spacing: 0.3px; flex: 1; text-align: center; }
+
+  .scroll { flex: 1; min-height: 0; overflow-y: auto; padding: 4px 16px 20px; display: flex; flex-direction: column; gap: 12px; scrollbar-width: none; }
+  .scroll::-webkit-scrollbar { width: 0; }
+  .scroll > * { flex-shrink: 0; }
+
+  .card { background: #FFF; border-radius: 20px; padding: 16px; box-shadow: 0 4px 16px rgba(15,23,42,0.06); }
+  .loan-head { display: flex; align-items: center; gap: 12px; padding-bottom: 14px; border-bottom: 1px solid #F1F1F4; }
+  .logo { width: 44px; height: 44px; border-radius: 12px; border: 1px solid #EFEFF2; background: #FFF; display: flex; align-items: center; justify-content: center; overflow: hidden; flex-shrink: 0; }
+  .logo img { width: 34px; height: 34px; object-fit: contain; }
+  .loan-head .info { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 3px; }
+  .loan-head b { font-size: 15px; font-weight: 700; color: var(--On-Surface); }
+  .loan-head small { font-size: 12.5px; color: var(--On-Surface-Low); }
+  .badge { flex-shrink: 0; display: inline-flex; align-items: center; gap: 5px; padding: 4px 9px; border-radius: 999px; font-size: 11px; font-weight: 600; }
+  .badge::before { content: ''; width: 6px; height: 6px; border-radius: 50%; background: currentColor; }
+  .badge.ok { background: #E8F9EE; color: #167C2A; }
+  .badge.warn { background: #FEF3C7; color: #B45309; }
+  .badge.done { background: #EDEDF0; color: #55555E; }
+
+  .lbl { font-size: 12px; color: var(--On-Surface-Low); }
+  .total { margin-top: 14px; }
+  .total b { display: block; margin-top: 4px; font-size: 26px; font-weight: 700; color: var(--On-Surface); letter-spacing: -0.3px; }
+  .total b span { font-size: 13px; font-weight: 500; color: var(--On-Surface-Low); margin-left: 3px; }
+  .stats { margin-top: 14px; display: flex; padding: 12px 0; border-top: 1px solid #F1F1F4; border-bottom: 1px solid #F1F1F4; }
+  .stat { flex: 1; min-width: 0; }
+  .stat + .stat { border-left: 1px solid #F1F1F4; padding-left: 12px; }
+  .stat b { display: block; margin-top: 4px; font-size: 13.5px; font-weight: 700; color: var(--On-Surface); white-space: nowrap; }
+  .stat b.red { color: var(--Primary); }
+  .disb { margin-top: 12px; display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+  .disb span.d { display: flex; align-items: center; gap: 6px; margin-top: 4px; font-size: 13.5px; font-weight: 600; color: var(--On-Surface); }
+  .disb svg { width: 16px; height: 16px; stroke: #8A8A94; stroke-width: 1.9; fill: none; stroke-linecap: round; stroke-linejoin: round; }
+  .btn-red { flex-shrink: 0; height: 38px; padding: 0 18px; border: none; border-radius: 999px; background: var(--Primary); color: #FFF; font-family: 'Poppins', sans-serif; font-size: 13px; font-weight: 500; cursor: pointer; box-shadow: 0 3px 10px rgba(254,53,61,0.25); }
+  .btn-red:disabled { background: #E0E0E0; color: var(--On-Surface-Low); box-shadow: none; cursor: default; }
+
+  .title { font-size: 15px; font-weight: 600; color: var(--On-Surface); }
+  .bar { margin-top: 12px; height: 8px; border-radius: 4px; background: #F1F1F4; overflow: hidden; }
+  .bar i { display: block; height: 100%; border-radius: 4px; background: #16A34A; }
+  .prog { margin-top: 10px; display: flex; justify-content: space-between; }
+  .prog b { display: block; margin-top: 3px; font-size: 13.5px; font-weight: 700; color: #16A34A; }
+  .prog div:last-child { text-align: right; }
+  .prog div:last-child b { color: var(--On-Surface); }
+
+  .sec-head { display: flex; justify-content: space-between; align-items: center; margin: 4px 2px -2px; }
+  .sec-head a { font-size: 12.5px; font-weight: 600; color: var(--Primary); cursor: pointer; }
+  .inst-top { display: flex; justify-content: space-between; align-items: center; }
+  .inst-top b { font-size: 14px; font-weight: 700; color: var(--On-Surface); }
+  .inst-top small { font-size: 12px; color: var(--On-Surface-Low); }
+  .inst-top small.late { color: var(--Primary); font-weight: 600; }
+  .inst .bar i { background: var(--Primary); }
+  .inst.paid .bar i { background: #16A34A; }
+  .inst-foot { margin-top: 12px; display: flex; justify-content: space-between; align-items: flex-end; }
+  .inst-foot b { display: block; margin-top: 3px; font-size: 14px; font-weight: 700; color: var(--On-Surface); }
+  .paid-tag { display: inline-flex; align-items: center; gap: 4px; font-size: 12.5px; font-weight: 700; color: #16A34A; }
+  .paid-tag svg { width: 15px; height: 15px; stroke: currentColor; stroke-width: 3; fill: none; }
+
+  /* Repay sheet */
+  .scrim { position: absolute; inset: 0; z-index: 100; background: rgba(0,0,0,0.42); opacity: 0; visibility: hidden; transition: opacity 0.22s, visibility 0.22s; }
+  .scrim.show { opacity: 1; visibility: visible; }
+  .sheet { position: absolute; left: 0; right: 0; bottom: 0; z-index: 101; background: #FFF; border-radius: 28px 28px 0 0; padding: 10px 16px 22px; transform: translateY(100%); transition: transform 0.28s cubic-bezier(.2,.8,.2,1); }
+  .sheet.show { transform: translateY(0); }
+  .sheet-grip { width: 40px; height: 4px; border-radius: 2px; background: #D8D8DE; margin: 0 auto 16px; }
+  .cf-head { position: relative; display: flex; align-items: center; gap: 12px; border: 1px solid #E6E6EA; border-radius: 16px; padding: 14px; }
+  .cf-head .logo { width: 42px; height: 42px; border-radius: 50%; }
+  .cf-head b { display: block; font-size: 15px; font-weight: 700; color: var(--On-Surface); }
+  .cf-head small { font-size: 12.5px; color: var(--On-Surface-Low); }
+  .cf-badge { position: absolute; top: -11px; right: 14px; padding: 4px 10px; border-radius: 999px; background: #EDEDF0; color: #3A3A42; font-size: 10px; font-weight: 700; letter-spacing: 0.5px; }
+  .cf-rows { margin: 6px 0 18px; }
+  .cf-row { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 11px 0; border-bottom: 1px solid #EFEFF2; }
+  .cf-row:last-child { border-bottom: none; }
+  .cf-row span { font-size: 12.5px; color: #55555E; }
+  .cf-row b { font-size: 12.5px; font-weight: 700; color: var(--On-Surface); font-variant-numeric: tabular-nums; }
+  .cf-row b.red { font-size: 14px; color: var(--Primary); }
+  .cf-actions { display: flex; gap: 12px; }
+  .cf-btn { flex: 1; height: 52px; border-radius: 14px; background: #FFF; font-family: 'Poppins', sans-serif; font-size: 15px; font-weight: 500; cursor: pointer; }
+  .cf-btn.cancel { border: 1.5px solid #E0E0E4; color: #55555E; }
+  .cf-btn.confirm { border: 1.5px solid var(--Primary); color: var(--Primary); }
+  .cf-warn { display: none; margin: -8px 0 14px; padding: 10px 12px; border-radius: 12px; background: #FDECEC; font-size: 12px; color: var(--Primary); }
+  .cf-warn.show { display: block; }
+</style>
+<link rel="stylesheet" href="styles/device.css">
+</head>
+<body>
+<div class="phone-frame">
+  <div class="app-content">
+
+    <div class="status-bar">
+      <span class="time">10:00</span>
+      <div class="status-icons">
+        <svg viewBox="0 0 24 24" fill="none"><path d="M1 9l2 2c4.97-4.97 13.03-4.97 18 0l2-2C16.93 2.93 7.08 2.93 1 9z" fill="#1C1C21"/><path d="M5 13l2 2c2.76-2.76 7.24-2.76 10 0l2-2C15.14 9.14 8.87 9.14 5 13z" fill="#1C1C21"/><path d="M9 17l2 2c1.1-1.1 2.9-1.1 4 0l2-2c-2.21-2.21-5.79-2.21-8 0z" fill="#1C1C21"/></svg>
+        <svg viewBox="0 0 24 24" fill="none"><rect x="2" y="6" width="4" height="12" rx="1" fill="#1C1C21"/><rect x="8" y="4" width="4" height="14" rx="1" fill="#1C1C21"/><rect x="14" y="2" width="4" height="16" rx="1" fill="#1C1C21"/><rect x="20" y="0" width="4" height="18" rx="1" fill="#1C1C21" opacity="0.3"/></svg>
+        <svg viewBox="0 0 28 14" fill="none"><rect x="0" y="1" width="22" height="12" rx="2.5" stroke="#1C1C21" stroke-width="1.5"/><rect x="2" y="3" width="16" height="8" rx="1" fill="#1C1C21"/><rect x="24" y="4" width="2" height="6" rx="1" fill="#1C1C21"/></svg>
+      </div>
+    </div>
+
+    <div class="header-nav">
+      <button class="icon-btn" onclick="location.href='Term Loan.html'" aria-label="Back"><svg viewBox="0 0 24 24"><path d="M19 12H5M12 19l-7-7 7-7"/></svg></button>
+      <span class="header-title">Loan Details</span>
+      <button class="icon-btn" onclick="location.href='Tariffs & Fees.html'" aria-label="Fees"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 8v5M12 16h.01"/></svg></button>
+    </div>
+
+    <div class="scroll" id="scroll"></div>
+  </div>
+
+  <!-- Repay -->
+  <div class="scrim" id="scrim" onclick="closeRepay()"></div>
+  <div class="sheet" id="sheet" role="dialog" aria-label="Confirm repayment">
+    <div class="sheet-grip"></div>
+    <div class="cf-head">
+      <span class="cf-badge">REPAYMENT</span>
+      <span class="logo"><img id="cfLogo" src="" alt=""></span>
+      <span><b id="cfName"></b><small id="cfWhat"></small></span>
+    </div>
+    <div class="cf-rows">
+      <div class="cf-row"><span>From:</span><b>Main account · 0712 *** *78</b></div>
+      <div class="cf-row"><span>Fee:</span><b>0.00 ETB</b></div>
+      <div class="cf-row"><span>Remaining after:</span><b id="cfLeft"></b></div>
+      <div class="cf-row"><span>Balance after:</span><b id="cfBal"></b></div>
+      <div class="cf-row"><span>Amount to repay:</span><b class="red" id="cfAmt"></b></div>
+    </div>
+    <div class="cf-warn" id="cfWarn">Your M-PESA balance is too low for this repayment. Add money first.</div>
+    <div class="cf-actions">
+      <button class="cf-btn cancel" onclick="closeRepay()">Cancel</button>
+      <button class="cf-btn confirm" id="cfGo" onclick="confirmRepay()">Repay</button>
+    </div>
+  </div>
+</div>
+
+<script src="term-loan-store.js"></script>
+<script>
+  const $ = id => document.getElementById(id);
+  const { fmt } = TL;
+  const BALANCE = 12580;   // M-PESA main balance (same as Home)
+  const params = new URLSearchParams(location.search);
+  const loans = TL.load();
+  const loan = loans.find(l => l.id === params.get('id')) || TL.active(loans)[0] || loans[0];
+
+  const CAL = '<svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/></svg>';
+  const TICK = '<svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>';
+
+  function render() {
+    const paid = TL.paidOf(loan), left = TL.remainingOf(loan), nx = TL.nextDue(loan);
+    const doneN = loan.instalments.filter(i => i.paid).length, n = loan.instalments.length;
+    const soon = nx && (new Date(nx.due) - Date.now()) < 5 * 864e5;
+    const status = !nx ? ['done', 'Paid off'] : soon ? ['warn', 'Due soon'] : ['ok', 'Active'];
+    $('scroll').innerHTML = `
+      <div class="card">
+        <div class="loan-head"><span class="logo"><img src="${loan.logo}" alt=""></span>
+          <span class="info"><b>${loan.lender}</b><small>${loan.product}</small></span><span class="badge ${status[0]}">${status[1]}</span></div>
+        <div class="total"><span class="lbl">Total repayment</span><b>${fmt(loan.total)}<span>ETB</span></b></div>
+        <div class="stats">
+          <div class="stat"><span class="lbl">Due date</span><b class="red">${nx ? TL.dateStr(nx.due) : '—'}</b></div>
+          <div class="stat"><span class="lbl">Due in</span><b class="red">${nx ? TL.dueIn(nx.due) : '—'}</b></div>
+          <div class="stat"><span class="lbl">Instalment</span><b>${nx ? nx.n : n} of ${n}</b></div>
+        </div>
+        <div class="disb"><div><span class="lbl">Disbursed on</span><span class="d">${CAL}${TL.dateStr(loan.disbursed)}</span></div>
+          <button class="btn-red" ${left > 0 ? '' : 'disabled'} onclick="openRepay('all')">Repay All</button></div>
+      </div>
+
+      <div class="card">
+        <div class="title">Repayment Progress</div>
+        <div class="bar"><i style="width:${Math.max(2, Math.round(paid / loan.total * 100))}%"></i></div>
+        <div class="prog"><div><span class="lbl">Amount paid</span><b>${fmt(paid)} ETB</b></div><div><span class="lbl">Remaining</span><b>${fmt(left)} ETB</b></div></div>
+      </div>
+
+      <div class="sec-head"><span class="title">Instalment History</span><a onclick="location.href='Transaction History.html'">Transactions</a></div>
+      ${loan.instalments.map(i => {
+        const late = !i.paid && new Date(i.due) < Date.now();
+        return `<div class="card inst${i.paid ? ' paid' : ''}">
+          <div class="inst-top"><b>Instalment ${i.n}</b><small class="${late ? 'late' : ''}">${i.paid ? 'Paid' : (late ? 'Overdue' : 'Due in ' + TL.dueIn(i.due))}</small></div>
+          <div class="bar"><i style="width:${i.paid ? 100 : 4}%"></i></div>
+          <div class="inst-foot"><div><span class="lbl">Repayment amount</span><b>${fmt(i.amount)} ETB</b></div>
+            ${i.paid ? `<span class="paid-tag">${TICK}Paid</span>` : `<button class="btn-red" onclick="openRepay(${i.n})" ${i === nx ? '' : 'disabled'}>Repay Now</button>`}</div>
+        </div>`; }).join('')}`;
+  }
+
+  // Repay one instalment (the next one) or everything left
+  let pending = null;
+  function openRepay(which) {
+    const nx = TL.nextDue(loan); if (!nx) return;
+    const amount = which === 'all' ? TL.remainingOf(loan) : loan.instalments.find(i => i.n === which).amount;
+    pending = { which, amount };
+    $('cfLogo').src = loan.logo; $('cfName').textContent = loan.lender;
+    $('cfWhat').textContent = which === 'all' ? `${loan.product} · Repay all` : `${loan.product} · Instalment ${which}`;
+    $('cfAmt').textContent = fmt(amount) + ' ETB';
+    $('cfLeft').textContent = fmt(TL.remainingOf(loan) - amount) + ' ETB';
+    $('cfBal').textContent = fmt(BALANCE - amount) + ' ETB';
+    const low = amount > BALANCE;
+    $('cfWarn').classList.toggle('show', low); $('cfGo').disabled = low; $('cfGo').style.opacity = low ? 0.5 : 1;
+    $('scrim').classList.add('show'); $('sheet').classList.add('show');
+  }
+  function closeRepay() { $('scrim').classList.remove('show'); $('sheet').classList.remove('show'); }
+  document.addEventListener('keydown', e => { if (e.key === 'Escape') closeRepay(); });
+  function confirmRepay() {
+    sessionStorage.setItem('termLoanData', JSON.stringify({
+      kind: 'repay', loanId: loan.id, which: pending.which, lender: loan.lender, logo: loan.logo, product: loan.product,
+      amount: pending.amount, remaining: TL.remainingOf(loan) - pending.amount, back: 'Term Loan - Details.html?id=' + loan.id
+    }));
+    location.href = 'Term Loan - Enter PIN.html';
+  }
+
+  render();
+  if (params.get('repay') === 'next') { const nx = TL.nextDue(loan); if (nx) openRepay(nx.n); }
+</script>
+<script src="figma-export.js"></script>
+<script src="test-scenarios-data.js"></script>
+<script src="test-scenarios.js"></script>
+</body>
+</html>

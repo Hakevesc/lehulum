@@ -1,0 +1,1118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BeU Delivery</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    background: #2c2c2e;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    min-height: 100vh;
+    padding: 20px;
+    overflow: hidden;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .phone {
+    width: 375px;
+    max-width: 100%;
+    height: min(812px, calc(100vh - 40px));
+    height: min(812px, calc(100dvh - 40px));
+    background: #fff;
+    border-radius: 40px;
+    overflow: hidden;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+    display: flex;
+    flex-direction: column;
+    position: relative;
+  }
+
+  .home-indicator {
+    position: absolute;
+    bottom: 8px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 134px;
+    height: 5px;
+    background: #000;
+    border-radius: 3px;
+    z-index: 300;
+    pointer-events: none;
+  }
+
+  /* ---------- STATUS BAR ---------- */
+  .status-bar {
+    flex-shrink: 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 16px 24px 6px;
+    background: #fff;
+    position: relative;
+    z-index: 100;
+  }
+  .status-bar .time { font-size: 15px; font-weight: 700; letter-spacing: .2px; }
+  .status-bar .right { display: flex; align-items: center; gap: 7px; font-size: 13px; font-weight: 600; }
+  .signal-bars { display: flex; align-items: flex-end; gap: 2px; height: 13px; }
+  .signal-bars span { width: 3px; background: #000; border-radius: 1px; }
+  .signal-bars span:nth-child(1) { height: 4px; }
+  .signal-bars span:nth-child(2) { height: 7px; }
+  .signal-bars span:nth-child(3) { height: 10px; }
+  .signal-bars span:nth-child(4) { height: 13px; }
+  .battery-icon {
+    width: 25px; height: 12px; border: 1.5px solid #000; border-radius: 3px;
+    position: relative; display: flex; align-items: center; padding: 1.5px;
+  }
+  .battery-icon::after {
+    content: ''; position: absolute; right: -4px; top: 3px; width: 2px; height: 5px;
+    background: #000; border-radius: 0 1px 1px 0;
+  }
+  .battery-icon .fill { width: 75%; height: 100%; background: #000; border-radius: 1px; }
+
+  /* ---------- HEADER ---------- */
+  .header {
+    flex-shrink: 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 16px 12px;
+    background: #fff;
+    position: relative;
+    z-index: 100;
+  }
+  .header-left {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 18px;
+    font-weight: 700;
+    color: #000;
+    min-width: 0;
+  }
+  .header-left .back {
+    display: none;
+    width: 11px;
+    height: 20px;
+    flex-shrink: 0;
+    cursor: pointer;
+  }
+  .header-left #headerTitle {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .header-right { display: flex; align-items: center; gap: 10px; flex-shrink: 0; }
+  .dots-btn {
+    width: 46px; height: 32px;
+    border: 1px solid #e3e3e3;
+    border-radius: 16px;
+    display: flex; align-items: center; justify-content: center; gap: 3px;
+    background: #fff;
+    cursor: pointer;
+  }
+  .dots-btn span { width: 3.5px; height: 3.5px; background: #111; border-radius: 50%; }
+  .close-btn {
+    width: 32px; height: 32px;
+    border: 1px solid #e3e3e3;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    background: #fff;
+    cursor: pointer;
+  }
+
+  /* ---------- SCREENS ---------- */
+  .screens { flex: 1; position: relative; overflow: hidden; }
+  .screen {
+    position: absolute;
+    inset: 0;
+    display: none;
+    flex-direction: column;
+    background: #fff;
+  }
+  .screen.active { display: flex; }
+  .screen-scroll {
+    flex: 1;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+  .screen-scroll::-webkit-scrollbar { display: none; }
+
+  /* ---------- SEARCH ---------- */
+  .search-bar {
+    margin: 4px 16px 14px;
+    padding: 15px 16px;
+    background: #f6f6f6;
+    border-radius: 12px;
+    font-size: 16px;
+    color: #b0b0b0;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  /* ---------- BANNER ---------- */
+  .banner {
+    margin: 0 16px 6px;
+    border-radius: 16px;
+    overflow: hidden;
+    height: 150px;
+    position: relative;
+  }
+  .banner img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .banner-content {
+    position: absolute; inset: 0;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 0 18px;
+  }
+  .banner-left h2 {
+    color: #fff; font-size: 34px; font-weight: 800; line-height: 1;
+    text-shadow: 0 2px 8px rgba(0,0,0,.35);
+  }
+  .banner-left p {
+    color: #fff; font-size: 9px; font-weight: 700; margin-top: 10px;
+    letter-spacing: .4px; display: flex; align-items: center; gap: 4px;
+    text-shadow: 0 1px 4px rgba(0,0,0,.35);
+  }
+  .banner-right {
+    color: #fff; font-size: 46px; font-weight: 900; line-height: 1;
+    text-shadow: 0 2px 10px rgba(0,0,0,.35);
+  }
+  .banner-right small { font-size: 24px; font-weight: 800; }
+
+  /* ---------- BANNER 2 ---------- */
+  .banner2 {
+    margin: 0 16px 6px;
+    border-radius: 16px;
+    overflow: hidden;
+    height: 150px;
+    position: relative;
+  }
+  .banner2 img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .banner2-content { position: absolute; inset: 0; padding: 18px; }
+  .banner2-left h2 {
+    color: #fff; font-size: 26px; font-weight: 800; line-height: 1.1;
+    text-shadow: 0 2px 8px rgba(0,0,0,.45);
+  }
+  .banner2-left p {
+    color: #fff; font-size: 9px; font-weight: 700; margin-top: 10px;
+    letter-spacing: .4px; display: flex; align-items: center; gap: 4px;
+    text-shadow: 0 1px 4px rgba(0,0,0,.35);
+  }
+  .banner2-right { position: absolute; top: 14px; right: 14px; }
+  .food-circles { display: flex; gap: 8px; }
+  .food-circle {
+    width: 46px; height: 46px; border-radius: 50%; overflow: hidden;
+    border: 2px solid rgba(255,255,255,.35);
+  }
+  .food-circle img { width: 100%; height: 100%; object-fit: cover; }
+  .banner2-discount {
+    position: absolute; right: -4px; bottom: -52px;
+    color: #fff; font-size: 46px; font-weight: 900; line-height: 1;
+    text-shadow: 0 2px 10px rgba(0,0,0,.45);
+  }
+  .banner2-discount small { font-size: 22px; font-weight: 800; }
+
+  /* ---------- CATEGORIES ---------- */
+  .categories {
+    display: flex; gap: 12px;
+    padding: 16px 16px 4px;
+    overflow-x: auto;
+  }
+  .categories::-webkit-scrollbar { display: none; }
+  .cat-item {
+    display: flex; flex-direction: column; align-items: center; gap: 8px;
+    min-width: 64px;
+  }
+  .cat-icon {
+    width: 58px; height: 58px; border-radius: 50%; overflow: hidden;
+    flex-shrink: 0;
+  }
+  .cat-icon img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .cat-item span {
+    font-size: 12px; font-weight: 700; text-align: center;
+    line-height: 1.15; color: #000;
+  }
+
+  /* ---------- SECTION HEADERS ---------- */
+  .section-header {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 18px 16px 12px;
+  }
+  .section-header h2 { font-size: 20px; font-weight: 800; letter-spacing: -.2px; }
+  .section-header .filter { color: #FF5722; font-size: 15px; font-weight: 600; cursor: pointer; }
+
+  /* ---------- OFFER CARDS ---------- */
+  .offers-scroll {
+    display: flex; gap: 12px;
+    padding: 0 16px 6px;
+    overflow-x: auto;
+  }
+  .offers-scroll::-webkit-scrollbar { display: none; }
+  .offer-card {
+    flex: 0 0 158px;
+    width: 158px;
+    border-radius: 12px;
+    overflow: hidden;
+    background: #fff;
+    box-shadow: 0 2px 10px rgba(0,0,0,.10);
+    cursor: pointer;
+  }
+  .offer-card-img { height: 112px; position: relative; }
+  .offer-card-img img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .offer-badge {
+    position: absolute; top: 8px; left: 8px;
+    background: #4CAF50; color: #fff;
+    font-size: 11px; font-weight: 700;
+    padding: 3px 7px; border-radius: 5px;
+  }
+  .offer-card-info { padding: 10px 10px 12px; }
+  .offer-card-info h4 {
+    font-size: 14px; font-weight: 700; margin-bottom: 3px;
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  }
+  .offer-card-info .restaurant { font-size: 11px; color: #9a9a9a; margin-bottom: 6px; }
+  .offer-card-info .price-row { display: flex; align-items: baseline; gap: 6px; }
+  .offer-card-info .price { font-size: 15px; font-weight: 700; }
+  .offer-card-info .old-price { font-size: 12px; color: #bdbdbd; text-decoration: line-through; }
+
+  /* ---------- RESTAURANT CARD ---------- */
+  .restaurant-card {
+    display: flex; gap: 14px;
+    padding: 6px 16px 28px;
+    align-items: flex-start;
+  }
+  .rest-img {
+    width: 88px; height: 88px; border-radius: 12px; overflow: hidden; flex-shrink: 0;
+  }
+  .rest-img img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .rest-info { flex: 1; min-width: 0; }
+  .rest-top { display: flex; justify-content: space-between; align-items: flex-start; gap: 10px; }
+  .rest-top h3 { font-size: 16px; font-weight: 700; line-height: 1.25; flex: 1; }
+  .rest-top .rating {
+    display: flex; align-items: center; gap: 4px;
+    font-size: 15px; font-weight: 700; flex-shrink: 0;
+  }
+  .rest-top .rating .star { color: #FF5722; font-size: 16px; }
+  .tags { display: flex; gap: 8px; margin: 9px 0 7px; flex-wrap: wrap; }
+  .tag {
+    padding: 4px 10px;
+    border: 1px solid #FF5722; border-radius: 7px;
+    font-size: 12px; color: #FF5722; font-weight: 600;
+  }
+  .avg-price { font-size: 13px; color: #9a9a9a; }
+
+  /* ---------- BOTTOM NAV ---------- */
+  .bottom-nav {
+    flex-shrink: 0;
+    height: 76px;
+    display: flex; justify-content: space-around; align-items: flex-start;
+    padding: 9px 0 0;
+    border-top: 1px solid #f0f0f0;
+    background: #fff;
+  }
+  .nav-item {
+    display: flex; flex-direction: column; align-items: center; gap: 4px;
+    font-size: 11px; font-weight: 600; color: #9a9a9a;
+    cursor: pointer; width: 74px;
+  }
+  .nav-item.active { color: #FF5722; }
+  .nav-item svg { display: block; }
+
+  /* ---------- ITEM MODAL (Screen 2) ---------- */
+  .home-overlay {
+    position: absolute;
+    left: 0; right: 0; top: 0;
+    bottom: 76px;
+    background: rgba(0,0,0,.42);
+    z-index: 5;
+  }
+  .item-modal {
+    position: absolute;
+    left: 0; right: 0;
+    bottom: 76px;              /* sits exactly on top of the bottom nav */
+    background: #fff;
+    border-radius: 20px 20px 0 0;
+    padding: 20px 20px 24px;
+    z-index: 60;               /* above nav + overlay so Order Now is visible */
+    box-shadow: 0 -4px 20px rgba(0,0,0,.10);
+  }
+  .modal-item-row { display: flex; gap: 14px; margin-bottom: 18px; }
+  .modal-item-img {
+    width: 100px; height: 100px; border-radius: 12px; overflow: hidden;
+    flex-shrink: 0; position: relative;
+  }
+  .modal-item-img img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .modal-item-info { flex: 1; min-width: 0; }
+  .modal-item-info h3 { font-size: 18px; font-weight: 700; margin-bottom: 6px; line-height: 1.2; }
+  .modal-item-info .rest-name { color: #FF5722; font-size: 15px; font-weight: 600; margin-bottom: 6px; }
+  .modal-item-info .modal-price { font-size: 18px; font-weight: 700; }
+  .modal-item-info .modal-old-price {
+    font-size: 14px; color: #c4c4c4; text-decoration: line-through; margin-left: 6px;
+  }
+
+  .quantity-row {
+    display: flex; justify-content: space-between; align-items: center;
+    margin: 6px 0 14px;
+  }
+  .quantity-row .qty-label { font-size: 17px; font-weight: 700; }
+  .quantity-controls { display: flex; align-items: center; gap: 16px; }
+  .qty-btn {
+    width: 34px; height: 34px; border-radius: 9px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 19px; font-weight: 700; cursor: pointer;
+    user-select: none;
+  }
+  .qty-btn.minus { color: #FF5722; background: #fff; border: 1.5px solid #FF5722; }
+  .qty-btn.plus { color: #fff; background: #FF5722; border: 1.5px solid #FF5722; }
+  .qty-value { font-size: 18px; font-weight: 600; min-width: 14px; text-align: center; }
+
+  .total-amount { font-size: 17px; font-weight: 700; margin-bottom: 16px; }
+  .total-amount span { color: #FF5722; }
+
+  .btn-order {
+    width: 100%; padding: 16px;
+    background: #FF5722; color: #fff;
+    border: none; border-radius: 12px;
+    font-size: 17px; font-weight: 700;
+    cursor: pointer; font-family: inherit;
+  }
+
+  /* ---------- CHECKOUT ---------- */
+  .content { padding: 0 16px; }
+
+  .item-row {
+    display: flex; align-items: center; gap: 14px;
+    padding: 14px 0 12px;
+  }
+  .item-img { width: 80px; height: 80px; border-radius: 10px; overflow: hidden; flex-shrink: 0; }
+  .item-img img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .item-info h3 { font-size: 17px; font-weight: 700; margin-bottom: 6px; line-height: 1.2; }
+  .item-info p { font-size: 15px; color: #111; }
+
+  .section-title { font-size: 17px; font-weight: 700; margin: 14px 0 10px; }
+
+  .input-field {
+    width: 100%;
+    padding: 15px 16px;
+    border: 1px solid #e3e3e3;
+    border-radius: 10px;
+    font-size: 15px;
+    color: #111;
+    margin-bottom: 12px;
+    background: #fff;
+    outline: none;
+    font-family: inherit;
+  }
+  .input-field::placeholder { color: #b3b3b3; }
+
+  .location-box {
+    display: flex; align-items: center; gap: 12px;
+    padding: 14px 16px;
+    border: 1px solid #e3e3e3;
+    border-radius: 10px;
+    margin-bottom: 12px;
+  }
+  .location-box .loc-info h4 { font-size: 16px; font-weight: 700; margin-bottom: 2px; }
+  .location-box .loc-info p { font-size: 13px; color: #a5a5a5; }
+
+  /* ---------- OVERLAY MODAL (Screen 3) ---------- */
+  .overlay {
+    position: absolute;
+    inset: 0;
+    background: rgba(0,0,0,.45);
+    display: flex;
+    align-items: flex-end;
+    z-index: 20;
+  }
+  .modal {
+    position: relative;
+    width: 100%;
+    background: #fff;
+    border-radius: 22px 22px 0 0;
+    padding: 26px 20px 44px;
+  }
+  .modal-close {
+    position: absolute;
+    top: 20px; right: 20px;
+    line-height: 0;
+    cursor: pointer;
+    padding: 4px;
+  }
+  .modal-header { margin: 16px 0 20px; }
+  .modal-header h2 {
+    font-size: 22px; font-weight: 800;
+    text-align: center; letter-spacing: -.2px;
+  }
+
+  .radio-option {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 17px 18px;
+    border: 1px solid #efefef;
+    border-radius: 12px;
+    margin-bottom: 12px;
+    cursor: pointer;
+  }
+  .radio-option span { font-size: 16px; font-weight: 500; color: #111; }
+  .radio-circle {
+    width: 22px; height: 22px; border-radius: 50%;
+    border: 2px solid #ccc;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+  }
+  .radio-circle.selected { border-color: #FF5722; }
+  .radio-circle.selected::after {
+    content: ''; width: 11px; height: 11px; border-radius: 50%; background: #FF5722;
+  }
+  .radio-circle.unselected::after {
+    content: ''; width: 11px; height: 11px; border-radius: 50%; background: #dcdcdc;
+  }
+
+  .btn-continue {
+    width: 100%; padding: 16px;
+    background: #FF5722; color: #fff;
+    border: none; border-radius: 12px;
+    font-size: 17px; font-weight: 700;
+    cursor: pointer; margin-top: 8px; font-family: inherit;
+  }
+
+  /* ---------- SUMMARY ---------- */
+  .summary-row {
+    display: flex; justify-content: space-between;
+    padding: 7px 0; font-size: 15px;
+  }
+  .summary-row .label { color: #111; font-weight: 600; }
+  .summary-row .value { color: #111; font-weight: 600; }
+  .summary-divider { border-top: 1px solid #ececec; margin: 10px 0; }
+  .total-row {
+    display: flex; justify-content: space-between;
+    padding: 10px 0 14px;
+    font-size: 19px; font-weight: 800; color: #FF5722;
+  }
+  .btn-confirm {
+    width: 100%; padding: 16px;
+    background: #FF5722; color: #fff;
+    border: none; border-radius: 12px;
+    font-size: 17px; font-weight: 700;
+    cursor: pointer; font-family: inherit;
+  }
+
+  @media (max-width: 480px) {
+    body {
+      display: block;
+      height: 100vh;
+      height: 100dvh;
+      min-height: 0;
+      padding: 0;
+      background: #fff;
+    }
+    .phone {
+      width: 100%;
+      height: 100vh;
+      height: 100dvh;
+      max-width: none;
+      border-radius: 0;
+      box-shadow: none;
+    }
+  }
+</style>
+</head>
+<body>
+
+<div class="phone">
+  <div class="home-indicator"></div>
+
+  <!-- ============ STATUS BAR ============ -->
+  <div class="status-bar">
+    <span class="time" id="statusTime">11:17</span>
+    <div class="right">
+      <div class="signal-bars"><span></span><span></span><span></span><span></span></div>
+      <span id="statusNetwork">5G</span>
+      <div class="battery-icon"><div class="fill"></div></div>
+    </div>
+  </div>
+
+  <!-- ============ HEADER ============ -->
+  <div class="header">
+    <div class="header-left">
+      <svg class="back" id="backBtn" viewBox="0 0 10 18" fill="none"
+           stroke="#000" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"
+           onclick="goBack()">
+        <path d="M9 1L1 9l8 8"/>
+      </svg>
+      <span id="headerTitle">Addis Ababa, Ethiopia</span>
+    </div>
+    <div class="header-right">
+      <div class="dots-btn"><span></span><span></span><span></span></div>
+      <div class="close-btn" onclick="window.location.href='More Services.html'" title="Close BeU Delivery">
+        <svg width="11" height="11" viewBox="0 0 12 12" fill="none"
+             stroke="#111" stroke-width="1.6" stroke-linecap="round">
+          <path d="M1.5 1.5l9 9M10.5 1.5l-9 9"/>
+        </svg>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ SCREENS ============ -->
+  <div class="screens">
+
+    <!-- ================= SCREEN 1 : HOME ================= -->
+    <div class="screen active" id="screen1">
+      <div class="screen-scroll">
+
+        <div class="search-bar">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none"
+               stroke="#b5b5b5" stroke-width="2.4" stroke-linecap="round">
+            <circle cx="10.5" cy="10.5" r="7"/>
+            <path d="M20.5 20.5L16 16"/>
+          </svg>
+          <span>Search your taste</span>
+        </div>
+
+        <div class="banner">
+          <img src="https://images.unsplash.com/photo-1626700051175-6818013e1d4f?w=600&h=300&fit=crop" alt="Banner">
+          <div class="banner-content">
+            <div class="banner-left">
+              <h2>Des 9</h2>
+              <p>
+                <svg width="9" height="9" viewBox="0 0 10 10" fill="none" stroke="#fff" stroke-width="1.3">
+                  <circle cx="5" cy="5" r="4"/>
+                  <circle cx="5" cy="5" r="1.3" fill="#fff" stroke="none"/>
+                </svg>
+                ORDER NOW - - - - - -
+              </p>
+            </div>
+            <div class="banner-right">40%<small>off</small></div>
+          </div>
+        </div>
+
+        <div class="categories">
+          <div class="cat-item">
+            <div class="cat-icon">
+              <img src="https://images.unsplash.com/photo-1547592180-85f173990554?w=120&h=120&fit=crop" alt="Fasting">
+            </div>
+            <span>Fasting<br>Specials</span>
+          </div>
+          <div class="cat-item">
+            <div class="cat-icon">
+              <img src="https://images.unsplash.com/photo-1512820790803-83ca734da794?w=120&h=120&fit=crop" alt="Books">
+            </div>
+            <span>Books</span>
+          </div>
+          <div class="cat-item">
+            <div class="cat-icon">
+              <img src="https://images.unsplash.com/photo-1533089860892-a7c6f0a88666?w=120&h=120&fit=crop" alt="Breakfast">
+            </div>
+            <span>Breakfast<br>For You</span>
+          </div>
+          <div class="cat-item">
+            <div class="cat-icon">
+              <img src="https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=120&h=120&fit=crop" alt="Burger">
+            </div>
+            <span>Burger</span>
+          </div>
+          <div class="cat-item">
+            <div class="cat-icon">
+              <img src="https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=120&h=120&fit=crop" alt="International">
+            </div>
+            <span>Interna-<br>Restau...</span>
+          </div>
+        </div>
+
+        <div class="section-header">
+          <h2>Special Offers</h2>
+        </div>
+
+        <div class="offers-scroll">
+          <div class="offer-card" onclick="showScreen(2)">
+            <div class="offer-card-img">
+              <img src="assets/beu-quesadilla.jpg" alt="Buffalo Chicken Quesadilla">
+              <div class="offer-badge">30Br. OFF</div>
+            </div>
+            <div class="offer-card-info">
+              <h4>Buffalo Chicken Q...</h4>
+              <div class="restaurant">Cina Restaurant</div>
+              <div class="price-row">
+                <span class="price">670 Br.</span>
+                <span class="old-price">700 Br.</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="offer-card">
+            <div class="offer-card-img">
+              <img src="https://images.unsplash.com/photo-1604908176997-125f25cc6f3d?w=300&h=200&fit=crop" alt="Chicken Rice">
+              <div class="offer-badge">180Br. OFF</div>
+            </div>
+            <div class="offer-card-info">
+              <h4>Crispy Chicken Rice</h4>
+              <div class="restaurant">Cina Restaurant</div>
+              <div class="price-row">
+                <span class="price">920 Br.</span>
+                <span class="old-price">1100 Br.</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="offer-card">
+            <div class="offer-card-img">
+              <img src="https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=300&h=200&fit=crop" alt="Bowl">
+              <div class="offer-badge">20Br. OFF</div>
+            </div>
+            <div class="offer-card-info">
+              <h4>Single Bi...</h4>
+              <div class="restaurant">Cina Rest...</div>
+              <div class="price-row">
+                <span class="price">830 Br.</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="section-header">
+          <h2>All Restaurants Nearby</h2>
+          <span class="filter">Filter</span>
+        </div>
+
+        <div class="restaurant-card">
+          <div class="rest-img">
+            <img src="https://images.unsplash.com/photo-1555396273-367ea4eb4db5?w=200&h=200&fit=crop" alt="Restaurant">
+          </div>
+          <div class="rest-info">
+            <div class="rest-top">
+              <h3>Chanoly Noodles | Friendship</h3>
+              <div class="rating"><span class="star">★</span> 5.0</div>
+            </div>
+            <div class="tags">
+              <span class="tag">Around 1.1KM</span>
+              <span class="tag">Around 50 min</span>
+            </div>
+            <div class="avg-price">Avg 963 Br. per person</div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- BOTTOM NAV -->
+      <div class="bottom-nav">
+        <div class="nav-item active">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+            <rect x="2" y="2" width="20" height="20" rx="6" fill="#FF5722"/>
+            <path d="M7.5 11.2 12 7.5l4.5 3.7v4.6a1 1 0 0 1-1 1h-2.2v-3h-2.6v3H8.5a1 1 0 0 1-1-1v-4.6Z" fill="#fff"/>
+          </svg>
+          <span>Home</span>
+        </div>
+        <div class="nav-item">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none"
+               stroke="#9a9a9a" stroke-width="1.8" stroke-linejoin="round">
+            <path d="M6 3.5h8.5L19 8v12.5H6z"/>
+            <path d="M14 3.5V8h5"/>
+            <path d="M9.5 12h6M9.5 15.5h6" stroke-linecap="round"/>
+          </svg>
+          <span>Orders</span>
+        </div>
+        <div class="nav-item">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none"
+               stroke="#9a9a9a" stroke-width="1.8" stroke-linejoin="round" stroke-linecap="round">
+            <path d="M18 15.5c-1.2-1.2-1.6-2.4-1.6-4.3a4.4 4.4 0 0 0-8.8 0c0 1.9-.4 3.1-1.6 4.3z"/>
+            <path d="M10 19a2.2 2.2 0 0 0 4 0"/>
+          </svg>
+          <span>Notification</span>
+        </div>
+        <div class="nav-item">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none"
+               stroke="#9a9a9a" stroke-width="1.8" stroke-linecap="round">
+            <circle cx="12" cy="8.5" r="3.8"/>
+            <path d="M4.5 20.5c0-3.6 3.4-5.6 7.5-5.6s7.5 2 7.5 5.6"/>
+          </svg>
+          <span>Profile</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- ================= SCREEN 2 : HOME + ITEM MODAL ================= -->
+    <div class="screen" id="screen2">
+      <div class="screen-scroll">
+
+        <div class="search-bar">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none"
+               stroke="#b5b5b5" stroke-width="2.4" stroke-linecap="round">
+            <circle cx="10.5" cy="10.5" r="7"/>
+            <path d="M20.5 20.5L16 16"/>
+          </svg>
+          <span>Search your taste</span>
+        </div>
+
+        <div class="banner2">
+          <img src="https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=600&h=300&fit=crop" alt="Bagel Restaurant">
+          <div class="banner2-content">
+            <div class="banner2-left">
+              <h2>Bagel<br>Restaurant<br>&amp; Bar</h2>
+              <p>
+                <svg width="9" height="9" viewBox="0 0 10 10" fill="none" stroke="#fff" stroke-width="1.3">
+                  <circle cx="5" cy="5" r="4"/>
+                  <circle cx="5" cy="5" r="1.3" fill="#fff" stroke="none"/>
+                </svg>
+                ORDER NOW - - - - - -
+              </p>
+            </div>
+            <div class="banner2-right">
+              <div class="food-circles">
+                <div class="food-circle">
+                  <img src="https://images.unsplash.com/photo-1547592180-85f173990554?w=100&h=100&fit=crop" alt="Food">
+                </div>
+                <div class="food-circle">
+                  <img src="https://images.unsplash.com/photo-1565557623262-b51c2513a641?w=100&h=100&fit=crop" alt="Food">
+                </div>
+              </div>
+              <div class="banner2-discount">30%<small>off</small></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="categories">
+          <div class="cat-item">
+            <div class="cat-icon">
+              <img src="https://images.unsplash.com/photo-1547592180-85f173990554?w=120&h=120&fit=crop" alt="Fasting">
+            </div>
+            <span>Fasting<br>Specials</span>
+          </div>
+          <div class="cat-item">
+            <div class="cat-icon">
+              <img src="https://images.unsplash.com/photo-1512820790803-83ca734da794?w=120&h=120&fit=crop" alt="Books">
+            </div>
+            <span>Books</span>
+          </div>
+          <div class="cat-item">
+            <div class="cat-icon">
+              <img src="https://images.unsplash.com/photo-1533089860892-a7c6f0a88666?w=120&h=120&fit=crop" alt="Breakfast">
+            </div>
+            <span>Breakfast<br>For You</span>
+          </div>
+          <div class="cat-item">
+            <div class="cat-icon">
+              <img src="https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=120&h=120&fit=crop" alt="Burger">
+            </div>
+            <span>Burger</span>
+          </div>
+          <div class="cat-item">
+            <div class="cat-icon">
+              <img src="https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=120&h=120&fit=crop" alt="International">
+            </div>
+            <span>Interna-<br>Restau...</span>
+          </div>
+        </div>
+
+        <div class="section-header">
+          <h2>Special Offers</h2>
+        </div>
+
+        <div class="offers-scroll">
+          <div class="offer-card">
+            <div class="offer-card-img">
+              <img src="https://images.unsplash.com/photo-1618040996337-56904b7850b4?w=300&h=200&fit=crop" alt="Quesadilla">
+              <div class="offer-badge">30Br. OFF</div>
+            </div>
+            <div class="offer-card-info">
+              <h4>Buffalo Chicken Q...</h4>
+              <div class="restaurant">Cina Restaurant</div>
+              <div class="price-row">
+                <span class="price">670 Br.</span>
+                <span class="old-price">700 Br.</span>
+              </div>
+            </div>
+          </div>
+          <div class="offer-card">
+            <div class="offer-card-img">
+              <img src="https://images.unsplash.com/photo-1604908176997-125f25cc6f3d?w=300&h=200&fit=crop" alt="Chicken Rice">
+              <div class="offer-badge">180Br. OFF</div>
+            </div>
+            <div class="offer-card-info">
+              <h4>Crispy Chicken Rice</h4>
+              <div class="restaurant">Cina Restaurant</div>
+              <div class="price-row">
+                <span class="price">920 Br.</span>
+                <span class="old-price">1100 Br.</span>
+              </div>
+            </div>
+          </div>
+          <div class="offer-card">
+            <div class="offer-card-img">
+              <img src="https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=300&h=200&fit=crop" alt="Bowl">
+              <div class="offer-badge">20Br. OFF</div>
+            </div>
+            <div class="offer-card-info">
+              <h4>Single Bi...</h4>
+              <div class="restaurant">Cina Rest...</div>
+              <div class="price-row">
+                <span class="price">830 Br.</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- DIM OVERLAY (stops above bottom nav) -->
+      <div class="home-overlay" onclick="showScreen(1)"></div>
+
+      <!-- ITEM MODAL -->
+      <div class="item-modal">
+        <div class="modal-item-row">
+          <div class="modal-item-img">
+            <img src="assets/beu-quesadilla.jpg" alt="Buffalo Chicken Quesadilla">
+            <div class="offer-badge" style="position:absolute;top:7px;left:7px;">30Br. OFF</div>
+          </div>
+          <div class="modal-item-info">
+            <h3>Buffalo Chicken Quesadilla</h3>
+            <div class="rest-name">Cina Restaurant</div>
+            <div>
+              <span class="modal-price">670 Br.</span>
+              <span class="modal-old-price">700 Br.</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="quantity-row">
+          <span class="qty-label">Quantity</span>
+          <div class="quantity-controls">
+            <div class="qty-btn minus" onclick="changeQty(-1)">−</div>
+            <span class="qty-value" id="qtyValue">1</span>
+            <div class="qty-btn plus" onclick="changeQty(1)">+</div>
+          </div>
+        </div>
+
+        <div class="total-amount">Total Amount: <span id="totalAmount">670 Br</span></div>
+
+        <button class="btn-order" onclick="showScreen(3)">Order Now</button>
+      </div>
+
+      <!-- BOTTOM NAV -->
+      <div class="bottom-nav">
+        <div class="nav-item active">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+            <rect x="2" y="2" width="20" height="20" rx="6" fill="#FF5722"/>
+            <path d="M7.5 11.2 12 7.5l4.5 3.7v4.6a1 1 0 0 1-1 1h-2.2v-3h-2.6v3H8.5a1 1 0 0 1-1-1v-4.6Z" fill="#fff"/>
+          </svg>
+          <span>Home</span>
+        </div>
+        <div class="nav-item">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none"
+               stroke="#9a9a9a" stroke-width="1.8" stroke-linejoin="round">
+            <path d="M6 3.5h8.5L19 8v12.5H6z"/>
+            <path d="M14 3.5V8h5"/>
+            <path d="M9.5 12h6M9.5 15.5h6" stroke-linecap="round"/>
+          </svg>
+          <span>Orders</span>
+        </div>
+        <div class="nav-item">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none"
+               stroke="#9a9a9a" stroke-width="1.8" stroke-linejoin="round" stroke-linecap="round">
+            <path d="M18 15.5c-1.2-1.2-1.6-2.4-1.6-4.3a4.4 4.4 0 0 0-8.8 0c0 1.9-.4 3.1-1.6 4.3z"/>
+            <path d="M10 19a2.2 2.2 0 0 0 4 0"/>
+          </svg>
+          <span>Notification</span>
+        </div>
+        <div class="nav-item">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none"
+               stroke="#9a9a9a" stroke-width="1.8" stroke-linecap="round">
+            <circle cx="12" cy="8.5" r="3.8"/>
+            <path d="M4.5 20.5c0-3.6 3.4-5.6 7.5-5.6s7.5 2 7.5 5.6"/>
+          </svg>
+          <span>Profile</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- ================= SCREEN 3 : CHECKOUT + DELIVERY MAN MODAL ================= -->
+    <div class="screen" id="screen3">
+      <div class="screen-scroll">
+        <div class="content">
+          <div class="item-row">
+            <div class="item-img">
+              <img src="assets/beu-quesadilla.jpg" alt="Buffalo Chicken Quesadilla">
+            </div>
+            <div class="item-info">
+              <h3>Buffalo Chicken Quesadilla</h3>
+              <p>1 X 700 Br</p>
+            </div>
+          </div>
+
+          <div class="section-title">Promo Code</div>
+          <input class="input-field" type="text" placeholder="Enter Promo Code">
+
+          <div class="section-title">Deliver To</div>
+          <div class="location-box">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none"
+                 stroke="#FF5722" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M5 21V4"/>
+              <path d="M5 4.5h10.5L14 9l1.5 4.5H5"/>
+            </svg>
+            <div class="loc-info">
+              <h4>Current Location</h4>
+              <p>Addis Ababa, Ethiopia</p>
+            </div>
+          </div>
+          <input class="input-field" type="text" placeholder="Enter your address(including bldg no, floor....)">
+          <input class="input-field" type="text" placeholder="Additional note">
+          <div style="height:40px;"></div>
+        </div>
+      </div>
+
+      <!-- MODAL -->
+      <div class="overlay">
+        <div class="modal">
+          <div class="modal-close" onclick="showScreen(2)">
+            <svg width="15" height="15" viewBox="0 0 12 12" fill="none"
+                 stroke="#b3b3b3" stroke-width="1.6" stroke-linecap="round">
+              <path d="M1.5 1.5l9 9M10.5 1.5l-9 9"/>
+            </svg>
+          </div>
+          <div class="modal-header">
+            <h2>Delivery Man Preference</h2>
+          </div>
+          <div class="radio-option" onclick="selectRadio(this)">
+            <span>Regular</span>
+            <div class="radio-circle selected"></div>
+          </div>
+          <div class="radio-option" onclick="selectRadio(this)">
+            <span>English Speaking</span>
+            <div class="radio-circle unselected"></div>
+          </div>
+          <button class="btn-continue" onclick="showScreen(4)">Continue</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ================= SCREEN 4 : CHECKOUT SUMMARY ================= -->
+    <div class="screen" id="screen4">
+      <div class="screen-scroll">
+        <div class="content">
+          <div class="item-row">
+            <div class="item-img">
+              <img src="assets/beu-quesadilla.jpg" alt="Buffalo Chicken Quesadilla">
+            </div>
+            <div class="item-info">
+              <h3>Buffalo Chicken Quesadilla</h3>
+              <p>1 X 700 Br</p>
+            </div>
+          </div>
+
+          <div class="section-title">Promo Code</div>
+          <input class="input-field" type="text" placeholder="Enter Promo Code">
+
+          <div class="section-title">Deliver To</div>
+          <div class="location-box">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none"
+                 stroke="#FF5722" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M5 21V4"/>
+              <path d="M5 4.5h10.5L14 9l1.5 4.5H5"/>
+            </svg>
+            <div class="loc-info">
+              <h4>Current Location</h4>
+              <p>Addis Ababa, Ethiopia</p>
+            </div>
+          </div>
+          <input class="input-field" type="text" placeholder="Enter your address(including bldg no, floor....)">
+          <input class="input-field" type="text" placeholder="Additional note">
+
+          <div style="margin-top: 18px;">
+            <div class="summary-row">
+              <span class="label">Subtotal</span>
+              <span class="value">700 Br</span>
+            </div>
+            <div class="summary-row">
+              <span class="label">Discount</span>
+              <span class="value">(-) 30 Br.</span>
+            </div>
+            <div class="summary-row">
+              <span class="label">Extras</span>
+              <span class="value">(+) 0 Br</span>
+            </div>
+            <div class="summary-row">
+              <span class="label">Service Charge</span>
+              <span class="value">(+) 12 Br</span>
+            </div>
+            <div class="summary-row">
+              <span class="label">Delivery Fee</span>
+              <span class="value">(+) 72 Br</span>
+            </div>
+            <div class="summary-divider"></div>
+            <div class="total-row">
+              <span>Total Amount</span>
+              <span>754 Br</span>
+            </div>
+          </div>
+
+          <button class="btn-confirm" onclick="window.location.href='BeU Payment.html'">Confirm Order</button>
+          <div style="height:30px;"></div>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /screens -->
+</div><!-- /phone -->
+
+<script>
+  let currentScreen = 1;
+  let quantity = 1;
+  const pricePerItem = 670;
+
+  function showScreen(num) {
+    document.querySelectorAll('.screen').forEach(function (s) {
+      s.classList.remove('active');
+    });
+    const target = document.getElementById('screen' + num);
+    target.classList.add('active');
+    target.querySelector('.screen-scroll').scrollTop = 0;
+    currentScreen = num;
+
+    const headerTitle   = document.getElementById('headerTitle');
+    const backBtn       = document.getElementById('backBtn');
+    const statusTime    = document.getElementById('statusTime');
+    const statusNetwork = document.getElementById('statusNetwork');
+
+    if (num === 1 || num === 2) {
+      headerTitle.textContent = 'Addis Ababa, Ethiopia';
+      backBtn.style.display = 'none';
+      statusTime.textContent = '11:17';
+      statusNetwork.textContent = '5G';
+    } else {
+      headerTitle.textContent = 'Checkout';
+      backBtn.style.display = 'block';
+      statusTime.textContent = (num === 3) ? '11:18' : '11:17';
+      statusNetwork.textContent = 'LTE';
+    }
+  }
+
+  function goBack() {
+    if (currentScreen === 4) showScreen(3);
+    else if (currentScreen === 3) showScreen(2);
+    else showScreen(1);
+  }
+
+  function changeQty(delta) {
+    quantity = Math.max(1, quantity + delta);
+    document.getElementById('qtyValue').textContent = quantity;
+    document.getElementById('totalAmount').textContent = (quantity * pricePerItem) + ' Br';
+  }
+
+  function selectRadio(el) {
+    document.querySelectorAll('.radio-option').forEach(function (opt) {
+      opt.querySelector('.radio-circle').className = 'radio-circle unselected';
+    });
+    el.querySelector('.radio-circle').className = 'radio-circle selected';
+  }
+
+  /* init */
+  showScreen(1);
+</script>
+
+</body>
+</html>

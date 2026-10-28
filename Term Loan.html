@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Term Loan</title>
+<!-- Same balance card as Home and Saving & Credit -->
+<link rel="stylesheet" href="styles/design-tokens.css">
+<link rel="stylesheet" href="styles/base.css">
+<link rel="stylesheet" href="styles/component-status-bar.css">
+<link rel="stylesheet" href="styles/component-balance-card.css">
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@400;500;600&display=swap');
+  @import url('https://api.fontshare.com/v2/css?f[]=switzer@400,500,600,700,800&display=swap');
+
+  /* Term Loan dashboard (the green product mockups, in Lehulum style): the red
+     limit card with the credit-score chip, how much of the limit is used, the
+     loans taken (swipe), and loan offers filtered by lender and type — each with
+     its conditions and Apply. ?partner=boa shows the M-PESA × BOA co-brand. */
+  :root { --Font: 'Switzer', 'Inter', sans-serif; --Primary: #FE353D; --Primary-Light: #FFF1F2; --On-Surface: #1C1C21; --On-Surface-Low: #7C7C87; }
+  body { font-family: var(--Font); }
+  .app-content { display: flex; flex-direction: column; }
+  .app-content > * { flex-shrink: 0; }
+
+  .header-nav { display: flex; align-items: center; justify-content: space-between; padding: 0 0 12px; }
+  .icon-btn { width: 36px; height: 36px; border-radius: 50%; background: transparent; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+  .icon-btn:hover { background: rgba(0,0,0,0.05); }
+  .icon-btn svg { width: 22px; height: 22px; stroke: var(--On-Surface); stroke-width: 1.8; fill: none; stroke-linecap: round; stroke-linejoin: round; }
+  .header-title { color: var(--On-Surface); font-size: 17px; font-weight: 500; letter-spacing: 0.3px; flex: 1; text-align: center; }
+
+  /* Co-brand strip (partner variant) */
+  .cobrand { display: none; align-items: center; justify-content: center; gap: 10px; margin-bottom: 10px; padding: 10px; background: #FFF; border-radius: 16px; box-shadow: 0 2px 12px rgba(0,0,0,0.04); font-size: 12px; font-weight: 600; color: var(--On-Surface-Low); }
+  .cobrand.show { display: flex; }
+  .cobrand img { height: 22px; width: auto; }
+  .cobrand .x { color: #B0B0B8; font-weight: 500; }
+
+  /* Credit-score chip in place of Home's Add Money */
+  .score-chip { position: relative; z-index: 1; flex-shrink: 0; display: flex; align-items: center; gap: 8px; padding: 6px 10px 6px 6px; border: none; border-radius: 12px; background: rgba(255,255,255,0.16); cursor: pointer; color: #FFF; font-family: var(--Font); }
+  .score-chip:hover { background: rgba(255,255,255,0.24); }
+  .score-chip svg { width: 38px; height: 24px; }
+  .score-chip b { display: block; font-size: 15px; font-weight: 700; line-height: 1; text-align: left; }
+  .score-chip small { display: block; margin-top: 2px; font-size: 10px; opacity: 0.85; text-align: left; }
+
+  /* Limit used */
+  .usage { background: #FFF; border-radius: 18px; padding: 14px 16px; box-shadow: 0 2px 12px rgba(0,0,0,0.04); margin-bottom: 16px; }
+  .usage-top { display: flex; justify-content: space-between; align-items: baseline; font-size: 12.5px; color: var(--On-Surface-Low); }
+  .usage-top b { color: var(--On-Surface); font-weight: 600; }
+  .bar { margin-top: 8px; height: 8px; border-radius: 4px; background: #F1F1F4; overflow: hidden; }
+  .bar i { display: block; height: 100%; border-radius: 4px; background: var(--Primary); }
+  .usage-foot { margin-top: 6px; display: flex; justify-content: space-between; font-size: 11.5px; color: var(--On-Surface-Low); font-variant-numeric: tabular-nums; }
+
+  .section-hdr { display: flex; align-items: center; justify-content: space-between; padding: 0 2px; margin-bottom: 10px; }
+  .section-title { color: var(--On-Surface); font-size: 15px; font-weight: 600; }
+  .see-all-btn { display: inline-flex; align-items: center; gap: 2px; color: var(--Primary); font-size: 12.5px; font-weight: 600; cursor: pointer; border: none; background: none; font-family: var(--Font); padding: 0; }
+  .see-all-btn svg { width: 14px; height: 14px; stroke: currentColor; stroke-width: 2.4; fill: none; stroke-linecap: round; stroke-linejoin: round; }
+
+  /* Loans taken — swipe */
+  .loans { display: flex; gap: 10px; overflow-x: auto; scroll-snap-type: x mandatory; margin: 0 -15px 18px; padding: 2px 15px 6px; scrollbar-width: none; }
+  .loans::-webkit-scrollbar { display: none; }
+  .loan { flex: 0 0 236px; scroll-snap-align: start; background: #FFF; border-radius: 20px; padding: 14px; box-shadow: 0 4px 16px rgba(15,23,42,0.06); cursor: pointer; }
+  .loan-top { display: flex; align-items: center; gap: 10px; }
+  .logo { width: 38px; height: 38px; border-radius: 11px; background: #FFF; border: 1px solid #EFEFF2; display: flex; align-items: center; justify-content: center; overflow: hidden; flex-shrink: 0; }
+  .logo img { width: 30px; height: 30px; object-fit: contain; }
+  .loan-top .info { flex: 1; min-width: 0; }
+  .loan-top b { display: block; font-size: 16px; font-weight: 700; color: var(--On-Surface); white-space: nowrap; }
+  .loan-top b span { font-size: 10.5px; font-weight: 500; color: var(--On-Surface-Low); margin-left: 3px; }
+  .loan-top small { display: block; font-size: 11.5px; color: var(--On-Surface-Low); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .badge { flex-shrink: 0; display: inline-flex; align-items: center; gap: 5px; padding: 3px 8px; border-radius: 999px; font-size: 10.5px; font-weight: 600; }
+  .badge::before { content: ''; width: 6px; height: 6px; border-radius: 50%; background: currentColor; }
+  .badge.ok { background: #E8F9EE; color: #167C2A; }
+  .badge.warn { background: #FEF3C7; color: #B45309; }
+  .loan-mid { margin-top: 12px; padding-top: 10px; border-top: 1px solid #F1F1F4; display: flex; align-items: flex-end; justify-content: space-between; gap: 8px; }
+  .loan-mid p { font-size: 11.5px; color: var(--On-Surface-Low); line-height: 1.6; }
+  .loan-mid p b { color: var(--On-Surface); font-weight: 600; }
+  .repay { flex-shrink: 0; height: 32px; padding: 0 14px; border: none; border-radius: 999px; background: var(--Primary); color: #FFF; font-family: 'Poppins', sans-serif; font-size: 12px; font-weight: 500; cursor: pointer; box-shadow: 0 3px 10px rgba(254,53,61,0.25); }
+  .empty-loans { margin-bottom: 18px; padding: 18px; border-radius: 18px; background: #FFF; text-align: center; font-size: 13px; color: var(--On-Surface-Low); box-shadow: 0 2px 12px rgba(0,0,0,0.04); }
+
+  /* Offer filters */
+  .chips { display: flex; gap: 8px; overflow-x: auto; scrollbar-width: none; margin: 0 -15px 8px; padding: 0 15px; }
+  .chips::-webkit-scrollbar { display: none; }
+  .chip { flex-shrink: 0; height: 34px; padding: 0 14px; border-radius: 999px; border: 1px solid #E6E6EA; background: #FFF; font-family: var(--Font); font-size: 12.5px; font-weight: 600; color: #55555E; cursor: pointer; }
+  .chip.on { background: var(--Primary); border-color: var(--Primary); color: #FFF; box-shadow: 0 3px 10px rgba(254,53,61,0.25); }
+  .chips.second { margin-bottom: 12px; }
+  .chips.second .chip { height: 30px; font-size: 12px; background: transparent; }
+  .chips.second .chip.on { background: var(--Primary-Light); border-color: #F7C6CA; color: var(--Primary); box-shadow: none; }
+
+  /* Offer card */
+  .offers { display: flex; flex-direction: column; gap: 10px; margin-bottom: 10px; }
+  .offer { background: #FFF; border-radius: 20px; padding: 14px; box-shadow: 0 4px 16px rgba(15,23,42,0.06); }
+  .offer-top { display: flex; align-items: center; gap: 12px; }
+  .offer-top .info { flex: 1; min-width: 0; }
+  .offer-top b { display: block; font-size: 14.5px; font-weight: 700; color: var(--On-Surface); }
+  .offer-top small { display: block; margin-top: 2px; font-size: 12px; color: var(--On-Surface-Low); }
+  .tag { flex-shrink: 0; padding: 3px 8px; border-radius: 999px; background: #EDEDF0; font-size: 10.5px; font-weight: 600; color: #55555E; }
+  .offer-limit { margin-top: 12px; display: flex; gap: 8px; }
+  .offer-limit div { flex: 1; padding: 8px 10px; border-radius: 12px; background: #F7F7F9; }
+  .offer-limit small { display: block; font-size: 10.5px; color: var(--On-Surface-Low); }
+  .offer-limit b { display: block; margin-top: 2px; font-size: 12.5px; font-weight: 700; color: var(--On-Surface); white-space: nowrap; }
+  .offer-foot { margin-top: 12px; padding-top: 10px; border-top: 1px solid #F1F1F4; display: flex; align-items: center; justify-content: space-between; }
+  .cond-btn { display: inline-flex; align-items: center; gap: 4px; border: none; background: none; font-family: var(--Font); font-size: 12.5px; font-weight: 600; color: #55555E; cursor: pointer; padding: 0; }
+  .cond-btn svg { width: 15px; height: 15px; stroke: var(--Primary); stroke-width: 2.2; fill: none; transition: transform 0.2s; }
+  .offer.open .cond-btn svg { transform: rotate(180deg); }
+  .apply { height: 34px; padding: 0 18px; border: none; border-radius: 999px; background: var(--Primary); color: #FFF; font-family: 'Poppins', sans-serif; font-size: 12.5px; font-weight: 500; cursor: pointer; box-shadow: 0 3px 10px rgba(254,53,61,0.25); }
+  .conds { display: none; margin-top: 10px; padding: 4px 12px; border-radius: 12px; background: #F7F7F9; }
+  .offer.open .conds { display: block; }
+  .cond { display: flex; justify-content: space-between; padding: 7px 0; font-size: 12px; color: #55555E; }
+  .cond + .cond { border-top: 1px solid #ECECEF; }
+  .cond b { color: var(--On-Surface); font-weight: 600; }
+  .no-offers { padding: 22px; text-align: center; font-size: 13px; color: var(--On-Surface-Low); background: #FFF; border-radius: 18px; }
+
+  /* Menu sheet */
+  .scrim { position: absolute; inset: 0; z-index: 100; background: rgba(0,0,0,0.42); opacity: 0; visibility: hidden; transition: opacity 0.22s, visibility 0.22s; }
+  .scrim.show { opacity: 1; visibility: visible; }
+  .sheet { position: absolute; left: 0; right: 0; bottom: 0; z-index: 101; background: #FFF; border-radius: 28px 28px 0 0; padding: 10px 16px 24px; transform: translateY(100%); transition: transform 0.28s cubic-bezier(.2,.8,.2,1); }
+  .sheet.show { transform: translateY(0); }
+  .sheet-grip { width: 40px; height: 4px; border-radius: 2px; background: #D8D8DE; margin: 0 auto 14px; }
+  .menu-item { width: 100%; display: flex; align-items: center; gap: 12px; padding: 13px 4px; border: none; background: none; text-align: left; cursor: pointer; font-family: var(--Font); }
+  .menu-item + .menu-item { border-top: 1px solid #ECECEF; }
+  .menu-item i { width: 38px; height: 38px; border-radius: 11px; background: var(--Primary-Light); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+  .menu-item i svg { width: 19px; height: 19px; stroke: var(--Primary); stroke-width: 1.9; fill: none; stroke-linecap: round; stroke-linejoin: round; }
+  .menu-item b { flex: 1; font-size: 14px; font-weight: 600; color: var(--On-Surface); }
+  .menu-item .chev { width: 17px; height: 17px; stroke: #A0A0AA; stroke-width: 2.2; fill: none; }
+
+  .toast { position: absolute; bottom: 40px; left: 50%; transform: translateX(-50%) translateY(20px); background: #1C1C21; color: #FFF; padding: 11px 18px; border-radius: 12px; font-size: 13px; font-weight: 500; opacity: 0; pointer-events: none; transition: all 0.3s ease; z-index: 1000; white-space: nowrap; }
+  .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+</style>
+<link rel="stylesheet" href="styles/device.css">
+<style>@media (max-width: 480px) { .app-content { padding-top: 2px; } }</style>
+</head>
+<body>
+<div class="phone-frame">
+  <div class="status-bar">
+    <span class="time">10:00</span>
+    <div class="status-icons">
+      <svg viewBox="0 0 24 24" fill="none"><path d="M1 9l2 2c4.97-4.97 13.03-4.97 18 0l2-2C16.93 2.93 7.08 2.93 1 9z" fill="#1C1C21"/><path d="M5 13l2 2c2.76-2.76 7.24-2.76 10 0l2-2C15.14 9.14 8.87 9.14 5 13z" fill="#1C1C21"/><path d="M9 17l2 2c1.1-1.1 2.9-1.1 4 0l2-2c-2.21-2.21-5.79-2.21-8 0z" fill="#1C1C21"/></svg>
+      <svg viewBox="0 0 24 24" fill="none"><rect x="2" y="6" width="4" height="12" rx="1" fill="#1C1C21"/><rect x="8" y="4" width="4" height="14" rx="1" fill="#1C1C21"/><rect x="14" y="2" width="4" height="16" rx="1" fill="#1C1C21"/><rect x="20" y="0" width="4" height="18" rx="1" fill="#1C1C21" opacity="0.3"/></svg>
+      <svg viewBox="0 0 28 14" fill="none"><rect x="0" y="1" width="22" height="12" rx="2.5" stroke="#1C1C21" stroke-width="1.5"/><rect x="2" y="3" width="16" height="8" rx="1" fill="#1C1C21"/><rect x="24" y="4" width="2" height="6" rx="1" fill="#1C1C21"/></svg>
+    </div>
+  </div>
+
+  <div class="app-content">
+    <div class="header-nav">
+      <button class="icon-btn" onclick="location.href='Credit & Saving.html'" aria-label="Back"><svg viewBox="0 0 24 24"><path d="M19 12H5M12 19l-7-7 7-7"/></svg></button>
+      <span class="header-title">Term Loan</span>
+      <button class="icon-btn" onclick="openMenu()" aria-label="Menu"><svg viewBox="0 0 24 24"><circle cx="12" cy="5" r="1.2"/><circle cx="12" cy="12" r="1.2"/><circle cx="12" cy="19" r="1.2"/></svg></button>
+    </div>
+
+    <!-- Partner variant: M-PESA × Bank of Abyssinia -->
+    <div class="cobrand" id="cobrand"><img src="assets/M-PESA-red-logo.svg" alt="M-PESA"><span class="x">×</span><img src="assets/banks logo/abyssinya-bank.png" alt="Bank of Abyssinia"><span>Bank of Abyssinia</span></div>
+
+    <!-- Limit card: same as Home -->
+    <div class="balance-card-wrapper">
+      <div class="balance-card" id="balanceCard">
+        <div class="balance-card-top">
+          <div class="main-balance">
+            <div class="header"><span class="label">Available Limit (ETB)</span></div>
+            <div class="amount" id="limitAmt" data-value="">* * * * * *</div>
+          </div>
+          <button class="score-chip" onclick="location.href='Credit Score.html'" aria-label="Credit score">
+            <svg viewBox="0 0 38 24"><path d="M4 20a15 15 0 0 1 30 0" fill="none" stroke="rgba(255,255,255,0.3)" stroke-width="4" stroke-linecap="round"/><path id="chipArc" d="M4 20a15 15 0 0 1 30 0" fill="none" stroke="#FFF" stroke-width="4" stroke-linecap="round" stroke-dasharray="47.1" stroke-dashoffset="47.1"/></svg>
+            <span><b id="chipScore">720</b><small id="chipLabel">Good</small></span>
+          </button>
+        </div>
+        <div class="balance-card-bottom">
+          <div class="other-balance">
+            <span class="header-label">Unpaid Loan</span>
+            <span class="amount" id="unpaidAmt" data-value="">****</span>
+          </div>
+          <div class="other-balance">
+            <span class="header-label">Next Due</span>
+            <span class="amount" id="nextDue" data-value="">****</span>
+          </div>
+          <div class="hide-unhide">
+            <button class="eye-btn" id="eyeBtn" title="Show balances">
+              <svg id="eyeIcon" viewBox="0 0 24 24" fill="none"><path d="M12 4.5C7 4.5 2.73 7.61 1 12C2.73 16.39 7 19.5 12 19.5C17 19.5 21.27 16.39 23 12C21.27 7.61 17 4.5 12 4.5Z" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><circle cx="12" cy="12" r="3" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- How much of the limit is used -->
+    <div class="usage">
+      <div class="usage-top"><span>Limit used</span><span><b id="usedTxt"></b> of <span id="limitTxt"></span> ETB</span></div>
+      <div class="bar"><i id="usedBar"></i></div>
+      <div class="usage-foot"><span id="usedPct"></span><span id="availTxt"></span></div>
+    </div>
+
+    <!-- Loans taken -->
+    <div class="section-hdr">
+      <span class="section-title">Loans Taken</span>
+      <button class="see-all-btn" onclick="location.href='Active Accounts.html?tab=credit'">See all <svg viewBox="0 0 24 24"><path d="M9 18l6-6-6-6"/></svg></button>
+    </div>
+    <div class="loans" id="loans"></div>
+
+    <!-- Loan offers -->
+    <div class="section-hdr">
+      <span class="section-title">Loan Offers</span>
+      <span style="font-size:12px;color:var(--On-Surface-Low)" id="offerCount"></span>
+    </div>
+    <div class="chips" id="lenderChips">
+      <button class="chip on" data-v="all">All Banks</button>
+      <button class="chip" data-v="abyssinia">Abyssinia</button>
+      <button class="chip" data-v="awash">Awash</button>
+      <button class="chip" data-v="more">More</button>
+    </div>
+    <div class="chips second" id="typeChips">
+      <button class="chip on" data-v="all">All</button>
+      <button class="chip" data-v="cash">Cash Loan</button>
+      <button class="chip" data-v="salary">Salary Advance</button>
+      <button class="chip" data-v="bnpl">BNPL</button>
+    </div>
+    <div class="offers" id="offers"></div>
+  </div>
+
+  <!-- Menu -->
+  <div class="scrim" id="scrim" onclick="closeMenu()"></div>
+  <div class="sheet" id="sheet" role="dialog" aria-label="Term loan menu">
+    <div class="sheet-grip"></div>
+    <button class="menu-item" onclick="location.href='Active Accounts.html?tab=credit'"><i><svg viewBox="0 0 24 24"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20"/></svg></i><b>My Loans</b><svg class="chev" viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg></button>
+    <button class="menu-item" onclick="location.href='Credit Score.html'"><i><svg viewBox="0 0 24 24"><path d="M4 18a8 8 0 0 1 16 0"/><path d="M12 18l4-5"/></svg></i><b>Credit Score</b><svg class="chev" viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg></button>
+    <button class="menu-item" onclick="location.href='Transaction History.html'"><i><svg viewBox="0 0 24 24"><path d="M4 6h16M4 12h16M4 18h10"/></svg></i><b>Loan Transactions</b><svg class="chev" viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg></button>
+    <button class="menu-item" onclick="location.href='Tariffs & Fees.html'"><i><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 8v5M12 16h.01"/></svg></i><b>Fees &amp; Conditions</b><svg class="chev" viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg></button>
+  </div>
+  <div class="toast" id="toast"></div>
+</div>
+
+<script src="term-loan-store.js"></script>
+<script>
+  const $ = id => document.getElementById(id);
+  const { fmt } = TL;
+  const params = new URLSearchParams(location.search);
+  if (params.get('partner') === 'boa') $('cobrand').classList.add('show');
+
+  // Limit and loans
+  const loans = TL.load();
+  const live = TL.active(loans);
+  const owed = TL.outstanding(loans);
+  const avail = Math.max(0, TL.LIMIT - owed);
+  const nextAll = live.map(TL.nextDue).filter(Boolean).sort((a, b) => new Date(a.due) - new Date(b.due))[0];
+  $('limitAmt').dataset.value = fmt(avail);
+  $('unpaidAmt').dataset.value = fmt(owed);
+  $('nextDue').dataset.value = nextAll ? 'In ' + TL.dueIn(nextAll.due) : 'None';
+  $('usedTxt').textContent = fmt(owed);
+  $('limitTxt').textContent = fmt(TL.LIMIT);
+  const pct = Math.round(owed / TL.LIMIT * 100);
+  $('usedBar').style.width = Math.max(pct, 1) + '%';
+  $('usedPct').textContent = pct + '% used';
+  $('availTxt').textContent = fmt(avail) + ' ETB available';
+
+  // Score chip arc (300–900 scale)
+  $('chipScore').textContent = TL.SCORE.value; $('chipLabel').textContent = TL.SCORE.label;
+  $('chipArc').setAttribute('stroke-dashoffset', (47.1 * (1 - (TL.SCORE.value - 300) / 600)).toFixed(1));
+
+  // Eye toggle — same as Home: hidden until tapped
+  (function () {
+    const btn = $('eyeBtn'), icon = $('eyeIcon'), card = $('balanceCard'), on = icon.innerHTML;
+    const off = '<path d="M17.94 17.94A10.07 10.07 0 0 1 12 19.5C7 19.5 2.73 16.39 1 12C2.73 7.61 7 4.5 12 4.5C14.12 4.5 16.07 5.2 17.62 6.38" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M15 12C15 13.66 13.66 15 12 15C10.34 15 9 13.66 9 12C9 10.34 10.34 9 12 9" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><line x1="1" y1="1" x2="23" y2="23" stroke="white" stroke-width="1.5" stroke-linecap="round"/>';
+    let shown = false;
+    btn.addEventListener('click', () => {
+      shown = !shown;
+      $('limitAmt').textContent = shown ? $('limitAmt').dataset.value : '* * * * * *';
+      ['unpaidAmt', 'nextDue'].forEach(id => $(id).textContent = shown ? $(id).dataset.value : '****');
+      card.classList.toggle('balance-visible', shown);
+      icon.innerHTML = shown ? off : on;
+      btn.title = shown ? 'Hide balances' : 'Show balances';
+    });
+  })();
+
+  // Loans taken
+  $('loans').outerHTML = live.length ? `<div class="loans" id="loans">${live.map(l => {
+    const nx = TL.nextDue(l), done = l.instalments.filter(i => i.paid).length;
+    const soon = nx && (new Date(nx.due) - Date.now()) < 5 * 864e5;
+    return `<div class="loan" onclick="location.href='Term Loan - Details.html?id=${l.id}'">
+      <div class="loan-top"><span class="logo"><img src="${l.logo}" alt=""></span>
+        <span class="info"><b>${fmt(TL.remainingOf(l))}<span>ETB</span></b><small>${l.product}</small></span>
+        <span class="badge ${soon ? 'warn' : 'ok'}">${soon ? 'Due soon' : 'Active'}</span></div>
+      <div class="loan-mid"><p>Instalment: <b>${done + 1}/${l.instalments.length}</b><br>Due: <b>In ${TL.dueIn(nx.due)}</b></p>
+        <button class="repay" onclick="event.stopPropagation(); location.href='Term Loan - Details.html?id=${l.id}&repay=next'">Repay</button></div>
+    </div>`; }).join('')}</div>` : '<div class="empty-loans" id="loans">You have no active loans. Pick an offer below.</div>';
+
+  // Offers, filtered by lender and type
+  let lender = 'all', type = 'all';
+  const DOWN = '<svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>';
+  function renderOffers() {
+    const list = TL.OFFERS.filter(o => (lender === 'all' || o.key === lender) && (type === 'all' || o.product === type));
+    $('offerCount').textContent = list.length + (list.length === 1 ? ' offer' : ' offers');
+    $('offers').innerHTML = list.length ? list.map(o => `
+      <div class="offer" id="of-${o.id}">
+        <div class="offer-top"><span class="logo"><img src="${o.logo}" alt=""></span>
+          <span class="info"><b>${o.name}</b><small>${o.lender}</small></span><span class="tag">${o.productLabel}</span></div>
+        <div class="offer-limit">
+          <div><small>Credit limit</small><b>${fmt(o.min).replace('.00', '')} – ${fmt(o.max).replace('.00', '')} ETB</b></div>
+          <div><small>Repay in</small><b>${o.days.join(' / ')} days</b></div>
+        </div>
+        <div class="conds">
+          <div class="cond"><span>Access fee</span><b>${(o.access * 100).toFixed(0)}%</b></div>
+          <div class="cond"><span>Daily maintenance fee</span><b>${(o.daily * 100).toFixed(2)}% / day</b></div>
+          <div class="cond"><span>Late penalty</span><b>${(o.penalty * 100).toFixed(1)}% / day</b></div>
+          <div class="cond"><span>Instalments</span><b>${o.inst}</b></div>
+          ${o.note ? `<div class="cond"><span>Eligibility</span><b>${o.note}</b></div>` : ''}
+        </div>
+        <div class="offer-foot">
+          <button class="cond-btn" type="button" onclick="this.closest('.offer').classList.toggle('open')">Loan conditions ${DOWN}</button>
+          <button class="apply" type="button" onclick="location.href='Term Loan - Apply.html?offer=${o.id}'">Apply</button>
+        </div>
+      </div>`).join('') : '<div class="no-offers">No offers match these filters.</div>';
+  }
+  function bindChips(id, set) {
+    $(id).querySelectorAll('.chip').forEach(c => c.addEventListener('click', () => {
+      $(id).querySelectorAll('.chip').forEach(x => x.classList.toggle('on', x === c));
+      set(c.dataset.v); renderOffers();
+    }));
+  }
+  bindChips('lenderChips', v => lender = v);
+  bindChips('typeChips', v => type = v);
+  renderOffers();
+
+  function openMenu() { $('scrim').classList.add('show'); $('sheet').classList.add('show'); }
+  function closeMenu() { $('scrim').classList.remove('show'); $('sheet').classList.remove('show'); }
+  document.addEventListener('keydown', e => { if (e.key === 'Escape') closeMenu(); });
+  let tt;
+  function showToast(m) { const t = $('toast'); t.textContent = m; t.classList.add('show'); clearTimeout(tt); tt = setTimeout(() => t.classList.remove('show'), 2000); }
+  if (params.get('done') === 'apply') showToast('Loan sent to your M-PESA balance');
+  if (params.get('done') === 'repay') showToast('Repayment received');
+</script>
+<script src="figma-export.js"></script>
+<script src="test-scenarios-data.js"></script>
+<script src="test-scenarios.js"></script>
+</body>
+</html>

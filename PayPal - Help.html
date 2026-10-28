@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PayPal · Help</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@400;500;600&display=swap');
+  @import url('https://api.fontshare.com/v2/css?f[]=switzer@400,500,600,700&display=swap');
+
+  /* PayPal FAQ and Help (Super App flow): FAQ as an accordion; Help with call,
+     email and live chat, plus quick help topics. Open a tab with ?tab=faq|help. */
+  :root {
+    --Primary: #FE353D;
+    --Primary-Light: #FFF1F2;
+    --On-Surface: #1C1C21;
+    --On-Surface-Low: #7C7C87;
+    --Background: #F5F5F5;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'Inter', sans-serif; background: transparent; display: flex; justify-content: center; align-items: center; min-height: 100vh; padding: 20px; }
+  button { font-family: inherit; }
+  .phone-frame { width: 360px; height: 780px; background: var(--Background); border-radius: 30px; overflow: hidden; position: relative; box-shadow: 0 20px 60px rgba(0,0,0,0.15); display: flex; flex-direction: column; }
+  .app-content { height: 100%; display: flex; flex-direction: column; }
+
+  .status-bar { display: flex; justify-content: space-between; align-items: center; padding: 14px 24px 8px; background: var(--Background); flex-shrink: 0; }
+  .status-bar .time { font-size: 14px; font-weight: 600; color: var(--On-Surface); }
+  .status-icons { display: flex; align-items: center; gap: 6px; }
+  .status-icons svg { width: 18px; height: 18px; }
+  .header-nav { display: flex; align-items: center; justify-content: space-between; padding: 8px 16px 12px; background: var(--Background); flex-shrink: 0; }
+  .back-btn { width: 36px; height: 36px; border-radius: 50%; background: transparent; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+  .back-btn:hover { background: rgba(0,0,0,0.05); }
+  .back-btn svg { width: 22px; height: 22px; stroke: var(--On-Surface); stroke-width: 1.8px; fill: none; }
+  .header-title { color: var(--On-Surface); font-family: 'Switzer', sans-serif; font-size: 17px; font-weight: 500; letter-spacing: 0.3px; flex: 1; text-align: center; }
+
+  /* FAQ | Help — same pill tabs as Withdraw at Agent */
+  .tabs { margin: 0 16px 12px; height: 50px; display: grid; grid-template-columns: 1fr 1fr; gap: 4px; padding: 4px; background: #FFF; border-radius: 25px; flex-shrink: 0; box-shadow: 0 2px 10px rgba(15,23,42,0.05); }
+  .tab { border: none; border-radius: 21px; background: transparent; color: var(--On-Surface-Low); font-family: 'Switzer', sans-serif; font-size: 14px; font-weight: 600; cursor: pointer; }
+  .tab.active { background: var(--Primary); color: #FFF; box-shadow: 0 4px 12px rgba(254,53,61,0.3); }
+
+  .scroll { flex: 1; min-height: 0; overflow-y: auto; padding: 0 16px 20px; scrollbar-width: none; }
+  .scroll::-webkit-scrollbar { width: 0; }
+  .panel { display: none; flex-direction: column; gap: 14px; }
+  .panel.show { display: flex; }
+
+  .card { background: #FFF; border-radius: 18px; padding: 2px 16px; box-shadow: 0 4px 14px rgba(15,23,42,0.05); }
+  .qa + .qa { border-top: 1px solid #ECECEF; }
+  .q { width: 100%; display: flex; align-items: center; gap: 10px; padding: 15px 0; border: none; background: none; text-align: left; cursor: pointer; font-family: 'Switzer', sans-serif; font-size: 14px; font-weight: 600; color: var(--On-Surface); }
+  .q span { flex: 1; }
+  .q svg { width: 17px; height: 17px; stroke: var(--Primary); stroke-width: 2.2; fill: none; flex-shrink: 0; transition: transform 0.2s; }
+  .qa.open .q svg { transform: rotate(180deg); }
+  .a { display: none; padding: 0 0 14px; font-family: 'Switzer', sans-serif; font-size: 12.8px; line-height: 1.55; color: #55555E; }
+  .qa.open .a { display: block; }
+
+  .contact { display: flex; flex-direction: column; align-items: center; text-align: center; background: #FFF; border-radius: 18px; padding: 20px 16px 16px; box-shadow: 0 4px 14px rgba(15,23,42,0.05); }
+  .contact .big { width: 56px; height: 56px; border-radius: 16px; background: var(--Primary-Light); display: flex; align-items: center; justify-content: center; }
+  .contact .big svg { width: 27px; height: 27px; stroke: var(--Primary); stroke-width: 1.8; fill: none; }
+  .contact h3 { margin-top: 12px; font-family: 'Switzer', sans-serif; font-size: 17px; font-weight: 700; color: var(--On-Surface); }
+  .contact p { margin-top: 4px; font-family: 'Switzer', sans-serif; font-size: 12.5px; color: var(--On-Surface-Low); }
+  .ways { margin-top: 14px; width: 100%; }
+  .way { width: 100%; display: flex; align-items: center; gap: 12px; padding: 12px 0; border: none; border-top: 1px solid #ECECEF; background: none; text-align: left; cursor: pointer; }
+  .way i { width: 38px; height: 38px; border-radius: 11px; background: var(--Primary-Light); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+  .way i svg { width: 18px; height: 18px; stroke: var(--Primary); stroke-width: 2; fill: none; }
+  .way span { flex: 1; display: flex; flex-direction: column; gap: 2px; }
+  .way b { font-family: 'Switzer', sans-serif; font-size: 14px; font-weight: 600; color: var(--On-Surface); }
+  .way small { font-family: 'Switzer', sans-serif; font-size: 12px; color: var(--On-Surface-Low); }
+  .way .chev { width: 17px; height: 17px; stroke: #A0A0AA; stroke-width: 2.2; fill: none; }
+  .group-label { margin: 4px 4px -6px; font-family: 'Switzer', sans-serif; font-size: 12.5px; font-weight: 600; color: #8A8A94; }
+
+  .toast { position: absolute; left: 50%; bottom: 40px; transform: translate(-50%, 10px); background: #1C1C21; color: #FFF; font-family: 'Switzer', sans-serif; font-size: 13px; padding: 10px 14px; border-radius: 12px; opacity: 0; pointer-events: none; transition: opacity 0.2s, transform 0.2s; white-space: nowrap; z-index: 140; }
+  .toast.show { opacity: 1; transform: translate(-50%, 0); }
+</style>
+<link rel="stylesheet" href="styles/device.css">
+</head>
+<body>
+<div class="phone-frame">
+  <div class="app-content">
+
+    <div class="status-bar">
+      <span class="time">10:00</span>
+      <div class="status-icons">
+        <svg viewBox="0 0 24 24" fill="none"><path d="M1 9l2 2c4.97-4.97 13.03-4.97 18 0l2-2C16.93 2.93 7.08 2.93 1 9z" fill="#1C1C21"/><path d="M5 13l2 2c2.76-2.76 7.24-2.76 10 0l2-2C15.14 9.14 8.87 9.14 5 13z" fill="#1C1C21"/><path d="M9 17l2 2c1.1-1.1 2.9-1.1 4 0l2-2c-2.21-2.21-5.79-2.21-8 0z" fill="#1C1C21"/></svg>
+        <svg viewBox="0 0 24 24" fill="none"><rect x="2" y="6" width="4" height="12" rx="1" fill="#1C1C21"/><rect x="8" y="4" width="4" height="14" rx="1" fill="#1C1C21"/><rect x="14" y="2" width="4" height="16" rx="1" fill="#1C1C21"/><rect x="20" y="0" width="4" height="18" rx="1" fill="#1C1C21" opacity="0.3"/></svg>
+        <svg viewBox="0 0 28 14" fill="none"><rect x="0" y="1" width="22" height="12" rx="2.5" stroke="#1C1C21" stroke-width="1.5"/><rect x="2" y="3" width="16" height="8" rx="1" fill="#1C1C21"/><rect x="24" y="4" width="2" height="6" rx="1" fill="#1C1C21"/></svg>
+      </div>
+    </div>
+
+    <div class="header-nav">
+      <button class="back-btn" onclick="location.href='PayPal.html'" aria-label="Back">
+        <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+      </button>
+      <span class="header-title" id="hdr">FAQ</span>
+      <div style="width:36px;"></div>
+    </div>
+
+    <div class="tabs" role="tablist">
+      <button class="tab active" id="tFaq" onclick="showTab('faq')">FAQ</button>
+      <button class="tab" id="tHelp" onclick="showTab('help')">Help</button>
+    </div>
+
+    <div class="scroll">
+      <section class="panel show" id="pFaq">
+        <div class="card" id="faqList"></div>
+      </section>
+
+      <section class="panel" id="pHelp">
+        <div class="contact">
+          <span class="big"><svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M3 18v-6a9 9 0 0 1 18 0v6"/><path d="M21 19a2 2 0 0 1-2 2h-1v-6h3zM3 19a2 2 0 0 0 2 2h1v-6H3z"/></svg></span>
+          <h3>Contact Support</h3>
+          <p>We're here to help you 24/7</p>
+          <div class="ways">
+            <button class="way" onclick="location.href='tel:+251700700700'"><i><svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16.9v2.5a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 1.1 3.7 2 2 0 0 1 3.1 1.5h2.5a2 2 0 0 1 2 1.7c.1 1 .4 1.9.7 2.8a2 2 0 0 1-.5 2.1L6.7 9.3a16 16 0 0 0 6 6l1.2-1.1a2 2 0 0 1 2.1-.5c.9.3 1.8.6 2.8.7a2 2 0 0 1 1.7 2z"/></svg></i><span><b>Call Us</b><small>Free from your M-PESA line</small></span><svg class="chev" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg></button>
+            <button class="way" onclick="toast('Opening email')"><i><svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 6 9-6"/></svg></i><span><b>Email Us</b><small>Reply within one business day</small></span><svg class="chev" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg></button>
+            <button class="way" onclick="toast('Connecting you to an agent…')"><i><svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a8 8 0 0 1-11.6 7.1L4 20l1-4.1A8 8 0 1 1 21 12z"/></svg></i><span><b>Live Chat</b><small>Chat with an agent now</small></span><svg class="chev" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg></button>
+          </div>
+        </div>
+        <p class="group-label">Quick help</p>
+        <div class="card" id="helpList"></div>
+      </section>
+    </div>
+  </div>
+  <div class="toast" id="toast"></div>
+</div>
+
+<script>
+  const $ = id => document.getElementById(id);
+  const CHEV = '<svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>';
+  const FAQ = [
+    ['How do I withdraw from PayPal?', 'Open PayPal from Add Money, tap “Withdraw from PayPal”, enter the amount in USD, check the rate and fee, then confirm with your M-PESA PIN.'],
+    ['What is the exchange rate?', 'The rate is set at the time of the withdrawal and shown before you confirm, together with the effective rate after the PayPal fee.'],
+    ['What does it cost?', 'PayPal charges 3% of the amount you withdraw. M-PESA does not add a fee. You see the exact amount you receive in ETB before you confirm.'],
+    ['How long do withdrawals take?', 'Withdrawals arrive in your M-PESA balance in near real time. You receive a confirmation SMS once it is complete.'],
+    ['Can I send money from M-PESA to PayPal?', 'No. The service only moves money from your PayPal account to your own M-PESA wallet.'],
+    ['Whose PayPal account can I link?', 'Only your own. The PayPal account name must match your M-PESA registered name, and one PayPal account links to one M-PESA number.'],
+    ['Is there a withdrawal limit?', 'You can withdraw up to your available PayPal balance, within M-PESA customer transaction limits.']
+  ];
+  const HELP = [
+    ['Troubleshooting a withdrawal', 'Check your M-PESA balance and the transaction in PayPal → Transactions. If the money has not arrived after 24 hours, contact support with the transaction ID.'],
+    ['Account linking issues', 'Make sure your PayPal account is verified and its name matches your M-PESA name. If you swapped your SIM in the last 48 hours, linking opens 24 hours later. You can also unlink and link again from the PayPal menu.'],
+    ['Money sent to the wrong account', 'Contact support right away with the transaction ID so the case can be escalated.']
+  ];
+  const qa = ([q, a]) => `<div class="qa"><button class="q" type="button" onclick="this.parentElement.classList.toggle('open')"><span>${q}</span>${CHEV}</button><div class="a">${a}</div></div>`;
+  $('faqList').innerHTML = FAQ.map(qa).join('');
+  $('helpList').innerHTML = HELP.map(qa).join('');
+
+  function showTab(t) {
+    $('tFaq').classList.toggle('active', t === 'faq'); $('tHelp').classList.toggle('active', t === 'help');
+    $('pFaq').classList.toggle('show', t === 'faq'); $('pHelp').classList.toggle('show', t === 'help');
+    $('hdr').textContent = t === 'faq' ? 'FAQ' : 'Help';
+  }
+  if (new URLSearchParams(location.search).get('tab') === 'help') showTab('help');
+  let tt;
+  function toast(m) { const t = $('toast'); t.textContent = m; t.classList.add('show'); clearTimeout(tt); tt = setTimeout(() => t.classList.remove('show'), 1800); }
+</script>
+<!-- Export to Figma button (shared exporter) -->
+<script src="figma-export.js"></script>
+<script src="test-scenarios-data.js"></script>
+<script src="test-scenarios.js"></script>
+</body>
+</html>

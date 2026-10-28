@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Credit Score</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@400;500;600&display=swap');
+  @import url('https://api.fontshare.com/v2/css?f[]=switzer@400,500,600,700,800&display=swap');
+
+  /* Credit score: a half-circle gauge (300–900) with the score and its band,
+     the band scale, Update score, an overview of what makes up the score, what
+     affects it (accordion) and a tip. Continue goes back to Term Loan. */
+  :root {
+    --Primary: #FE353D;
+    --Primary-Light: #FFF1F2;
+    --On-Surface: #1C1C21;
+    --On-Surface-Low: #7C7C87;
+    --Background: #F5F5F5;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'Switzer', 'Inter', sans-serif; background: transparent; display: flex; justify-content: center; align-items: center; min-height: 100vh; padding: 20px; }
+  button { font-family: inherit; }
+  .phone-frame { width: 360px; height: 780px; background: var(--Background); border-radius: 30px; overflow: hidden; position: relative; box-shadow: 0 20px 60px rgba(0,0,0,0.15); display: flex; flex-direction: column; }
+  .app-content { height: 100%; display: flex; flex-direction: column; }
+
+  .status-bar { display: flex; justify-content: space-between; align-items: center; padding: 14px 24px 8px; background: var(--Background); flex-shrink: 0; }
+  .status-bar .time { font-size: 14px; font-weight: 600; color: var(--On-Surface); }
+  .status-icons { display: flex; align-items: center; gap: 6px; }
+  .status-icons svg { width: 18px; height: 18px; }
+  .header-nav { display: flex; align-items: center; justify-content: space-between; padding: 8px 16px 12px; background: var(--Background); flex-shrink: 0; }
+  .icon-btn { width: 36px; height: 36px; border-radius: 50%; background: transparent; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+  .icon-btn:hover { background: rgba(0,0,0,0.05); }
+  .icon-btn svg { width: 22px; height: 22px; stroke: var(--On-Surface); stroke-width: 1.8px; fill: none; stroke-linecap: round; stroke-linejoin: round; }
+  .header-title { color: var(--On-Surface); font-size: 17px; font-weight: 500; letter-spacing: 0.3px; flex: 1; text-align: center; }
+
+  .scroll { flex: 1; min-height: 0; overflow-y: auto; padding: 4px 16px 16px; display: flex; flex-direction: column; gap: 12px; scrollbar-width: none; }
+  .scroll::-webkit-scrollbar { width: 0; }
+  .scroll > * { flex-shrink: 0; }
+  .card { background: #FFF; border-radius: 20px; padding: 16px; box-shadow: 0 4px 16px rgba(15,23,42,0.06); }
+
+  /* Gauge */
+  .gauge { position: relative; display: flex; flex-direction: column; align-items: center; padding-top: 6px; }
+  .gauge svg { width: 240px; height: 132px; overflow: visible; }
+  .gauge .val { position: absolute; top: 58px; left: 0; right: 0; text-align: center; }
+  .gauge .val b { display: block; font-size: 44px; font-weight: 700; color: var(--On-Surface); letter-spacing: -1px; line-height: 1; }
+  .gauge .val span { display: block; margin-top: 4px; font-size: 15px; font-weight: 700; color: #16A34A; }
+  .gauge p { margin-top: 6px; font-size: 12.5px; color: var(--On-Surface-Low); }
+  .bands { margin-top: 16px; display: grid; grid-template-columns: repeat(5, 1fr); gap: 4px; text-align: center; }
+  .band i { display: block; height: 5px; border-radius: 3px; }
+  .band small { display: block; margin-top: 6px; font-size: 10px; color: var(--On-Surface-Low); }
+  .band em { display: block; font-style: normal; font-size: 9.5px; color: #A0A0AA; margin-top: 1px; }
+  .band.on small { color: var(--On-Surface); font-weight: 700; }
+  .band.on em { color: var(--On-Surface); }
+  .band.on { position: relative; }
+  .band.on::before { content: ''; position: absolute; top: -8px; left: 50%; transform: translateX(-50%); border: 5px solid transparent; border-top-color: var(--On-Surface); }
+  .upd { margin-top: 14px; padding-top: 12px; border-top: 1px solid #F1F1F4; display: flex; justify-content: space-between; align-items: center; font-size: 12px; color: var(--On-Surface-Low); }
+  .upd b { color: var(--On-Surface); font-weight: 600; }
+  .upd button { display: inline-flex; align-items: center; gap: 5px; border: none; background: none; font-size: 12.5px; font-weight: 700; color: var(--Primary); cursor: pointer; padding: 0; }
+  .upd button svg { width: 15px; height: 15px; stroke: currentColor; stroke-width: 2.2; fill: none; stroke-linecap: round; stroke-linejoin: round; }
+  .upd button.spin svg { animation: spin 0.8s linear infinite; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  .title { font-size: 15px; font-weight: 600; color: var(--On-Surface); margin-bottom: 4px; }
+  .row { width: 100%; display: flex; align-items: center; gap: 12px; padding: 12px 0; border: none; background: none; text-align: left; cursor: pointer; }
+  .row + .row, .qa + .qa { border-top: 1px solid #F1F1F4; }
+  .ic { width: 38px; height: 38px; border-radius: 11px; background: var(--Primary-Light); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+  .ic svg { width: 19px; height: 19px; stroke: var(--Primary); stroke-width: 1.9; fill: none; stroke-linecap: round; stroke-linejoin: round; }
+  .row .info { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px; }
+  .row b, .q b { font-size: 13.5px; font-weight: 600; color: var(--On-Surface); }
+  .row small { font-size: 11.5px; color: var(--On-Surface-Low); }
+  .pill { flex-shrink: 0; padding: 4px 9px; border-radius: 999px; font-size: 10.5px; font-weight: 700; }
+  .pill.strong { background: #E8F9EE; color: #167C2A; }
+  .pill.good { background: #EAF7D9; color: #4D7C0F; }
+  .pill.fair { background: #FEF3C7; color: #B45309; }
+  .chev { width: 16px; height: 16px; stroke: #A0A0AA; stroke-width: 2.2; fill: none; flex-shrink: 0; }
+
+  .q { width: 100%; display: flex; align-items: center; gap: 12px; padding: 12px 0; border: none; background: none; text-align: left; cursor: pointer; }
+  .q .info { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px; }
+  .q small { font-size: 11.5px; color: var(--On-Surface-Low); }
+  .q .tog { width: 16px; height: 16px; stroke: var(--Primary); stroke-width: 2.2; fill: none; flex-shrink: 0; transition: transform 0.2s; }
+  .qa.open .tog { transform: rotate(180deg); }
+  .a { display: none; padding: 0 0 12px 50px; font-size: 12.5px; line-height: 1.55; color: #55555E; }
+  .qa.open .a { display: block; }
+
+  .tip { display: flex; gap: 12px; align-items: flex-start; background: #EEF9F0; border-radius: 18px; padding: 14px; }
+  .tip .ic { background: #16A34A; }
+  .tip .ic svg { stroke: #FFF; }
+  .tip b { display: block; font-size: 14px; font-weight: 700; color: var(--On-Surface); }
+  .tip p { margin-top: 3px; font-size: 12px; line-height: 1.5; color: #55555E; }
+
+  .bottom-bar { flex-shrink: 0; padding: 10px 16px 18px; background: var(--Background); }
+  .btn-primary { width: 100%; height: 52px; border: none; border-radius: 14px; background: var(--Primary); color: #FFF; font-family: 'Poppins', sans-serif; font-size: 15px; font-weight: 500; cursor: pointer; box-shadow: 0 4px 16px rgba(254,53,61,0.25); }
+  .toast { position: absolute; left: 50%; bottom: 96px; transform: translate(-50%, 10px); background: #1C1C21; color: #FFF; font-size: 13px; padding: 10px 14px; border-radius: 12px; opacity: 0; pointer-events: none; transition: opacity 0.2s, transform 0.2s; white-space: nowrap; z-index: 140; }
+  .toast.show { opacity: 1; transform: translate(-50%, 0); }
+</style>
+<link rel="stylesheet" href="styles/device.css">
+</head>
+<body>
+<div class="phone-frame">
+  <div class="app-content">
+
+    <div class="status-bar">
+      <span class="time">10:00</span>
+      <div class="status-icons">
+        <svg viewBox="0 0 24 24" fill="none"><path d="M1 9l2 2c4.97-4.97 13.03-4.97 18 0l2-2C16.93 2.93 7.08 2.93 1 9z" fill="#1C1C21"/><path d="M5 13l2 2c2.76-2.76 7.24-2.76 10 0l2-2C15.14 9.14 8.87 9.14 5 13z" fill="#1C1C21"/><path d="M9 17l2 2c1.1-1.1 2.9-1.1 4 0l2-2c-2.21-2.21-5.79-2.21-8 0z" fill="#1C1C21"/></svg>
+        <svg viewBox="0 0 24 24" fill="none"><rect x="2" y="6" width="4" height="12" rx="1" fill="#1C1C21"/><rect x="8" y="4" width="4" height="14" rx="1" fill="#1C1C21"/><rect x="14" y="2" width="4" height="16" rx="1" fill="#1C1C21"/><rect x="20" y="0" width="4" height="18" rx="1" fill="#1C1C21" opacity="0.3"/></svg>
+        <svg viewBox="0 0 28 14" fill="none"><rect x="0" y="1" width="22" height="12" rx="2.5" stroke="#1C1C21" stroke-width="1.5"/><rect x="2" y="3" width="16" height="8" rx="1" fill="#1C1C21"/><rect x="24" y="4" width="2" height="6" rx="1" fill="#1C1C21"/></svg>
+      </div>
+    </div>
+
+    <div class="header-nav">
+      <button class="icon-btn" onclick="goBack()" aria-label="Back"><svg viewBox="0 0 24 24"><path d="M19 12H5M12 19l-7-7 7-7"/></svg></button>
+      <span class="header-title">Credit Score</span>
+      <div style="width:36px;"></div>
+    </div>
+
+    <div class="scroll">
+      <div class="card">
+        <div class="gauge">
+          <svg viewBox="0 0 240 132" id="gauge" aria-hidden="true"></svg>
+          <div class="val"><b id="scoreVal">720</b><span id="scoreLbl">Good</span></div>
+          <p>Your credit score is in a good range.</p>
+        </div>
+        <div class="bands" id="bands"></div>
+        <div class="upd"><span>Last updated: <b id="updated"></b></span>
+          <button type="button" id="updBtn" onclick="updateScore()"><svg viewBox="0 0 24 24"><path d="M21 12a9 9 0 1 1-2.6-6.4"/><path d="M21 4v5h-5"/></svg>Update score</button></div>
+      </div>
+
+      <div class="card">
+        <div class="title">Credit Score Overview</div>
+        <button class="row" type="button"><span class="ic"><svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/></svg></span><span class="info"><b>Payment History</b><small>How consistently you pay on time</small></span><span class="pill strong">Strong</span><svg class="chev" viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg></button>
+        <button class="row" type="button"><span class="ic"><svg viewBox="0 0 24 24"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20"/></svg></span><span class="info"><b>Credit Utilization</b><small>How much of your limit you use</small></span><span class="pill good">Good</span><svg class="chev" viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg></button>
+        <button class="row" type="button"><span class="ic"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></span><span class="info"><b>Credit History</b><small>Length and quality of your history</small></span><span class="pill good">Good</span><svg class="chev" viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg></button>
+      </div>
+
+      <div class="card">
+        <div class="title">What Affects Your Score?</div>
+        <div id="factors"></div>
+      </div>
+
+      <div class="tip">
+        <span class="ic"><svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></svg></span>
+        <span><b>Keep your score healthy</b><p>Repay on time, keep your balances low, and avoid taking on more debt than you need.</p></span>
+      </div>
+    </div>
+
+    <div class="bottom-bar"><button class="btn-primary" onclick="goBack()">Continue</button></div>
+  </div>
+  <div class="toast" id="toast"></div>
+</div>
+
+<script src="term-loan-store.js"></script>
+<script>
+  const $ = id => document.getElementById(id);
+  const BANDS = [
+    { name: 'Poor', from: 300, to: 579, c: '#FE353D' },
+    { name: 'Fair', from: 580, to: 669, c: '#F59E0B' },
+    { name: 'Good', from: 670, to: 739, c: '#84CC16' },
+    { name: 'Very Good', from: 740, to: 799, c: '#22C55E' },
+    { name: 'Excellent', from: 800, to: 900, c: '#16A34A' }
+  ];
+  const MIN = 300, MAX = 900, CX = 120, CY = 120, R = 100;
+  const pt = v => { const a = Math.PI * (1 - (v - MIN) / (MAX - MIN)); return [CX + R * Math.cos(a), CY - R * Math.sin(a)]; };
+  const arc = (a, b) => { const [x1, y1] = pt(a), [x2, y2] = pt(b); return `M${x1.toFixed(1)} ${y1.toFixed(1)} A${R} ${R} 0 0 1 ${x2.toFixed(1)} ${y2.toFixed(1)}`; };
+
+  function draw(score) {
+    const band = BANDS.find(b => score >= b.from && score <= b.to) || BANDS[0];
+    const [dx, dy] = pt(score);
+    $('gauge').innerHTML = BANDS.map((b, i) => `<path d="${arc(b.from + (i ? 3 : 0), b.to)}" fill="none" stroke="${b.c}" stroke-width="14" stroke-linecap="butt" opacity="${b === band ? 1 : 0.28}"/>`).join('')
+      // Rounded outer ends only, so the bands meet cleanly
+      + [[MIN, BANDS[0]], [MAX, BANDS[BANDS.length - 1]]].map(([v, b]) => { const [x, y] = pt(v); return `<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="7" fill="${b.c}" opacity="${b === band ? 1 : 0.28}"/>`; }).join('')
+      + `<circle cx="${dx.toFixed(1)}" cy="${dy.toFixed(1)}" r="10" fill="#FFF" stroke="${band.c}" stroke-width="4"/>`;
+    $('scoreVal').textContent = score;
+    $('scoreLbl').textContent = band.name; $('scoreLbl').style.color = band.c;
+    $('bands').innerHTML = BANDS.map(b => `<div class="band${b === band ? ' on' : ''}"><i style="background:${b.c};opacity:${b === band ? 1 : 0.35}"></i><small>${b.name}</small><em>${b.from}–${b.to}</em></div>`).join('');
+  }
+  const stamp = () => new Date().toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
+  $('updated').textContent = stamp();
+  draw(TL.SCORE.value);
+
+  function updateScore() {
+    const b = $('updBtn'); if (b.classList.contains('spin')) return;
+    b.classList.add('spin');
+    setTimeout(() => { b.classList.remove('spin'); $('updated').textContent = stamp(); draw(TL.SCORE.value); toast('Your score is up to date'); }, 1400);
+  }
+
+  const DOWN = '<svg class="tog" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>';
+  const FACTORS = [
+    ['<svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/></svg>', 'Repayment behaviour', 'Pay your loans on time, every time', 'Each on-time repayment builds your score. A late or missed instalment lowers it and adds a daily penalty.'],
+    ['<svg viewBox="0 0 24 24"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>', 'Outstanding loans', 'Too many or high balances lower your score', 'Having several loans open at once, or owing close to your limit, signals risk. Repay before taking a new loan.'],
+    ['<svg viewBox="0 0 24 24"><path d="M21 12a9 9 0 1 1-9-9v9z"/></svg>', 'Credit usage', 'Keep usage low and manageable', 'Try to use less than a third of your available limit. Using M-PESA regularly also helps lenders trust your account.']
+  ];
+  $('factors').innerHTML = FACTORS.map(([ic, t, s, a]) => `<div class="qa"><button class="q" type="button" onclick="this.parentElement.classList.toggle('open')"><span class="ic">${ic}</span><span class="info"><b>${t}</b><small>${s}</small></span>${DOWN}</button><div class="a">${a}</div></div>`).join('');
+
+  function goBack() { if (document.referrer && history.length > 1) history.back(); else location.href = 'Term Loan.html'; }
+  let tt;
+  function toast(m) { const t = $('toast'); t.textContent = m; t.classList.add('show'); clearTimeout(tt); tt = setTimeout(() => t.classList.remove('show'), 1800); }
+</script>
+<script src="figma-export.js"></script>
+<script src="test-scenarios-data.js"></script>
+<script src="test-scenarios.js"></script>
+</body>
+</html>

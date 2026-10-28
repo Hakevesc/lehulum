@@ -292,21 +292,34 @@
         </div>
 
         <div class="transaction-details">
+          <!-- Same rows and order as the Bill Payment and Send Money receipts -->
           <div class="detail-row">
-            <span class="label">Deposit Type</span>
-            <span class="value" id="detailType">Cash-In</span>
+            <span class="label">Depositor's Name</span>
+            <span class="value" id="detailPayer">Derartu Tulu Andegna</span>
           </div>
           <div class="detail-row">
-            <span class="label">Agent</span>
+            <span class="label">Depositor's Phone Number</span>
+            <span class="value" id="detailPhone">0712 *** *78</span>
+          </div>
+          <div class="detail-row">
+            <span class="label">Agent Business Name</span>
             <span class="value" id="detailAgent">&mdash;</span>
           </div>
           <div class="detail-row">
-            <span class="label">Short Code</span>
+            <span class="label">Merchant Short Code</span>
             <span class="value" id="detailAgentCode">&mdash;</span>
           </div>
           <div class="detail-row">
-            <span class="label">Status</span>
-            <span class="value" style="color: #167C2A; font-weight:700;">Successful</span>
+            <span class="label">Fee</span>
+            <span class="value" id="detailFee">0.00 ETB</span>
+          </div>
+          <div class="detail-row">
+            <span class="label">VAT (15%)</span>
+            <span class="value">0.00 ETB</span>
+          </div>
+          <div class="detail-row">
+            <span class="label">Transaction Type</span>
+            <span class="value" id="detailType">Cash-In at Agent</span>
           </div>
           <div class="detail-row">
             <span class="label">Transaction ID</span>
@@ -413,7 +426,9 @@
   const fmt = n => parseFloat(n || 0).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
 
   const amount = parseFloat(data.amount || 0);
-  $('detailType').textContent = 'Cash-In';
+  $('detailType').textContent = 'Cash-In at Agent';
+  $('detailPayer').textContent = data.customerName || 'Derartu Tulu Andegna';
+  $('detailFee').textContent = fmt(data.fee || 0) + ' ETB';
   $('detailAgent').textContent = data.agentName || agent.name || '\u2014';
   $('detailAgentCode').textContent = data.agentCode || agent.code || '\u2014';
   $('detailName').textContent = data.customerName || 'Derartu Tulu Andegna';
@@ -428,7 +443,6 @@
 
   const qrData = encodeURIComponent(JSON.stringify({
     type: 'Cash-In',
-    voucher: data.voucherCode || '',
     txId: $('transactionId').textContent,
     amount: fmt(amount) + ' ETB'
   }));
@@ -491,7 +505,7 @@
   function downloadReceipt() { showToast('Downloading receipt as PDF...'); }
   function goHome() { sessionStorage.removeItem('cashInData'); window.location.href = 'Lehulum Home.html'; }
   function addToFavorite() { showToast('Added to favorites!'); }
-  function cashInAgain() { sessionStorage.removeItem('cashInData'); window.location.href = 'Cash In - Amount First.html'; }
+  function cashInAgain() { sessionStorage.removeItem('cashInData'); window.location.href = 'Cash In.html'; }
 </script>
 <script src="test-scenarios-data.js"></script>
 <script src="test-scenarios.js"></script>

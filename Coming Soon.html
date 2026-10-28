@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Coming Soon</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@400;500;600&display=swap');
+  @import url('https://api.fontshare.com/v2/css?f[]=switzer@400,500,600,700,800&display=swap');
+
+  /* Coming Soon: shown for any feature that is not live yet. Pass ?f=<name> to
+     name it ("Request Money is coming soon"); Close goes back where you came from. */
+  :root {
+    --Primary: #FE353D;
+    --Primary-Dark: #C8161D;
+    --On-Surface: #1C1C21;
+    --On-Surface-Low: #7C7C87;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'Inter', sans-serif; background: transparent; display: flex; justify-content: center; align-items: center; min-height: 100vh; padding: 20px; }
+  button { font-family: inherit; }
+  .phone-frame { width: 360px; height: 780px; background: #FFF; border-radius: 30px; overflow: hidden; position: relative; box-shadow: 0 20px 60px rgba(0,0,0,0.15); display: flex; flex-direction: column; }
+  .app-content { position: relative; height: 100%; display: flex; flex-direction: column; }
+
+  /* M-PESA pattern, soft pink, bottom-right */
+  .pattern { position: absolute; right: -150px; bottom: -110px; width: 420px; height: 420px; background: #FE353D; opacity: 0.07; pointer-events: none;
+    -webkit-mask: url('assets/M-PESA-pattern.svg') center / contain no-repeat; mask: url('assets/M-PESA-pattern.svg') center / contain no-repeat; }
+
+  .status-bar { position: relative; z-index: 1; display: flex; justify-content: space-between; align-items: center; padding: 14px 24px 8px; flex-shrink: 0; }
+  .status-bar .time { font-size: 14px; font-weight: 600; color: var(--On-Surface); }
+  .status-icons { display: flex; align-items: center; gap: 6px; }
+  .status-icons svg { width: 18px; height: 18px; }
+  .top { position: relative; z-index: 1; padding: 6px 12px 0; flex-shrink: 0; }
+  .close-x { width: 40px; height: 40px; border: none; border-radius: 50%; background: transparent; display: flex; align-items: center; justify-content: center; cursor: pointer; }
+  .close-x:hover { background: rgba(0,0,0,0.05); }
+  .close-x svg { width: 22px; height: 22px; stroke: var(--On-Surface); stroke-width: 1.8; fill: none; }
+
+  .body { position: relative; z-index: 1; flex: 1; display: flex; flex-direction: column; align-items: center; text-align: center; padding: 30px 28px 0; }
+  .art { width: 220px; height: 200px; }
+  .art .float { animation: float 3.2s ease-in-out infinite; transform-origin: center; }
+  @keyframes float { 50% { transform: translateY(-5px); } }
+  .eyebrow { margin-top: 28px; font-family: 'Switzer', sans-serif; font-size: 15px; font-weight: 500; letter-spacing: 1.2px; color: #8A8A94; text-transform: uppercase; }
+  h1 { margin-top: 8px; font-family: 'Switzer', sans-serif; font-size: 27px; font-weight: 800; line-height: 1.12; letter-spacing: -0.3px; color: var(--On-Surface); text-transform: uppercase; }
+  .desc { margin-top: 14px; max-width: 280px; font-family: 'Switzer', sans-serif; font-size: 13.5px; line-height: 1.55; color: #55555E; }
+  .feature { margin-top: 18px; display: none; align-items: center; gap: 8px; padding: 8px 14px; border-radius: 999px; background: #FFF1F2; font-family: 'Switzer', sans-serif; font-size: 13px; font-weight: 600; color: var(--Primary); }
+  .feature.show { display: inline-flex; }
+  .feature svg { width: 15px; height: 15px; stroke: currentColor; stroke-width: 2.2; fill: none; }
+
+  .bottom-bar { position: relative; z-index: 1; flex-shrink: 0; padding: 12px 20px 26px; }
+  .btn-primary { width: 100%; height: 52px; border: none; border-radius: 14px; background: var(--Primary); color: #FFF; font-family: 'Poppins', sans-serif; font-size: 15px; font-weight: 500; cursor: pointer; box-shadow: 0 6px 18px rgba(254,53,61,0.3); }
+  .btn-primary:active { transform: scale(0.98); }
+</style>
+<link rel="stylesheet" href="styles/device.css">
+</head>
+<body>
+<div class="phone-frame">
+  <div class="app-content">
+    <div class="pattern" aria-hidden="true"></div>
+
+    <div class="status-bar">
+      <span class="time">10:00</span>
+      <div class="status-icons">
+        <svg viewBox="0 0 24 24" fill="none"><path d="M1 9l2 2c4.97-4.97 13.03-4.97 18 0l2-2C16.93 2.93 7.08 2.93 1 9z" fill="#1C1C21"/><path d="M5 13l2 2c2.76-2.76 7.24-2.76 10 0l2-2C15.14 9.14 8.87 9.14 5 13z" fill="#1C1C21"/><path d="M9 17l2 2c1.1-1.1 2.9-1.1 4 0l2-2c-2.21-2.21-5.79-2.21-8 0z" fill="#1C1C21"/></svg>
+        <svg viewBox="0 0 24 24" fill="none"><rect x="2" y="6" width="4" height="12" rx="1" fill="#1C1C21"/><rect x="8" y="4" width="4" height="14" rx="1" fill="#1C1C21"/><rect x="14" y="2" width="4" height="16" rx="1" fill="#1C1C21"/><rect x="20" y="0" width="4" height="18" rx="1" fill="#1C1C21" opacity="0.3"/></svg>
+        <svg viewBox="0 0 28 14" fill="none"><rect x="0" y="1" width="22" height="12" rx="2.5" stroke="#1C1C21" stroke-width="1.5"/><rect x="2" y="3" width="16" height="8" rx="1" fill="#1C1C21"/><rect x="24" y="4" width="2" height="6" rx="1" fill="#1C1C21"/></svg>
+      </div>
+    </div>
+
+    <div class="top">
+      <button class="close-x" onclick="closePage()" aria-label="Close">
+        <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18M6 6l12 12"/></svg>
+      </button>
+    </div>
+
+    <div class="body">
+      <!-- A phone with its screen cover being pulled away: something new being unveiled -->
+      <svg class="art" viewBox="0 0 220 200" aria-hidden="true">
+        <path d="M18 132c18-30 46-30 64-12" fill="none" stroke="#FFB3B6" stroke-width="20" stroke-linecap="round"/>
+        <rect x="70" y="22" width="80" height="150" rx="12" fill="#FE353D"/>
+        <rect x="79" y="36" width="62" height="118" rx="4" fill="#FFF"/>
+        <rect x="100" y="27" width="20" height="4" rx="2" fill="#C8161D"/>
+        <g class="float">
+          <path d="M86 78c18-4 34-16 52-38l14 8c-6 26-22 40-48 46z" fill="#E1262D"/>
+          <path d="M86 78c6 10 12 14 18 16l-8 10c-6-6-10-14-10-26z" fill="#9E1117"/>
+          <path d="M138 40l14 8-6 4z" fill="#FF6B70"/>
+        </g>
+        <path d="M150 74c14-18 34-22 52-12" fill="none" stroke="#FE353D" stroke-width="20" stroke-linecap="round"/>
+        <circle cx="172" cy="118" r="3" fill="#FFB3B6"/>
+        <circle cx="40" cy="70" r="4" fill="#FFE1E2"/>
+      </svg>
+
+      <p class="eyebrow">Coming soon!</p>
+      <h1>Something great<br>is on the way!</h1>
+      <p class="desc">We're working hard to bring you exciting new features and an even better experience.</p>
+      <span class="feature" id="feature"><svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg><span id="featureTxt"></span></span>
+    </div>
+
+    <div class="bottom-bar">
+      <button class="btn-primary" onclick="closePage()">Close</button>
+    </div>
+  </div>
+</div>
+
+<script>
+  const params = new URLSearchParams(location.search);
+  const feature = params.get('f');
+  if (feature) {
+    document.getElementById('featureTxt').textContent = feature + ' is coming soon';
+    document.getElementById('feature').classList.add('show');
+  }
+  // Close: back to where the customer came from (or ?back=, or Home)
+  function closePage() {
+    const back = params.get('back');
+    if (back) location.href = back;
+    else if (document.referrer && history.length > 1) history.back();
+    else location.href = 'Lehulum Home.html';
+  }
+</script>
+<!-- Export to Figma button (shared exporter) -->
+<script src="figma-export.js"></script>
+<script src="test-scenarios-data.js"></script>
+<script src="test-scenarios.js"></script>
+</body>
+</html>

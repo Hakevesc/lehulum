@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Add Money · How it works</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@400;500;600&display=swap');
+  @import url('https://api.fontshare.com/v2/css?f[]=switzer@400,500,600,700,800&display=swap');
+
+  /* Animated walkthrough (adopted from the "Transfer from Bank" Expo guide, in the
+     Lehulum style): four stages on a wireframe phone, each with the control to
+     tap highlighted in red, a gentle zoom pulse and a tapping hand. Stages
+     advance on their own (4.2 s) and loop; the phone zooms in on each tap.
+     Default: Transfer from Bank. ?type=abroad: Receive from Abroad. */
+  :root {
+    --Primary: #FE353D;
+    --Primary-Dark: #C8161D;
+    --Primary-Light: #FFF1F2;
+    --On-Surface: #1C1C21;
+    --On-Surface-Low: #7C7C87;
+    --Background: #F5F5F5;
+    --Line: #E2E2E7;
+    --Wire: #8E8E99;
+    --Sk: #D9D9DF;
+    --SkLight: #ECECF0;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'Switzer', 'Inter', sans-serif; background: transparent; display: flex; justify-content: center; align-items: center; min-height: 100vh; padding: 20px; }
+  button { font-family: inherit; }
+  .phone-frame { width: 360px; height: 780px; background: var(--Background); border-radius: 30px; overflow: hidden; position: relative; box-shadow: 0 20px 60px rgba(0,0,0,0.15); display: flex; flex-direction: column; }
+  .app-content { height: 100%; display: flex; flex-direction: column; padding: 0 16px; }
+
+  .status-bar { display: flex; justify-content: space-between; align-items: center; padding: 14px 8px 8px; flex-shrink: 0; }
+  .status-bar .time { font-size: 14px; font-weight: 600; color: var(--On-Surface); }
+  .status-icons { display: flex; align-items: center; gap: 6px; }
+  .status-icons svg { width: 18px; height: 18px; }
+  .header-nav { display: flex; align-items: center; justify-content: space-between; padding: 4px 0 10px; flex-shrink: 0; }
+  .back-btn { width: 36px; height: 36px; border-radius: 50%; background: transparent; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+  .back-btn:hover { background: rgba(0,0,0,0.05); }
+  .back-btn svg { width: 22px; height: 22px; stroke: var(--On-Surface); stroke-width: 1.8px; fill: none; }
+  .header-title { color: var(--On-Surface); font-size: 17px; font-weight: 500; letter-spacing: 0.3px; flex: 1; text-align: center; }
+
+  /* Current step */
+  .step-head { flex-shrink: 0; display: flex; align-items: center; gap: 12px; padding: 12px 14px; margin-bottom: 10px; background: #FFF; border-radius: 16px; box-shadow: 0 2px 10px rgba(28,28,33,0.05); }
+  .step-no { width: 40px; height: 40px; border-radius: 12px; background: var(--Primary); color: #FFF; font-size: 19px; font-weight: 800; display: flex; align-items: center; justify-content: center; flex-shrink: 0; box-shadow: 0 4px 12px rgba(254,53,61,0.3); }
+  .step-copy { flex: 1; min-width: 0; }
+  .step-copy b { display: block; font-size: 16px; font-weight: 700; color: var(--On-Surface); line-height: 1.25; }
+  .step-copy small { display: block; margin-top: 3px; font-size: 12.5px; line-height: 1.4; color: var(--On-Surface-Low); }
+  .step-head.swap { animation: swapIn 0.35s ease; }
+  @keyframes swapIn { from { transform: translateY(6px); } to { transform: none; } }
+
+
+  /* Wireframe phone */
+  .zone { flex: 1; min-height: 0; display: flex; align-items: center; justify-content: center; }
+  .wire { position: relative; width: 232px; height: 100%; max-height: 440px; background: #FFF; border: 2.5px solid var(--Wire); border-radius: 30px; overflow: hidden; padding-top: 18px; box-shadow: 0 10px 30px rgba(15,23,42,0.08); }
+  .notch { position: absolute; top: -2px; left: 50%; transform: translateX(-50%); width: 84px; height: 15px; background: #FFF; border: 1.7px solid var(--Wire); border-top: none; border-radius: 0 0 9px 9px; z-index: 4; }
+  /* Camera: zooms toward the control being tapped, then back out */
+  .cam { position: absolute; inset: 18px 0 0; transition: transform 0.9s cubic-bezier(.4,0,.2,1); }
+  .cam.focus { transform: scale(1.32); }
+  .screen { position: absolute; inset: 0; padding: 8px 12px 12px; display: flex; flex-direction: column; animation: screenIn 0.4s ease; }
+  @keyframes screenIn { from { transform: translateX(18px); } to { transform: none; } }
+  .sk { background: var(--Sk); border-radius: 6px; height: 6px; }
+  .sk.light { background: var(--SkLight); }
+  .w-head { height: 28px; display: flex; align-items: center; justify-content: center; position: relative; margin-bottom: 8px; }
+  .w-head .bk { position: absolute; left: 0; font-size: 20px; color: var(--Primary); line-height: 1; }
+  .w-head b { font-size: 12px; font-weight: 700; color: var(--On-Surface); }
+
+  /* Bank / app home */
+  .prof { display: flex; align-items: center; gap: 9px; height: 30px; }
+  .av { width: 28px; height: 28px; border-radius: 50%; background: var(--SkLight); border: 1.5px solid var(--Sk); flex-shrink: 0; }
+  .prof .lines { flex: 1; display: flex; flex-direction: column; gap: 5px; }
+  .bell { width: 16px; height: 16px; border: 1.5px solid var(--Sk); border-radius: 8px 8px 4px 4px; }
+  .bal { margin-top: 9px; padding: 8px 10px; border: 1px solid var(--Line); border-radius: 10px; background: #F8F8FA; display: flex; flex-direction: column; gap: 6px; position: relative; }
+  .bal span { font-size: 9.5px; font-weight: 600; color: var(--On-Surface-Low); }
+  .bal::after { content: '›'; position: absolute; right: 9px; top: 50%; transform: translateY(-50%); font-size: 18px; color: #A0A0AA; }
+  .grid { margin-top: 9px; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 6px; }
+  .svc { height: 54px; border: 1.2px solid var(--Line); border-radius: 9px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 3px; background: #FFF; }
+  .svc i { width: 22px; height: 22px; border-radius: 50%; border: 1.3px solid var(--Sk); display: flex; align-items: center; justify-content: center; }
+  .svc i svg { width: 12px; height: 12px; stroke: #B5B5BE; stroke-width: 2; fill: none; stroke-linecap: round; stroke-linejoin: round; }
+  .svc span { font-size: 8px; color: var(--On-Surface-Low); text-align: center; line-height: 1.15; }
+  .recent { margin-top: 10px; }
+  .recent > span { font-size: 9.5px; font-weight: 600; color: var(--On-Surface-Low); }
+  .tx { display: flex; align-items: center; gap: 8px; height: 26px; border-bottom: 1px solid #F1F1F4; }
+  .tx .c { width: 18px; height: 18px; border-radius: 50%; background: var(--SkLight); border: 1px solid var(--Sk); flex-shrink: 0; }
+  .tx .lines { flex: 1; display: flex; flex-direction: column; gap: 4px; }
+
+  /* Options list */
+  .opts { display: flex; flex-direction: column; gap: 7px; padding-top: 2px; }
+  .optr { min-height: 40px; border: 1px solid var(--Line); border-radius: 10px; display: flex; align-items: center; gap: 9px; padding: 0 10px; background: #FFF; }
+  .radio { width: 16px; height: 16px; border-radius: 50%; border: 1.5px solid #B5B5BE; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+  .optr span { flex: 1; font-size: 10.5px; color: #55555E; }
+  .optr span.flag, .optr span.radio, .optr span.hand, .optr span.halo { flex: none; }
+  .optr .cv { font-size: 16px; color: #B5B5BE; flex: 0; }
+  .flag { width: 18px; height: 18px; border-radius: 50%; overflow: hidden; flex-shrink: 0; box-shadow: 0 0 0 1px rgba(0,0,0,0.08); }
+  .flag svg { width: 100%; height: 100%; display: block; }
+
+  /* Form */
+  .mp-panel { height: 46px; border: 1px solid var(--Line); border-radius: 9px; background: #FAFAFB; display: flex; align-items: center; justify-content: center; margin-bottom: 10px; }
+  .mp-panel img { height: 16px; }
+  .flabel { font-size: 9.5px; font-weight: 600; color: var(--On-Surface-Low); margin: 0 0 4px; }
+  .inp { height: 34px; border: 1px solid var(--Line); border-radius: 8px; display: flex; align-items: center; justify-content: space-between; padding: 0 10px; font-size: 11px; color: #9A9AA6; margin-bottom: 9px; }
+  .inp.filled { color: var(--On-Surface); font-weight: 600; }
+  .chips { display: flex; gap: 5px; }
+  .chips span { flex: 1; height: 28px; border: 1px solid var(--Line); border-radius: 7px; display: flex; align-items: center; justify-content: center; font-size: 9px; color: var(--On-Surface-Low); }
+  .chips span.on { border-color: #F7C6CA; background: var(--Primary-Light); color: var(--Primary); font-weight: 700; }
+  .spacer { flex: 1; min-height: 8px; }
+  .wbtn { height: 38px; border-radius: 9px; background: var(--Primary); color: #FFF; font-size: 12px; font-weight: 700; display: flex; align-items: center; justify-content: center; }
+
+  /* Summary */
+  .sum { border: 1px solid var(--Line); border-radius: 10px; padding: 2px 10px; }
+  .sum-r { display: flex; align-items: center; justify-content: space-between; min-height: 40px; border-bottom: 1px solid #F1F1F4; }
+  .sum-r:last-child { border-bottom: none; }
+  .sum-r > span { font-size: 10px; color: var(--On-Surface-Low); }
+  .sum-r div { text-align: right; }
+  .sum-r b { display: block; font-size: 10.5px; font-weight: 700; color: var(--On-Surface); }
+  .sum-r small { display: block; margin-top: 2px; font-size: 9px; color: #A0A0AA; }
+
+  /* Highlighted target: pulse + tapping hand */
+  .target { position: relative; z-index: 3; animation: pulse 1.16s ease-in-out infinite; }
+  .screen::after { content: ''; position: absolute; inset: -20px; background: rgba(28,28,33,0); pointer-events: none; transition: background 0.6s; z-index: 2; }
+  .cam.focus .screen::after { background: rgba(28,28,33,0.28); }
+  .cam.focus .target { box-shadow: 0 0 0 4px rgba(255,255,255,0.9), 0 6px 18px rgba(254,53,61,0.35); }
+  .svc.target, .optr.target { border-color: var(--Primary); border-width: 1.7px; background: #FFFBFB; }
+  .svc.target i { background: var(--Primary-Light); border-color: var(--Primary); }
+  .svc.target i svg { stroke: var(--Primary); }
+  .svc.target span, .optr.target span { color: var(--Primary-Dark); font-weight: 700; }
+  .optr.target .radio { border-color: var(--Primary); }
+  .optr.target .radio::after { content: ''; width: 8px; height: 8px; border-radius: 50%; background: var(--Primary); }
+  .optr.target .cv { color: var(--Primary); }
+  .wbtn.target { box-shadow: 0 0 0 3px rgba(254,53,61,0.18); margin-bottom: 22px; }
+  /* Rows and buttons: fingertip lands in the middle of the control */
+  .optr .hand, .wbtn .hand { right: auto; left: 50%; margin-left: -14px; bottom: -26px; }
+  @keyframes pulse { 0%, 100% { transform: scale(1); } 36% { transform: scale(1.055); } 67% { transform: scale(1); } }
+  .hand { position: absolute; right: -8px; bottom: -24px; width: 36px; height: 44px; pointer-events: none; z-index: 8; animation: tap 1.16s ease-in-out infinite, handIn 0.2s ease; }
+  .hand svg { width: 100%; height: 100%; filter: drop-shadow(0 2px 2px rgba(0,0,0,0.12)); }
+  .halo { position: absolute; left: 2px; top: 0; width: 22px; height: 22px; border-radius: 50%; border: 1.6px solid rgba(254,53,61,0.55); background: rgba(254,53,61,0.08); animation: halo 1.16s ease-out infinite; }
+  @keyframes tap { 0%, 36% { transform: translateY(0); } 55% { transform: translateY(7px); } 74%, 100% { transform: translateY(0); } }
+  @keyframes halo { 0%, 45% { transform: scale(0.6); opacity: 0; } 55% { opacity: 1; } 100% { transform: scale(1.5); opacity: 0; } }
+  @keyframes handIn { from { transform: scale(0.8); } to { transform: none; } }
+
+  /* Note + footer */
+  .note { flex-shrink: 0; margin: 10px 0 18px; display: flex; align-items: center; gap: 10px; padding: 12px 14px; border-radius: 14px; background: linear-gradient(115deg, #FF3B40 0%, #EE2A30 50%, #C8161D 100%); box-shadow: 0 6px 16px rgba(238,42,48,0.25); }
+  .note i { width: 26px; height: 26px; border-radius: 50%; background: #FFF; color: var(--Primary); font-style: italic; font-weight: 800; font-size: 15px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; font-family: Georgia, serif; }
+  .note b { display: block; font-size: 12.5px; font-weight: 700; color: #FFF; }
+  .note p { margin-top: 1px; font-size: 11px; line-height: 1.4; color: rgba(255,255,255,0.92); }
+
+  @media (prefers-reduced-motion: reduce) { .target, .hand, .halo, .screen, .step-head.swap { animation: none !important; } .cam { transition: none; } }
+</style>
+<link rel="stylesheet" href="styles/device.css">
+</head>
+<body>
+<div class="phone-frame">
+  <div class="app-content" id="app">
+
+    <div class="status-bar">
+      <span class="time">10:00</span>
+      <div class="status-icons">
+        <svg viewBox="0 0 24 24" fill="none"><path d="M1 9l2 2c4.97-4.97 13.03-4.97 18 0l2-2C16.93 2.93 7.08 2.93 1 9z" fill="#1C1C21"/><path d="M5 13l2 2c2.76-2.76 7.24-2.76 10 0l2-2C15.14 9.14 8.87 9.14 5 13z" fill="#1C1C21"/><path d="M9 17l2 2c1.1-1.1 2.9-1.1 4 0l2-2c-2.21-2.21-5.79-2.21-8 0z" fill="#1C1C21"/></svg>
+        <svg viewBox="0 0 24 24" fill="none"><rect x="2" y="6" width="4" height="12" rx="1" fill="#1C1C21"/><rect x="8" y="4" width="4" height="14" rx="1" fill="#1C1C21"/><rect x="14" y="2" width="4" height="16" rx="1" fill="#1C1C21"/><rect x="20" y="0" width="4" height="18" rx="1" fill="#1C1C21" opacity="0.3"/></svg>
+        <svg viewBox="0 0 28 14" fill="none"><rect x="0" y="1" width="22" height="12" rx="2.5" stroke="#1C1C21" stroke-width="1.5"/><rect x="2" y="3" width="16" height="8" rx="1" fill="#1C1C21"/><rect x="24" y="4" width="2" height="6" rx="1" fill="#1C1C21"/></svg>
+      </div>
+    </div>
+
+    <div class="header-nav">
+      <button class="back-btn" onclick="location.href='Add Money.html'" aria-label="Back"><svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg></button>
+      <span class="header-title" id="title">Transfer from Bank</span>
+      <div style="width:36px;"></div>
+    </div>
+
+    <div class="step-head" id="stepHead">
+      <span class="step-no" id="stepNo">1</span>
+      <span class="step-copy"><b id="stepTitle"></b><small id="stepDesc"></small></span>
+    </div>
+
+    <div class="zone"><div class="wire" id="wire"><span class="notch"></span><div class="cam" id="cam"><div class="screen" id="screen"></div></div></div></div>
+
+    <div class="note"><i>i</i><span><b>Note</b><p id="noteTxt"></p></span></div>
+  </div>
+</div>
+
+<script>
+  const $ = id => document.getElementById(id);
+  const ICON = {
+    phone: '<svg viewBox="0 0 24 24"><rect x="7" y="2" width="10" height="20" rx="2"/><path d="M11 18h2"/></svg>',
+    swap: '<svg viewBox="0 0 24 24"><path d="M4 8h15M15 4l4 4-4 4"/><path d="M20 16H5M9 12l-4 4 4 4"/></svg>',
+    form: '<svg viewBox="0 0 24 24"><rect x="4" y="3" width="16" height="18" rx="2"/><path d="M8 8h8M8 12h8M8 16h5"/></svg>',
+    check: '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="m8 12.5 2.8 2.8L16 10"/></svg>',
+    globe: '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a14 14 0 0 1 0 18M12 3a14 14 0 0 0 0 18"/></svg>'
+  };
+  const SVC = {
+    transfer: '<path d="M4 8h15M15 4l4 4-4 4"/><path d="M20 16H5M9 12l-4 4 4 4"/>',
+    bills: '<path d="M6 3h12v18l-3-2-3 2-3-2-3 2z"/>',
+    topup: '<rect x="7" y="2" width="10" height="20" rx="2"/>',
+    card: '<rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20"/>',
+    save: '<circle cx="12" cy="12" r="8"/>',
+    more: '<circle cx="6" cy="12" r="1"/><circle cx="12" cy="12" r="1"/><circle cx="18" cy="12" r="1"/>',
+    send: '<path d="M22 2 11 13"/><path d="M22 2 15 22l-4-9-9-4z"/>',
+    track: '<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>',
+    people: '<circle cx="9" cy="8" r="4"/><path d="M2 21a7 7 0 0 1 14 0"/>',
+    rate: '<path d="m3 17 6-6 4 4 8-8"/>'
+  };
+  const ET_FLAG = '<svg viewBox="0 0 24 24"><rect width="24" height="8" fill="#078930"/><rect y="8" width="24" height="8" fill="#FCDD09"/><rect y="16" width="24" height="8" fill="#DA121A"/><circle cx="12" cy="12" r="5" fill="#0F47AF"/></svg>';
+  const HAND = '<span class="hand"><span class="halo"></span><svg viewBox="0 0 36 44"><path d="M13 4.5a3.2 3.2 0 0 1 6.4 0V19l1.2-.3a3 3 0 0 1 3.5 1.9l.2.5a3 3 0 0 1 4.6 1.6 3 3 0 0 1 3.8 2.6l.6 6.1c.4 4.2-1.6 8.3-5.3 10.4l-1 .6H17.2c-2 0-3.9-1-5-2.7L5.3 29.4a3.3 3.3 0 0 1 4.9-4.4l2.8 2.6z" fill="#FFF" stroke="#FE353D" stroke-width="2.2" stroke-linejoin="round"/></svg></span>';
+  const sk = (w, light) => `<span class="sk${light ? ' light' : ''}" style="width:${w}"></span>`;
+  const tgt = (active) => active ? ' target' : '';
+
+  // ── Screens ──
+  function home(items, activeKey) {
+    return `<div class="prof"><span class="av"></span><span class="lines">${sk('72%')}${sk('46%')}</span><span class="bell"></span></div>
+      <div class="bal"><span>${items.balance}</span>${sk('58%')}${sk('38%')}</div>
+      <div class="grid">${items.grid.map(([k, label]) => `<div class="svc${tgt(k === activeKey)}"><i><svg viewBox="0 0 24 24">${SVC[k]}</svg></i><span>${label}</span>${k === activeKey ? HAND : ''}</div>`).join('')}</div>
+      <div class="recent"><span>${items.recent}</span>${[0, 1, 2].map(() => `<div class="tx"><span class="c"></span><span class="lines">${sk('70%')}${sk('34%', 1)}</span></div>`).join('')}</div>`;
+  }
+  function options(head, list, activeIdx) {
+    return `<div class="w-head"><span class="bk">‹</span><b>${head}</b></div><div class="opts">${list.map((o, i) =>
+      `<div class="optr${tgt(i === activeIdx)}">${o.flag ? `<span class="flag">${o.flag}</span>` : '<span class="radio"></span>'}<span>${o.label}</span><span class="cv">›</span>${i === activeIdx ? HAND : ''}</div>`).join('')}</div>`;
+  }
+  function form(head, f) {
+    return `<div class="w-head"><span class="bk">‹</span><b>${head}</b></div>
+      <div class="mp-panel"><img src="assets/M-PESA-red-logo.svg" alt="M-PESA"></div>
+      <div class="flabel">${f.l1}</div><div class="inp">${f.p1}<svg viewBox="0 0 24 24" style="width:14px;height:14px;stroke:#A0A0AA;stroke-width:2;fill:none"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg></div>
+      <div class="flabel">${f.l2}</div><div class="inp filled">${f.v2}</div>
+      <div class="chips">${f.chips.map(c => `<span class="${c === f.v2 ? 'on' : ''}">${c}</span>`).join('')}</div>
+      <div class="spacer"></div><div class="wbtn target">${f.btn}${HAND}</div>`;
+  }
+  function confirm(head, rows, btn) {
+    return `<div class="w-head"><span class="bk">‹</span><b>${head}</b></div>
+      <div class="mp-panel"><img src="assets/M-PESA-red-logo.svg" alt="M-PESA"></div>
+      <div class="sum">${rows.map(([k, v, s]) => `<div class="sum-r"><span>${k}</span><div><b>${v}</b>${s ? `<small>${s}</small>` : ''}</div></div>`).join('')}</div>
+      <div class="spacer"></div><div class="wbtn target">${btn}${HAND}</div>`;
+  }
+
+  // ── Guides ──
+  const GUIDES = {
+    bank: {
+      title: 'Transfer from Bank',
+      note: 'Transfers may take a few minutes or longer, depending on your bank. Additional fees may apply.',
+      steps: [
+        { icon: 'phone', title: 'Log in to Your Bank App', desc: "Open your bank's app, USSD or online banking.",
+          screen: () => home({ balance: 'Current Balance', recent: 'Recent Transactions', grid: [['transfer', 'Transfer'], ['bills', 'Pay Bills'], ['topup', 'Mobile Top Up'], ['card', 'Card Services'], ['save', 'Savings'], ['more', 'More']] }, 'transfer') },
+        { icon: 'swap', title: 'Select M-PESA', desc: 'Find the transfer options and choose “To M-PESA”.',
+          screen: () => options('Transfer', [{ label: 'Within My Bank' }, { label: 'To Other Bank' }, { label: 'To M-PESA' }, { label: 'To Mobile Money' }, { label: 'International Transfer' }], 2) },
+        { icon: 'form', title: 'Enter Details', desc: 'Enter your M-PESA number and the amount to transfer.',
+          screen: () => form('M-PESA Transfer', { l1: 'M-PESA Number', p1: '07XX XXX XXX', l2: 'Amount (ETB)', v2: '1,000', chips: ['500', '1,000', '2,000', '5,000'], btn: 'Send' }) },
+        { icon: 'check', title: 'Confirm Transfer', desc: 'Check the details, then confirm. The money lands in your M-PESA balance.',
+          screen: () => confirm('Confirm Transfer', [['To', 'M-PESA', '07XX XXX XXX'], ['Amount', 'ETB 1,000'], ['From', 'Your bank', '•••• 4321']], 'Confirm') }
+      ]
+    },
+    abroad: {
+      title: 'Receive from Abroad',
+      note: 'The sender pays the transfer fee. Money usually arrives in minutes; the rate is set by the sending service.',
+      steps: [
+        { icon: 'phone', title: 'Sender Opens a Partner App', desc: 'Your sender opens a partner money-transfer app or agent abroad.',
+          screen: () => home({ balance: 'Send money worldwide', recent: 'Recent Recipients', grid: [['send', 'Send Money'], ['track', 'Track'], ['people', 'Recipients'], ['rate', 'Rates'], ['card', 'Cards'], ['more', 'More']] }, 'send') },
+        { icon: 'globe', title: 'Choose Ethiopia → M-PESA', desc: 'They pick Ethiopia, then M-PESA as the way to receive.',
+          screen: () => options('Send to Ethiopia', [{ label: 'Bank Account', flag: ET_FLAG }, { label: 'Cash Pickup', flag: ET_FLAG }, { label: 'M-PESA Wallet', flag: ET_FLAG }, { label: 'Other Mobile Wallet', flag: ET_FLAG }], 2) },
+        { icon: 'form', title: 'Enter Your Details', desc: 'They enter your M-PESA number, your name and the amount.',
+          screen: () => form('Send to M-PESA', { l1: 'Recipient M-PESA Number', p1: '+251 7XX XXX XXX', l2: 'Amount (USD)', v2: '100', chips: ['50', '100', '200', '500'], btn: 'Continue' }) },
+        { icon: 'check', title: 'Confirm & Receive', desc: 'They confirm and pay. You get an SMS and the money in your M-PESA balance.',
+          screen: () => confirm('Review Transfer', [['To', 'M-PESA Ethiopia', '+251 7XX XXX XXX'], ['They send', 'USD 100'], ['You receive', 'ETB 15,750', 'Sample rate']], 'Confirm & Pay') }
+      ]
+    }
+  };
+  const G = GUIDES[new URLSearchParams(location.search).get('type') === 'abroad' ? 'abroad' : 'bank'];
+  document.title = G.title;
+  $('title').textContent = G.title;
+  $('noteTxt').textContent = G.note;
+
+  const DUR = 4200;
+  let step = 0, timer = null, zIn = null, zOut = null;
+
+  // Zoom the camera toward the highlighted control, then back out before the next step
+  function focusOn() {
+    const cam = $('cam'), t = $('screen').querySelector('.target');
+    cam.classList.remove('focus');
+    if (!t) return;
+    const c = cam.getBoundingClientRect(), r = t.getBoundingClientRect();
+    cam.style.transformOrigin = `${((r.left + r.width / 2 - c.left) / c.width * 100).toFixed(1)}% ${((r.top + r.height / 2 - c.top) / c.height * 100).toFixed(1)}%`;
+    zIn = setTimeout(() => cam.classList.add('focus'), 650);
+    zOut = setTimeout(() => cam.classList.remove('focus'), DUR - 900);
+  }
+  function show(i) {
+    step = i;
+    const s = G.steps[i];
+    $('stepNo').textContent = i + 1;
+    $('stepTitle').textContent = s.title;
+    $('stepDesc').textContent = s.desc;
+    const head = $('stepHead'); head.classList.remove('swap'); void head.offsetWidth; head.classList.add('swap');
+    const scr = $('screen'); scr.style.animation = 'none'; void scr.offsetWidth; scr.style.animation = '';
+    scr.innerHTML = s.screen();
+    [timer, zIn, zOut].forEach(clearTimeout);
+    focusOn();
+    // Loops: after the last step it starts again from step 1
+    timer = setTimeout(() => show((step + 1) % G.steps.length), DUR);
+  }
+  show(0);
+</script>
+<!-- Export to Figma button (shared exporter) -->
+<script src="figma-export.js"></script>
+<script src="test-scenarios-data.js"></script>
+<script src="test-scenarios.js"></script>
+</body>
+</html>

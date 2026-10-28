@@ -7,39 +7,50 @@
 .actions {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
-  padding: 10px 8px;
+  padding: 22px 14px 20px;
   align-items: start;
-  gap: 8px;
+  row-gap: 24px;
+  column-gap: 8px;
   align-self: stretch;
-  border-radius: 20px;
-  background: var(--Surface-Container, #FCFCFC);
+  border-radius: 24px;
+  background: #FFFFFF;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.04);
   justify-content: center;
-  margin-bottom: 8px;
+  margin-bottom: 12px;
 }
 
 .primary-action {
   display: flex;
   width: auto;
   min-width: 0;
-  height: 110px;
+  height: auto;
   flex-direction: column;
-  justify-content: center;
+  justify-content: flex-start;
   align-items: center;
-  gap: 4px;
-  border-radius: 20px;
-  background: var(--Surface-Container, #FCFCFC);
+  gap: 8px;
+  padding: 0 2px;
+  border-radius: 16px;
+  background: transparent;
   cursor: pointer;
-  transition: transform 0.2s;
+  transition: transform 0.18s ease;
 }
-.primary-action:hover { transform: scale(1.03); }
+.primary-action:hover { transform: scale(1.04); }
+.primary-action:active { transform: scale(0.97); }
 
 .primary-action .icon-container {
   display: flex;
-  width: 52px;
-  height: 52px;
+  width: 44px;
+  height: 44px;
   justify-content: center;
   align-items: center;
   flex-shrink: 0;
+}
+
+.primary-action .icon-container img {
+  width: 40px !important;
+  height: 40px !important;
+  object-fit: contain;
+  display: block;
 }
 
 /* Lucide icon color override - ensures red */
@@ -47,12 +58,12 @@
   color: var(--Primary, #FE353D);
 }
 .primary-action .icon-container i {
-  width: 52px !important;
-  height: 52px !important;
+  width: 40px !important;
+  height: 40px !important;
 }
 .primary-action .icon-container svg {
-  width: 52px !important;
-  height: 52px !important;
+  width: 40px !important;
+  height: 40px !important;
   stroke: var(--Primary, #FE353D);
   color: var(--Primary, #FE353D);
 }
@@ -61,9 +72,9 @@
   align-self: stretch;
   color: var(--On-Surface, #1C1C21);
   text-align: center;
-  font-family: var(--Font-Family, 'Switzer', sans-serif);
-  font-size: 14px;
+  font-family: var(--Font-Family, 'Switzer', -apple-system, BlinkMacSystemFont, 'Inter', sans-serif);
+  font-size: 13.5px;
   font-style: normal;
-  font-weight: var(--Font-Weight-Regular, 400);
-  line-height: 125%;
+  font-weight: 500;
+  line-height: 1.25;
 }

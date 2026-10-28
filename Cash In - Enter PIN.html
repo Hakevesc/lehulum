@@ -155,7 +155,7 @@
         </button>
       </div>
 
-      <button class="pay-btn" id="payBtn" disabled onclick="submitPin()">Generate Voucher</button>
+      <button class="pay-btn" id="payBtn" disabled onclick="submitPin()">Cash In</button>
 
     </div>
   </div>
@@ -207,24 +207,17 @@
     else window.location.href = 'Cash In - Agent Short Code Locate.html?tab=nearby';
   }
 
-  function genVoucher() {
-    let s = '';
-    for (let i = 0; i < 9; i++) s += Math.floor(Math.random() * 10);
-    return s;
-  }
-
   function submitPin() {
     if (pinFeedback.busy) return;
     // Any 4 digits are accepted here: green stroke, then continue
     pinFeedback(true, () => {
-      // NOTE: Cash-In is free (fee = 0) and credits after agent validation, so there is
-      // no wallet-balance check here. The voucher only PRE-AUTHORIZES the deposit.
-      data.voucherCode = genVoucher();
-      data.expiry = new Date(Date.now() + 24 * 3600 * 1000).toISOString();
+      // Cash-In is free (fee = 0) and needs no wallet-balance check. No voucher:
+      // the deposit completes here and the regular receipt follows.
+      delete data.voucherCode; delete data.expiry;
       data.ref = 'U' + 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'[Math.floor(Math.random()*26)] + Array.from({length:8},()=>'ABCDEFGHJKLMNPQRSTUVWXYZ23456789'[Math.floor(Math.random()*31)]).join('');
-      data.status = 'AWAITING_AGENT';
+      data.status = 'SUCCESSFUL';
       sessionStorage.setItem('cashInData', JSON.stringify(data));
-      window.location.href = 'Cash In - Voucher.html';
+      window.location.href = 'Cash In - Receipt.html';   // regular confirmation receipt
     });
   }
 </script>

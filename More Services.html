@@ -36,27 +36,27 @@
   .back-btn svg { width: 22px; height: 22px; stroke: var(--On-Surface); stroke-width: 1.8px; fill: none; }
   .header-title { color: var(--On-Surface); font-family: 'Switzer', sans-serif; font-size: 17px; font-weight: 500; letter-spacing: 0.3px; flex: 1; text-align: center; }
 
-  .scroll { flex: 1; overflow-y: auto; padding: 0 16px 24px; display: flex; flex-direction: column; gap: 16px; }
+  .scroll { flex: 1; overflow-y: auto; padding: 8px 16px 24px; display: flex; flex-direction: column; gap: 16px; }
   .scroll::-webkit-scrollbar { width: 0; }
   /* Keep sections at their own height when the list is taller than the screen */
   .scroll > * { flex-shrink: 0; }
 
   /* ── Search ── */
-  .search-row { display: flex; align-items: center; gap: 10px; background: #FFF; border: none; border-radius: 14px; padding: 0 14px; height: 46px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); }
-  .search-row svg { width: 19px; height: 19px; stroke: var(--On-Surface-Low); stroke-width: 2; fill: none; flex-shrink: 0; }
-  .search-input { flex: 1; min-width: 0; border: none; background: transparent; font-family: 'Switzer', sans-serif; font-size: 13px; color: var(--On-Surface); outline: none; }
+  .search-row { display: flex; align-items: center; gap: 12px; background: #FFF; border: 1px solid #C9CAD0; border-radius: 13px; padding: 0 16px; height: 50px; box-shadow: none; flex-shrink: 0; }
+  .search-row svg { width: 22px; height: 22px; stroke: #24252a; stroke-width: 1.8; fill: none; flex-shrink: 0; }
+  .search-input { flex: 1; min-width: 0; border: none; background: transparent; font-family: 'Switzer', sans-serif; font-size: 14px; color: var(--On-Surface); outline: none; }
   .search-input::placeholder { color: var(--On-Surface-Low); }
 
   /* ── Services grid ── */
-  .services-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
-  .service-tile { background: #FFF; border: 1px solid var(--Border); border-radius: 14px; padding: 11px 4px; display: flex; flex-direction: column; align-items: center; justify-content: flex-start; gap: 7px; cursor: pointer; transition: transform 0.15s, box-shadow 0.15s; box-shadow: 0 2px 8px rgba(0,0,0,0.04); min-height: 84px; }
+  .services-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; padding: 10px; border-radius: 28px; background: #FFF; }
+  .service-tile { background: #FDFDFD; border: 1px solid #ECEEF1; border-radius: 24px; padding: 12px 5px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; cursor: pointer; transition: transform 0.15s, box-shadow 0.15s; box-shadow: none; min-height: 100px; }
   .service-tile:hover { transform: translateY(-2px); box-shadow: 0 6px 16px rgba(0,0,0,0.08); }
-  .tile-icon { width: 40px; height: 40px; border-radius: 12px; display: flex; align-items: center; justify-content: center; background: var(--Primary); flex-shrink: 0; }
-  .tile-icon.logo { background: #FFF; border: 1px solid var(--Border); padding: 0; overflow: hidden; }
+  .tile-icon { width: 38px; height: 38px; border-radius: 12px; display: flex; align-items: center; justify-content: center; background: #E63245; flex-shrink: 0; }
+  .tile-icon.logo { background: transparent; border: 0; padding: 0; overflow: hidden; }
   .tile-icon.logo img { width: 100%; height: 100%; object-fit: cover; }
   .msi { font-family: 'Material Symbols Rounded'; font-weight: normal; font-style: normal; line-height: 1; letter-spacing: normal; text-transform: none; white-space: nowrap; direction: ltr; -webkit-font-smoothing: antialiased; font-variation-settings: 'FILL' 1, 'wght' 500, 'GRAD' 0, 'opsz' 24; }
   .tile-icon .msi { font-size: 23px; color: #FFF; }
-  .tile-label { font-family: 'Switzer', sans-serif; font-size: 10.5px; font-weight: 600; color: var(--On-Surface); text-align: center; line-height: 1.3; }
+  .tile-label { font-family: 'Switzer', sans-serif; font-size: 14px; font-weight: 400; color: var(--On-Surface); text-align: center; line-height: 1.3; }
 
   .empty-state { display: none; text-align: center; font-family: 'Switzer', sans-serif; font-size: 13px; color: var(--On-Surface-Low); padding: 24px 0; }
 
@@ -72,6 +72,14 @@
   .promo-cta:active { transform: translateY(0); }
 </style>
 <link rel="stylesheet" href="styles/device.css">
+<style>
+  /* Keep the reference status bar visible on phone-sized previews. */
+  @media (max-width: 480px) {
+    .status-bar { height: 44px !important; min-height: 44px !important; padding: 14px 24px 8px !important; }
+    .status-bar > .time { display: block !important; }
+    .status-bar > .status-icons { display: flex !important; }
+  }
+</style>
 </head>
 <body>
 <div class="phone-frame">
@@ -101,7 +109,56 @@
         <input class="search-input" type="text" placeholder="Search services, categories or brands..." oninput="filterServices(this.value)">
       </div>
 
-      <!-- Promo banner: right under the search bar -->
+      <div class="services-grid" id="servicesGrid">
+
+        <div class="service-tile" data-name="withdraw cash out agent atm" onclick="window.location.href='Withdraw Cash - Option 2.html'">
+          <div class="tile-icon"><span class="msi">payments</span></div>
+          <span class="tile-label">Withdraw</span>
+        </div>
+
+        <div class="service-tile" data-name="buy ticket event bus" onclick="window.location.href='Buy Ticket.html'">
+          <div class="tile-icon"><span class="msi">confirmation_number</span></div>
+          <span class="tile-label">Event &amp; Tickets</span>
+        </div>
+
+        <div class="service-tile" data-name="ride taxi transport" onclick="window.location.href='Coming Soon.html?f=Ride%20Payment&back=More%20Services.html'">
+          <div class="tile-icon logo"><img src="assets/bill pay logos/ride logo.png" alt="Ride"></div>
+          <span class="tile-label">Ride</span>
+        </div>
+
+        <div class="service-tile" data-name="beu food delivery" onclick="window.location.href='BeU Consent.html'">
+          <div class="tile-icon logo"><img src="assets/bill pay logos/beu-logo.png" alt="Beu"></div>
+          <span class="tile-label">BeU</span>
+        </div>
+
+        <div class="service-tile" data-name="qetero booking appointment" onclick="window.location.href='Coming Soon.html?f=Qetero&back=More%20Services.html'">
+          <div class="tile-icon logo"><img src="assets/bill pay logos/qetro-logo.png" alt="Qetero"></div>
+          <span class="tile-label">Qetero</span>
+        </div>
+
+        <div class="service-tile" data-name="z-mall zmall shopping" onclick="window.location.href='Coming Soon.html?f=Z-Mall&back=More%20Services.html'">
+          <div class="tile-icon logo"><img src="assets/bill pay logos/z-mall-logo.png" alt="Z-mall"></div>
+          <span class="tile-label">Z-mall</span>
+        </div>
+
+        <div class="service-tile" data-name="tomoca coffee" onclick="window.location.href='Coming Soon.html?f=Tomoca&back=More%20Services.html'">
+          <div class="tile-icon logo"><img src="assets/bill pay logos/tomoca-logo.png" alt="Tomoca"></div>
+          <span class="tile-label">Tomoca</span>
+        </div>
+
+        <div class="service-tile" data-name="yene guzo travel trip" onclick="window.location.href='Coming Soon.html?f=Yene%20Guzo&back=More%20Services.html'">
+          <div class="tile-icon logo"><img src="assets/bill pay logos/yene-guzo.jpg" alt="Yene Guzo"></div>
+          <span class="tile-label">Yene Guzo</span>
+        </div>
+
+        <div class="service-tile" data-name="parking" onclick="window.location.href='Coming Soon.html?f=Parking&back=More%20Services.html'">
+          <div class="tile-icon logo"><img src="assets/bill pay logos/parking-logo.png" alt="Parking"></div>
+          <span class="tile-label">Parking</span>
+        </div>
+
+      </div>
+
+      <!-- Keep the AI credits promotion below the service tiles. -->
       <div class="promo-banner" onclick="window.location.href='Pay Merchant.html'">
         <div style="position: relative; z-index: 2;">
           <h3>Buy AI Credits<br>with M-PESA</h3>
@@ -111,60 +168,6 @@
           Buy Credits
           <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
         </button>
-      </div>
-
-      <div class="services-grid" id="servicesGrid">
-
-        <div class="service-tile" data-name="withdraw cash out agent atm" onclick="window.location.href='Withdraw Cash - Amount First.html'">
-          <div class="tile-icon"><span class="msi">payments</span></div>
-          <span class="tile-label">Withdraw</span>
-        </div>
-
-        <div class="service-tile" data-name="buy ticket event bus" onclick="window.location.href='Buy Ticket.html'">
-          <div class="tile-icon"><span class="msi">confirmation_number</span></div>
-          <span class="tile-label">Buy Ticket</span>
-        </div>
-
-        <div class="service-tile" data-name="ride taxi transport" onclick="window.location.href='Pay Merchant.html'">
-          <div class="tile-icon logo"><img src="assets/bill pay logos/ride logo.png" alt="Ride"></div>
-          <span class="tile-label">Ride</span>
-        </div>
-
-        <div class="service-tile" data-name="beu food delivery" onclick="window.location.href='Pay Merchant.html'">
-          <div class="tile-icon logo"><img src="assets/bill pay logos/beu-logo.png" alt="Beu"></div>
-          <span class="tile-label">Beu</span>
-        </div>
-
-        <div class="service-tile" data-name="qetero booking appointment" onclick="window.location.href='Pay Merchant.html'">
-          <div class="tile-icon logo"><img src="assets/bill pay logos/qetro-logo.png" alt="Qetero"></div>
-          <span class="tile-label">Qetero</span>
-        </div>
-
-        <div class="service-tile" data-name="z-mall zmall shopping" onclick="window.location.href='Pay Merchant.html'">
-          <div class="tile-icon logo"><img src="assets/bill pay logos/z-mall-logo.png" alt="Z-mall"></div>
-          <span class="tile-label">Z-mall</span>
-        </div>
-
-        <div class="service-tile" data-name="tomoca coffee" onclick="window.location.href='Pay Merchant.html'">
-          <div class="tile-icon logo"><img src="assets/bill pay logos/tomoca-logo.png" alt="Tomoca"></div>
-          <span class="tile-label">Tomoca</span>
-        </div>
-
-        <div class="service-tile" data-name="yene guzo travel trip" onclick="window.location.href='Pay Merchant.html'">
-          <div class="tile-icon logo"><img src="assets/bill pay logos/yene-guzo.jpg" alt="Yene Guzo"></div>
-          <span class="tile-label">Yene Guzo</span>
-        </div>
-
-        <div class="service-tile" data-name="parking" onclick="window.location.href='Pay Merchant.html'">
-          <div class="tile-icon logo"><img src="assets/bill pay logos/parking-logo.png" alt="Parking"></div>
-          <span class="tile-label">Parking</span>
-        </div>
-
-        <div class="service-tile" data-name="et airlines flight" onclick="window.location.href='Bill Payment_Airlines.html'">
-          <div class="tile-icon logo"><img src="assets/bill pay logos/ethiopia_airlines_logo.png" alt="ET Airlines"></div>
-          <span class="tile-label">ET Airlines</span>
-        </div>
-
       </div>
 
       <div class="empty-state" id="emptyState">No services match your search.</div>

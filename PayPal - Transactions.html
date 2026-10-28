@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PayPal · Transactions</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@400;500;600&display=swap');
+  @import url('https://api.fontshare.com/v2/css?f[]=switzer@400,500,600,700&display=swap');
+
+  /* PayPal transactions (Super App flow): withdrawals grouped by day; tap one
+     for its details (ID, status, ETB and USD, rate, fee, reference). */
+  :root {
+    --Primary: #FE353D;
+    --Primary-Light: #FFF1F2;
+    --On-Surface: #1C1C21;
+    --On-Surface-Low: #7C7C87;
+    --Background: #F5F5F5;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'Inter', sans-serif; background: transparent; display: flex; justify-content: center; align-items: center; min-height: 100vh; padding: 20px; }
+  button, input { font-family: inherit; }
+  .phone-frame { width: 360px; height: 780px; background: var(--Background); border-radius: 30px; overflow: hidden; position: relative; box-shadow: 0 20px 60px rgba(0,0,0,0.15); display: flex; flex-direction: column; }
+  .app-content { height: 100%; display: flex; flex-direction: column; }
+
+  .status-bar { display: flex; justify-content: space-between; align-items: center; padding: 14px 24px 8px; background: var(--Background); flex-shrink: 0; }
+  .status-bar .time { font-size: 14px; font-weight: 600; color: var(--On-Surface); }
+  .status-icons { display: flex; align-items: center; gap: 6px; }
+  .status-icons svg { width: 18px; height: 18px; }
+  .header-nav { display: flex; align-items: center; justify-content: space-between; padding: 8px 16px 12px; background: var(--Background); flex-shrink: 0; }
+  .back-btn { width: 36px; height: 36px; border-radius: 50%; background: transparent; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+  .back-btn:hover { background: rgba(0,0,0,0.05); }
+  .back-btn svg { width: 22px; height: 22px; stroke: var(--On-Surface); stroke-width: 1.8px; fill: none; }
+  .header-title { color: var(--On-Surface); font-family: 'Switzer', sans-serif; font-size: 17px; font-weight: 500; letter-spacing: 0.3px; flex: 1; text-align: center; }
+
+  .search { flex-shrink: 0; margin: 0 16px 10px; height: 46px; display: flex; align-items: center; gap: 10px; padding: 0 14px; background: #FFF; border-radius: 14px; box-shadow: 0 2px 8px rgba(15,23,42,0.04); }
+  .search svg { width: 18px; height: 18px; stroke: var(--On-Surface-Low); stroke-width: 2; fill: none; }
+  .search input { flex: 1; min-width: 0; border: none; outline: none; background: transparent; font-family: 'Switzer', sans-serif; font-size: 14px; color: var(--On-Surface); }
+  .scroll { flex: 1; min-height: 0; overflow-y: auto; padding: 0 16px 20px; scrollbar-width: none; }
+  .scroll::-webkit-scrollbar { width: 0; }
+  .day { margin: 14px 4px 8px; font-family: 'Switzer', sans-serif; font-size: 12px; font-weight: 600; letter-spacing: 0.6px; color: #8A8A94; text-transform: uppercase; }
+  .day:first-child { margin-top: 4px; }
+  .tx-list { background: #FFF; border-radius: 18px; padding: 2px 14px; box-shadow: 0 4px 14px rgba(15,23,42,0.05); }
+  .tx { width: 100%; display: flex; align-items: center; gap: 12px; padding: 12px 0; border: none; background: none; text-align: left; cursor: pointer; }
+  .tx + .tx { border-top: 1px solid #ECECEF; }
+  .tx-ic { width: 40px; height: 40px; border-radius: 12px; background: #E8F9EE; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+  .tx-ic svg { width: 19px; height: 19px; stroke: #16A34A; stroke-width: 2; fill: none; }
+  .tx-info { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px; }
+  .tx-info b { font-family: 'Switzer', sans-serif; font-size: 14px; font-weight: 600; color: var(--On-Surface); }
+  .tx-info small { font-family: 'Switzer', sans-serif; font-size: 12px; color: var(--On-Surface-Low); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .tx-amt { text-align: right; font-family: 'Switzer', sans-serif; font-variant-numeric: tabular-nums; }
+  .tx-amt b { display: block; font-size: 14px; font-weight: 700; color: #16A34A; }
+  .tx-amt small { font-size: 11.5px; color: var(--On-Surface-Low); }
+  .empty { padding: 40px 0; text-align: center; font-family: 'Switzer', sans-serif; font-size: 13px; color: var(--On-Surface-Low); }
+
+  /* Detail sheet */
+  .scrim { position: absolute; inset: 0; z-index: 100; background: rgba(0,0,0,0.42); opacity: 0; visibility: hidden; transition: opacity 0.22s, visibility 0.22s; }
+  .scrim.show { opacity: 1; visibility: visible; }
+  .sheet { position: absolute; left: 0; right: 0; bottom: 0; z-index: 101; background: #FFF; border-radius: 28px 28px 0 0; padding: 10px 16px 22px; transform: translateY(100%); transition: transform 0.28s cubic-bezier(.2,.8,.2,1); }
+  .sheet.show { transform: translateY(0); }
+  .sheet-grip { width: 40px; height: 4px; border-radius: 2px; background: #D8D8DE; margin: 0 auto 16px; }
+  .d-head { display: flex; flex-direction: column; align-items: center; text-align: center; }
+  .d-head .tx-ic { width: 52px; height: 52px; border-radius: 16px; }
+  .d-head .tx-ic svg { width: 24px; height: 24px; }
+  .d-head h3 { margin-top: 10px; font-family: 'Switzer', sans-serif; font-size: 13px; font-weight: 600; letter-spacing: 0.6px; color: #8A8A94; text-transform: uppercase; }
+  .d-head b { margin-top: 4px; font-family: 'Switzer', sans-serif; font-size: 28px; font-weight: 700; color: #16A34A; font-variant-numeric: tabular-nums; }
+  .d-head small { font-family: 'Switzer', sans-serif; font-size: 12.5px; color: var(--On-Surface-Low); }
+  .d-rows { margin: 14px 0 16px; border-top: 1px solid #EFEFF2; }
+  .d-row { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 11px 0; border-bottom: 1px solid #EFEFF2; font-family: 'Switzer', sans-serif; }
+  .d-row span { font-size: 12.5px; color: #55555E; }
+  .d-row b { font-size: 12.5px; font-weight: 700; color: var(--On-Surface); font-variant-numeric: tabular-nums; text-align: right; }
+  .status { display: inline-flex; align-items: center; gap: 5px; padding: 3px 9px; border-radius: 999px; background: #E8F9EE; color: #167C2A; font-size: 11.5px !important; }
+  .status::before { content: ''; width: 6px; height: 6px; border-radius: 50%; background: currentColor; }
+  .btn-primary { width: 100%; height: 52px; border: none; border-radius: 14px; background: var(--Primary); color: #FFF; font-family: 'Poppins', sans-serif; font-size: 15px; font-weight: 500; cursor: pointer; box-shadow: 0 4px 16px rgba(254,53,61,0.25); }
+</style>
+<link rel="stylesheet" href="styles/device.css">
+</head>
+<body>
+<div class="phone-frame">
+  <div class="app-content">
+
+    <div class="status-bar">
+      <span class="time">10:00</span>
+      <div class="status-icons">
+        <svg viewBox="0 0 24 24" fill="none"><path d="M1 9l2 2c4.97-4.97 13.03-4.97 18 0l2-2C16.93 2.93 7.08 2.93 1 9z" fill="#1C1C21"/><path d="M5 13l2 2c2.76-2.76 7.24-2.76 10 0l2-2C15.14 9.14 8.87 9.14 5 13z" fill="#1C1C21"/><path d="M9 17l2 2c1.1-1.1 2.9-1.1 4 0l2-2c-2.21-2.21-5.79-2.21-8 0z" fill="#1C1C21"/></svg>
+        <svg viewBox="0 0 24 24" fill="none"><rect x="2" y="6" width="4" height="12" rx="1" fill="#1C1C21"/><rect x="8" y="4" width="4" height="14" rx="1" fill="#1C1C21"/><rect x="14" y="2" width="4" height="16" rx="1" fill="#1C1C21"/><rect x="20" y="0" width="4" height="18" rx="1" fill="#1C1C21" opacity="0.3"/></svg>
+        <svg viewBox="0 0 28 14" fill="none"><rect x="0" y="1" width="22" height="12" rx="2.5" stroke="#1C1C21" stroke-width="1.5"/><rect x="2" y="3" width="16" height="8" rx="1" fill="#1C1C21"/><rect x="24" y="4" width="2" height="6" rx="1" fill="#1C1C21"/></svg>
+      </div>
+    </div>
+
+    <div class="header-nav">
+      <button class="back-btn" onclick="location.href='PayPal.html'" aria-label="Back">
+        <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+      </button>
+      <span class="header-title">Transactions</span>
+      <div style="width:36px;"></div>
+    </div>
+
+    <label class="search"><svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg><input id="q" type="text" placeholder="Search by reference or amount" autocomplete="off"></label>
+    <div class="scroll" id="list"></div>
+  </div>
+
+  <div class="scrim" id="scrim" onclick="closeDetail()"></div>
+  <div class="sheet" id="sheet" role="dialog" aria-label="Transaction details">
+    <div class="sheet-grip"></div>
+    <div class="d-head">
+      <span class="tx-ic"><svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12l7 7 7-7"/></svg></span>
+      <h3>Money Withdrawal</h3>
+      <b id="dEtb"></b>
+      <small id="dWhen"></small>
+    </div>
+    <div class="d-rows">
+      <div class="d-row"><span>Transaction ID</span><b id="dRef"></b></div>
+      <div class="d-row"><span>Status</span><b class="status">Completed</b></div>
+      <div class="d-row"><span>From</span><b id="dFrom">PayPal · as•••••@gmail.com</b></div>
+      <div class="d-row"><span>To</span><b>M-PESA · 0712 *** *78</b></div>
+      <div class="d-row"><span>USD amount</span><b id="dUsd"></b></div>
+      <div class="d-row"><span>Exchange rate</span><b id="dRate"></b></div>
+      <div class="d-row"><span>PayPal fee (3%)</span><b id="dFee"></b></div>
+      <div class="d-row"><span>Reference</span><b id="dPp"></b></div>
+    </div>
+    <button class="btn-primary" onclick="closeDetail()">Done</button>
+  </div>
+</div>
+
+<script>
+  const $ = id => document.getElementById(id);
+  const RATE = 157.50, PP_FEE = 0.03;
+  const money = n => Number(n).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+  const DEFAULT_TX = [
+    { ref: 'UDT4BYB7SI', usd: 5.00, etb: 763.88, when: 'Today, 01:23 PM' },
+    { ref: 'XH8L2P9F1K', usd: 3.27, etb: 500.00, when: 'Yesterday, 10:30 AM' },
+    { ref: 'ZT9B4K2W7Q', usd: 2.10, etb: 320.50, when: '14 Jul 2026, 08:45 AM' },
+    { ref: 'PL5H8F0V9N', usd: 7.53, etb: 1150.25, when: '14 Jul 2026, 06:20 PM' },
+    { ref: 'WD8E1T6Y2M', usd: 5.83, etb: 890.00, when: '13 Jul 2026, 11:30 AM' },
+    { ref: 'NC5A2D8L0P', usd: 1.37, etb: 210.00, when: '12 Jul 2026, 03:00 PM' }
+  ];
+  let TX = DEFAULT_TX;
+  // New withdrawals (saved by the receipt) come first, then the history
+  try { TX = (JSON.parse(sessionStorage.getItem('paypalTx') || '[]')).concat(DEFAULT_TX); } catch (e) {}
+
+  const ICON = '<span class="tx-ic"><svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12l7 7 7-7"/></svg></span>';
+  const dayOf = w => w.split(',')[0];
+  function render() {
+    const q = $('q').value.trim().toLowerCase();
+    const rows = TX.filter(t => !q || t.ref.toLowerCase().includes(q) || money(t.etb).includes(q) || money(t.usd).includes(q));
+    if (!rows.length) { $('list').innerHTML = '<div class="empty">No transactions found</div>'; return; }
+    const groups = [];
+    rows.forEach(t => { const d = dayOf(t.when); let g = groups.find(x => x.d === d); if (!g) groups.push(g = { d, items: [] }); g.items.push(t); });
+    $('list').innerHTML = groups.map(g => `<p class="day">${g.d}</p><div class="tx-list">${g.items.map(t => `
+      <button class="tx" type="button" onclick="openDetail('${t.ref}')">${ICON}
+        <span class="tx-info"><b>Money Withdrawal</b><small>From PayPal • Ref: ${t.ref}</small></span>
+        <span class="tx-amt"><b>+${money(t.etb)} ETB</b><small>${(t.when.split(', ')[1] || '')}</small></span>
+      </button>`).join('')}</div>`).join('');
+  }
+  $('q').addEventListener('input', render);
+
+  function openDetail(ref) {
+    const t = TX.find(x => x.ref === ref); if (!t) return;
+    $('dEtb').textContent = '+' + money(t.etb) + ' ETB';
+    $('dWhen').textContent = t.when;
+    $('dRef').textContent = t.ref;
+    $('dUsd').textContent = money(t.usd) + ' USD';
+    $('dRate').textContent = '1 USD = ' + money(t.rate || RATE) + ' ETB';
+    $('dFee').textContent = money(t.feeUsd != null ? t.feeUsd : t.usd * PP_FEE) + ' USD';
+    $('dPp').textContent = 'PYPL-' + t.ref.slice(0, 5);
+    $('scrim').classList.add('show'); $('sheet').classList.add('show');
+  }
+  try { const e = sessionStorage.getItem('paypalEmail'); if (e) $('dFrom').textContent = 'PayPal · ' + e; } catch (x) {}
+  function closeDetail() { $('scrim').classList.remove('show'); $('sheet').classList.remove('show'); }
+  document.addEventListener('keydown', e => { if (e.key === 'Escape') closeDetail(); });
+
+  render();
+  const open = new URLSearchParams(location.search).get('ref');
+  if (open) openDetail(open);
+</script>
+<script src="components/keyboard.js"></script>
+<!-- Export to Figma button (shared exporter) -->
+<script src="figma-export.js"></script>
+<script src="test-scenarios-data.js"></script>
+<script src="test-scenarios.js"></script>
+</body>
+</html>

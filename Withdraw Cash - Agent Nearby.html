@@ -812,7 +812,7 @@
 
     <!-- Header Navigation -->
     <div class="header-nav">
-      <button class="back-btn" onclick="window.location.href='Withdraw Cash.html'" title="Back">
+      <button class="back-btn" onclick="window.location.href=wdFrom()" title="Back">
         <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round">
           <path d="M19 12H5M12 19l-7-7 7-7"/>
         </svg>
@@ -1264,8 +1264,12 @@
   // Continue (details box) carries the tapped merchant into the amount step.
   function continueWithAgent() {
     if (!selectedAgent) return;
-    sessionStorage.setItem('withdrawData', JSON.stringify({ method: 'agent', methodLabel: 'Merchant Short Code', entry: 'code', agentCode: selectedAgent.code }));
+    sessionStorage.setItem('withdrawData', JSON.stringify({ method: 'agent', methodLabel: 'Merchant Short Code', entry: 'code', agentCode: selectedAgent.code, from: wdFrom() }));
     window.location.href = 'Withdraw Cash - Agent Locator.html';
+  }
+  // The screen this map was opened from (Back returns there, and so does the next screen's Back)
+  function wdFrom() {
+    try { return JSON.parse(sessionStorage.getItem('withdrawData') || '{}').from || 'Withdraw Cash.html'; } catch (e) { return 'Withdraw Cash.html'; }
   }
 
   // Location is asked for the first time the user re-centers the map.
@@ -1297,6 +1301,9 @@
     $('mapContainer').style.setProperty('--card-safe', Math.max(0, map.bottom - top + 6) + 'px');
   }).observe($('agentPanel'));
 </script>
+
+<!-- Export to Figma button (shared exporter) -->
+<script src="figma-export.js"></script>
 <script src="test-scenarios-data.js"></script>
 <script src="test-scenarios.js"></script>
 </body>

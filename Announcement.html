@@ -273,6 +273,24 @@
     filter: drop-shadow(0 6px 14px rgba(0,0,0,0.25));
   }
 
+  /* Full-bleed banner-ad creative (partner campaigns set `coverImage`) —
+     the creative fills the card and a left-side scrim keeps copy legible. */
+  .banner .banner-cover {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    pointer-events: none;
+  }
+  .banner.cover::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(90deg, rgba(12,12,16,0.60) 0%, rgba(12,12,16,0.28) 52%, rgba(12,12,16,0.04) 100%);
+    pointer-events: none;
+  }
+
   .banner-top { position: relative; z-index: 2; display: flex; align-items: center; gap: 6px; }
   .banner-badge {
     display: inline-flex; align-items: center; gap: 4px;
@@ -748,10 +766,12 @@
     host.innerHTML = featured.map(a => {
       const ending = expiryLabel(a.expiresInDays);
       return `
-      <div class="banner" style="background:${a.gradient}" onclick="openDetail('${a.id}')">
-        <div class="art-circle c1"></div>
+      <div class="banner${a.coverImage ? ' cover' : ''}" style="background:${a.gradient}" onclick="openDetail('${a.id}')">
+        ${a.coverImage
+          ? `<img class="banner-cover" src="${a.coverImage}" alt="">`
+          : `<div class="art-circle c1"></div>
         <div class="art-circle c2"></div>
-        ${(a.popupImage || a.image) ? `<img class="art-img" src="${a.popupImage || a.image}" alt="">` : `<div class="art-glyph">${a.glyph}</div>`}
+        ${(a.popupImage || a.image) ? `<img class="art-img" src="${a.popupImage || a.image}" alt="">` : `<div class="art-glyph">${a.glyph}</div>`}`}
         <div class="banner-top">
           ${a.badge ? `<span class="banner-badge">${a.badge}</span>` : ''}
           ${ending ? `<span class="banner-badge urgent">${ending}</span>` : ''}

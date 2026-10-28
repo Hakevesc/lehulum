@@ -464,6 +464,7 @@
   try {
     const d = JSON.parse(sessionStorage.getItem('withdrawData') || '{}');
     if (d.from) origin = d.from;
+    if (d.atmKey && ATMS[d.atmKey]) pickBank(d.atmKey);   // a frequent ATM arrives already picked
     if (d.from === 'Withdraw Cash - Amount First.html' && Number(d.amount) > 0) {
       carried = true;
       $('amt').value = String(d.amount);

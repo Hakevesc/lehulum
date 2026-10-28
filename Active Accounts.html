@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Active Accounts</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@400;500;600&display=swap');
+  @import url('https://api.fontshare.com/v2/css?f[]=switzer@400,500,600,700,800&display=swap');
+
+  /* Active Accounts (See all from Saving & Credit): Savings | Credit tabs, a
+     summary of the tab, then one card per account with its progress — saved
+     toward the goal, or repaid / limit used — and its key dates. Open the
+     Credit tab with ?tab=credit. */
+  :root {
+    --Primary: #FE353D;
+    --Primary-Light: #FFF1F2;
+    --On-Surface: #1C1C21;
+    --On-Surface-Low: #7C7C87;
+    --Background: #F5F5F5;
+    --Success: #16A34A;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'Switzer', 'Inter', sans-serif; background: transparent; display: flex; justify-content: center; align-items: center; min-height: 100vh; padding: 20px; }
+  button { font-family: inherit; }
+  .phone-frame { width: 360px; height: 780px; background: var(--Background); border-radius: 30px; overflow: hidden; position: relative; box-shadow: 0 20px 60px rgba(0,0,0,0.15); display: flex; flex-direction: column; }
+  .app-content { height: 100%; display: flex; flex-direction: column; }
+
+  .status-bar { display: flex; justify-content: space-between; align-items: center; padding: 14px 24px 8px; background: var(--Background); flex-shrink: 0; }
+  .status-bar .time { font-size: 14px; font-weight: 600; color: var(--On-Surface); }
+  .status-icons { display: flex; align-items: center; gap: 6px; }
+  .status-icons svg { width: 18px; height: 18px; }
+  .header-nav { display: flex; align-items: center; justify-content: space-between; padding: 8px 16px 12px; background: var(--Background); flex-shrink: 0; }
+  .icon-btn { width: 36px; height: 36px; border-radius: 50%; background: transparent; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+  .icon-btn:hover { background: rgba(0,0,0,0.05); }
+  .icon-btn svg { width: 22px; height: 22px; stroke: var(--On-Surface); stroke-width: 1.8px; fill: none; stroke-linecap: round; stroke-linejoin: round; }
+  .header-title { color: var(--On-Surface); font-size: 17px; font-weight: 500; letter-spacing: 0.3px; flex: 1; text-align: center; }
+
+  /* Savings | Credit — the app's pill tabs */
+  .tabs { margin: 0 16px 12px; height: 50px; display: grid; grid-template-columns: 1fr 1fr; gap: 4px; padding: 4px; background: #FFF; border-radius: 25px; flex-shrink: 0; box-shadow: 0 2px 10px rgba(15,23,42,0.05); }
+  .tab { border: none; border-radius: 21px; background: transparent; color: var(--On-Surface-Low); font-size: 14px; font-weight: 600; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; }
+  .tab img { width: 20px; height: 20px; }
+  .tab.active { background: var(--Primary); color: #FFF; box-shadow: 0 4px 12px rgba(254,53,61,0.3); }
+  .tab.active img { filter: brightness(0) invert(1); }
+  .tab .n { min-width: 20px; height: 20px; padding: 0 6px; border-radius: 10px; background: #F1F1F4; color: var(--On-Surface-Low); font-size: 11px; font-weight: 700; display: inline-flex; align-items: center; justify-content: center; }
+  .tab.active .n { background: rgba(255,255,255,0.22); color: #FFF; }
+
+  .scroll { flex: 1; min-height: 0; overflow-y: auto; padding: 0 16px 20px; scrollbar-width: none; }
+  .scroll::-webkit-scrollbar { width: 0; }
+  .panel { display: none; flex-direction: column; gap: 12px; }
+  .panel.show { display: flex; }
+  .panel > * { flex-shrink: 0; }
+
+  /* Summary — the balance-card red (savings) / deep blue (credit) */
+  .summary { position: relative; overflow: hidden; border-radius: 22px; padding: 16px 18px; color: #FFF; }
+  .summary.savings { background: linear-gradient(180deg, #A41016 0%, #ED1C24 100%); }
+  .summary.credit { background: linear-gradient(180deg, #1E3A8A 0%, #2F6BEA 100%); }
+  .summary::before { content: ''; position: absolute; top: -50px; right: -50px; width: 200px; height: 200px; border-radius: 50%; background: rgba(255,255,255,0.06); }
+  .summary::after { content: ''; position: absolute; bottom: -80px; right: -20px; width: 170px; height: 170px; border-radius: 50%; background: rgba(0,0,0,0.1); }
+  .summary > * { position: relative; z-index: 1; }
+  .sum-label { font-size: 12px; color: rgba(255,255,255,0.8); }
+  .sum-amt { margin-top: 4px; font-size: 26px; font-weight: 700; letter-spacing: -0.4px; }
+  .sum-amt span { font-size: 13px; font-weight: 500; opacity: 0.8; margin-left: 3px; }
+  .sum-row { margin-top: 14px; padding-top: 12px; border-top: 1px solid rgba(255,255,255,0.18); display: flex; }
+  .sum-stat { flex: 1; min-width: 0; }
+  .sum-stat + .sum-stat { border-left: 1px solid rgba(255,255,255,0.18); padding-left: 12px; }
+  .sum-stat small { display: block; font-size: 10.5px; color: rgba(255,255,255,0.7); }
+  .sum-stat b { display: block; margin-top: 3px; font-size: 13.5px; font-weight: 600; white-space: nowrap; }
+
+  .list-head { display: flex; align-items: center; justify-content: space-between; margin: 4px 2px -2px; }
+  .list-head h3 { font-size: 15px; font-weight: 600; color: var(--On-Surface); }
+  .list-head small { font-size: 12px; color: var(--On-Surface-Low); }
+
+  /* Account card */
+  #savList, #creList { display: flex; flex-direction: column; gap: 12px; }
+  .acct { background: #FFF; border-radius: 20px; padding: 14px; box-shadow: 0 4px 16px rgba(15,23,42,0.06); cursor: pointer; }
+  .acct:active { transform: scale(0.99); }
+  .acct-top { display: flex; align-items: center; gap: 12px; }
+  .acct-ic { width: 44px; height: 44px; border-radius: 13px; background: var(--Primary-Light); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+  .acct-ic img { width: 28px; height: 28px; }
+  .acct-info { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 3px; }
+  .acct-info b { font-size: 14.5px; font-weight: 700; color: var(--On-Surface); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .acct-info small { font-size: 12px; color: var(--On-Surface-Low); }
+  .badge { flex-shrink: 0; display: inline-flex; align-items: center; gap: 5px; padding: 4px 9px; border-radius: 999px; font-size: 11px; font-weight: 600; }
+  .badge::before { content: ''; width: 6px; height: 6px; border-radius: 50%; background: currentColor; }
+  .badge.ok { background: #E8F9EE; color: #167C2A; }
+  .badge.warn { background: #FEF3C7; color: #B45309; }
+  .badge.lock { background: #EDEDF0; color: #55555E; }
+  .acct-amt { margin-top: 14px; display: flex; align-items: baseline; justify-content: space-between; }
+  .acct-amt b { font-size: 20px; font-weight: 700; color: var(--On-Surface); letter-spacing: -0.2px; }
+  .acct-amt b span { font-size: 11.5px; font-weight: 500; color: var(--On-Surface-Low); margin-left: 3px; }
+  .acct-amt small { font-size: 12px; color: var(--On-Surface-Low); }
+  .acct-amt small b { font-size: 12px; font-weight: 600; color: var(--On-Surface); letter-spacing: 0; }
+  .bar { margin-top: 8px; height: 8px; border-radius: 4px; background: #F1F1F4; overflow: hidden; }
+  .bar i { display: block; height: 100%; border-radius: 4px; background: var(--Primary); }
+  .bar.credit i { background: #2F6BEA; }
+  .acct-foot { margin-top: 12px; padding-top: 10px; border-top: 1px solid #F1F1F4; display: flex; align-items: center; gap: 6px; font-size: 12px; color: #55555E; }
+  .acct-foot svg { width: 15px; height: 15px; stroke: #8A8A94; stroke-width: 1.9; fill: none; stroke-linecap: round; stroke-linejoin: round; flex-shrink: 0; }
+  .acct-foot span { flex: 1; }
+  .acct-foot .chev { stroke: #55555E; stroke-width: 2.2; }
+
+  /* Open a new one */
+  .add { display: flex; align-items: center; justify-content: center; gap: 8px; height: 52px; border: 1.5px dashed #F4B4BA; border-radius: 16px; background: #FFF; color: var(--Primary); font-size: 14px; font-weight: 600; cursor: pointer; }
+  .add svg { width: 18px; height: 18px; stroke: currentColor; stroke-width: 2.2; fill: none; stroke-linecap: round; }
+
+  .toast { position: absolute; left: 50%; bottom: 40px; transform: translate(-50%, 10px); background: #1C1C21; color: #FFF; font-size: 13px; padding: 10px 14px; border-radius: 12px; opacity: 0; pointer-events: none; transition: opacity 0.2s, transform 0.2s; white-space: nowrap; z-index: 140; }
+  .toast.show { opacity: 1; transform: translate(-50%, 0); }
+</style>
+<link rel="stylesheet" href="styles/device.css">
+</head>
+<body>
+<div class="phone-frame">
+  <div class="app-content">
+
+    <div class="status-bar">
+      <span class="time">10:00</span>
+      <div class="status-icons">
+        <svg viewBox="0 0 24 24" fill="none"><path d="M1 9l2 2c4.97-4.97 13.03-4.97 18 0l2-2C16.93 2.93 7.08 2.93 1 9z" fill="#1C1C21"/><path d="M5 13l2 2c2.76-2.76 7.24-2.76 10 0l2-2C15.14 9.14 8.87 9.14 5 13z" fill="#1C1C21"/><path d="M9 17l2 2c1.1-1.1 2.9-1.1 4 0l2-2c-2.21-2.21-5.79-2.21-8 0z" fill="#1C1C21"/></svg>
+        <svg viewBox="0 0 24 24" fill="none"><rect x="2" y="6" width="4" height="12" rx="1" fill="#1C1C21"/><rect x="8" y="4" width="4" height="14" rx="1" fill="#1C1C21"/><rect x="14" y="2" width="4" height="16" rx="1" fill="#1C1C21"/><rect x="20" y="0" width="4" height="18" rx="1" fill="#1C1C21" opacity="0.3"/></svg>
+        <svg viewBox="0 0 28 14" fill="none"><rect x="0" y="1" width="22" height="12" rx="2.5" stroke="#1C1C21" stroke-width="1.5"/><rect x="2" y="3" width="16" height="8" rx="1" fill="#1C1C21"/><rect x="24" y="4" width="2" height="6" rx="1" fill="#1C1C21"/></svg>
+      </div>
+    </div>
+
+    <div class="header-nav">
+      <button class="icon-btn" onclick="location.href='Credit & Saving.html'" aria-label="Back"><svg viewBox="0 0 24 24"><path d="M19 12H5M12 19l-7-7 7-7"/></svg></button>
+      <span class="header-title">Active Accounts</span>
+      <div style="width:36px;"></div>
+    </div>
+
+    <div class="tabs" role="tablist">
+      <button class="tab active" id="tSav" onclick="showTab('savings')"><img src="assets/Saving.svg" alt="">Savings <span class="n">2</span></button>
+      <button class="tab" id="tCre" onclick="showTab('credit')"><img src="assets/Credit Card Plus.svg" alt="">Credit <span class="n">2</span></button>
+    </div>
+
+    <div class="scroll">
+      <!-- Savings -->
+      <section class="panel show" id="pSav">
+        <div class="summary savings">
+          <div class="sum-label">Total Savings</div>
+          <div class="sum-amt">30,000.00<span>ETB</span></div>
+          <div class="sum-row">
+            <div class="sum-stat"><small>Available</small><b>20,000.00 ETB</b></div>
+            <div class="sum-stat"><small>Locked</small><b>10,000.00 ETB</b></div>
+            <div class="sum-stat"><small>Interest earned</small><b>+245.30 ETB</b></div>
+          </div>
+        </div>
+        <div class="list-head"><h3>Saving Accounts</h3><small>2 active</small></div>
+        <div id="savList"></div>
+        <button class="add" type="button" onclick="location.href='Coming Soon.html?f=Start%20Saving&back=Active%20Accounts.html'"><svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>Start a New Saving</button>
+      </section>
+
+      <!-- Credit -->
+      <section class="panel" id="pCre">
+        <div class="summary credit">
+          <div class="sum-label">Total Credit Outstanding</div>
+          <div class="sum-amt">10,000.00<span>ETB</span></div>
+          <div class="sum-row">
+            <div class="sum-stat"><small>Next due</small><b>Jun 30, 2026</b></div>
+            <div class="sum-stat"><small>Due amount</small><b>5,200.00 ETB</b></div>
+          </div>
+        </div>
+        <div class="list-head"><h3>Credit Accounts</h3><small>2 active</small></div>
+        <div id="creList"></div>
+        <button class="add" type="button" onclick="location.href='Term Loan.html'"><svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>Get a Term Loan</button>
+      </section>
+    </div>
+  </div>
+  <div class="toast" id="toast"></div>
+</div>
+
+<script>
+  const $ = id => document.getElementById(id);
+  const money = n => Number(n).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+  const CAL = '<svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/></svg>';
+  const CHEV = '<svg class="chev" viewBox="0 0 24 24"><path d="M9 18l6-6-6-6"/></svg>';
+
+  // Saving accounts: balance toward a goal
+  const SAVINGS = [
+    { name: 'New Phone Goal', sub: 'Goal Pocket · Flexible', icon: 'Saving.svg', bal: 20000, goal: 35000, badge: ['ok', 'Active'], foot: 'Target date: Dec 31, 2026' },
+    { name: 'Emergency Fund', sub: 'Fixed · 6 months · 7% p.a.', icon: 'Saving.svg', bal: 10000, goal: 10000, badge: ['lock', 'Locked'], foot: 'Matures: Mar 15, 2027' }
+  ];
+  // Credit accounts: repaid of the loan, or used of the limit
+  const CREDIT = [
+    { name: 'Salary Advance', link: 'Term Loan - Details.html?id=L1002', sub: 'Term Loan · 30 days', icon: 'Credit.svg', bal: 5000, total: 5200, paidPct: 0, badge: ['warn', 'Due soon'], foot: 'Due: Jun 30, 2026 · 5,200.00 ETB', label: 'Outstanding', right: '0% repaid' },
+    { name: 'Errif Overdraft', sub: 'Over Draft · Limit 8,450.00 ETB', icon: 'Overdraft.svg', bal: 5000, limit: 8450, badge: ['ok', 'Active'], foot: 'Auto-repays when you receive money', label: 'Used' }
+  ];
+
+  $('savList').innerHTML = SAVINGS.map(a => {
+    const pct = Math.min(100, Math.round(a.bal / a.goal * 100));
+    return `<div class="acct" onclick="toast('${a.name} details coming soon')">
+      <div class="acct-top"><span class="acct-ic"><img src="assets/${a.icon}" alt=""></span>
+        <span class="acct-info"><b>${a.name}</b><small>${a.sub}</small></span><span class="badge ${a.badge[0]}">${a.badge[1]}</span></div>
+      <div class="acct-amt"><b>${money(a.bal)}<span>ETB</span></b><small>${pct}% of <b>${money(a.goal)}</b></small></div>
+      <div class="bar"><i style="width:${pct}%"></i></div>
+      <div class="acct-foot">${CAL}<span>${a.foot}</span>${CHEV}</div>
+    </div>`;
+  }).join('');
+
+  $('creList').innerHTML = CREDIT.map(a => {
+    const pct = a.limit ? Math.round(a.bal / a.limit * 100) : a.paidPct;
+    const right = a.limit ? `${pct}% of <b>${money(a.limit)}</b> limit` : `${a.paidPct}% repaid`;
+    return `<div class="acct" onclick="${a.link ? `location.href='${a.link}'` : `toast('${a.name} details coming soon')`}">
+      <div class="acct-top"><span class="acct-ic"><img src="assets/${a.icon}" alt=""></span>
+        <span class="acct-info"><b>${a.name}</b><small>${a.sub}</small></span><span class="badge ${a.badge[0]}">${a.badge[1]}</span></div>
+      <div class="acct-amt"><b>${money(a.bal)}<span>ETB</span></b><small>${right}</small></div>
+      <div class="bar credit"><i style="width:${Math.max(pct, 2)}%"></i></div>
+      <div class="acct-foot">${CAL}<span>${a.foot}</span>${CHEV}</div>
+    </div>`;
+  }).join('');
+
+  function showTab(t) {
+    const sav = t === 'savings';
+    $('tSav').classList.toggle('active', sav); $('tCre').classList.toggle('active', !sav);
+    $('pSav').classList.toggle('show', sav); $('pCre').classList.toggle('show', !sav);
+  }
+  if (new URLSearchParams(location.search).get('tab') === 'credit') showTab('credit');
+
+  let tt;
+  function toast(m) { const t = $('toast'); t.textContent = m; t.classList.add('show'); clearTimeout(tt); tt = setTimeout(() => t.classList.remove('show'), 1800); }
+</script>
+<!-- Export to Figma button (shared exporter) -->
+<script src="figma-export.js"></script>
+<script src="test-scenarios-data.js"></script>
+<script src="test-scenarios.js"></script>
+</body>
+</html>

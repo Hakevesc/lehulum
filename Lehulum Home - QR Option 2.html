@@ -306,7 +306,7 @@
                 <div class="amt"><small>ETB</small><span id="mainBalance" data-value="12,580.00">* * * * *</span></div>
               </div>
             </div>
-            <button class="qh-add stp-add" onclick="window.location.href='Cash In - Amount First.html'">
+            <button class="qh-add stp-add" onclick="window.location.href='Add Money.html'">
               <span class="pl"><svg viewBox="0 0 12 12" fill="none"><path d="M6 1V11M1 6H11" stroke="white" stroke-width="1.6" stroke-linecap="round"/></svg></span>
               Add Money
             </button>
@@ -345,36 +345,36 @@
     `,
 
     actions: `
-      <div class="actions actions-8">
+      <div class="actions">
+        <div class="primary-action" onclick="window.location.href='Pay Merchant.html'" style="cursor:pointer">
+          <div class="icon-container">
+            <img src="assets/Merchant Payemnt.svg" alt="Merchant Payment" style="width:40px;height:40px;object-fit:contain;">
+          </div>
+          <span class="label">Merchant<br>Payment</span>
+        </div>
+        <div class="primary-action" onclick="window.location.href='Pay Bill.html'" style="cursor:pointer">
+          <div class="icon-container">
+            <img src="assets/Bill Payment.svg" alt="Bill Payment" style="width:40px;height:40px;object-fit:contain;">
+          </div>
+          <span class="label">Bill<br>Payment</span>
+        </div>
+        <div class="primary-action" onclick="window.location.href='Credit & Saving.html'" style="cursor:pointer">
+          <div class="icon-container">
+            <img src="assets/Credit Saving.svg" alt="Credit & Saving" style="width:40px;height:40px;object-fit:contain;">
+          </div>
+          <span class="label">Credit &<br>Saving</span>
+        </div>
         <div class="primary-action" onclick="window.location.href='Send Money Menu.html'" style="cursor:pointer">
           <div class="icon-container">
             <img src="assets/Transfer Money.svg" alt="Transfer Money" style="width:40px;height:40px;object-fit:contain;">
           </div>
           <span class="label">Transfer<br>Money</span>
         </div>
-        <div class="primary-action" onclick="window.location.href='Pay Bill.html'" style="cursor:pointer">
-          <div class="icon-container">
-            <img src="assets/Bill Payment.svg" alt="Make Payments" style="width:40px;height:40px;object-fit:contain;">
-          </div>
-          <span class="label">Make<br>Payments</span>
-        </div>
-        <div class="primary-action" onclick="window.location.href='Credit & Saving.html?tab=credit'" style="cursor:pointer">
-          <div class="icon-container">
-            <img src="assets/Credit.svg" alt="Get Credit" style="width:40px;height:40px;object-fit:contain;">
-          </div>
-          <span class="label">Get<br>Credit</span>
-        </div>
-        <div class="primary-action" onclick="window.location.href='Credit & Saving.html?tab=saving'" style="cursor:pointer">
-          <div class="icon-container">
-            <img src="assets/Saving.svg" alt="My Savings" style="width:40px;height:40px;object-fit:contain;">
-          </div>
-          <span class="label">My<br>Savings</span>
-        </div>
         <div class="primary-action" onclick="window.location.href='Airtime_Buy.html'" style="cursor:pointer">
           <div class="icon-container">
-            <img src="assets/Airtime Package.svg" alt="Airtime/Data" style="width:40px;height:40px;object-fit:contain;">
+            <img src="assets/Airtime Package.svg" alt="Airtime/Package" style="width:40px;height:40px;object-fit:contain;">
           </div>
-          <span class="label">Airtime/<br>Data</span>
+          <span class="label">Airtime/<br>Package</span>
         </div>
         <div class="primary-action" onclick="window.location.href='More Services.html'" style="cursor:pointer">
           <div class="icon-container">

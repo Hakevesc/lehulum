@@ -1,0 +1,515 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Add Money · Visa Card</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@400;500;600&display=swap');
+  @import url('https://api.fontshare.com/v2/css?f[]=switzer@400,500,600,700,800&display=swap');
+
+  /* Add Money from a Visa card (any bank's Visa, processed by Bank of Abyssinia).
+     Four steps: 1 Rate & amount — the live rate with a 7-day chart and a
+     converter (you send → you receive in ETB); 2 Your profile; 3 Card details;
+     4 Confirm. Confirm → the card's security code from the bank → success receipt. */
+  :root {
+    --Primary: #FE353D;
+    --Primary-Light: #FFF1F2;
+    --On-Surface: #1C1C21;
+    --On-Surface-Low: #7C7C87;
+    --Border: #E8E8EC;
+    --Background: #F5F5F5;
+    --Field: #F7F7F9;
+    --Up: #16A34A;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'Switzer', 'Inter', sans-serif; background: transparent; display: flex; justify-content: center; align-items: center; min-height: 100vh; padding: 20px; }
+  button, input, select { font-family: inherit; }
+  .phone-frame { width: 360px; height: 780px; background: var(--Background); border-radius: 30px; overflow: hidden; position: relative; box-shadow: 0 20px 60px rgba(0,0,0,0.15); display: flex; flex-direction: column; }
+  .app-content { height: 100%; display: flex; flex-direction: column; }
+
+  .status-bar { display: flex; justify-content: space-between; align-items: center; padding: 14px 24px 8px; background: var(--Background); flex-shrink: 0; }
+  .status-bar .time { font-size: 14px; font-weight: 600; color: var(--On-Surface); }
+  .status-icons { display: flex; align-items: center; gap: 6px; }
+  .status-icons svg { width: 18px; height: 18px; }
+  .header-nav { display: flex; align-items: center; justify-content: space-between; padding: 8px 16px 12px; background: var(--Background); flex-shrink: 0; }
+  .back-btn { width: 36px; height: 36px; border-radius: 50%; background: transparent; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+  .back-btn:hover { background: rgba(0,0,0,0.05); }
+  .back-btn svg { width: 22px; height: 22px; stroke: var(--On-Surface); stroke-width: 1.8px; fill: none; }
+  .header-title { color: var(--On-Surface); font-size: 17px; font-weight: 500; letter-spacing: 0.3px; flex: 1; text-align: center; }
+
+
+  .scroll { flex: 1; min-height: 0; overflow-y: auto; padding: 0 16px 16px; scrollbar-width: none; }
+  .scroll::-webkit-scrollbar { width: 0; }
+  .page { display: none; flex-direction: column; gap: 12px; }
+  .page.show { display: flex; }
+  .page > * { flex-shrink: 0; }
+  .card { background: #FFF; border-radius: 20px; padding: 16px; box-shadow: 0 4px 16px rgba(15,23,42,0.06); }
+
+  /* Flags */
+  .flag { width: 24px; height: 24px; border-radius: 50%; overflow: hidden; flex-shrink: 0; box-shadow: 0 0 0 1px rgba(0,0,0,0.08); display: block; }
+  .flag svg { width: 100%; height: 100%; display: block; }
+
+  /* 1 · Rate card */
+  .rate-top { display: flex; align-items: center; gap: 8px; }
+  .cur-pick { flex: 1; min-width: 0; position: relative; display: flex; align-items: center; gap: 8px; height: 40px; padding: 0 10px; border: 1px solid #E6E6EA; border-radius: 12px; background: #FFF; cursor: pointer; }
+  .cur-pick b { flex: 1; font-size: 13px; font-weight: 600; color: var(--On-Surface); text-align: left; }
+  .cur-pick svg.chev { width: 16px; height: 16px; stroke: #8A8A94; stroke-width: 2.2; fill: none; }
+  .cur-pick select { position: absolute; inset: 0; opacity: 0; cursor: pointer; }
+  .live { flex-shrink: 0; display: inline-flex; align-items: center; gap: 5px; height: 40px; padding: 0 10px; border-radius: 12px; background: var(--Primary-Light); font-size: 11.5px; font-weight: 700; color: var(--Primary); }
+  .live::before { content: ''; width: 7px; height: 7px; border-radius: 50%; background: var(--Primary); animation: pulse 1.6s ease-in-out infinite; }
+  @keyframes pulse { 50% { opacity: 0.3; } }
+  .rate-val { margin-top: 14px; font-size: 32px; font-weight: 700; color: var(--On-Surface); letter-spacing: -0.6px; line-height: 1; }
+  .rate-val span { font-size: 15px; font-weight: 600; color: var(--On-Surface-Low); margin-left: 4px; letter-spacing: 0; }
+  .rate-sub { margin-top: 4px; font-size: 12px; color: var(--On-Surface-Low); }
+  .chg { margin-top: 10px; display: flex; gap: 12px; font-size: 12px; font-weight: 700; color: var(--Up); }
+  .chg span { display: inline-flex; align-items: center; gap: 4px; }
+  .chg svg { width: 10px; height: 10px; fill: currentColor; }
+  .chg.down { color: var(--Primary); }
+  .chg.down svg { transform: rotate(180deg); }
+  .chart { margin-top: 12px; position: relative; }
+  .chart svg { width: 100%; height: 120px; display: block; overflow: visible; }
+  .days { display: flex; justify-content: space-between; margin-top: 6px; padding: 0 2px; font-size: 10px; font-weight: 600; color: #A0A0AA; }
+  .legend { margin-top: 8px; display: flex; gap: 14px; font-size: 11px; color: var(--On-Surface-Low); }
+  .legend i { display: inline-block; width: 14px; height: 3px; border-radius: 2px; margin-right: 5px; vertical-align: middle; }
+
+  /* 1 · Converter */
+  .conv-head { display: flex; align-items: baseline; justify-content: space-between; }
+  .conv-head b { font-size: 16px; font-weight: 700; color: var(--On-Surface); }
+  .conv-head small { font-size: 12px; color: var(--On-Surface-Low); }
+  .conv { position: relative; margin-top: 12px; display: flex; flex-direction: column; gap: 8px; }
+  .leg { display: flex; align-items: center; gap: 10px; height: 64px; padding: 0 14px; border: 1.5px solid var(--Border); border-radius: 16px; background: #FFF; }
+  .leg:focus-within { border-color: var(--Primary); box-shadow: 0 4px 12px rgba(254,53,61,0.12); }
+  .leg .who { display: flex; flex-direction: column; gap: 1px; flex-shrink: 0; }
+  .leg .who small { font-size: 10.5px; color: var(--On-Surface-Low); }
+  .leg .who b { font-size: 15px; font-weight: 700; color: var(--On-Surface); }
+  .leg input { flex: 1; min-width: 0; border: none; outline: none; background: transparent; text-align: right; font-size: 19px; font-weight: 700; color: var(--On-Surface); }
+  .leg input::placeholder { color: #C4C4CC; }
+  .leg input[readonly] { color: var(--Up); }
+  .leg.recv { background: #F7F7F9; border-color: #EFEFF2; }
+  .swap { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); width: 34px; height: 34px; border-radius: 50%; background: var(--Primary); border: 3px solid #FFF; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 12px rgba(254,53,61,0.3); z-index: 2; }
+  .swap svg { width: 16px; height: 16px; stroke: #FFF; stroke-width: 2.6; fill: none; }
+  .err-text { display: none; margin-top: 6px; font-size: 12px; color: var(--Primary); }
+  .err-text.show { display: block; }
+
+  /* Forms (profile, card) */
+  .form-title { font-size: 16px; font-weight: 700; color: var(--On-Surface); }
+  .form-sub { margin-top: 3px; font-size: 12px; line-height: 1.45; color: var(--On-Surface-Low); }
+  .field-label { display: block; font-size: 13.5px; font-weight: 500; color: var(--On-Surface); margin: 14px 0 7px; }
+  .card > .field-label:first-child { margin-top: 0; }
+  .field { height: 50px; background: var(--Field); border: 1.5px solid var(--Border); border-radius: 12px; padding: 0 14px; display: flex; align-items: center; gap: 8px; }
+  .field:focus-within { border-color: var(--Primary); background: #FFF; box-shadow: 0 4px 12px rgba(254,53,61,0.12); }
+  .field.err { border-color: var(--Primary); background: #FFF; }
+  .field.ok { border-color: #BFE8CC; }
+  .field.locked { background: #F1F1F4; border-color: #EBEBEF; }
+  .field input, .field select { flex: 1; min-width: 0; border: none; outline: none; background: transparent; font-size: 14.5px; font-weight: 600; color: var(--On-Surface); appearance: none; }
+  .field input::placeholder { color: var(--On-Surface-Low); font-weight: 400; }
+  .field .lock, .field .chev { width: 16px; height: 16px; stroke: var(--On-Surface-Low); stroke-width: 2; fill: none; flex-shrink: 0; }
+  .ok-tick { display: none; width: 20px; height: 20px; stroke: var(--Up); stroke-width: 2.2; fill: none; flex-shrink: 0; }
+  .field.ok .ok-tick { display: block; }
+  .visa-mark { font-size: 14px; font-weight: 800; font-style: italic; color: #1A1F71; letter-spacing: 0.3px; }
+  .row2 { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 12px; }
+  .secure { display: flex; align-items: center; gap: 10px; padding: 12px 14px; border-radius: 14px; background: #FFF; box-shadow: 0 2px 10px rgba(15,23,42,0.04); font-size: 12px; color: #55555E; }
+  .secure img { width: 28px; height: 28px; border-radius: 8px; border: 1px solid #EFEFF2; object-fit: contain; padding: 2px; background: #FFF; }
+  .secure b { color: var(--On-Surface); }
+  .secure .visa-mark { margin-left: auto; font-size: 15px; }
+
+  /* 4 · Confirm */
+  .cf-amt { text-align: center; padding: 6px 0 14px; border-bottom: 1px solid #F1F1F4; }
+  .cf-amt small { font-size: 12px; color: var(--On-Surface-Low); }
+  .cf-amt b { display: block; margin-top: 4px; font-size: 30px; font-weight: 700; color: var(--Up); letter-spacing: -0.4px; }
+  .cf-amt b span { font-size: 14px; font-weight: 600; margin-left: 3px; }
+  .cf-amt p { margin-top: 2px; font-size: 12.5px; color: var(--On-Surface-Low); }
+  .cf-row { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 11px 0; border-bottom: 1px solid #F1F1F4; }
+  .cf-row:last-child { border-bottom: none; }
+  .cf-row span { font-size: 12.5px; color: #55555E; flex-shrink: 0; }
+  .cf-row b { font-size: 12.5px; font-weight: 700; color: var(--On-Surface); text-align: right; font-variant-numeric: tabular-nums; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .edit { border: none; background: none; font-size: 12px; font-weight: 600; color: var(--Primary); cursor: pointer; padding: 0 0 0 8px; }
+  .sec-title { display: flex; justify-content: space-between; align-items: center; font-size: 14px; font-weight: 700; color: var(--On-Surface); }
+  .note { font-size: 11.5px; line-height: 1.45; color: #8A8A94; padding: 0 4px; }
+
+  .bottom-bar { flex-shrink: 0; padding: 10px 16px 18px; background: var(--Background); }
+  .btn-primary { width: 100%; height: 52px; border: none; border-radius: 14px; background: var(--Primary); color: #FFF; font-family: 'Poppins', sans-serif; font-size: 15px; font-weight: 500; cursor: pointer; box-shadow: 0 4px 16px rgba(254,53,61,0.25); display: flex; align-items: center; justify-content: center; gap: 10px; }
+  .btn-primary svg { width: 18px; height: 18px; stroke: #FFF; stroke-width: 2.2; fill: none; }
+  .btn-primary:disabled { background: #E0E0E0; color: var(--On-Surface-Low); box-shadow: none; cursor: not-allowed; }
+  .btn-primary:disabled svg { stroke: var(--On-Surface-Low); }
+
+  /* Card security code */
+  .otp { position: absolute; inset: 0; z-index: 120; background: var(--Background); display: none; flex-direction: column; }
+  .otp.show { display: flex; }
+  .otp-body { flex: 1; padding: 8px 20px 20px; display: flex; flex-direction: column; align-items: center; text-align: center; }
+  .otp-ic { width: 64px; height: 64px; border-radius: 18px; background: #FFF; border: 1px solid #EFEFF2; display: flex; align-items: center; justify-content: center; margin-top: 18px; }
+  .otp-ic svg { width: 30px; height: 30px; stroke: var(--Primary); stroke-width: 1.9; fill: none; }
+  .otp-body h2 { margin-top: 16px; font-size: 18px; font-weight: 700; color: var(--On-Surface); }
+  .otp-body p { margin-top: 6px; font-size: 13px; line-height: 1.5; color: var(--On-Surface-Low); }
+  .otp-body p b { color: var(--On-Surface); }
+  .otp-boxes { margin-top: 22px; display: flex; gap: 8px; }
+  .otp-boxes input { width: 44px; height: 54px; border-radius: 12px; border: 1.5px solid var(--Border); background: #FFF; text-align: center; font-size: 20px; font-weight: 700; color: var(--On-Surface); outline: none; }
+  .otp-boxes input:focus { border-color: var(--Primary); box-shadow: 0 4px 12px rgba(254,53,61,0.12); }
+  .otp-boxes.err input { border-color: var(--Primary); }
+  .otp-err { display: none; margin-top: 10px; font-size: 12.5px; color: var(--Primary); }
+  .otp-err.show { display: block; }
+  .otp-resend { margin-top: 16px; border: none; background: none; font-size: 13px; font-weight: 600; color: var(--Primary); cursor: pointer; }
+  .otp-resend:disabled { color: #A0A0AA; cursor: default; }
+
+  .busy { position: absolute; inset: 0; z-index: 130; background: rgba(245,245,245,0.96); display: none; flex-direction: column; align-items: center; justify-content: center; gap: 14px; font-size: 14px; color: var(--On-Surface); }
+  .busy.show { display: flex; }
+  .spinner { width: 38px; height: 38px; border-radius: 50%; border: 3.5px solid #F1D3D5; border-top-color: var(--Primary); animation: spin 0.8s linear infinite; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+</style>
+<link rel="stylesheet" href="styles/device.css">
+</head>
+<body>
+<div class="phone-frame">
+  <div class="app-content" id="app">
+
+    <div class="status-bar">
+      <span class="time">10:00</span>
+      <div class="status-icons">
+        <svg viewBox="0 0 24 24" fill="none"><path d="M1 9l2 2c4.97-4.97 13.03-4.97 18 0l2-2C16.93 2.93 7.08 2.93 1 9z" fill="#1C1C21"/><path d="M5 13l2 2c2.76-2.76 7.24-2.76 10 0l2-2C15.14 9.14 8.87 9.14 5 13z" fill="#1C1C21"/><path d="M9 17l2 2c1.1-1.1 2.9-1.1 4 0l2-2c-2.21-2.21-5.79-2.21-8 0z" fill="#1C1C21"/></svg>
+        <svg viewBox="0 0 24 24" fill="none"><rect x="2" y="6" width="4" height="12" rx="1" fill="#1C1C21"/><rect x="8" y="4" width="4" height="14" rx="1" fill="#1C1C21"/><rect x="14" y="2" width="4" height="16" rx="1" fill="#1C1C21"/><rect x="20" y="0" width="4" height="18" rx="1" fill="#1C1C21" opacity="0.3"/></svg>
+        <svg viewBox="0 0 28 14" fill="none"><rect x="0" y="1" width="22" height="12" rx="2.5" stroke="#1C1C21" stroke-width="1.5"/><rect x="2" y="3" width="16" height="8" rx="1" fill="#1C1C21"/><rect x="24" y="4" width="2" height="6" rx="1" fill="#1C1C21"/></svg>
+      </div>
+    </div>
+
+    <div class="header-nav">
+      <button class="back-btn" onclick="back()" aria-label="Back">
+        <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+      </button>
+      <span class="header-title">Add from Visa Card</span>
+      <div style="width:36px;"></div>
+    </div>
+
+
+    <div class="scroll" id="scroll">
+      <!-- 1 · Rate & amount -->
+      <section class="page show" id="p1">
+        <div class="card">
+          <div class="rate-top">
+            <label class="cur-pick"><span class="flag" id="curFlag"></span><b id="curName">USD (US Dollar)</b>
+              <svg class="chev" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+              <select id="curSel" aria-label="Card currency"><option value="USD">USD (US Dollar)</option><option value="EUR">EUR (Euro)</option><option value="GBP">GBP (Pound)</option></select></label>
+            <span class="live">Live rate</span>
+          </div>
+          <div class="rate-val" id="rateVal">157.50<span>ETB</span></div>
+          <div class="rate-sub" id="rateSub">for 1 USD</div>
+          <div class="chg" id="chg"><span><svg viewBox="0 0 10 10"><path d="M5 1 9 8H1z"/></svg><b id="chgPct">1.2%</b></span><span><svg viewBox="0 0 10 10"><path d="M5 1 9 8H1z"/></svg><b id="chgAbs">1.85 ETB</b></span><span style="color:#8A8A94;font-weight:500">this week</span></div>
+          <div class="chart"><svg id="chart" viewBox="0 0 300 120" preserveAspectRatio="none" aria-hidden="true"></svg></div>
+          <div class="days" id="days"></div>
+          <div class="legend"><span><i style="background:#FE353D"></i>This week</span><span><i style="background:#C9C9D1"></i>Last week</span></div>
+        </div>
+
+        <div class="card">
+          <div class="conv-head"><b>Add Money</b><small id="convRate">1 USD = 157.50 ETB</small></div>
+          <div class="conv">
+            <div class="leg" id="sendLeg">
+              <span class="flag" id="sendFlag"></span>
+              <span class="who"><small>You send</small><b id="sendCur">USD</b></span>
+              <input id="amount" type="text" inputmode="decimal" placeholder="0.00" autocomplete="off" aria-label="Amount to send">
+            </div>
+            <span class="swap" aria-hidden="true"><svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M6 13l6 6 6-6"/></svg></span>
+            <div class="leg recv">
+              <span class="flag" id="etFlag"></span>
+              <span class="who"><small>You receive</small><b>ETB</b></span>
+              <input id="receive" type="text" readonly value="0.00" aria-label="You receive in ETB">
+            </div>
+          </div>
+          <div class="err-text" id="amtErr"></div>
+        </div>
+      </section>
+
+      <!-- 2 · Profile -->
+      <section class="page" id="p2">
+        <div class="card">
+          <label class="field-label" for="pfName">Full Name</label>
+          <div class="field"><input id="pfName" type="text" value="Aster Mequanent" autocomplete="off"></div>
+          <label class="field-label">M-PESA Number</label>
+          <div class="field locked"><input type="text" value="0712 *** *78" readonly aria-label="M-PESA number"><svg class="lock" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg></div>
+          <label class="field-label" for="pfEmail">Email</label>
+          <div class="field" id="pfEmailF"><input id="pfEmail" type="email" placeholder="name@example.com" autocomplete="off"></div>
+          <div class="err-text" id="pfEmailErr">Enter a valid email address.</div>
+          <label class="field-label" for="pfCountry">Billing Country</label>
+          <div class="field"><select id="pfCountry"><option>Ethiopia</option><option>United States</option><option>United Kingdom</option><option>Germany</option><option>United Arab Emirates</option><option>Saudi Arabia</option><option>Canada</option></select>
+            <svg class="chev" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg></div>
+          <div class="row2">
+            <div><label class="field-label" for="pfCity">City</label><div class="field"><input id="pfCity" type="text" placeholder="e.g. Addis Ababa" autocomplete="off"></div></div>
+            <div><label class="field-label" for="pfZip">Postal Code</label><div class="field"><input id="pfZip" type="text" placeholder="Optional" autocomplete="off"></div></div>
+          </div>
+          <label class="field-label" for="pfAddr">Billing Address</label>
+          <div class="field"><input id="pfAddr" type="text" placeholder="Street, building, house no." autocomplete="off"></div>
+        </div>
+      </section>
+
+      <!-- 3 · Card -->
+      <section class="page" id="p3">
+        <div class="card">
+          <label class="field-label" for="cardNum">Card Number</label>
+          <div class="field" id="cardField"><input id="cardNum" type="text" inputmode="numeric" autocomplete="off" placeholder="0000 0000 0000 0000" maxlength="23"><svg class="ok-tick" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" aria-label="Valid Visa card"><circle cx="12" cy="12" r="9"/><path d="m8 12.5 2.8 2.8L16 10"/></svg><span class="visa-mark">VISA</span></div>
+          <div class="err-text" id="cardErr"></div>
+          <label class="field-label" for="cardName">Name on Card</label>
+          <div class="field"><input id="cardName" type="text" autocomplete="off" placeholder="As printed on the card"></div>
+          <div class="row2">
+            <div><label class="field-label" for="cardExp">Expiry</label><div class="field" id="expField"><input id="cardExp" type="text" inputmode="numeric" autocomplete="off" placeholder="MM/YY" maxlength="5"></div></div>
+            <div><label class="field-label" for="cardCvv">CVV</label><div class="field"><input id="cardCvv" type="password" inputmode="numeric" autocomplete="off" placeholder="•••" maxlength="3"></div></div>
+          </div>
+          <div class="err-text" id="expErr">Enter a valid expiry date (MM/YY) that hasn't passed.</div>
+        </div>
+        <div class="secure"><img src="assets/banks logo/abyssinya-bank.png" alt=""><span>Processed securely by <b>Bank of Abyssinia</b>. Your card details are not stored.</span><span class="visa-mark">VISA</span></div>
+      </section>
+
+      <!-- 4 · Confirm -->
+      <section class="page" id="p4">
+        <div class="card">
+          <div class="cf-amt"><small>You receive</small><b id="cfGet">0.00<span>ETB</span></b><p id="cfSend"></p></div>
+          <div class="cf-row"><span>To</span><b>Main account · 0712 *** *78</b></div>
+          <div class="cf-row"><span>Exchange rate</span><b id="cfRate"></b></div>
+          <div class="cf-row"><span>Fee</span><b id="cfFee"></b></div>
+          <div class="cf-row"><span>Card charged</span><b id="cfCharged"></b></div>
+        </div>
+        <div class="card">
+          <div class="sec-title">Card <button class="edit" onclick="go(3)">Edit</button></div>
+          <div class="cf-row"><span>Card</span><b id="cfCard"></b></div>
+          <div class="cf-row"><span>Name on card</span><b id="cfCardName"></b></div>
+        </div>
+        <div class="card">
+          <div class="sec-title">Profile <button class="edit" onclick="go(2)">Edit</button></div>
+          <div class="cf-row"><span>Name</span><b id="cfName"></b></div>
+          <div class="cf-row"><span>Email</span><b id="cfEmail"></b></div>
+          <div class="cf-row"><span>Billing</span><b id="cfBill"></b></div>
+        </div>
+        <p class="note">By confirming, your card is charged and the money arrives in your M-PESA balance. Your bank may ask for a security code.</p>
+      </section>
+    </div>
+
+    <div class="bottom-bar">
+      <button class="btn-primary" id="mainBtn" disabled onclick="next()"><span id="mainTxt">Continue</span><svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button>
+    </div>
+  </div>
+
+  <!-- Card security code (from the card's bank) -->
+  <div class="otp" id="otp">
+    <div class="status-bar">
+      <span class="time">10:00</span>
+      <div class="status-icons">
+        <svg viewBox="0 0 24 24" fill="none"><rect x="2" y="6" width="4" height="12" rx="1" fill="#1C1C21"/><rect x="8" y="4" width="4" height="14" rx="1" fill="#1C1C21"/><rect x="14" y="2" width="4" height="16" rx="1" fill="#1C1C21"/><rect x="20" y="0" width="4" height="18" rx="1" fill="#1C1C21" opacity="0.3"/></svg>
+        <svg viewBox="0 0 28 14" fill="none"><rect x="0" y="1" width="22" height="12" rx="2.5" stroke="#1C1C21" stroke-width="1.5"/><rect x="2" y="3" width="16" height="8" rx="1" fill="#1C1C21"/><rect x="24" y="4" width="2" height="6" rx="1" fill="#1C1C21"/></svg>
+      </div>
+    </div>
+    <div class="header-nav">
+      <button class="back-btn" onclick="closeOtp()" aria-label="Back"><svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg></button>
+      <span class="header-title">Verify Card</span>
+      <div style="width:36px;"></div>
+    </div>
+    <div class="otp-body">
+      <span class="otp-ic"><svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></svg></span>
+      <h2>Enter the code from your bank</h2>
+      <p>Your card's bank sent a 6-digit code to the phone linked to card <b id="otpCard">•••• 0000</b>.</p>
+      <div class="otp-boxes" id="otpBoxes">
+        <input inputmode="numeric" maxlength="1" aria-label="Digit 1"><input inputmode="numeric" maxlength="1" aria-label="Digit 2"><input inputmode="numeric" maxlength="1" aria-label="Digit 3"><input inputmode="numeric" maxlength="1" aria-label="Digit 4"><input inputmode="numeric" maxlength="1" aria-label="Digit 5"><input inputmode="numeric" maxlength="1" aria-label="Digit 6">
+      </div>
+      <div class="otp-err" id="otpErr">Incorrect code. Please try again.</div>
+      <button class="otp-resend" id="resendBtn" disabled onclick="resend()">Resend code in <span id="resendT">30</span>s</button>
+    </div>
+    <div class="bottom-bar"><button class="btn-primary" id="verifyBtn" disabled onclick="verify()">Verify &amp; Add Money</button></div>
+  </div>
+
+  <div class="busy" id="busy"><span class="spinner"></span><span id="busyTxt">Processing…</span></div>
+</div>
+
+<script>
+  const $ = id => document.getElementById(id);
+  const money = n => Number(n).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+  const digits = v => v.replace(/\D/g, '');
+
+  // ── Currencies: sample live rates and a 7-day history ──
+  const FLAGS = {
+    USD: '<svg viewBox="0 0 24 24"><rect width="24" height="24" fill="#FFF"/><g fill="#B22234"><rect y="0" width="24" height="2"/><rect y="4" width="24" height="2"/><rect y="8" width="24" height="2"/><rect y="12" width="24" height="2"/><rect y="16" width="24" height="2"/><rect y="20" width="24" height="2"/></g><rect width="12" height="12" fill="#3C3B6E"/></svg>',
+    EUR: '<svg viewBox="0 0 24 24"><rect width="24" height="24" fill="#003399"/><g fill="#FFCC00">' + Array.from({ length: 12 }, (_, i) => { const a = i * Math.PI / 6; return `<circle cx="${(12 + 6 * Math.cos(a)).toFixed(2)}" cy="${(12 + 6 * Math.sin(a)).toFixed(2)}" r="1"/>`; }).join('') + '</g></svg>',
+    GBP: '<svg viewBox="0 0 24 24"><rect width="24" height="24" fill="#012169"/><path d="M0 0l24 24M24 0L0 24" stroke="#FFF" stroke-width="5"/><path d="M0 0l24 24M24 0L0 24" stroke="#C8102E" stroke-width="2"/><path d="M12 0v24M0 12h24" stroke="#FFF" stroke-width="7"/><path d="M12 0v24M0 12h24" stroke="#C8102E" stroke-width="4"/></svg>',
+    ETB: '<svg viewBox="0 0 24 24"><rect width="24" height="8" fill="#078930"/><rect y="8" width="24" height="8" fill="#FCDD09"/><rect y="16" width="24" height="8" fill="#DA121A"/><circle cx="12" cy="12" r="5" fill="#0F47AF"/><path d="M12 8.6l.9 2.6h2.7l-2.2 1.6.8 2.6-2.2-1.6-2.2 1.6.8-2.6-2.2-1.6h2.7z" fill="#FCDD09"/></svg>'
+  };
+  const CUR = {
+    USD: { name: 'USD (US Dollar)', rate: 157.50, week: [154.9, 155.6, 155.2, 156.4, 156.0, 157.1, 157.50], last: [153.2, 153.9, 154.6, 154.1, 155.0, 154.7, 155.65], max: 5000 },
+    EUR: { name: 'EUR (Euro)', rate: 170.25, week: [171.8, 171.0, 170.4, 171.2, 169.9, 170.6, 170.25], last: [172.4, 172.9, 172.1, 171.6, 172.3, 171.9, 171.40], max: 4500 },
+    GBP: { name: 'GBP (Pound)', rate: 199.80, week: [196.7, 197.9, 197.2, 198.5, 199.1, 198.6, 199.80], last: [195.2, 195.8, 196.4, 195.9, 196.8, 196.3, 196.55], max: 4000 }
+  };
+  const FEE_ETB = 0, MIN = 1;
+  let cur = 'USD';
+  $('etFlag').innerHTML = FLAGS.ETB;
+
+  // Day labels ending today
+  const DAYS = Array.from({ length: 7 }, (_, i) => new Date(Date.now() - (6 - i) * 864e5).toLocaleDateString('en-US', { weekday: 'short' }).toUpperCase());
+  $('days').innerHTML = DAYS.map(d => `<span>${d}</span>`).join('');
+
+  function drawChart() {
+    const c = CUR[cur], all = c.week.concat(c.last);
+    const lo = Math.min(...all) - 0.4, hi = Math.max(...all) + 0.4, W = 300, H = 120;
+    const xy = (v, i) => [i * W / 6, H - 8 - (v - lo) / (hi - lo) * (H - 20)];
+    const path = arr => arr.map((v, i) => { const [x, y] = xy(v, i); return (i ? 'L' : 'M') + x.toFixed(1) + ' ' + y.toFixed(1); }).join(' ');
+    const [ex, ey] = xy(c.week[6], 6);
+    const grid = Array.from({ length: 7 }, (_, i) => `<line x1="${i * W / 6}" y1="0" x2="${i * W / 6}" y2="${H}" stroke="#F1F1F4" stroke-width="1" vector-effect="non-scaling-stroke"/>`).join('');
+    $('chart').innerHTML = grid
+      + `<defs><linearGradient id="fillG" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FE353D" stop-opacity="0.16"/><stop offset="1" stop-color="#FE353D" stop-opacity="0"/></linearGradient></defs>`
+      + `<path d="${path(c.week)} L${W} ${H} L0 ${H} Z" fill="url(#fillG)"/>`
+      + `<path d="${path(c.last)}" fill="none" stroke="#C9C9D1" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round" vector-effect="non-scaling-stroke"/>`
+      + `<path d="${path(c.week)}" fill="none" stroke="#FE353D" stroke-width="3" stroke-linejoin="round" stroke-linecap="round" vector-effect="non-scaling-stroke"/>`
+      + `<circle cx="${ex}" cy="${ey.toFixed(1)}" r="5" fill="#FFF" stroke="#FE353D" stroke-width="3" vector-effect="non-scaling-stroke"/>`;
+  }
+  function setCurrency(code) {
+    cur = code; const c = CUR[code];
+    $('curFlag').innerHTML = $('sendFlag').innerHTML = FLAGS[code];
+    $('curName').textContent = c.name; $('sendCur').textContent = code;
+    $('rateVal').innerHTML = money(c.rate) + '<span>ETB</span>';
+    $('rateSub').textContent = 'for 1 ' + code;
+    $('convRate').textContent = `1 ${code} = ${money(c.rate)} ETB`;
+    const d = c.rate - c.week[0], pct = d / c.week[0] * 100;
+    $('chg').classList.toggle('down', d < 0);
+    $('chgPct').textContent = Math.abs(pct).toFixed(1) + '%';
+    $('chgAbs').textContent = money(Math.abs(d)) + ' ETB';
+    drawChart(); onAmount();
+  }
+  $('curSel').addEventListener('change', e => setCurrency(e.target.value));
+
+  // ── 1 · Amount ──
+  const amt = () => Number($('amount').value.replace(/,/g, '')) || 0;
+  const receive = () => Math.max(0, amt() * CUR[cur].rate - FEE_ETB);
+  function onAmount() {
+    const el = $('amount');
+    let v = el.value.replace(/[^\d.]/g, ''); const [i, f] = v.split('.');
+    el.value = (i ? Number(i).toLocaleString('en-US') : '') + (f !== undefined ? '.' + f.slice(0, 2) : '');
+    $('receive').value = money(receive());
+    const a = amt(), max = CUR[cur].max, bad = a > max || (a > 0 && a < MIN);
+    $('amtErr').textContent = a > max ? `The most you can add at once is ${money(max)} ${cur}.` : bad ? `Minimum is ${money(MIN)} ${cur}.` : '';
+    $('amtErr').classList.toggle('show', bad);
+    validate();
+  }
+  $('amount').addEventListener('input', onAmount);
+
+  // ── 2 · Profile ──
+  const emailOk = v => /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(v.trim());
+  ['pfName', 'pfEmail', 'pfCity', 'pfAddr', 'pfCountry'].forEach(id => $(id).addEventListener('input', () => { $('pfEmailF').classList.remove('err'); $('pfEmailErr').classList.remove('show'); validate(); }));
+  $('pfEmail').addEventListener('blur', () => { const v = $('pfEmail').value; const bad = v && !emailOk(v); $('pfEmailF').classList.toggle('err', bad); $('pfEmailErr').classList.toggle('show', bad); });
+
+  // ── 3 · Card: any bank's Visa — starts with 4, 13/16/19 digits, passes the Luhn check ──
+  const VISA_LENGTHS = [13, 16, 19];
+  function luhn(num) { let s = 0, dbl = false; for (let i = num.length - 1; i >= 0; i--) { let n = +num[i]; if (dbl) { n *= 2; if (n > 9) n -= 9; } s += n; dbl = !dbl; } return s % 10 === 0; }
+  const visaOk = d => VISA_LENGTHS.includes(d.length) && d[0] === '4' && luhn(d);
+  function visaError(d, final) {
+    if (!d) return final ? 'Enter your Visa card number.' : '';
+    if (d[0] !== '4') return "This isn't a Visa card. Visa card numbers start with 4.";
+    if (!VISA_LENGTHS.includes(d.length)) return final || d.length > 19 ? 'A Visa card number has 13, 16 or 19 digits.' : '';
+    if (!luhn(d)) return (final || d.length >= 16) ? "This card number isn't valid. Please check it and try again." : '';
+    return '';
+  }
+  function showCardState(d, final) {
+    const msg = visaError(d, final);
+    $('cardErr').textContent = msg; $('cardErr').classList.toggle('show', !!msg);
+    $('cardField').classList.toggle('err', !!msg); $('cardField').classList.toggle('ok', visaOk(d));
+  }
+  $('cardNum').addEventListener('input', e => { const d = digits(e.target.value).slice(0, 19); e.target.value = d.replace(/(\d{4})(?=\d)/g, '$1 '); showCardState(d, false); validate(); });
+  $('cardNum').addEventListener('blur', () => { const d = digits($('cardNum').value); if (d) showCardState(d, true); });
+  $('cardName').addEventListener('input', validate);
+  function expOk(v) {
+    const m = v.match(/^(\d{2})\/(\d{2})$/); if (!m) return false;
+    const mm = +m[1], yy = 2000 + +m[2]; if (mm < 1 || mm > 12) return false;
+    const now = new Date(); return yy > now.getFullYear() || (yy === now.getFullYear() && mm >= now.getMonth() + 1);
+  }
+  $('cardExp').addEventListener('input', e => { let d = digits(e.target.value).slice(0, 4); if (d.length >= 3) d = d.slice(0, 2) + '/' + d.slice(2); e.target.value = d; $('expErr').classList.remove('show'); $('expField').classList.remove('err'); validate(); });
+  $('cardExp').addEventListener('blur', () => { const v = $('cardExp').value; const bad = v.length >= 4 && !expOk(v); $('expErr').classList.toggle('show', bad); $('expField').classList.toggle('err', bad); });
+  $('cardCvv').addEventListener('input', e => { e.target.value = digits(e.target.value).slice(0, 3); validate(); });
+
+  // ── Steps ──
+  let step = 1;
+  const ok = {
+    1: () => amt() >= MIN && amt() <= CUR[cur].max,
+    2: () => $('pfName').value.trim().length > 2 && emailOk($('pfEmail').value) && $('pfCity').value.trim() && $('pfAddr').value.trim(),
+    3: () => visaOk(digits($('cardNum').value)) && $('cardName').value.trim().length > 1 && expOk($('cardExp').value) && $('cardCvv').value.length === 3,
+    4: () => true
+  };
+  function validate() { $('mainBtn').disabled = !ok[step](); }
+  function labelFor() {
+    if (step === 1) return amt() > 0 ? `Add ${money(receive())} ETB` : 'Continue';
+    if (step === 4) return 'Confirm & Add Money';
+    return 'Continue';
+  }
+  function go(n) {
+    step = n;
+    [1, 2, 3, 4].forEach(i => { $('p' + i).classList.toggle('show', i === n); });
+    if (n === 3 && !$('cardName').value.trim()) $('cardName').value = $('pfName').value.trim();
+    if (n === 4) fillConfirm();
+    $('scroll').scrollTop = 0;
+    document.activeElement && document.activeElement.blur();
+    validate(); $('mainTxt').textContent = labelFor();
+  }
+  function next() { if ($('mainBtn').disabled) return; if (step < 4) go(step + 1); else startOtp(); }
+  function back() { if (step > 1) go(step - 1); else location.href = 'Add Money.html'; }
+  // keep the button label in sync on step 1
+  $('amount').addEventListener('input', () => { if (step === 1) $('mainTxt').textContent = labelFor(); });
+
+  const last4 = () => digits($('cardNum').value).slice(-4);
+  function fillConfirm() {
+    const c = CUR[cur];
+    $('cfGet').innerHTML = money(receive()) + '<span>ETB</span>';
+    $('cfSend').textContent = `You send ${money(amt())} ${cur}`;
+    $('cfRate').textContent = `1 ${cur} = ${money(c.rate)} ETB`;
+    $('cfFee').textContent = money(FEE_ETB) + ' ETB';
+    $('cfCharged').textContent = money(amt()) + ' ' + cur;
+    $('cfCard').textContent = 'Visa •••• ' + last4();
+    $('cfCardName').textContent = $('cardName').value.trim();
+    $('cfName').textContent = $('pfName').value.trim();
+    $('cfEmail').textContent = $('pfEmail').value.trim();
+    $('cfBill').textContent = [$('pfCity').value.trim(), $('pfCountry').value].filter(Boolean).join(', ');
+  }
+
+  // ── Card security code (any 6 digits work except 000000) ──
+  const boxes = [...document.querySelectorAll('#otpBoxes input')];
+  let resendTimer;
+  function startOtp() {
+    $('otpCard').textContent = '•••• ' + last4();
+    boxes.forEach(b => b.value = '');
+    $('otpErr').classList.remove('show'); $('otpBoxes').classList.remove('err');
+    $('verifyBtn').disabled = true;
+    $('otp').classList.add('show'); boxes[0].focus(); countdown();
+  }
+  function closeOtp() { $('otp').classList.remove('show'); clearInterval(resendTimer); }
+  function countdown() {
+    let t = 30; $('resendBtn').disabled = true; $('resendBtn').innerHTML = 'Resend code in <span id="resendT">30</span>s';
+    clearInterval(resendTimer);
+    resendTimer = setInterval(() => { t--; if (t > 0) { $('resendT').textContent = t; return; } clearInterval(resendTimer); $('resendBtn').disabled = false; $('resendBtn').textContent = 'Resend code'; }, 1000);
+  }
+  function resend() { boxes.forEach(b => b.value = ''); boxes[0].focus(); countdown(); }
+  boxes.forEach((b, i) => {
+    b.addEventListener('input', () => { b.value = digits(b.value).slice(-1); if (b.value && i < 5) boxes[i + 1].focus(); $('otpErr').classList.remove('show'); $('otpBoxes').classList.remove('err'); $('verifyBtn').disabled = boxes.some(x => !x.value); });
+    b.addEventListener('keydown', e => { if (e.key === 'Backspace' && !b.value && i > 0) boxes[i - 1].focus(); if (e.key === 'Enter' && !$('verifyBtn').disabled) verify(); });
+  });
+  function verify() {
+    if (boxes.map(b => b.value).join('') === '000000') { $('otpErr').classList.add('show'); $('otpBoxes').classList.add('err'); return; }
+    clearInterval(resendTimer);
+    $('busyTxt').textContent = 'Adding money from your card…';
+    $('busy').classList.add('show');
+    setTimeout(() => {
+      sessionStorage.setItem('addMoneyData', JSON.stringify({
+        source: 'visa', sourceLabel: 'Visa Card', card: 'Visa •••• ' + last4(), cur,
+        amountUsd: amt(), rate: CUR[cur].rate, fee: FEE_ETB, amount: receive(),
+        ref: 'U' + Math.random().toString(36).slice(2, 10).toUpperCase()
+      }));
+      location.href = 'Add Money - Receipt.html';
+    }, 1400);
+  }
+
+  setCurrency('USD');
+  go(1);
+</script>
+<script src="components/keyboard.js"></script>
+<script>
+  // Go / Enter on a field moves on once the step is complete
+  document.querySelectorAll('.scroll input').forEach(i => i.addEventListener('keydown', e => {
+    if (e.key === 'Enter' && !$('mainBtn').disabled) { e.preventDefault(); setTimeout(next, 0); }
+  }));
+</script>
+<!-- Export to Figma button (shared exporter) -->
+<script src="figma-export.js"></script>
+<script src="test-scenarios-data.js"></script>
+<script src="test-scenarios.js"></script>
+</body>
+</html>

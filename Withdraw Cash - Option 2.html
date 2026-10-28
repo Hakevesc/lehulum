@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Withdraw Cash · Option 2</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700&display=swap">
+<style>
+  /* Withdraw first screen, Option 2: the QR scanner leads (dark hero), then
+     Agent / ATM, then the agents and ATMs used most. */
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'Figtree', system-ui, sans-serif; background: transparent; display: flex; justify-content: center; align-items: center; min-height: 100vh; padding: 20px; color: #1C1C1E; }
+  button { font-family: inherit; }
+  .phone-frame { width: 360px; height: 780px; background: #F2F2F2; border-radius: 30px; overflow: hidden; position: relative; box-shadow: 0 20px 60px rgba(0,0,0,0.15); display: flex; flex-direction: column; }
+  .app-content { height: 100%; display: flex; flex-direction: column; overflow-y: auto; scrollbar-width: none; }
+  .app-content::-webkit-scrollbar { display: none; }
+
+  /* ── Scanner hero ── */
+  .hero { flex: none; background: #121212; border-radius: 0 0 32px 32px; padding: 22px 12px 24px; display: flex; flex-direction: column; align-items: center; gap: 12px; }
+  .hero-head { width: 100%; height: 56px; display: grid; grid-template-columns: 44px 1fr 44px; align-items: center; }
+  .icon-btn { width: 44px; height: 44px; padding: 0; border: 0; background: transparent; display: flex; align-items: center; justify-content: center; cursor: pointer; }
+  .hero-head h1 { font-size: 18px; font-weight: 500; text-align: center; color: #FFF; }
+  .scan-row { width: 100%; margin-top: 4px; display: flex; justify-content: center; }
+  .scan-actions { width: 100%; padding: 0 4px; display: grid; grid-template-columns: 44px 1fr 44px; align-items: center; gap: 8px; }
+  .round-btn { width: 44px; height: 44px; padding: 0; border: 0; border-radius: 22px; background: rgba(255,255,255,0.12); display: flex; align-items: center; justify-content: center; cursor: pointer; transition: background 0.15s; }
+  .round-btn.on { background: rgba(255,255,255,0.32); }
+  .viewfinder { border: 0; padding: 0; background: none; cursor: pointer; display: block; }
+  .viewfinder:active { transform: scale(0.98); }
+  .scan-line { animation: sweep 2.2s ease-in-out infinite; }
+  @keyframes sweep { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(96px); } }
+  @media (prefers-reduced-motion: reduce) { .scan-line { animation: none; } }
+  .hero p { font-size: 13px; font-weight: 500; color: rgba(255,255,255,0.72); text-align: center; white-space: nowrap; }
+
+  /* ── Choices and frequents ── */
+  main { padding: 4px 16px 24px; display: flex; flex-direction: column; }
+  .divider { display: flex; align-items: center; gap: 12px; margin: 16px 0 12px; }
+  .divider i { flex: 1; height: 1px; background: #D4D4D6; }
+  .divider span { font-size: 14px; color: #3A3A3C; }
+  .choices { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+  .choice { appearance: none; border: 0; padding: 14px; background: #FFF; border-radius: 24px; text-align: left; color: inherit; cursor: pointer; display: flex; flex-direction: column; gap: 14px; box-shadow: 0 1px 2px rgba(0,0,0,0.05); transition: transform 0.12s; }
+  .choice:active { transform: scale(0.98); }
+  .choice-top { width: 100%; display: flex; align-items: center; justify-content: space-between; }
+  .choice-ic { width: 44px; height: 44px; border-radius: 14px; background: #FDE7E9; border: 1.5px solid #FF3340; display: flex; align-items: center; justify-content: center; }
+  .choice-name { font-size: 14px; font-weight: 700; line-height: 1.25; }
+  h2 { margin: 20px 0 10px; font-size: 16px; font-weight: 600; }
+  .freq { background: #FFF; border-radius: 24px; padding: 4px 14px; box-shadow: 0 1px 2px rgba(0,0,0,0.05); }
+  .freq-row { width: 100%; display: flex; align-items: center; gap: 12px; padding: 8px 0; border: 0; background: none; text-align: left; color: inherit; cursor: pointer; }
+  .freq-row + .freq-row { border-top: 1px solid #F0F0F0; }
+  .freq-av { width: 44px; height: 44px; flex: none; border-radius: 14px; background: #FDE7E9; color: #CC2433; font-size: 15px; font-weight: 700; display: flex; align-items: center; justify-content: center; }
+  .freq-info { flex: 1; min-width: 0; }
+  .freq-name { display: block; font-size: 15px; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .freq-sub { display: block; margin-top: 2px; font-size: 12px; color: #6E6E73; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .freq-tag { flex: none; padding: 3px 8px; border-radius: 999px; background: #F1F1F2; color: #5A5A5F; font-size: 11px; font-weight: 600; }
+</style>
+<link rel="stylesheet" href="styles/device.css">
+</head>
+<body>
+<div class="phone-frame">
+  <div class="app-content">
+
+    <section class="hero" aria-label="QR scanner">
+      <header class="hero-head">
+        <button class="icon-btn" type="button" aria-label="Back" onclick="window.location.href='More Services.html'">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 12H5M11 6l-6 6 6 6"/></svg>
+        </button>
+        <h1>Withdraw</h1>
+        <div></div>
+      </header>
+
+      <div class="scan-row">
+        <!-- Tap the viewfinder to open the camera -->
+        <button class="viewfinder" type="button" aria-label="Scan the QR code to withdraw" onclick="scanQr()">
+          <svg width="200" height="200" viewBox="0 0 180 180" fill="none" aria-hidden="true">
+            <defs>
+              <linearGradient id="scanGlowB" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FF3340" stop-opacity="0"/><stop offset="1" stop-color="#FF3340" stop-opacity="0.24"/></linearGradient>
+              <filter id="blurB" filterUnits="userSpaceOnUse" x="0" y="40" width="180" height="44"><feGaussianBlur stdDeviation="4"/></filter>
+            </defs>
+            <rect x="6" y="6" width="168" height="168" rx="22" fill="#262626"/>
+            <g class="scan-line">
+              <rect x="16" y="24" width="148" height="38" fill="url(#scanGlowB)"/>
+              <path d="M24 62H156" stroke="#FF3340" stroke-width="9" stroke-linecap="round" opacity="0.4" filter="url(#blurB)"/>
+              <path d="M24 62H156" stroke="#FF3340" stroke-width="3" stroke-linecap="round"/>
+            </g>
+            <path d="M6 40V28A22 22 0 0 1 28 6H40M140 6H152A22 22 0 0 1 174 28V40M6 140V152A22 22 0 0 0 28 174H40M174 140V152A22 22 0 0 1 152 174H140" stroke="#fff" stroke-width="3.5" stroke-linecap="round"/>
+          </svg>
+        </button>
+      </div>
+      <!-- Under the viewfinder: flash, the hint, gallery — one row -->
+      <div class="scan-actions">
+        <button class="round-btn" id="flashBtn" type="button" aria-label="Toggle flashlight" aria-pressed="false" onclick="toggleFlash()">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13 2L4.5 13.5H11L10 22l8.5-11.5H12z"/></svg>
+        </button>
+        <p>Scan the QR code to withdraw</p>
+        <button class="round-btn" type="button" aria-label="Scan from gallery" onclick="scanQr()">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="3"/><circle cx="9" cy="10" r="1.6"/><path d="M21 16l-4.5-4.5L8 20"/></svg>
+        </button>
+      </div>
+    </section>
+
+    <main>
+      <div class="divider"><i></i><span>Or choose</span><i></i></div>
+
+      <div class="choices">
+        <button class="choice" type="button" onclick="goAgent()">
+          <span class="choice-top">
+            <span class="choice-ic"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#DD3545" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8" r="3.6"/><path d="M5 20c0-3.9 3.1-7 7-7s7 3.1 7 7"/></svg></span>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#DD3545" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg>
+          </span>
+          <span class="choice-name">Withdraw at Agent</span>
+        </button>
+        <button class="choice" type="button" onclick="goAtm()">
+          <span class="choice-top">
+            <span class="choice-ic"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#DD3545" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 9.5L12 4l9 5.5"/><path d="M5.5 11v7M10 11v7M14 11v7M18.5 11v7"/><path d="M3 20.5h18"/></svg></span>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#DD3545" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg>
+          </span>
+          <span class="choice-name">Withdraw at ATM</span>
+        </button>
+      </div>
+
+      <h2>Frequent</h2>
+      <div class="freq" id="freqList"></div>
+    </main>
+
+  </div>
+</div>
+
+<script>
+  const HERE = 'Withdraw Cash - Option 2.html';
+  const stamp = () => new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+  const save = d => sessionStorage.setItem('withdrawData', JSON.stringify(Object.assign({ from: HERE, time: stamp() }, d)));
+
+  // Frequent: the same agents / ATMs the other withdraw screens know
+  const FREQUENT = [
+    { abbr: 'BM', name: 'Betty Merhat Agency', sub: 'Short Code: 323 217 • 0.8 km', tag: 'Agent', code: '323217' },
+    { abbr: 'KR', name: 'Kebede Retails',      sub: 'Short Code: 562 394 • 1.2 km', tag: 'Agent', code: '562394' },
+    { abbr: 'CB', name: 'CBE ATM',             sub: 'Cardless • Bole Medhanialem',  tag: 'ATM',   atm: 'cbe' }
+  ];
+  document.getElementById('freqList').innerHTML = FREQUENT.map((f, i) => `
+    <button class="freq-row" type="button" onclick="useFrequent(${i})">
+      <span class="freq-av">${f.abbr}</span>
+      <span class="freq-info"><span class="freq-name">${f.name}</span><span class="freq-sub">${f.sub}</span></span>
+      <span class="freq-tag">${f.tag}</span>
+    </button>`).join('');
+
+  // Viewfinder / gallery: straight into the camera on the agent screen
+  function scanQr() {
+    save({ method: 'agent', methodLabel: 'Scan Agent QR', entry: 'qr', agentCode: '204411' });
+    window.location.href = 'Withdraw Cash - Agent Short Code Locate.html?entry=qr';
+  }
+  function toggleFlash() {
+    const b = document.getElementById('flashBtn');
+    const on = !b.classList.contains('on');
+    b.classList.toggle('on', on);
+    b.setAttribute('aria-pressed', on);
+  }
+  // Agent: Withdraw at Agent (Enter Code / Near By); ATM: Withdraw at ATM (amount, then confirm)
+  function goAgent() {
+    save({ method: 'agent', methodLabel: 'Merchant Short Code' });
+    window.location.href = 'Withdraw Cash - Agent Short Code Locate.html';
+  }
+  function goAtm() {
+    save({ method: 'atm', methodLabel: 'ATM Cardless' });
+    window.location.href = 'Withdraw Cash - At ATM.html';
+  }
+  // A frequent agent opens the amount step with that agent filled in; a frequent ATM opens the ATM step
+  function useFrequent(i) {
+    const f = FREQUENT[i];
+    if (f.code) { save({ method: 'agent', methodLabel: 'Merchant Short Code', entry: 'code', agentCode: f.code }); window.location.href = 'Withdraw Cash - Agent Short Code Locate.html'; }
+    else { save({ method: 'atm', methodLabel: 'ATM Cardless', atmKey: f.atm }); window.location.href = 'Withdraw Cash - At ATM.html'; }
+  }
+</script>
+<!-- Export to Figma button (shared exporter) -->
+<script src="figma-export.js"></script>
+<script src="test-scenarios-data.js"></script>
+<script src="test-scenarios.js"></script>
+</body>
+</html>

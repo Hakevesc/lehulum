@@ -41,7 +41,7 @@
 
   /* ── Payee summary ── */
   .party-card { background: #FFF; border-radius: 16px; padding: 14px; display: flex; align-items: center; gap: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.04); }
-  .party-avatar { width: 44px; height: 44px; border-radius: 50%; background: #FFE9EA; color: var(--Primary); display: flex; align-items: center; justify-content: center; font-family: 'Switzer', sans-serif; font-size: 14px; font-weight: 700; flex-shrink: 0; }
+  .party-avatar { width: 44px; height: 44px; border-radius: 12px; background: #FFE9EA; color: var(--Primary); display: flex; align-items: center; justify-content: center; font-family: 'Switzer', sans-serif; font-size: 14px; font-weight: 700; flex-shrink: 0; }
   .party-info { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 3px; }
   .party-name { font-family: 'Switzer', sans-serif; font-size: 15px; font-weight: 700; color: var(--On-Surface); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
   .party-sub { font-family: 'Switzer', sans-serif; font-size: 12.5px; color: var(--On-Surface-Low); }
@@ -53,7 +53,7 @@
   .pin-prompt span { font-family: 'Switzer', sans-serif; font-size: 14px; font-weight: 600; color: var(--On-Surface); }
 
   .pin-container { display: flex; justify-content: space-between; gap: 12px; margin-top: 16px; }
-  .pin-box { flex: 1; height: 60px; border-radius: 14px; background: #F1F1F4; border: 2px solid transparent; display: flex; align-items: center; justify-content: center; transition: border-color 0.18s, background 0.18s; }
+  .pin-box { flex: 1; height: 60px; border-radius: 14px; background: #F7F7F9; border: 2px solid #EBEBEF; display: flex; align-items: center; justify-content: center; transition: border-color 0.18s, background 0.18s; }
   .pin-box.active { border-color: var(--Primary); background: #FFF7F7; }
   .pin-box.error { border-color: var(--Primary); background: #FFF4F4; animation: shake 0.35s; }
   @keyframes shake { 25% { transform: translateX(-5px); } 75% { transform: translateX(5px); } }
@@ -106,7 +106,7 @@
       <button class="back-btn" onclick="goBack()">
         <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
       </button>
-      <span class="header-title">Withdraw Cash</span>
+      <span class="header-title" id="hdrTitle">Withdraw At Agent</span>
       <div style="width:36px;"></div>
     </div>
 
@@ -159,7 +159,7 @@
 <script>
   const data = JSON.parse(sessionStorage.getItem('withdrawData') || '{}');
   const method = data.method || 'agent';
-  const MAIN_BALANCE = 12580;
+  const MAIN_BALANCE = 20000;
   const fmt = n => parseFloat(n || 0).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
 
   const agent = data.agent || {};
@@ -167,7 +167,8 @@
     ? 'ATM Cardless Withdrawal'
     : (data.agentName || agent.name || 'Agent Withdrawal');
   document.getElementById('sumTotal').textContent = fmt(data.total || data.amount || '0');
-  document.getElementById('sumIcon').textContent = method === 'atm' ? 'A' : (agent.abbr || 'W');
+  document.getElementById('sumIcon').textContent = method === 'atm' ? 'A' : (agent.abbr || data.agentAbbr || 'W');
+  if (method === 'atm') document.getElementById('hdrTitle').textContent = 'Withdraw At ATM';
 
   let pin = '';
   const boxes = Array.from(document.querySelectorAll('.pin-box'));
@@ -196,19 +197,13 @@
   refresh();
 
   function goBack() {
-    if (data.from === 'Withdraw Cash - Amount First.html') {
-      window.location.href = 'Withdraw Cash - Agent Short Code Locate.html';
-      return;
-    }
-    // The agent locator captures code and amount together, so it owns the back step.
-    if (method === 'agent') window.location.href = 'Withdraw Cash - Agent Locator.html';
-    else if (method === 'atm') window.location.href = 'Withdraw Cash - ATM Locator.html';
-    else window.location.href = 'Withdraw Cash - Agent Nearby.html';
+    // Withdraw at Agent (code, nearby or scanned QR) owns the back step; ATM goes back to Withdraw at ATM
+    window.location.href = method === 'atm' ? 'Withdraw Cash - At ATM.html' : 'Withdraw Cash - Agent Short Code Locate.html';
   }
 
   function genVoucher() {
     let s = '';
-    for (let i = 0; i < 9; i++) s += Math.floor(Math.random() * 10);
+    for (let i = 0; i < 6; i++) s += Math.floor(Math.random() * 10);
     return s;
   }
 
@@ -223,18 +218,13 @@
         window.location.href = 'Withdraw Cash - Insufficient Balance.html';
         return;
       }
-      // Only ATM cardless withdrawals carry a one-time voucher code; the agent
-      // settles the withdrawal in person, so agent bills never show one.
-      if (method === 'atm') {
-        data.voucherCode = genVoucher();
-        data.expiry = new Date(Date.now() + 24 * 3600 * 1000).toISOString();
-      } else {
-        delete data.voucherCode;
-        delete data.expiry;
-      }
+      // Every withdrawal gets a one-time voucher code: typed at the ATM, or
+      // shown to the agent, who redeems it before handing over the cash.
+      data.voucherCode = genVoucher();
+      data.expiry = new Date(Date.now() + 24 * 3600 * 1000).toISOString();
       data.ref = 'U' + 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'[Math.floor(Math.random()*26)] + Array.from({length:8},()=>'ABCDEFGHJKLMNPQRSTUVWXYZ23456789'[Math.floor(Math.random()*31)]).join('');
       sessionStorage.setItem('withdrawData', JSON.stringify(data));
-      window.location.href = 'Withdraw Cash - Receipt.html';
+      window.location.href = method === 'atm' ? 'Withdraw Cash - Receipt (ATM).html' : 'Withdraw Cash - Receipt.html';
     });
   }
 </script>

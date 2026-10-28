@@ -46,6 +46,8 @@
   .party-sub { font-family: 'Switzer', sans-serif; font-size: 12.5px; color: var(--On-Surface-Low); }
   .party-sub b { color: var(--On-Surface); font-weight: 600; }
 
+  .party-avatar.has-logo { background: #FFF; overflow: hidden; }
+  .party-avatar.has-logo img { width: 100%; height: 100%; object-fit: cover; display: block; }
   /* ── PIN prompt ── */
   .pin-prompt { display: flex; align-items: center; justify-content: center; gap: 7px; margin-top: 34px; }
   .pin-prompt svg { width: 15px; height: 15px; stroke: var(--On-Surface); stroke-width: 2; fill: none; }
@@ -192,6 +194,15 @@
     document.getElementById('reviewName').textContent = name;
     document.getElementById('reviewInitials').textContent = m.abbr || initials(name);
     document.getElementById('reviewAmount').textContent = total;
+    // Partner journeys (e.g. BeU) can pass their logo, page title and button label
+    if (m.logo) {
+      const av = document.getElementById('reviewInitials');
+      av.textContent = '';
+      av.classList.add('has-logo');
+      av.innerHTML = '<img src="' + m.logo + '" alt="">';
+    }
+    if (m.title) document.querySelector('.header-title').textContent = m.title;
+    if (m.btnLabel) document.querySelector('.pay-btn').textContent = m.btnLabel;
 
     // Errif-funded payment → blue overdraft mode (avatar + Pay button), like Airtime.
     if (m.overdraft) {
@@ -261,7 +272,11 @@
     });
   }
 
-  function goBack() { window.location.href = 'Pay Merchant.html'; }
+  function goBack() {
+    const returnPage = sessionStorage.getItem('merchantReturnPage') || 'Pay Merchant.html';
+    sessionStorage.removeItem('merchantReturnPage');
+    window.location.href = returnPage;
+  }
 
   document.addEventListener('keydown', function (e) {
     if (e.key >= '0' && e.key <= '9') pressKey(e.key);

@@ -576,7 +576,7 @@
 
   // Prefill from a saved favourite/frequent agent, or when editing an
   // already-generated voucher's details from the Cash-In Voucher screen.
-  let enteredByQr = false, ciFrom = 'Cash In - Amount First.html';
+  let enteredByQr = false, ciFrom = 'Cash In.html';
   function goBackCi() { window.location.href = ciFrom; }
   try {
     const data = JSON.parse(sessionStorage.getItem('cashInData') || '{}');
@@ -587,7 +587,7 @@
     enteredByQr = data.entry === 'qr';
     // From Cash In · Amount First: the QR panel starts with that amount
     if (enteredByQr && data.amount) { $('qrAmt').value = String(data.amount); onQrAmountInput($('qrAmt')); }
-    ciFrom = data.from || 'Cash In - Amount First.html';
+    ciFrom = data.from || 'Cash In.html';
   } catch (e) { /* ignore corrupt state */ }
 
   // The QR card belongs to the Generate QR entry only. The At Agent / Merchant

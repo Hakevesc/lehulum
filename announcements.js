@@ -256,6 +256,54 @@ window.MPESA_ANNOUNCEMENTS = [
     }
   },
   {
+    id: 'beu-delivery',
+    type: 'campaign',
+    priority: 2,
+    featured: true,
+    title: 'beU Delivery',
+    desc: 'Order food and parcels with beU and pay for delivery right from your M-PESA wallet.',
+    short: 'Pay for beU deliveries straight from your wallet',
+    publishedDaysAgo: 0,
+    expiresInDays: 14,
+    badge: 'New Partner',
+    glyph: '🛵',
+    coverImage: 'assets/stories/Beu-Banner-156-by-104-px.jpg',
+    iconBg: '#FFE9DC',
+    gradient: 'linear-gradient(135deg, #F26A21 0%, #D6391A 100%)',
+    cta: { label: 'Pay Merchant', href: 'Pay Merchant.html' },
+    body: 'Order meals, groceries and parcels on the beU Delivery app and settle the bill with M-PESA — no cash, no card.\n\nAt checkout choose M-PESA as your payment method, approve the prompt on your phone and your delivery is confirmed in seconds.',
+    terms: [
+      'Available on the beU Delivery app and website',
+      'Payment is deducted instantly from your M-PESA wallet',
+      'Standard M-PESA transaction limits apply',
+      'Delivery fees and merchant prices are set by beU'
+    ],
+    // Partner banner ad: photo-led cover reusing the beU creative.
+    detail: {
+      cover: 'photo',
+      image: 'assets/stories/Beu-Banner-156-by-104-px.jpg',
+      accent: '#E85D14',
+      badgeBg: 'rgba(255,255,255,0.24)',
+      badge: 'beU Delivery',
+      headline: 'beU Delivery',
+      kicker: 'order food & parcels, pay with M-PESA',
+      stats: [
+        { icon: 'wallet', label: 'Pay with', value: 'M-PESA Wallet' },
+        { icon: 'clock',  label: 'Ends in', value: '14 days' }
+      ],
+      introTitle: 'How it works',
+      intro: 'Order on beU Delivery and choose M-PESA at checkout to pay for your order and delivery fees straight from your wallet.',
+      highlights: [
+        { icon: 'utensils', title: 'Food & parcels', desc: 'Meals, groceries and more.' },
+        { icon: 'zap',      title: 'Instant approval', desc: 'Approve the prompt in seconds.' }
+      ],
+      reassure: { title: 'No card needed', text: 'Your M-PESA wallet covers the full amount — there is nothing else to set up.' },
+      tip: { title: 'Tip', text: 'You get an M-PESA receipt for every beU order, right in Transaction History.' },
+      support: true,
+      ctaLabel: 'Pay Merchant Now'
+    }
+  },
+  {
     id: 'bank-transfer-live',
     type: 'notice',
     priority: 2,

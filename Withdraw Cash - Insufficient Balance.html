@@ -99,7 +99,7 @@
 
   function lower() {
     const m = (JSON.parse(sessionStorage.getItem('withdrawData') || '{}').method) || 'agent';
-    window.location.href = m === 'atm'    ? 'Withdraw Cash - ATM Locator.html'
+    window.location.href = m === 'atm'    ? 'Withdraw Cash - At ATM.html'
                          : m === 'nearby' ? 'Withdraw Cash - Agent Nearby.html'
                          :                  'Withdraw Cash - Agent Locator.html';
   }
