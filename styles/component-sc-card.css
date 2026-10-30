@@ -1,0 +1,54 @@
+/* ============================================================
+   Component: Saving & Credit card (white, illustration top-right)
+   ============================================================ */
+
+/* The top card for every saving and credit screen (Saving & Credit, Term
+   Loan, Active Accounts) — deliberately not Home's red balance card. Label +
+   eye, big amount, then a progress row / bar / note or a row of stats. */
+.sc-card {
+  position: relative;
+  min-height: 176px;
+  padding: 16px 16px 18px;
+  border-radius: 22px;
+  overflow: hidden;
+  color: var(--On-Surface, #1C1C21);
+  background: radial-gradient(70% 80% at 92% 8%, #FFE9EA 0%, rgba(255, 233, 234, 0) 70%), #FFF;
+  box-shadow: 0 4px 16px rgba(15, 23, 42, 0.06);
+}
+.sc-card .art { position: absolute; right: 6px; top: 4px; width: 128px; height: 112px; pointer-events: none; }
+/* With a stats row the illustration steps down a size so the stats clear it */
+.sc-card:has(.s-stats) .art { width: 104px; height: 91px; }
+
+.s-label { position: relative; display: flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 500; color: var(--On-Surface-Low, #7C7C87); }
+.sc-card .eye { width: 22px; height: 18px; border: none; background: none; padding: 0; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+.sc-card .eye svg { width: 17px; height: 17px; stroke: #7C7C87; stroke-width: 1.7; fill: none; stroke-linecap: round; stroke-linejoin: round; }
+.s-amount { position: relative; margin-top: 0; line-height: 1.15; font-size: 28px; font-weight: 700; letter-spacing: -0.4px; white-space: nowrap; }
+.s-amount small { font-size: 14px; font-weight: 500; margin-left: 5px; color: var(--On-Surface-Low, #7C7C87); }
+
+/* Progress: label / value on the left, % chip on the right, bar, note */
+.s-row { position: relative; margin-top: 20px; display: flex; align-items: flex-end; justify-content: space-between; }
+.s-row span { display: block; font-size: 11.5px; color: var(--On-Surface-Low, #7C7C87); }
+.s-row b { display: block; margin-top: 1px; font-size: 15px; font-weight: 700; }
+.s-row b small { font-size: 11px; font-weight: 500; margin-left: 3px; color: var(--On-Surface-Low, #7C7C87); }
+.s-pct { padding: 3px 9px; border-radius: 10px; background: #FFF1F2; color: var(--Primary, #FE353D); font-size: 11.5px; font-weight: 700; }
+.s-bar { position: relative; margin-top: 8px; height: 6px; border-radius: 3px; background: #FFE4E5; overflow: hidden; }
+.s-bar i { display: block; height: 100%; border-radius: 3px; background: var(--Primary, #FE353D); }
+.s-note { position: relative; margin-top: 8px; font-size: 11.5px; color: #55555E; }
+
+/* Stats: two or three small label / value pairs split by thin lines */
+.s-stats { position: relative; margin-top: 36px; display: flex; gap: 12px; }
+.s-stat { position: relative; flex: 1; min-width: 0; }
+.s-stat .split { position: absolute; left: -6px; top: 2px; bottom: 2px; width: 1px; background: #ECECF0; }
+.s-stat small { display: block; font-size: 11px; color: var(--On-Surface-Low, #7C7C87); }
+.s-stat b { display: block; margin-top: 3px; font-size: 13.5px; font-weight: 700; white-space: nowrap; }
+.s-stat b.up { color: #16A34A; }
+
+/* Shortcut tiles under the card: icon, title, chevron */
+.tiles { display: flex; gap: 8px; padding: 8px; margin-bottom: 12px; background: #FFF; border-radius: 22px; box-shadow: 0 2px 12px rgba(0,0,0,0.04); }
+.tile { flex: 1; min-width: 0; display: flex; align-items: center; gap: 8px; padding: 11px 8px 11px 9px; border-radius: 16px; background: #FFF6F6; cursor: pointer; }
+.tile:active { transform: scale(0.98); }
+.t-ic { width: 26px; height: 26px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.t-ic svg { width: 26px; height: 26px; stroke: var(--Primary, #FE353D); stroke-width: 1.8; fill: none; stroke-linecap: round; stroke-linejoin: round; }
+.t-txt { flex: 1; min-width: 0; }
+.t-txt b { display: block; font-size: 12.5px; font-weight: 600; color: var(--On-Surface, #1C1C21); white-space: nowrap; }
+.tile .cv { width: 12px; height: 12px; flex-shrink: 0; stroke: #55555E; stroke-width: 2.2; fill: none; stroke-linecap: round; stroke-linejoin: round; }

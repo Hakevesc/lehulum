@@ -107,7 +107,7 @@
       <button class="back-btn" onclick="goBack()">
         <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
       </button>
-      <span class="header-title">Term Loan</span>
+      <span class="header-title" id="pinTitle">Term Loan</span>
       <div style="width:36px;"></div>
     </div>
 
@@ -117,7 +117,7 @@
         <div class="party-avatar" id="sumIcon">PP</div>
         <div class="party-info">
           <span class="party-name" id="sumName">Agent Cash-In</span>
-          <span class="party-sub"><b>Amount:</b> <span id="sumTotal">—</span> ETB</span>
+          <span class="party-sub"><b id="sumLbl">Amount:</b> <span id="sumTotal">—</span> ETB</span>
         </div>
       </div>
 
@@ -166,7 +166,10 @@
   const data = JSON.parse(sessionStorage.getItem('termLoanData') || '{}');
   const fmt = n => parseFloat(n || 0).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
   // Lender logo, what is happening, and the amount
-  document.getElementById('sumName').textContent = data.kind === 'repay' ? 'Repay ' + (data.lender || 'Loan') : (data.product || 'Term Loan');
+  // Errif (overdraft) uses this screen too: its own title, and a limit instead of an amount
+  document.getElementById('sumName').textContent = data.title || (data.kind === 'repay' ? 'Repay ' + (data.lender || 'Loan') : (data.product || 'Term Loan'));
+  if (/^errif/.test(data.kind || '')) document.getElementById('pinTitle').textContent = 'Errif Overdraft';
+  if (data.kind === 'errif-activate') document.getElementById('sumLbl').textContent = 'Limit:';
   document.getElementById('sumTotal').textContent = fmt(data.amount || 0);
   if (data.logo) {
     const av = document.getElementById('sumIcon');
@@ -210,7 +213,7 @@
     pinFeedback(true, () => {
       data.ref = 'U' + 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'[Math.floor(Math.random()*26)] + Array.from({length:8},()=>'ABCDEFGHJKLMNPQRSTUVWXYZ23456789'[Math.floor(Math.random()*31)]).join('');
       sessionStorage.setItem('termLoanData', JSON.stringify(data));
-      window.location.href = 'Term Loan - Receipt.html';
+      window.location.href = data.next || 'Term Loan - Receipt.html';
     });
   }
 </script>

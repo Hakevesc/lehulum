@@ -8,10 +8,10 @@
   @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@400;500;600&display=swap');
   @import url('https://api.fontshare.com/v2/css?f[]=switzer@400,500,600,700,800&display=swap');
 
-  /* Loan details: lender, product and status; total repayment with due date,
-     days left and instalment; Repay All; repayment progress; instalment history
-     with Repay Now. Repay → confirmation sheet → M-PESA PIN → receipt.
-     ?id=<loan> picks the loan; ?repay=next opens the sheet for the next instalment. */
+  /* Loan details: one hero card — lender and status, a repaid ring with what is
+     left, disbursed / final due — then the instalment slider (Repay Now), and
+     Repay All pinned to the bottom edge. Repay → confirmation sheet → M-PESA PIN → receipt.
+     ?id=<loan> picks the loan; the repay sheet only opens when the customer taps a repay button. */
   :root {
     --Primary: #FE353D;
     --Primary-Light: #FFF1F2;
@@ -35,9 +35,13 @@
   .icon-btn svg { width: 22px; height: 22px; stroke: var(--On-Surface); stroke-width: 1.8px; fill: none; stroke-linecap: round; stroke-linejoin: round; }
   .header-title { color: var(--On-Surface); font-size: 17px; font-weight: 500; letter-spacing: 0.3px; flex: 1; text-align: center; }
 
-  .scroll { flex: 1; min-height: 0; overflow-y: auto; padding: 4px 16px 20px; display: flex; flex-direction: column; gap: 12px; scrollbar-width: none; }
+  .scroll { flex: 1; min-height: 0; overflow-y: auto; padding: 4px 16px 12px; display: flex; flex-direction: column; gap: 12px; scrollbar-width: none; }
   .scroll::-webkit-scrollbar { width: 0; }
   .scroll > * { flex-shrink: 0; }
+  /* Repay All sits on the bottom edge */
+  .bottom-bar { flex-shrink: 0; padding: 10px 16px 18px; background: var(--Background); }
+  .btn-primary { width: 100%; height: 52px; border: none; border-radius: 14px; background: var(--Primary); color: #FFF; font-family: 'Poppins', sans-serif; font-size: 15px; font-weight: 500; cursor: pointer; box-shadow: 0 4px 16px rgba(254,53,61,0.25); }
+  .btn-primary:disabled { background: #E0E0E0; color: var(--On-Surface-Low); box-shadow: none; cursor: default; }
 
   .card { background: #FFF; border-radius: 20px; padding: 16px; box-shadow: 0 4px 16px rgba(15,23,42,0.06); }
   .loan-head { display: flex; align-items: center; gap: 12px; padding-bottom: 14px; border-bottom: 1px solid #F1F1F4; }
@@ -53,33 +57,58 @@
   .badge.done { background: #EDEDF0; color: #55555E; }
 
   .lbl { font-size: 12px; color: var(--On-Surface-Low); }
-  .total { margin-top: 14px; }
-  .total b { display: block; margin-top: 4px; font-size: 26px; font-weight: 700; color: var(--On-Surface); letter-spacing: -0.3px; }
-  .total b span { font-size: 13px; font-weight: 500; color: var(--On-Surface-Low); margin-left: 3px; }
-  .stats { margin-top: 14px; display: flex; padding: 12px 0; border-top: 1px solid #F1F1F4; border-bottom: 1px solid #F1F1F4; }
-  .stat { flex: 1; min-width: 0; }
-  .stat + .stat { border-left: 1px solid #F1F1F4; padding-left: 12px; }
-  .stat b { display: block; margin-top: 4px; font-size: 13.5px; font-weight: 700; color: var(--On-Surface); white-space: nowrap; }
-  .stat b.red { color: var(--Primary); }
-  .disb { margin-top: 12px; display: flex; align-items: center; justify-content: space-between; gap: 10px; }
-  .disb span.d { display: flex; align-items: center; gap: 6px; margin-top: 4px; font-size: 13.5px; font-weight: 600; color: var(--On-Surface); }
-  .disb svg { width: 16px; height: 16px; stroke: #8A8A94; stroke-width: 1.9; fill: none; stroke-linecap: round; stroke-linejoin: round; }
+
+  /* Hero: repaid ring + remaining */
+  .hero-mid { display: flex; align-items: center; gap: 16px; margin-top: 16px; }
+  .ring { position: relative; width: 92px; height: 92px; flex-shrink: 0; }
+  .ring svg { width: 100%; height: 100%; transform: rotate(-90deg); }
+  .ring div { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+  .ring b { font-size: 19px; font-weight: 700; color: var(--On-Surface); line-height: 1; }
+  .ring small { margin-top: 3px; font-size: 10.5px; color: var(--On-Surface-Low); }
+  .left-amt b { display: block; margin-top: 2px; font-size: 24px; font-weight: 700; letter-spacing: -0.3px; color: var(--On-Surface); white-space: nowrap; }
+  .left-amt b span { font-size: 12.5px; font-weight: 500; color: var(--On-Surface-Low); margin-left: 3px; }
+  .left-amt p { margin-top: 4px; font-size: 12px; color: #55555E; }
+  .left-amt p b { display: inline; font-size: 12px; font-weight: 600; color: #16A34A; letter-spacing: 0; }
+
+
+  /* Loan facts */
+  /* Loan summary: key terms as label / value rows */
+  .sum-row { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; padding: 11px 0; }
+  .sum-row span { font-size: 13px; color: #55555E; }
+  .sum-row span small { display: block; margin-top: 1px; font-size: 11px; color: var(--On-Surface-Low); }
+  .sum-row b { font-size: 13.5px; font-weight: 600; color: var(--On-Surface); text-align: right; white-space: nowrap; }
+  .sum-row.total b { font-size: 15px; font-weight: 700; }
+  .sum-line { display: block; height: 1px; background: #F1F1F4; }
+  .sum-line.strong { background: #E6E6EA; }
+  .facts { margin-top: 16px; padding-top: 14px; border-top: 1px solid #F1F1F4; display: flex; }
+  .fact { position: relative; flex: 1; min-width: 0; }
+  .fact .split { position: absolute; left: -8px; top: 2px; bottom: 2px; width: 1px; background: #ECECF0; }
+  .fact + .fact { padding-left: 16px; }
+  .fact + .fact .split { left: 0; }
+  .fact b { display: block; margin-top: 3px; font-size: 13px; font-weight: 700; color: var(--On-Surface); white-space: nowrap; }
   .btn-red { flex-shrink: 0; height: 38px; padding: 0 18px; border: none; border-radius: 999px; background: var(--Primary); color: #FFF; font-family: 'Poppins', sans-serif; font-size: 13px; font-weight: 500; cursor: pointer; box-shadow: 0 3px 10px rgba(254,53,61,0.25); }
   .btn-red:disabled { background: #E0E0E0; color: var(--On-Surface-Low); box-shadow: none; cursor: default; }
 
   .title { font-size: 15px; font-weight: 600; color: var(--On-Surface); }
   .bar { margin-top: 12px; height: 8px; border-radius: 4px; background: #F1F1F4; overflow: hidden; }
   .bar i { display: block; height: 100%; border-radius: 4px; background: #16A34A; }
-  .prog { margin-top: 10px; display: flex; justify-content: space-between; }
-  .prog b { display: block; margin-top: 3px; font-size: 13.5px; font-weight: 700; color: #16A34A; }
-  .prog div:last-child { text-align: right; }
-  .prog div:last-child b { color: var(--On-Surface); }
 
   .sec-head { display: flex; justify-content: space-between; align-items: center; margin: 4px 2px -2px; }
   .sec-head a { font-size: 12.5px; font-weight: 600; color: var(--Primary); cursor: pointer; }
-  .inst-top { display: flex; justify-content: space-between; align-items: center; }
-  .inst-top b { font-size: 14px; font-weight: 700; color: var(--On-Surface); }
-  .inst-top small { font-size: 12px; color: var(--On-Surface-Low); }
+  /* Instalment slider: numbered stepper (tap to jump) + one slide per instalment */
+  /* ‹ 1 of 2 › — same control as Active Accounts */
+  .inst-nav { display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
+  .inst-nav button { width: 30px; height: 30px; border-radius: 50%; border: 1px solid #ECECF0; background: #FFF; display: flex; align-items: center; justify-content: center; cursor: pointer; }
+  .inst-nav button:disabled { opacity: 0.4; cursor: default; }
+  .inst-nav svg { width: 15px; height: 15px; stroke: var(--On-Surface); stroke-width: 2.2; fill: none; stroke-linecap: round; stroke-linejoin: round; }
+  .inst-nav span { font-size: 11.5px; font-weight: 600; color: var(--On-Surface-Low); white-space: nowrap; font-variant-numeric: tabular-nums; }
+  .inst-nav span b { color: var(--On-Surface); }
+  .inst-row { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+  .inst-track { display: flex; overflow-x: auto; scroll-snap-type: x mandatory; scrollbar-width: none; }
+  .inst-track::-webkit-scrollbar { display: none; }
+  .inst { flex: 0 0 100%; scroll-snap-align: start; }
+  .inst-top b { display: block; font-size: 14px; font-weight: 700; color: var(--On-Surface); }
+  .inst-top small { display: block; margin-top: 2px; font-size: 12px; color: var(--On-Surface-Low); }
   .inst-top small.late { color: var(--Primary); font-weight: 600; }
   .inst .bar i { background: var(--Primary); }
   .inst.paid .bar i { background: #16A34A; }
@@ -134,6 +163,7 @@
     </div>
 
     <div class="scroll" id="scroll"></div>
+    <div class="bottom-bar"><button class="btn-primary" id="repayAll" onclick="openRepay('all')"></button></div>
   </div>
 
   <!-- Repay -->
@@ -174,39 +204,91 @@
 
   function render() {
     const paid = TL.paidOf(loan), left = TL.remainingOf(loan), nx = TL.nextDue(loan);
-    const doneN = loan.instalments.filter(i => i.paid).length, n = loan.instalments.length;
+    const n = loan.instalments.length;
     const soon = nx && (new Date(nx.due) - Date.now()) < 5 * 864e5;
     const status = !nx ? ['done', 'Paid off'] : soon ? ['warn', 'Due soon'] : ['ok', 'Active'];
+    const pct = Math.round(paid / loan.total * 100), C = 2 * Math.PI * 40;
+    $('repayAll').disabled = !(left > 0);
+    $('repayAll').textContent = left > 0 ? 'Repay All · ' + fmt(left) + ' ETB' : 'Loan fully repaid';
     $('scroll').innerHTML = `
       <div class="card">
         <div class="loan-head"><span class="logo"><img src="${loan.logo}" alt=""></span>
           <span class="info"><b>${loan.lender}</b><small>${loan.product}</small></span><span class="badge ${status[0]}">${status[1]}</span></div>
-        <div class="total"><span class="lbl">Total repayment</span><b>${fmt(loan.total)}<span>ETB</span></b></div>
-        <div class="stats">
-          <div class="stat"><span class="lbl">Due date</span><b class="red">${nx ? TL.dateStr(nx.due) : '—'}</b></div>
-          <div class="stat"><span class="lbl">Due in</span><b class="red">${nx ? TL.dueIn(nx.due) : '—'}</b></div>
-          <div class="stat"><span class="lbl">Instalment</span><b>${nx ? nx.n : n} of ${n}</b></div>
-        </div>
-        <div class="disb"><div><span class="lbl">Disbursed on</span><span class="d">${CAL}${TL.dateStr(loan.disbursed)}</span></div>
-          <button class="btn-red" ${left > 0 ? '' : 'disabled'} onclick="openRepay('all')">Repay All</button></div>
-      </div>
 
-      <div class="card">
-        <div class="title">Repayment Progress</div>
-        <div class="bar"><i style="width:${Math.max(2, Math.round(paid / loan.total * 100))}%"></i></div>
-        <div class="prog"><div><span class="lbl">Amount paid</span><b>${fmt(paid)} ETB</b></div><div><span class="lbl">Remaining</span><b>${fmt(left)} ETB</b></div></div>
+        <div class="hero-mid">
+          <div class="ring">
+            <svg viewBox="0 0 92 92"><circle cx="46" cy="46" r="40" fill="none" stroke="#F1F1F4" stroke-width="9"/>
+              ${pct ? `<circle cx="46" cy="46" r="40" fill="none" stroke="#16A34A" stroke-width="9" stroke-linecap="round" stroke-dasharray="${(C * pct / 100).toFixed(1)} ${C.toFixed(1)}"/>` : ''}</svg>
+            <div><b>${pct}%</b><small>repaid</small></div>
+          </div>
+          <div class="left-amt"><span class="lbl">Left to repay</span><b>${fmt(left)}<span>ETB</span></b>
+            <p><b>${fmt(paid)}</b> paid of ${fmt(loan.total)} ETB</p></div>
+        </div>
+
+        <div class="facts">
+          <div class="fact"><span class="lbl">Disbursed</span><b>${TL.dateStr(loan.disbursed)}</b></div>
+          <div class="fact"><span class="split" data-shape="line" data-name="line"></span><span class="lbl">Final due</span><b>${TL.dateStr(loan.instalments[n - 1].due)}</b></div>
+        </div>
       </div>
 
       <div class="sec-head"><span class="title">Instalment History</span><a onclick="location.href='Transaction History.html'">Transactions</a></div>
-      ${loan.instalments.map(i => {
-        const late = !i.paid && new Date(i.due) < Date.now();
-        return `<div class="card inst${i.paid ? ' paid' : ''}">
-          <div class="inst-top"><b>Instalment ${i.n}</b><small class="${late ? 'late' : ''}">${i.paid ? 'Paid' : (late ? 'Overdue' : 'Due in ' + TL.dueIn(i.due))}</small></div>
-          <div class="bar"><i style="width:${i.paid ? 100 : 4}%"></i></div>
-          <div class="inst-foot"><div><span class="lbl">Repayment amount</span><b>${fmt(i.amount)} ETB</b></div>
-            ${i.paid ? `<span class="paid-tag">${TICK}Paid</span>` : `<button class="btn-red" onclick="openRepay(${i.n})" ${i === nx ? '' : 'disabled'}>Repay Now</button>`}</div>
-        </div>`; }).join('')}`;
+      <div class="card">
+        <div class="inst-row"><div class="inst-top" id="instTop"></div>
+          <div class="inst-nav"><button type="button" id="instPrev" aria-label="Previous instalment"><svg viewBox="0 0 24 24"><path d="M15 6l-6 6 6 6"/></svg></button><span id="instPos"></span><button type="button" id="instNext" aria-label="Next instalment"><svg viewBox="0 0 24 24"><path d="M9 6l6 6-6 6"/></svg></button></div></div>
+        <div class="inst-track" id="instTrack">${loan.instalments.map(i => {
+          const late = !i.paid && new Date(i.due) < Date.now();
+          return `<div class="inst${i.paid ? ' paid' : ''}">
+            <div class="bar"><i style="width:${i.paid ? 100 : 4}%"></i></div>
+            <div class="inst-foot"><div><span class="lbl">Repayment amount</span><b>${fmt(i.amount)} ETB</b></div>
+              ${i.paid ? `<span class="paid-tag">${TICK}Paid</span>` : `<button class="btn-red" onclick="openRepay(${i.n})" ${i === nx ? '' : 'disabled'}>Repay Now</button>`}</div>
+          </div>`; }).join('')}</div>
+      </div>
+
+      <div class="card">
+        <div class="title" style="margin-bottom:4px">Loan Summary</div>
+        ${summary().map((r, k) => r === '-' ? '<span class="sum-line strong" data-shape="line" data-name="line"></span>'
+          : `${k && summary()[k - 1] !== '-' ? '<span class="sum-line" data-shape="line" data-name="line"></span>' : ''}<div class="sum-row${r[2] ? ' total' : ''}"><span>${r[0]}${r[3] ? `<small>${r[3]}</small>` : ''}</span><b>${r[1]}</b></div>`).join('')}
+      </div>`;
+    initInst(nx ? loan.instalments.indexOf(nx) : 0);
   }
+
+  // Loan summary rows: [label, value, bold?, note?]; '-' = section divider.
+  // Fees follow the loan's offer (access % + daily fee over the tenure).
+  function summary() {
+    const o = TL.offer(loan.offer) || {}, n = loan.instalments.length;
+    const days = loan.days || (o.days && o.days[0]) || Math.max(1, Math.round((new Date(loan.instalments[n - 1].due) - new Date(loan.disbursed)) / 864e5));
+    const access = o.access ? loan.amount * o.access : 0, daily = Math.max(0, loan.total - loan.amount - access);
+    return [
+      ['Loan amount', fmt(loan.amount) + ' ETB'],
+      ['Access fee', fmt(access) + ' ETB', false, o.access ? (o.access * 100).toFixed(0) + '% one-time' : ''],
+      ['Daily maintenance fee', fmt(daily) + ' ETB', false, o.daily ? (o.daily * 100).toFixed(2) + '% per day · ' + days + ' days' : ''],
+      '-',
+      ['Total repayment', fmt(loan.total) + ' ETB', true],
+      ['Repayment plan', n + (n === 1 ? ' instalment' : ' instalments') + ' · ' + fmt(loan.total / n) + ' ETB'],
+      ['Late penalty', o.penalty ? (o.penalty * 100).toFixed(1) + '% per day' : '—'],
+      ['Loan ID', loan.id]
+    ];
+  }
+
+  // Instalment slider: swipe or use ‹ › ; the title and counter follow the slide in view
+  function initInst(start) {
+    const track = $('instTrack'), all = loan.instalments, n = all.length;
+    let cur = start;
+    const mark = k => {
+      cur = k;
+      const i = all[k], late = !i.paid && new Date(i.due) < Date.now();
+      const date = new Date(i.due).toLocaleDateString('en-GB', { day: 'numeric', month: 'short' });
+      $('instTop').innerHTML = `<b>Instalment ${i.n} of ${n}</b><small class="${late ? 'late' : ''}">${i.paid ? 'Paid · ' + date : (late ? 'Overdue · ' : 'Due in ' + TL.dueIn(i.due) + ' · ') + date}</small>`;
+      $('instPos').innerHTML = `<b>${k + 1}</b> of ${n}`;
+      $('instPrev').disabled = k === 0; $('instNext').disabled = k === n - 1;
+    };
+    $('instPrev').onclick = () => goInst(Math.max(0, cur - 1));
+    $('instNext').onclick = () => goInst(Math.min(n - 1, cur + 1));
+    track.addEventListener('scroll', () => mark(Math.round(track.scrollLeft / (track.clientWidth || 1))), { passive: true });
+    track.scrollLeft = start * track.clientWidth;
+    mark(start);
+  }
+  function goInst(k) { const t = $('instTrack'); t.scrollTo({ left: k * t.clientWidth, behavior: 'smooth' }); }
 
   // Repay one instalment (the next one) or everything left
   let pending = null;
@@ -234,7 +316,6 @@
   }
 
   render();
-  if (params.get('repay') === 'next') { const nx = TL.nextDue(loan); if (nx) openRepay(nx.n); }
 </script>
 <script src="figma-export.js"></script>
 <script src="test-scenarios-data.js"></script>

@@ -51,21 +51,47 @@
   .panel.show { display: flex; }
   .panel > * { flex-shrink: 0; }
 
-  /* Summary — the balance-card red (savings) / deep blue (credit) */
-  .summary { position: relative; overflow: hidden; border-radius: 22px; padding: 16px 18px; color: #FFF; }
-  .summary.savings { background: linear-gradient(180deg, #A41016 0%, #ED1C24 100%); }
-  .summary.credit { background: linear-gradient(180deg, #1E3A8A 0%, #2F6BEA 100%); }
-  .summary::before { content: ''; position: absolute; top: -50px; right: -50px; width: 200px; height: 200px; border-radius: 50%; background: rgba(255,255,255,0.06); }
-  .summary::after { content: ''; position: absolute; bottom: -80px; right: -20px; width: 170px; height: 170px; border-radius: 50%; background: rgba(0,0,0,0.1); }
-  .summary > * { position: relative; z-index: 1; }
-  .sum-label { font-size: 12px; color: rgba(255,255,255,0.8); }
-  .sum-amt { margin-top: 4px; font-size: 26px; font-weight: 700; letter-spacing: -0.4px; }
-  .sum-amt span { font-size: 13px; font-weight: 500; opacity: 0.8; margin-left: 3px; }
-  .sum-row { margin-top: 14px; padding-top: 12px; border-top: 1px solid rgba(255,255,255,0.18); display: flex; }
-  .sum-stat { flex: 1; min-width: 0; }
-  .sum-stat + .sum-stat { border-left: 1px solid rgba(255,255,255,0.18); padding-left: 12px; }
-  .sum-stat small { display: block; font-size: 10.5px; color: rgba(255,255,255,0.7); }
-  .sum-stat b { display: block; margin-top: 3px; font-size: 13.5px; font-weight: 600; white-space: nowrap; }
+  /* Summary: total, a split bar showing how it divides across the accounts,
+     a legend, and a highlight strip (next due / interest earned) */
+  .mix { background: #FFF; border-radius: 22px; padding: 16px; box-shadow: 0 4px 16px rgba(15,23,42,0.06); }
+  .mix-label { font-size: 12.5px; font-weight: 500; color: var(--On-Surface-Low); }
+  .mix-amt { margin-top: 2px; font-size: 26px; font-weight: 700; letter-spacing: -0.4px; color: var(--On-Surface); white-space: nowrap; }
+  .mix-amt small { font-size: 13px; font-weight: 500; margin-left: 4px; color: var(--On-Surface-Low); }
+  .mix-bar { margin-top: 14px; display: flex; gap: 3px; height: 10px; }
+  .mix-bar i { display: block; height: 100%; border-radius: 3px; min-width: 6px; }
+  .mix { position: relative; }
+  .mix-bar i { transition: opacity 0.25s; }
+  .mix-bar.focus i { opacity: 0.3; }
+  .mix-bar.focus i.cur { opacity: 1; }
+  /* Arrows (top right) step through the accounts one slide at a time */
+  .ms-nav { position: absolute; top: 14px; right: 14px; display: flex; align-items: center; gap: 8px; }
+  .ms-count { order: 2; font-size: 11.5px; font-weight: 600; color: var(--On-Surface-Low); font-variant-numeric: tabular-nums; white-space: nowrap; }
+  .ms-count b { color: var(--On-Surface); }
+  .ms-nav button:last-child { order: 3; }
+  .ms-nav button { width: 30px; height: 30px; border-radius: 50%; border: 1px solid #ECECF0; background: #FFF; display: flex; align-items: center; justify-content: center; cursor: pointer; }
+  .ms-nav button:disabled { opacity: 0.4; cursor: default; }
+  .ms-nav svg { width: 15px; height: 15px; stroke: var(--On-Surface); stroke-width: 2.2; fill: none; stroke-linecap: round; stroke-linejoin: round; }
+  .ms-track { margin-top: 12px; display: flex; overflow-x: auto; scroll-snap-type: x mandatory; scrollbar-width: none; border-radius: 14px; }
+  .ms-track::-webkit-scrollbar { display: none; }
+  .ms-slide { flex: 0 0 100%; scroll-snap-align: start; display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 12px 14px; border-radius: 14px; background: var(--Primary-Light); }
+  .ms-l { display: flex; align-items: center; gap: 8px; min-width: 0; }
+  .ms-l .dot { width: 10px; height: 10px; border-radius: 3px; flex-shrink: 0; }
+  .ms-l .dot { align-self: flex-start; margin-top: 4px; }
+  .ms-name { min-width: 0; }
+  .ms-name b { display: block; font-size: 13.5px; font-weight: 600; color: var(--On-Surface); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .ms-name small { display: block; margin-top: 2px; font-size: 11px; color: var(--On-Surface-Low); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .ms-r { text-align: right; flex-shrink: 0; }
+  .ms-r small { display: block; font-size: 11px; color: var(--On-Surface-Low); white-space: nowrap; }
+  .ms-r b { display: block; margin-top: 2px; font-size: 14px; font-weight: 700; color: var(--On-Surface); white-space: nowrap; }
+  /* Highlight strip: red gradient, two figures side by side, each on two lines */
+  .mix-strip { margin-top: 14px; display: flex; align-items: center; gap: 12px; padding: 12px 14px; border-radius: 14px; color: #FFF;
+    background: linear-gradient(115deg, #FF3B40 0%, #EE2A30 50%, #C8161D 100%); box-shadow: 0 6px 16px rgba(238,42,48,0.22); }
+  .mix-strip > svg { width: 32px; height: 32px; padding: 7px; border-radius: 10px; background: rgba(255,255,255,0.18); flex-shrink: 0; stroke: #FFF; stroke-width: 2; fill: none; stroke-linecap: round; stroke-linejoin: round; }
+  .ms-fig { position: relative; flex: 1; min-width: 0; }
+  .ms-fig + .ms-fig { padding-left: 12px; }
+  .ms-fig .split { position: absolute; left: 0; top: 2px; bottom: 2px; width: 1px; background: rgba(255,255,255,0.3); }
+  .ms-fig small { display: block; font-size: 11px; color: rgba(255,255,255,0.85); }
+  .ms-fig b { display: block; margin-top: 2px; font-size: 14px; font-weight: 700; white-space: nowrap; }
 
   .list-head { display: flex; align-items: center; justify-content: space-between; margin: 4px 2px -2px; }
   .list-head h3 { font-size: 15px; font-weight: 600; color: var(--On-Surface); }
@@ -78,6 +104,8 @@
   .acct-top { display: flex; align-items: center; gap: 12px; }
   .acct-ic { width: 44px; height: 44px; border-radius: 13px; background: var(--Primary-Light); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
   .acct-ic img { width: 28px; height: 28px; }
+  .acct-ic.bank { background: #FFF; border: 1px solid #EFEFF2; }
+  .acct-ic.bank img { width: 30px; height: 30px; object-fit: contain; }
   .acct-info { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 3px; }
   .acct-info b { font-size: 14.5px; font-weight: 700; color: var(--On-Surface); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
   .acct-info small { font-size: 12px; color: var(--On-Surface-Low); }
@@ -129,20 +157,19 @@
 
     <div class="tabs" role="tablist">
       <button class="tab active" id="tSav" onclick="showTab('savings')"><img src="assets/Saving.svg" alt="">Savings <span class="n">2</span></button>
-      <button class="tab" id="tCre" onclick="showTab('credit')"><img src="assets/Credit Card Plus.svg" alt="">Credit <span class="n">2</span></button>
+      <button class="tab" id="tCre" onclick="showTab('credit')"><img src="assets/Credit Card Plus.svg" alt="">Credit <span class="n" id="creN"></span></button>
     </div>
 
     <div class="scroll">
       <!-- Savings -->
       <section class="panel show" id="pSav">
-        <div class="summary savings">
-          <div class="sum-label">Total Savings</div>
-          <div class="sum-amt">30,000.00<span>ETB</span></div>
-          <div class="sum-row">
-            <div class="sum-stat"><small>Available</small><b>20,000.00 ETB</b></div>
-            <div class="sum-stat"><small>Locked</small><b>10,000.00 ETB</b></div>
-            <div class="sum-stat"><small>Interest earned</small><b>+245.30 ETB</b></div>
-          </div>
+        <div class="mix">
+          <div class="ms-nav"><span class="ms-count" id="savPos"></span><button type="button" id="savPrev" aria-label="Previous account"><svg viewBox="0 0 24 24"><path d="M15 6l-6 6 6 6"/></svg></button><button type="button" id="savNext" aria-label="Next account"><svg viewBox="0 0 24 24"><path d="M9 6l6 6-6 6"/></svg></button></div>
+          <div class="mix-label">Total Savings</div>
+          <div class="mix-amt"><span id="savTotal"></span><small>ETB</small></div>
+          <div class="mix-bar" id="savBar"></div>
+          <div class="ms-track" id="savTrack"></div>
+          <div class="mix-strip"><svg viewBox="0 0 24 24"><path d="M3 17l6-6 4 4 8-8"/><path d="M14 7h7v7"/></svg><div class="ms-fig"><small>Interest earned</small><b>+245.30 ETB</b></div><div class="ms-fig"><span class="split" data-shape="line" data-name="line"></span><small>Locked</small><b>10,000.00 ETB</b></div></div>
         </div>
         <div class="list-head"><h3>Saving Accounts</h3><small>2 active</small></div>
         <div id="savList"></div>
@@ -151,15 +178,14 @@
 
       <!-- Credit -->
       <section class="panel" id="pCre">
-        <div class="summary credit">
-          <div class="sum-label">Total Credit Outstanding</div>
-          <div class="sum-amt">10,000.00<span>ETB</span></div>
-          <div class="sum-row">
-            <div class="sum-stat"><small>Next due</small><b>Jun 30, 2026</b></div>
-            <div class="sum-stat"><small>Due amount</small><b>5,200.00 ETB</b></div>
-          </div>
+        <div class="mix">
+          <div class="ms-nav"><span class="ms-count" id="crePos"></span><button type="button" id="crePrev" aria-label="Previous account"><svg viewBox="0 0 24 24"><path d="M15 6l-6 6 6 6"/></svg></button><button type="button" id="creNext" aria-label="Next account"><svg viewBox="0 0 24 24"><path d="M9 6l6 6-6 6"/></svg></button></div>
+          <div class="mix-label">Total Credit Outstanding</div>
+          <div class="mix-amt"><span id="creTotal"></span><small>ETB</small></div>
+          <div class="mix-bar" id="creBar"></div>
+          <div class="ms-track" id="creTrack"></div>
         </div>
-        <div class="list-head"><h3>Credit Accounts</h3><small>2 active</small></div>
+        <div class="list-head"><h3>Credit Accounts</h3><small id="creCount"></small></div>
         <div id="creList"></div>
         <button class="add" type="button" onclick="location.href='Term Loan.html'"><svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>Get a Term Loan</button>
       </section>
@@ -168,6 +194,7 @@
   <div class="toast" id="toast"></div>
 </div>
 
+<script src="term-loan-store.js"></script>
 <script>
   const $ = id => document.getElementById(id);
   const money = n => Number(n).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
@@ -179,11 +206,25 @@
     { name: 'New Phone Goal', sub: 'Goal Pocket · Flexible', icon: 'Saving.svg', bal: 20000, goal: 35000, badge: ['ok', 'Active'], foot: 'Target date: Dec 31, 2026' },
     { name: 'Emergency Fund', sub: 'Fixed · 6 months · 7% p.a.', icon: 'Saving.svg', bal: 10000, goal: 10000, badge: ['lock', 'Locked'], foot: 'Matures: Mar 15, 2027' }
   ];
-  // Credit accounts: repaid of the loan, or used of the limit
-  const CREDIT = [
-    { name: 'Salary Advance', link: 'Term Loan - Details.html?id=L1002', sub: 'Term Loan · 30 days', icon: 'Credit.svg', bal: 5000, total: 5200, paidPct: 0, badge: ['warn', 'Due soon'], foot: 'Due: Jun 30, 2026 · 5,200.00 ETB', label: 'Outstanding', right: '0% repaid' },
-    { name: 'Errif Overdraft', sub: 'Over Draft · Limit 8,450.00 ETB', icon: 'Overdraft.svg', bal: 5000, limit: 8450, badge: ['ok', 'Active'], foot: 'Auto-repays when you receive money', label: 'Used' }
-  ];
+  // Credit accounts: every active term loan from the Term Loan store (repaid of
+  // the loan), then the Errif overdraft (used of its limit)
+  const EST = TL.errifLoad();
+  const ERRIF = { name: 'Errif Overdraft', sub: 'Over Draft · Limit ' + money(EST.limit) + ' ETB', icon: 'assets/Overdraft.svg', bal: EST.used, limit: EST.limit, badge: ['ok', 'Active'], foot: 'Auto-repays when you receive money', when: 'Auto-repays on income', link: 'Overdraft.html' };
+  const loans = TL.active(TL.load());
+  const CREDIT = loans.map(l => {
+    const nx = TL.nextDue(l), paid = TL.paidOf(l);
+    const soon = nx && (new Date(nx.due) - Date.now()) < 5 * 864e5;
+    return { name: l.product, link: `Term Loan - Details.html?id=${l.id}`, sub: l.lender, icon: l.logo, bank: true, bal: TL.remainingOf(l), total: l.total,
+      paidPct: Math.round(paid / l.total * 100), badge: soon ? ['warn', 'Due soon'] : ['ok', 'Active'],
+      foot: nx ? `Due: ${TL.dateStr(nx.due)} · ${money(nx.amount)} ETB` : 'Fully repaid', due: nx,
+      when: nx ? 'Next due ' + TL.dateStr(nx.due) : 'Fully repaid' };
+  }).concat(EST.active ? [ERRIF] : []);
+
+  // Summary + counts
+  const nextAll = loans.map(TL.nextDue).filter(Boolean).sort((a, b) => new Date(a.due) - new Date(b.due))[0];
+  $('creTotal').textContent = money(TL.outstanding(loans) + (EST.active ? ERRIF.bal : 0));
+  $('creN').textContent = CREDIT.length;
+  $('creCount').textContent = CREDIT.length + ' active';
 
   $('savList').innerHTML = SAVINGS.map(a => {
     const pct = Math.min(100, Math.round(a.bal / a.goal * 100));
@@ -200,13 +241,42 @@
     const pct = a.limit ? Math.round(a.bal / a.limit * 100) : a.paidPct;
     const right = a.limit ? `${pct}% of <b>${money(a.limit)}</b> limit` : `${a.paidPct}% repaid`;
     return `<div class="acct" onclick="${a.link ? `location.href='${a.link}'` : `toast('${a.name} details coming soon')`}">
-      <div class="acct-top"><span class="acct-ic"><img src="assets/${a.icon}" alt=""></span>
+      <div class="acct-top"><span class="acct-ic${a.bank ? ' bank' : ''}"><img src="${a.icon}" alt=""></span>
         <span class="acct-info"><b>${a.name}</b><small>${a.sub}</small></span><span class="badge ${a.badge[0]}">${a.badge[1]}</span></div>
       <div class="acct-amt"><b>${money(a.bal)}<span>ETB</span></b><small>${right}</small></div>
       <div class="bar credit"><i style="width:${Math.max(pct, 2)}%"></i></div>
       <div class="acct-foot">${CAL}<span>${a.foot}</span>${CHEV}</div>
     </div>`;
   }).join('');
+
+  // Summary split bar + one slide per account: one shade of red per account
+  const SHADES = ['#FE353D', '#FF9599', '#B3131A', '#FFC7C9', '#7A0B10'];
+  function mix(p, items) {
+    const sum = items.reduce((a, x) => a + x.bal, 0) || 1;
+    const bar = $(p + 'Bar'), track = $(p + 'Track'), prev = $(p + 'Prev'), next = $(p + 'Next'), count = $(p + 'Pos');
+    bar.innerHTML = items.map((x, k) => `<i style="flex:${x.bal / sum};background:${SHADES[k % SHADES.length]}"></i>`).join('');
+    track.innerHTML = items.map((x, k) => `<div class="ms-slide">
+      <span class="ms-l"><span class="dot" style="background:${SHADES[k % SHADES.length]}"></span><span class="ms-name"><b>${x.name}</b><small>${x.sub.split(' · ')[0]}</small></span></span>
+      <span class="ms-r"><small>${x.when}</small><b>${money(x.bal)} ETB</b></span></div>`).join('');
+    let cur = -1;
+    function mark(k) {
+      if (k === cur) return;
+      cur = k;
+      bar.classList.add('focus');
+      [...bar.children].forEach((seg, n) => seg.classList.toggle('cur', n === k));
+      prev.disabled = k === 0; next.disabled = k === items.length - 1;
+      count.innerHTML = `<b>${k + 1}</b> of ${items.length}`;
+    }
+    const go = k => track.scrollTo({ left: k * track.clientWidth, behavior: 'smooth' });
+    prev.onclick = () => go(Math.max(0, cur - 1));
+    next.onclick = () => go(Math.min(items.length - 1, cur + 1));
+    track.addEventListener('scroll', () => mark(Math.round(track.scrollLeft / track.clientWidth)), { passive: true });
+    mark(0);
+  }
+  $('savTotal').textContent = money(SAVINGS.reduce((a, x) => a + x.bal, 0));
+  SAVINGS.forEach(x => { x.when = x.foot.replace(':', ''); });
+  mix('sav', SAVINGS);
+  mix('cre', CREDIT);
 
   function showTab(t) {
     const sav = t === 'savings';

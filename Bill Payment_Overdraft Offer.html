@@ -90,7 +90,7 @@
       <p class="od-desc" id="odDesc">Activate Errif overdraft to complete this bill payment now and repay later within your limit.</p>
 
       <div class="od-card">
-        <div class="od-row hl"><span class="label">Available Errif limit</span><span class="val" id="odLimit">5,000.00 ETB</span></div>
+        <div class="od-row hl"><span class="label">Available Errif limit</span><span class="val" id="odLimit">3,000.00 ETB</span></div>
         <div class="od-row"><span class="label">This payment</span><span class="val" id="odAmount">— ETB</span></div>
         <div class="od-row sub" id="odInterestRow"><span class="label">Service charge</span><span class="val">Free · 0% for 7 days</span></div>
       </div>
@@ -113,7 +113,7 @@
 </div>
 
 <script>
-  const OD_LIMIT = 5000.00;
+  const OD_LIMIT = 3000.00;
   const data = JSON.parse(sessionStorage.getItem('billPaymentData') || '{}');
   const fmt = n => parseFloat(n || 0).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
   const amount = parseFloat(data.payAmount || '0');

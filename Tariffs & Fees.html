@@ -9,7 +9,7 @@
   @import url('https://api.fontshare.com/v2/css?f[]=switzer@400,500,600,700,800&display=swap');
 
   /* Tariffs & Fees: red header, then grouped cards. Each service shows its fee
-     pill (green Free / pink range); tapping it opens the fee by amount band. */
+     pill (green Free / pink range); its fee-by-amount table is open by default; tapping the row folds it. */
   :root {
     --Primary: #FE353D;
     --Primary-Light: #FFF1F2;
@@ -151,12 +151,12 @@
       <p class="group-label">${g.label}</p>
       <div class="fee-card">
         ${g.items.map(it => `
-        <div class="fee-row" role="button" tabindex="0" aria-expanded="false" onclick="toggleFee(this)" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();toggleFee(this)}">
+        <div class="fee-row" role="button" tabindex="0" aria-expanded="true" onclick="toggleFee(this)" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();toggleFee(this)}">
           <span class="fee-icon">${ICONS[it.icon]}</span>
           <span class="fee-info"><span class="fee-name">${it.name}</span><span class="fee-sub">${it.sub}</span></span>
           <span class="fee-value${isFree(it.pill) ? ' free' : ''}">${it.pill}</span>${CHEV}
         </div>
-        <div class="fee-panel" hidden>
+        <div class="fee-panel">
           <div class="band head"><span>${(it.head || ['Amount'])[0]}</span><b>Fee</b></div>
           ${it.bands.map(([a, f]) => `<div class="band"><span>${a}</span><b${isFree(f) ? ' class="free"' : ''}>${f}</b></div>`).join('')}
           ${it.note ? `<p class="band-note">${it.note}</p>` : ''}
@@ -168,14 +168,11 @@
       <span>Fees follow the latest approved tariff and may change. The exact charge is shown on the confirmation screen before you approve any transaction.</span>
     </div>`;
 
-  // Accordion: one row open at a time; its fee table drops down under it
+  // Every fee table starts open; tapping a row folds or unfolds just that one
   function toggleFee(row) {
     const open = row.getAttribute('aria-expanded') !== 'true';
-    document.querySelectorAll('.fee-row[aria-expanded="true"]').forEach(r => {
-      r.setAttribute('aria-expanded', 'false');
-      r.nextElementSibling.hidden = true;
-    });
-    if (open) { row.setAttribute('aria-expanded', 'true'); row.nextElementSibling.hidden = false; }
+    row.setAttribute('aria-expanded', String(open));
+    row.nextElementSibling.hidden = !open;
   }
 
   function goBack() {

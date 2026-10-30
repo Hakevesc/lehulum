@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Add Money · Receive from Abroad</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@400;500;600&display=swap');
+  @import url('https://api.fontshare.com/v2/css?f[]=switzer@400,500,600,700,800&display=swap');
+
+  /* Receive from Abroad guide: one white card per remittance partner with its
+     steps and a Visit Website link, then the other partners table. The note
+     stays pinned at the bottom. */
+  :root {
+    --Primary: #FE353D;
+    --Primary-Dark: #C8161D;
+    --Primary-Light: #FFF1F2;
+    --On-Surface: #1C1C21;
+    --On-Surface-Low: #7C7C87;
+    --Background: #F5F5F5;
+    --Line: #ECECF0;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body, button, table, th, td { font-family: 'Switzer', 'Inter', sans-serif; }
+  body { font-family: 'Switzer', 'Inter', sans-serif; background: transparent; display: flex; justify-content: center; align-items: center; min-height: 100vh; padding: 20px; }
+  button { font-family: inherit; }
+  .phone-frame { width: 360px; height: 780px; background: var(--Background); border-radius: 30px; overflow: hidden; position: relative; box-shadow: 0 20px 60px rgba(0,0,0,0.15); display: flex; flex-direction: column; }
+  .app-content { height: 100%; display: flex; flex-direction: column; }
+
+  .status-bar { display: flex; justify-content: space-between; align-items: center; padding: 14px 24px 8px; flex-shrink: 0; }
+  .status-bar .time { font-size: 14px; font-weight: 600; color: var(--On-Surface); }
+  .status-icons { display: flex; align-items: center; gap: 6px; }
+  .status-icons svg { width: 18px; height: 18px; }
+  .header-nav { display: flex; align-items: center; justify-content: space-between; padding: 4px 16px 10px; flex-shrink: 0; }
+  .back-btn { width: 36px; height: 36px; border-radius: 50%; background: transparent; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+  .back-btn:hover { background: rgba(0,0,0,0.05); }
+  .back-btn svg { width: 22px; height: 22px; stroke: var(--On-Surface); stroke-width: 1.8px; fill: none; }
+  .header-title { color: var(--On-Surface); font-size: 17px; font-weight: 500; letter-spacing: 0.3px; flex: 1; text-align: center; }
+
+  .scroll { flex: 1; min-height: 0; overflow-y: auto; padding: 6px 16px 120px; scrollbar-width: none; }
+  .scroll::-webkit-scrollbar { display: none; }
+  .intro { text-align: center; margin-bottom: 18px; }
+  .intro b { display: block; font-size: 15px; font-weight: 700; color: var(--On-Surface); }
+  .intro p { margin-top: 6px; font-size: 13.5px; color: var(--On-Surface); }
+
+  /* Partner card */
+  .card { background: #FFF; border-radius: 18px; padding: 16px 16px 14px; margin-bottom: 12px; }
+  .card-head { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; }
+  .card-head b { font-size: 15px; font-weight: 700; color: var(--On-Surface); white-space: nowrap; }
+  .card-head .rule { flex: 1; height: 1px; background: var(--Primary); }
+  .steps { list-style: none; display: flex; flex-direction: column; gap: 11px; }
+  .steps li { display: flex; align-items: flex-start; gap: 10px; font-size: 12.5px; line-height: 1.4; color: #6B6B75; }
+  .steps li .dot { width: 8px; height: 8px; margin-top: 5px; flex-shrink: 0; }
+  .steps li span { flex: 1; min-width: 0; overflow-wrap: anywhere; }
+  .visit { display: block; margin: 14px 0 0 auto; height: 34px; padding: 0 16px; border: none; border-radius: 17px; background: var(--Primary); color: #FFF; font-size: 13px; font-weight: 500; cursor: pointer; box-shadow: 0 6px 14px rgba(254,53,61,0.28); }
+  .visit:active { transform: scale(0.97); }
+
+  /* Other partners table */
+  /* Built from rows + real 1px divider elements (no table borders) so each
+     separator imports into Figma as its own line shape */
+  .tbl .row { display: flex; gap: 10px; padding: 9px 0; font-size: 12.5px; line-height: 1.35; color: var(--On-Surface); }
+  .tbl .row.th { padding: 0 0 8px; font-size: 11.5px; font-weight: 600; color: var(--On-Surface-Low); }
+  .tbl .row span:first-child { flex: 1; min-width: 0; }
+  .tbl .row:not(.th) span:first-child { font-weight: 500; }
+  .tbl .row span:last-child { width: 42%; flex-shrink: 0; }
+  .tbl .row:not(.th) span:last-child { color: #6B6B75; }
+  .tbl .row:last-child { padding-bottom: 0; }
+  .divider { display: block; height: 1px; background: var(--Line); }
+
+  /* Pinned note */
+  .note { position: absolute; left: 16px; right: 16px; bottom: 22px; display: flex; align-items: center; gap: 12px; padding: 14px 16px; border-radius: 16px; background: var(--On-Surface); box-shadow: 0 10px 24px rgba(0,0,0,0.18); z-index: 5; }
+  .note i { width: 34px; height: 34px; border-radius: 50%; background: #FFF; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+  .note i svg { width: 20px; height: 20px; stroke: var(--On-Surface); stroke-width: 2; fill: none; }
+  .note b { display: block; font-size: 14px; font-weight: 700; color: #FFF; }
+  .note p { margin-top: 3px; font-size: 11px; line-height: 1.45; color: rgba(255,255,255,0.85); }
+  .home-ind { position: absolute; bottom: 7px; left: 50%; transform: translateX(-50%); width: 106px; height: 3px; border-radius: 2px; background: #C4C4CC; }
+</style>
+</head>
+<body>
+<div class="phone-frame">
+  <div class="app-content" id="app">
+
+    <div class="status-bar">
+      <span class="time">10:00</span>
+      <div class="status-icons">
+        <svg data-name="icon-wifi" viewBox="0 0 24 24" fill="none"><path d="M1 9l2 2c4.97-4.97 13.03-4.97 18 0l2-2C16.93 2.93 7.08 2.93 1 9z" fill="#1C1C21"/><path d="M5 13l2 2c2.76-2.76 7.24-2.76 10 0l2-2C15.14 9.14 8.87 9.14 5 13z" fill="#1C1C21"/><path d="M9 17l2 2c1.1-1.1 2.9-1.1 4 0l2-2c-2.21-2.21-5.79-2.21-8 0z" fill="#1C1C21"/></svg>
+        <svg data-name="icon-signal" viewBox="0 0 24 24" fill="none"><rect x="2" y="6" width="4" height="12" rx="1" fill="#1C1C21"/><rect x="8" y="4" width="4" height="14" rx="1" fill="#1C1C21"/><rect x="14" y="2" width="4" height="16" rx="1" fill="#1C1C21"/><rect x="20" y="0" width="4" height="18" rx="1" fill="#1C1C21" opacity="0.3"/></svg>
+        <svg data-name="icon-battery" viewBox="0 0 28 14" fill="none"><rect x="0" y="1" width="22" height="12" rx="2.5" stroke="#1C1C21" stroke-width="1.5"/><rect x="2" y="3" width="16" height="8" rx="1" fill="#1C1C21"/><rect x="24" y="4" width="2" height="6" rx="1" fill="#1C1C21"/></svg>
+      </div>
+    </div>
+
+    <div class="header-nav">
+      <button class="back-btn" onclick="location.href='Add Money.html'" aria-label="Back"><svg data-name="icon-arrow-left" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg></button>
+      <span class="header-title">Receive from Abroad</span>
+      <div style="width:36px;"></div>
+    </div>
+
+    <div class="scroll">
+      <div class="intro">
+        <b>Remittance Partners</b>
+        <p>Receive international money transfers easily.</p>
+      </div>
+      <div id="partners"></div>
+
+      <div class="card">
+        <div class="card-head"><b>Other Partners List</b><span class="rule" data-name="line" data-shape="line"></span></div>
+<div class="tbl" id="others"></div>
+      </div>
+    </div>
+
+    <div class="note">
+      <i><svg data-name="icon-help" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9.5"/><path d="M9.6 9.3a2.5 2.5 0 0 1 4.8.9c0 1.7-2.4 2.2-2.4 3.6"/><path d="M12 17h.01"/></svg></i>
+      <div>
+        <b>Note</b>
+        <p>Transfers may take a few minutes or longer, depending on the partner. Additional fees may apply.</p>
+      </div>
+    </div>
+    <span class="home-ind"></span>
+  </div>
+</div>
+
+<script>
+  const PARTNERS = [
+    { name: 'CashGo', url: 'https://www.cashgo.com', steps: [
+      'Download from App store or Play store', 'Signup or Login', 'Select M-PESA', 'Enter receiver detail',
+      'Enter amount', 'Enter card details', 'Confirm payment'] },
+    { name: 'Safaricom Kenya', url: 'https://www.safaricom.co.ke', steps: [
+      'Dial *840#', 'Select Send Money abroad', 'Select country to send money (Select Ethiopia)',
+      'Enter the recipient mobile number in international format', 'Enter amount between Kshs 101 and Kshs 250,000',
+      'Enter PIN to confirm payment'] },
+    { name: 'Remitly', url: 'https://www.remitly.com/us/en/ethiopia', steps: [
+      'Go to the website https://www.remitly.com/us/en/ethiopia', 'Sign up / Sign in to send money',
+      'Choose Ethiopia as a sending country', 'Choose a recipient from history or select new', 'Enter Amount',
+      'See the rate', 'Select Mobile money on delivery method', 'Select M-PESA', 'Enter recipient full name',
+      'Enter recipient M-PESA number', 'Enter reason', 'Enter sender detail', 'Enter sender address',
+      'Enter card detail/fund source', 'Confirm payment'] },
+    { name: 'Dahabshiil', steps: [
+      'Find the nearest Agent', 'Go to the nearest Dahabshiil agent', 'Give Recipient Details', 'Enter Amount',
+      'Select a Transfer Method', 'Pay the Agent', 'Review and Confirm', 'Complete the Transaction'] },
+  ];
+  const OTHERS = [
+    ['iDT (Boss Money)', 'US'], ['GME', 'Korea'], ['G-Money Trans', 'Korea'], ['Capital Services', 'APP'],
+    ['BNB transfer', 'US and Canada'], ['Paysend', 'US, UK, Canada and Europe'], ['ClickSend', 'Most African Countries'],
+    ['Batelco Financial Services', 'Bahrain'], ['BFC Bahrain', 'Bahrain'], ['NAFEX', 'Bahrain'],
+    ['AL Mulla Exchange', 'Kuwait'], ['Bin Yaala Exchange', 'UAE'], ['Lulu Exchange Company WLL-Oman', 'Oman'],
+    ['Unimoni Qatar', 'Qatar'], ['Unimoni Oman', 'Oman'],
+  ];
+
+  const BULLET = '<svg class="dot" data-name="icon-bullet" viewBox="0 0 8 8"><circle cx="4" cy="4" r="4" fill="#FE353D"/></svg>';
+  document.getElementById('partners').innerHTML = PARTNERS.map(p => `
+    <div class="card">
+      <div class="card-head"><b>${p.name}</b><span class="rule" data-name="line" data-shape="line"></span></div>
+      <ul class="steps">${p.steps.map(s => `<li>${BULLET}<span>${s}</span></li>`).join('')}</ul>
+      ${p.url ? `<button class="visit" type="button" onclick="window.open('${p.url}', '_blank')">Visit Website</button>` : ''}
+    </div>`).join('');
+  const DIVIDER = '<span class="divider" data-name="line" data-shape="line"></span>';
+  document.getElementById('others').innerHTML = '<div class="row th"><span>Partner</span><span>Sending Country</span></div>' +
+    OTHERS.map(([n, c]) => `${DIVIDER}<div class="row"><span>${n}</span><span>${c}</span></div>`).join('');
+</script>
+<!-- Export to Figma button (shared exporter) -->
+<script src="figma-export.js"></script>
+<script src="test-scenarios-data.js"></script>
+<script src="test-scenarios.js"></script>
+</body>
+</html>

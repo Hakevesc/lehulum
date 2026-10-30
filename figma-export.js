@@ -617,9 +617,27 @@
       }
     }
 
+    // data-shape="line" (dividers, title rules) → a real line vector in Figma
+    // instead of a 1px filled frame. Drawn along the element's long side in its
+    // background colour.
+    if (el.getAttribute('data-shape') === 'line') {
+      var lw = Math.round(rect.width), lh = Math.max(1, Math.round(rect.height));
+      var lc = style.backgroundColor;
+      var horiz = lw >= lh;
+      var line = horiz
+        ? '<line x1="0" y1="' + (lh / 2) + '" x2="' + lw + '" y2="' + (lh / 2) + '" stroke="' + lc + '" stroke-width="' + lh + '"/>'
+        : '<line x1="' + (lw / 2) + '" y1="0" x2="' + (lw / 2) + '" y2="' + lh + '" stroke="' + lc + '" stroke-width="' + lw + '"/>';
+      node.name = el.getAttribute('data-name') || 'line';
+      node.svg = '<svg xmlns="http://www.w3.org/2000/svg" width="' + lw + '" height="' + lh + '" viewBox="0 0 ' + lw + ' ' + lh + '" fill="none">' + line + '</svg>';
+      node.fills = [];
+      node.autoLayout = null;
+      return node;
+    }
+
     // Inline SVG (lucide etc.) → markup the plugin rebuilds as vectors
     if (tag === 'svg') {
-      node.name = 'icon-svg';
+      // data-name / aria-label give icons a findable layer name in Figma
+      node.name = el.getAttribute('data-name') || el.getAttribute('aria-label') || 'icon-svg';
       if (svgMap && svgMap.get(el)) node.svg = svgMap.get(el);
       node.fills = [];
       node.autoLayout = null;

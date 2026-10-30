@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>My Activity — M-PESA</title>
+<!-- Home's frame and transaction list; the chart follows the Visa Card rate chart -->
+<link rel="stylesheet" href="styles/design-tokens.css">
+<link rel="stylesheet" href="styles/base.css">
+<link rel="stylesheet" href="styles/component-status-bar.css">
+<link rel="stylesheet" href="styles/component-transactions.css">
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+  @import url('https://api.fontshare.com/v2/css?f[]=switzer@400,500,600,700,800&display=swap');
+
+  /* My Activity (Saving & Credit → My Activity): a report of all saving and
+     credit activity for a period (Week / Month / 6 Months / Year) — a Savings |
+     Credit line chart against the previous period, summary tiles, where the
+     money moved, credit health, monthly bars and recent activity. Credit
+     figures come live from term-loan-store.js; savings figures are samples. */
+  :root { --Font: 'Switzer', 'Inter', sans-serif; --Up: #16A34A; }
+  body { font-family: var(--Font); }
+  .app-content { display: flex; flex-direction: column; gap: 12px; }
+  .app-content > * { flex-shrink: 0; }
+
+  .header-nav { display: flex; align-items: center; justify-content: space-between; padding: 0 0 2px; }
+  .icon-btn { width: 36px; height: 36px; border-radius: 50%; background: transparent; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+  .icon-btn:hover { background: rgba(0,0,0,0.05); }
+  .icon-btn svg { width: 22px; height: 22px; stroke: var(--On-Surface, #1C1C21); stroke-width: 1.8; fill: none; stroke-linecap: round; stroke-linejoin: round; }
+  .header-title { color: var(--On-Surface, #1C1C21); font-size: 17px; font-weight: 500; letter-spacing: 0.3px; flex: 1; text-align: center; }
+
+  .card { background: #FFF; border-radius: 22px; padding: 16px; box-shadow: 0 4px 16px rgba(15,23,42,0.06); }
+  .card-title { font-size: 15px; font-weight: 600; color: var(--On-Surface, #1C1C21); }
+  .card-head { display: flex; align-items: baseline; justify-content: space-between; }
+  .card-head small { font-size: 11.5px; color: var(--On-Surface-Low, #7C7C87); }
+
+  /* Period switcher */
+  .periods { display: flex; padding: 4px; border-radius: 14px; background: #FFF; box-shadow: 0 2px 12px rgba(0,0,0,0.04); }
+  .periods button { flex: 1; height: 34px; border: none; border-radius: 10px; background: none; font-family: var(--Font); font-size: 12.5px; font-weight: 600; color: #7C7C87; cursor: pointer; }
+  .periods button.on { background: var(--Primary, #FE353D); color: #FFF; box-shadow: 0 3px 10px rgba(254,53,61,0.25); }
+
+  /* Chart card */
+  .seg { display: inline-flex; padding: 3px; border-radius: 999px; background: #F3F3F6; }
+  .seg button { height: 28px; padding: 0 14px; border: none; border-radius: 999px; background: none; font-family: var(--Font); font-size: 12px; font-weight: 600; color: #7C7C87; cursor: pointer; }
+  .seg button.on { background: #FFF; color: var(--On-Surface, #1C1C21); box-shadow: 0 1px 4px rgba(0,0,0,0.08); }
+  .head-row { display: flex; align-items: center; justify-content: space-between; }
+  .head-lbl { margin-top: 14px; font-size: 12.5px; color: var(--On-Surface-Low, #7C7C87); }
+  .head-val { margin-top: 2px; font-size: 28px; font-weight: 700; letter-spacing: -0.5px; color: var(--On-Surface, #1C1C21); line-height: 1.15; white-space: nowrap; }
+  .head-val small { font-size: 14px; font-weight: 500; color: var(--On-Surface-Low, #7C7C87); margin-left: 4px; letter-spacing: 0; }
+  .chg { margin-top: 6px; display: flex; gap: 6px; align-items: center; font-size: 12px; font-weight: 700; color: var(--Up); }
+  .chg svg { width: 10px; height: 10px; fill: currentColor; }
+  .chg.down { color: var(--Primary, #FE353D); }
+  .chg.down svg { transform: rotate(180deg); }
+  .chg span { color: #8A8A94; font-weight: 500; }
+  .chart { position: relative; margin-top: 12px; touch-action: pan-y; }
+  .chart svg { width: 100%; height: 130px; display: block; overflow: visible; }
+  .guide { position: absolute; top: 0; bottom: 0; width: 1px; background: #D8D8DE; display: none; pointer-events: none; }
+  .pin { position: absolute; width: 12px; height: 12px; margin: -6px 0 0 -6px; border-radius: 50%; background: #FFF; border: 3px solid var(--Primary, #FE353D); display: none; pointer-events: none; }
+  .tip { position: absolute; top: -8px; transform: translate(-50%, -100%); padding: 6px 9px; border-radius: 10px; background: #1C1C21; color: #FFF; font-size: 11px; white-space: nowrap; display: none; pointer-events: none; }
+  .tip b { display: block; font-size: 12.5px; }
+  .chart.hover .guide, .chart.hover .pin, .chart.hover .tip { display: block; }
+  .axis { display: flex; justify-content: space-between; margin-top: 6px; padding: 0 2px; font-size: 10px; font-weight: 600; color: #A0A0AA; }
+  .legend { margin-top: 8px; display: flex; gap: 14px; font-size: 11px; color: var(--On-Surface-Low, #7C7C87); }
+  .legend i { display: inline-block; width: 14px; height: 3px; border-radius: 2px; margin-right: 5px; vertical-align: middle; }
+
+  /* Summary tiles */
+  .tiles4 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .stile { background: #FFF; border-radius: 18px; padding: 14px; box-shadow: 0 2px 12px rgba(0,0,0,0.04); }
+  .stile .top { display: flex; align-items: center; gap: 8px; font-size: 12px; font-weight: 500; color: var(--On-Surface-Low, #7C7C87); }
+  .stile .top svg { width: 20px; height: 20px; stroke: var(--Primary, #FE353D); stroke-width: 1.8; fill: none; stroke-linecap: round; stroke-linejoin: round; }
+  .stile b { display: block; margin-top: 8px; font-size: 16px; font-weight: 700; color: var(--On-Surface, #1C1C21); white-space: nowrap; }
+  .stile b small { font-size: 11px; font-weight: 500; color: var(--On-Surface-Low, #7C7C87); margin-left: 3px; }
+  .stile em { display: block; margin-top: 3px; font-style: normal; font-size: 11px; font-weight: 600; color: var(--Up); }
+  .stile em.down { color: var(--Primary, #FE353D); }
+
+  /* Where it moved: split bar + legend */
+  .moves { margin-top: 6px; }
+  .move { padding: 10px 0; }
+  .move + .move { border-top: 1px solid #F3F3F6; }
+  .move-top { display: flex; align-items: baseline; justify-content: space-between; gap: 10px; }
+  .move-top span { font-size: 13px; color: #55555E; }
+  .move-top b { font-size: 13.5px; font-weight: 700; color: var(--On-Surface, #1C1C21); white-space: nowrap; }
+  .move-bar { margin-top: 7px; height: 6px; border-radius: 3px; background: #F3F3F6; overflow: hidden; }
+  .move-bar i { display: block; height: 100%; border-radius: 3px; background: var(--Primary, #FE353D); transition: width 0.35s ease; }
+
+  /* Credit health: red gradient strip */
+  .health { display: flex; align-items: center; gap: 12px; padding: 14px; border-radius: 18px; color: #FFF; cursor: pointer;
+    background: linear-gradient(115deg, #FF3B40 0%, #EE2A30 50%, #C8161D 100%); box-shadow: 0 6px 16px rgba(238,42,48,0.22); }
+  .health .mini { position: relative; width: 58px; height: 36px; flex-shrink: 0; }
+  .health .mini svg { width: 58px; height: 36px; display: block; }
+  .health .mini b { position: absolute; left: 0; right: 0; bottom: -2px; text-align: center; font-size: 14px; font-weight: 800; }
+  .h-fig { position: relative; flex: 1; min-width: 0; }
+  .h-fig + .h-fig { padding-left: 12px; }
+  .h-fig .split { position: absolute; left: 0; top: 2px; bottom: 2px; width: 1px; background: rgba(255,255,255,0.3); }
+  .h-fig small { display: block; font-size: 11px; color: rgba(255,255,255,0.85); white-space: nowrap; }
+  .h-fig b { display: block; margin-top: 2px; font-size: 14px; font-weight: 700; white-space: nowrap; }
+  .health .cv { width: 16px; height: 16px; stroke: #FFF; stroke-width: 2.2; fill: none; stroke-linecap: round; stroke-linejoin: round; flex-shrink: 0; }
+
+  /* Monthly bars */
+  .bars { margin-top: 14px; height: 120px; display: flex; align-items: flex-end; gap: 10px; }
+  .bars .m { flex: 1; min-width: 0; height: 100%; display: flex; flex-direction: column; align-items: center; gap: 6px; }
+  .bars .pair { flex: 1; width: 100%; display: flex; align-items: flex-end; justify-content: center; gap: 3px; }
+  .bars .pair i { width: 9px; border-radius: 4px 4px 2px 2px; transition: height 0.35s ease; }
+  .bars small { font-size: 10px; font-weight: 600; color: #A0A0AA; }
+  .bars .m.cur small { color: var(--On-Surface, #1C1C21); }
+
+  .recent-transactions { margin-bottom: 8px; }
+  .transaction-card .logo.sc { background: #FFF1F2; }
+  .transaction-card .logo.sc img { width: 22px; height: 22px; }
+
+  .toast { position: absolute; bottom: 40px; left: 50%; transform: translateX(-50%) translateY(20px); background: #1C1C21; color: #FFF; padding: 11px 18px; border-radius: 12px; font-size: 13px; font-weight: 500; opacity: 0; pointer-events: none; transition: all 0.3s ease; z-index: 1000; white-space: nowrap; }
+  .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+</style>
+<link rel="stylesheet" href="styles/device.css">
+<style>@media (max-width: 480px) { .app-content { padding-top: 2px; } }</style>
+</head>
+<body>
+<div class="phone-frame">
+  <div class="status-bar">
+    <span class="time">10:00</span>
+    <div class="status-icons">
+      <svg data-name="icon-wifi" viewBox="0 0 24 24" fill="none"><path d="M1 9l2 2c4.97-4.97 13.03-4.97 18 0l2-2C16.93 2.93 7.08 2.93 1 9z" fill="#1C1C21"/><path d="M5 13l2 2c2.76-2.76 7.24-2.76 10 0l2-2C15.14 9.14 8.87 9.14 5 13z" fill="#1C1C21"/><path d="M9 17l2 2c1.1-1.1 2.9-1.1 4 0l2-2c-2.21-2.21-5.79-2.21-8 0z" fill="#1C1C21"/></svg>
+      <svg data-name="icon-signal" viewBox="0 0 24 24" fill="none"><rect x="2" y="6" width="4" height="12" rx="1" fill="#1C1C21"/><rect x="8" y="4" width="4" height="14" rx="1" fill="#1C1C21"/><rect x="14" y="2" width="4" height="16" rx="1" fill="#1C1C21"/><rect x="20" y="0" width="4" height="18" rx="1" fill="#1C1C21" opacity="0.3"/></svg>
+      <svg data-name="icon-battery" viewBox="0 0 28 14" fill="none"><rect x="0" y="1" width="22" height="12" rx="2.5" stroke="#1C1C21" stroke-width="1.5"/><rect x="2" y="3" width="16" height="8" rx="1" fill="#1C1C21"/><rect x="24" y="4" width="2" height="6" rx="1" fill="#1C1C21"/></svg>
+    </div>
+  </div>
+
+  <div class="app-content">
+    <div class="header-nav">
+      <button class="icon-btn" onclick="location.href='Credit & Saving.html'" aria-label="Back"><svg data-name="icon-arrow-left" viewBox="0 0 24 24"><path d="M19 12H5M12 19l-7-7 7-7"/></svg></button>
+      <span class="header-title">My Activity</span>
+      <button class="icon-btn" onclick="showToast('Report downloaded as PDF')" aria-label="Download report"><svg data-name="icon-download" viewBox="0 0 24 24"><path d="M12 4v11M7 10l5 5 5-5"/><path d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2"/></svg></button>
+    </div>
+
+    <!-- Period -->
+    <div class="periods" id="periods">
+      <button type="button" data-p="week">Week</button>
+      <button type="button" data-p="month" class="on">Month</button>
+      <button type="button" data-p="six">6 Months</button>
+      <button type="button" data-p="year">Year</button>
+    </div>
+
+    <!-- Chart: this period vs the one before -->
+    <div class="card">
+      <div class="head-row">
+        <span class="card-title">Overview</span>
+        <div class="seg" id="tabs"><button type="button" data-t="savings" class="on">Savings</button><button type="button" data-t="credit">Credit</button></div>
+      </div>
+      <div class="head-lbl" id="headLbl"></div>
+      <div class="head-val"><span id="headVal"></span><small>ETB</small></div>
+      <div class="chg" id="chg"><svg viewBox="0 0 10 10"><path d="M5 1 9 8H1z"/></svg><b id="chgPct"></b><span id="chgTxt"></span></div>
+      <div class="chart" id="chartBox">
+        <svg id="chart" viewBox="0 0 300 130" preserveAspectRatio="none" aria-hidden="true"></svg>
+        <span class="guide" id="guide"></span><span class="pin" id="pin"></span>
+        <span class="tip" id="tip"><span id="tipDate"></span><b id="tipAmt"></b></span>
+      </div>
+      <div class="axis" id="axis"></div>
+      <div class="legend"><span><i style="background:#FE353D"></i><span id="lgNow"></span></span><span><i style="background:#C9C9D1"></i><span id="lgLast"></span></span></div>
+    </div>
+
+    <!-- Summary -->
+    <div class="tiles4" id="tiles"></div>
+
+    <!-- Where the money moved -->
+    <div class="card">
+      <div class="card-head"><span class="card-title">Where your money moved</span><small id="mixTotal"></small></div>
+      <div class="moves" id="moves"></div>
+    </div>
+
+    <!-- Credit health -->
+    <div class="health" onclick="location.href='Credit Score.html'">
+      <span class="mini"><svg viewBox="0 0 58 36"><path d="M5 32a24 24 0 0 1 48 0" fill="none" stroke="rgba(255,255,255,0.3)" stroke-width="6" stroke-linecap="round"/><path id="miniArc" d="M5 32a24 24 0 0 1 48 0" fill="none" stroke="#FFF" stroke-width="6" stroke-linecap="round" pathLength="100" stroke-dasharray="0 100"/></svg><b id="hScore"></b></span>
+      <div class="h-fig"><small>Credit score</small><b id="hLabel"></b></div>
+      <div class="h-fig"><span class="split" data-shape="line" data-name="line"></span><small>On time</small><b>100%</b></div>
+      <div class="h-fig"><span class="split" data-shape="line" data-name="line"></span><small>Limit used</small><b id="hUsed"></b></div>
+      <svg class="cv" viewBox="0 0 24 24"><path d="M9 6l6 6-6 6"/></svg>
+    </div>
+
+    <!-- Last 6 months -->
+    <div class="card">
+      <div class="card-head"><span class="card-title">Last 6 months</span><small>Saved vs repaid</small></div>
+      <div class="bars" id="bars"></div>
+      <div class="legend"><span><i style="background:#FE353D"></i>Saved</span><span><i style="background:#FFB3B6"></i>Repaid</span></div>
+    </div>
+
+    <!-- Recent activity -->
+    <div class="recent-transactions">
+      <div class="header">
+        <span class="transactions-title">Recent Activity</span>
+        <span class="see-all" onclick="location.href='Transaction History.html'" style="cursor:pointer">See all</span>
+      </div>
+      <div class="transactions-list" id="recent"></div>
+    </div>
+  </div>
+  <div class="toast" id="toast"></div>
+</div>
+
+<script src="term-loan-store.js"></script>
+<script>
+  const $ = id => document.getElementById(id);
+  const money = n => Number(n).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+  const short = n => n >= 1000 ? (n / 1000).toFixed(n % 1000 ? 1 : 0) + 'K' : String(n);
+
+  // Live credit figures
+  const loans = TL.load(), live = TL.active(loans);
+  const repaidLive = loans.reduce((a, l) => a + TL.paidOf(l), 0);
+  const DAY = 864e5;
+  const borrowedIn = days => loans.filter(l => Date.now() - new Date(l.disbursed) <= days * DAY).reduce((a, l) => a + l.amount, 0);
+
+  // Period meta: days covered, axis labels, legend words
+  const today = new Date();
+  const lbl = (d, o) => d.toLocaleDateString('en-GB', o);
+  const back = n => new Date(today - n * DAY);
+  const monthsBack = n => new Date(today.getFullYear(), today.getMonth() - n, 1);
+  const PERIOD = {
+    week: { days: 7, now: 'This week', last: 'Last week', axis: Array.from({ length: 7 }, (_, i) => lbl(back(6 - i), { weekday: 'short' }).toUpperCase()) },
+    month: { days: 30, now: 'This month', last: 'Last month', axis: Array.from({ length: 5 }, (_, i) => lbl(back(28 - i * 7), { day: 'numeric', month: 'short' })) },
+    six: { days: 182, now: 'Last 6 months', last: 'Previous 6 months', axis: Array.from({ length: 6 }, (_, i) => lbl(monthsBack(5 - i), { month: 'short' }).toUpperCase()) },
+    year: { days: 365, now: 'This year', last: 'Last year', axis: Array.from({ length: 12 }, (_, i) => lbl(monthsBack(11 - i), { month: 'narrow' })) }
+  };
+  // Tooltip dates: the axis label, or the full month where the axis only has a letter
+  PERIOD.year.tip = Array.from({ length: 12 }, (_, i) => lbl(monthsBack(11 - i), { month: 'long', year: 'numeric' }));
+
+  // Sample series: savings = running balance; credit = cumulative repaid in the period
+  const SERIES = {
+    week:  { savings: { now: [28800, 28800, 29300, 29300, 29800, 29800, 30000], last: [27900, 28000, 28000, 28300, 28300, 28600, 28800] },
+             credit:  { now: [0, 0, 1150, 1150, 1150, 1150, 1150], last: [0, 600, 600, 600, 1200, 1200, 1200] } },
+    month: { savings: { now: [25750, 26800, 27500, 28700, 30000], last: [22800, 23600, 24300, 25000, 25750] },
+             credit:  { now: [0, 900, 1150, 2300, 3450], last: [0, 1200, 1800, 2600, 3000] } },
+    six:   { savings: { now: [14000, 17500, 20100, 22800, 25750, 30000], last: [6500, 8000, 9800, 11000, 12600, 14000] },
+             credit:  { now: [2000, 4800, 7100, 9600, 12400, 15850], last: [1500, 3000, 5200, 6900, 8800, 10400] } },
+    year:  { savings: { now: [9000, 10200, 11500, 12300, 13100, 14000, 17500, 20100, 22800, 25750, 27900, 30000], last: [2000, 2600, 3300, 4100, 4700, 5600, 6500, 6900, 7400, 8100, 8600, 9000] },
+             credit:  { now: [600, 1500, 2600, 3300, 4400, 5500, 7300, 9100, 11200, 13300, 15400, 17850], last: [400, 900, 1600, 2400, 3100, 3700, 4600, 5300, 6100, 7000, 7800, 8600] } }
+  };
+  // Live repayments land on the latest point of every credit series
+  Object.values(SERIES).forEach(p => { const c = p.credit.now; c[c.length - 1] += repaidLive; });
+
+  // Tiles and "where it moved", per period (samples + live credit)
+  const FIG = {
+    week:  { savedIn: 1200, withdrawn: 0, interest: 0, overdraft: 800, d: [12, 0, -40, 18] },
+    month: { savedIn: 5200, withdrawn: 950, interest: 45.30, overdraft: 1850, d: [24, -8, 35, 15] },
+    six:   { savedIn: 18400, withdrawn: 2400, interest: 245.30, overdraft: 6100, d: [31, 6, 52, 27] },
+    year:  { savedIn: 26800, withdrawn: 5800, interest: 410.80, overdraft: 9300, d: [44, 12, 61, 38] }
+  };
+
+  const ICON = {
+    in: '<svg viewBox="0 0 24 24"><path d="M12 4v12M7 11l5 5 5-5"/><path d="M5 20h14"/></svg>',
+    out: '<svg viewBox="0 0 24 24"><path d="M12 20V8M7 13l5-5 5 5"/><path d="M5 4h14"/></svg>',
+    borrow: '<svg viewBox="0 0 24 24"><rect x="2.5" y="5.5" width="19" height="13" rx="2.5"/><path d="M2.5 10h19M6 15h4"/></svg>',
+    repay: '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="m8 12 3 3 5-6"/></svg>'
+  };
+
+  let period = 'month', tab = 'savings';
+
+  function drawChart() {
+    const s = SERIES[period][tab], n = s.now.length, all = s.now.concat(s.last);
+    const lo = Math.min(...all), hi = Math.max(...all), pad = (hi - lo) * 0.1 || 1, W = 300, H = 130;
+    const xy = (v, i) => [i * W / (n - 1), H - 8 - (v - lo + pad) / (hi - lo + 2 * pad) * (H - 20)];
+    const path = arr => arr.map((v, i) => { const [x, y] = xy(v, i); return (i ? 'L' : 'M') + x.toFixed(1) + ' ' + y.toFixed(1); }).join(' ');
+    const [ex, ey] = xy(s.now[n - 1], n - 1);
+    const grid = Array.from({ length: n }, (_, i) => `<line x1="${i * W / (n - 1)}" y1="0" x2="${i * W / (n - 1)}" y2="${H}" stroke="#F1F1F4" stroke-width="1" vector-effect="non-scaling-stroke"/>`).join('');
+    $('chart').innerHTML = grid
+      + `<defs><linearGradient id="fillG" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FE353D" stop-opacity="0.16"/><stop offset="1" stop-color="#FE353D" stop-opacity="0"/></linearGradient></defs>`
+      + `<path d="${path(s.now)} L${W} ${H} L0 ${H} Z" fill="url(#fillG)"/>`
+      + `<path d="${path(s.last)}" fill="none" stroke="#C9C9D1" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round" vector-effect="non-scaling-stroke"/>`
+      + `<path d="${path(s.now)}" fill="none" stroke="#FE353D" stroke-width="3" stroke-linejoin="round" stroke-linecap="round" vector-effect="non-scaling-stroke"/>`
+      + `<circle cx="${ex}" cy="${ey.toFixed(1)}" r="5" fill="#FFF" stroke="#FE353D" stroke-width="3" vector-effect="non-scaling-stroke"/>`;
+    // Point lookup for the tooltip (in % of the box)
+    $('chartBox').pts = s.now.map((v, i) => { const [x, y] = xy(v, i); return { x: x / W * 100, y: y / H * 100, v, l: (PERIOD[period].tip || PERIOD[period].axis)[i] }; });
+    $('axis').innerHTML = PERIOD[period].axis.map(a => `<span>${a}</span>`).join('');
+    $('lgNow').textContent = PERIOD[period].now; $('lgLast').textContent = PERIOD[period].last;
+  }
+
+  function render() {
+    const s = SERIES[period][tab], P = PERIOD[period], f = FIG[period];
+    // Headline: net saved (savings) or repaid (credit) in the period, vs the period before
+    const net = tab === 'savings' ? s.now.at(-1) - s.now[0] : s.now.at(-1);
+    const prev = tab === 'savings' ? s.last.at(-1) - s.last[0] : s.last.at(-1);
+    $('headLbl').textContent = (tab === 'savings' ? 'Net saved · ' : 'Credit repaid · ') + P.now.toLowerCase();
+    $('headVal').textContent = (tab === 'savings' && net > 0 ? '+' : '') + money(net);
+    const pct = prev ? (net - prev) / prev * 100 : 100;
+    $('chg').classList.toggle('down', pct < 0);
+    $('chgPct').textContent = Math.abs(pct).toFixed(1) + '%';
+    $('chgTxt').textContent = 'vs ' + P.last.toLowerCase();
+    drawChart();
+
+    // Tiles
+    const borrowed = borrowedIn(P.days), repaid = SERIES[period].credit.now.at(-1);
+    const T = [['Saved in', ICON.in, f.savedIn, f.d[0]], ['Withdrawn', ICON.out, f.withdrawn, f.d[1]], ['Borrowed', ICON.borrow, borrowed, f.d[2]], ['Repaid', ICON.repay, repaid, f.d[3]]];
+    $('tiles').innerHTML = T.map(([t, ic, v, d]) => `<div class="stile"><div class="top">${ic}${t}</div><b>${money(v)}<small>ETB</small></b>
+      <em class="${(t === 'Withdrawn' ? d > 0 : d < 0) ? 'down' : ''}">${d < 0 ? '▼' : '▲'} ${Math.abs(d)}% vs ${P.last.toLowerCase()}</em></div>`).join('');
+
+    // Where it moved
+    const M = [['Savings deposits', f.savedIn], ['Interest earned', f.interest], ['Loans disbursed', borrowed], ['Loan repayments', repaid], ['Overdraft', f.overdraft]].filter(m => m[1] > 0);
+    const sum = M.reduce((a, m) => a + m[1], 0) || 1;
+    $('mixTotal').textContent = money(sum) + ' ETB';
+    // One row per type, biggest first; the bar is its share of the total
+    const top = Math.max(...M.map(m => m[1]));
+    $('moves').innerHTML = M.sort((a, b) => b[1] - a[1]).map(m => `<div class="move">
+      <div class="move-top"><span>${m[0]}</span><b>${money(m[1])} ETB</b></div>
+      <div class="move-bar"><i style="width:${Math.max(2, m[1] / top * 100)}%"></i></div></div>`).join('');
+
+    renderRecent();
+  }
+
+  // Credit health (live)
+  $('hScore').textContent = TL.SCORE.value; $('hLabel').textContent = TL.SCORE.label;
+  $('miniArc').setAttribute('stroke-dasharray', `${Math.round((TL.SCORE.value - 300) / 6)} 100`);
+  $('hUsed').textContent = Math.round(TL.outstanding(loans) / TL.LIMIT * 100) + '%';
+
+  // Last 6 months: saved vs repaid per month
+  (function () {
+    const saved = [2100, 3500, 2600, 2700, 2950, 4250], repaid = [1800, 2800, 2300, 2500, 2800, 3450 + repaidLive];
+    const top = Math.max(...saved, ...repaid);
+    $('bars').innerHTML = PERIOD.six.axis.map((m, i) => `<div class="m${i === 5 ? ' cur' : ''}"><div class="pair">
+      <i style="height:${saved[i] / top * 100}%;background:#FE353D" title="Saved ${money(saved[i])}"></i>
+      <i style="height:${repaid[i] / top * 100}%;background:#FFB3B6" title="Repaid ${money(repaid[i])}"></i></div><small>${m}</small></div>`).join('');
+  })();
+
+  // Recent activity for the selected tab
+  const RECENT = [
+    { t: 'savings', name: 'Saved to Goal Pocket', type: 'Saving', icon: 'Saving.svg', amt: 2000, date: 'Today' },
+    { t: 'credit', name: 'Errif Repayment', type: 'Over Draft', icon: 'Overdraft.svg', amt: -1150, date: 'Today' },
+    { t: 'credit', name: 'Term Loan Disbursed', type: 'Term Loan', icon: 'Credit.svg', amt: 5000, date: 'Yesterday', link: 'Term Loan - Details.html' },
+    { t: 'savings', name: 'Interest Earned', type: 'Saving', icon: 'Saving.svg', amt: 45.30, date: '12 Oct' },
+    { t: 'savings', name: 'Withdrawn from Goal Pocket', type: 'Saving', icon: 'Saving.svg', amt: -950, date: '9 Oct' },
+    { t: 'credit', name: 'Salary Advance Disbursed', type: 'Term Loan', icon: 'Credit.svg', amt: 7000, date: '20 Oct', link: 'Term Loan - Details.html?id=L1002' }
+  ];
+  function renderRecent() {
+    $('recent').innerHTML = RECENT.filter(r => r.t === tab).map(r => `<div class="transaction-card"${r.link ? ` onclick="location.href='${r.link}'" style="cursor:pointer"` : ''}>
+      <div class="left"><div class="logo sc"><img src="assets/${r.icon}" alt=""></div>
+        <div class="name-type"><span class="name">${r.name}</span><span class="type">${r.type}</span></div></div>
+      <div class="right"><span class="amount ${r.amt < 0 ? 'negative' : 'positive'}">${r.amt < 0 ? '-' : '+'}${money(Math.abs(r.amt))}</span><span class="date">${r.date}</span></div></div>`).join('');
+  }
+
+  // Tooltip: nearest point to the finger / pointer
+  (function () {
+    const box = $('chartBox');
+    function at(e) {
+      const r = box.getBoundingClientRect(), x = (e.clientX - r.left) / r.width * 100;
+      const p = box.pts.reduce((a, b) => Math.abs(b.x - x) < Math.abs(a.x - x) ? b : a);
+      box.classList.add('hover');
+      $('guide').style.left = p.x + '%';
+      $('pin').style.left = p.x + '%'; $('pin').style.top = p.y + '%';
+      const tip = $('tip'); tip.style.left = Math.min(85, Math.max(15, p.x)) + '%'; tip.style.top = (p.y / 100 * r.height - 8) + 'px';
+      $('tipDate').textContent = p.l; $('tipAmt').textContent = money(p.v) + ' ETB';
+    }
+    box.addEventListener('pointermove', at);
+    box.addEventListener('pointerdown', at);
+    box.addEventListener('pointerleave', () => box.classList.remove('hover'));
+  })();
+
+  // Switchers
+  $('periods').querySelectorAll('button').forEach(b => b.addEventListener('click', () => {
+    $('periods').querySelectorAll('button').forEach(x => x.classList.toggle('on', x === b));
+    period = b.dataset.p; render();
+  }));
+  $('tabs').querySelectorAll('button').forEach(b => b.addEventListener('click', () => {
+    $('tabs').querySelectorAll('button').forEach(x => x.classList.toggle('on', x === b));
+    tab = b.dataset.t; render();
+  }));
+  render();
+
+  let tt;
+  function showToast(m) { const t = $('toast'); t.textContent = m; t.classList.add('show'); clearTimeout(tt); tt = setTimeout(() => t.classList.remove('show'), 2000); }
+</script>
+<!-- Export to Figma button (shared exporter) -->
+<script src="figma-export.js"></script>
+<script src="test-scenarios-data.js"></script>
+<script src="test-scenarios.js"></script>
+</body>
+</html>

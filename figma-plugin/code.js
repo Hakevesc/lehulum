@@ -479,7 +479,28 @@ function renderPlainFrame(nodeData, parent, parentIsAutoLayout, plain) {
 function renderPlainNode(nodeData, parent, parentIsAutoLayout) {
   if (!nodeData) return Promise.resolve();
   if (nodeData.type === 'TEXT') return renderTextNode(nodeData, parent);
+  if (nodeData.svg) return renderSvgNode(nodeData, parent, parentIsAutoLayout);
   return renderPlainFrame(nodeData, parent, parentIsAutoLayout, true);
+}
+
+// Inline SVG icons, bullets and data-shape="line" dividers → real editable
+// vector layers. Falls back to a plain frame if the markup can't be parsed, so
+// layout stays intact.
+function renderSvgNode(nodeData, parent, parentIsAutoLayout) {
+  var node = null;
+  try { node = figma.createNodeFromSvg(nodeData.svg); } catch (e) { node = null; }
+  if (!node) return renderPlainFrame(nodeData, parent, parentIsAutoLayout, true);
+
+  node.name = nodeData.name || 'icon';
+  try {
+    node.resize(Math.max(1, nodeData.w || node.width), Math.max(1, nodeData.h || node.height));
+  } catch (e) { /* keep intrinsic size */ }
+  node.x = nodeData.x || 0;
+  node.y = nodeData.y || 0;
+  if (nodeData.opacity !== undefined && nodeData.opacity < 1) node.opacity = nodeData.opacity;
+  parent.appendChild(node);
+  positionAbsolute(node, nodeData, parentIsAutoLayout);
+  return Promise.resolve();
 }
 
 // Top-level renderer used for design imports. Component-tagged nodes become
@@ -488,6 +509,7 @@ function renderPlainNode(nodeData, parent, parentIsAutoLayout) {
 function renderNode(nodeData, parent, parentIsAutoLayout) {
   if (!nodeData) return Promise.resolve();
   if (nodeData.type === 'TEXT') return renderTextNode(nodeData, parent);
+  if (nodeData.svg) return renderSvgNode(nodeData, parent, parentIsAutoLayout);
   if (nodeData.component) return renderComponentInDesign(nodeData, parent, parentIsAutoLayout);
   return renderPlainFrame(nodeData, parent, parentIsAutoLayout, false);
 }

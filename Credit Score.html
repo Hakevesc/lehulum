@@ -179,11 +179,9 @@
   $('updated').textContent = stamp();
   draw(TL.SCORE.value);
 
-  function updateScore() {
-    const b = $('updBtn'); if (b.classList.contains('spin')) return;
-    b.classList.add('spin');
-    setTimeout(() => { b.classList.remove('spin'); $('updated').textContent = stamp(); draw(TL.SCORE.value); toast('Your score is up to date'); }, 1400);
-  }
+  // Update score: upload a bank statement
+  function updateScore() { location.href = 'Credit Score - Upload Statement.html'; }
+  if (new URLSearchParams(location.search).get('updated')) setTimeout(() => toast('Your score has been updated'), 300);
 
   const DOWN = '<svg class="tog" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>';
   const FACTORS = [
@@ -193,7 +191,7 @@
   ];
   $('factors').innerHTML = FACTORS.map(([ic, t, s, a]) => `<div class="qa"><button class="q" type="button" onclick="this.parentElement.classList.toggle('open')"><span class="ic">${ic}</span><span class="info"><b>${t}</b><small>${s}</small></span>${DOWN}</button><div class="a">${a}</div></div>`).join('');
 
-  function goBack() { if (document.referrer && history.length > 1) history.back(); else location.href = 'Term Loan.html'; }
+  function goBack() { if (document.referrer && !/Upload%20Statement|Upload Statement/.test(document.referrer) && history.length > 1) history.back(); else location.href = 'Term Loan.html'; }
   let tt;
   function toast(m) { const t = $('toast'); t.textContent = m; t.classList.add('show'); clearTimeout(tt); tt = setTimeout(() => t.classList.remove('show'), 1800); }
 </script>

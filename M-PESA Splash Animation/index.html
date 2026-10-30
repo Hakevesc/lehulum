@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>M-PESA Splash Animation</title>
+<link rel="stylesheet" href="mpesa-splash.css">
+<style>
+  html, body { margin: 0; height: 100%; background: #f2f2f4; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; }
+  /* demo: phone-sized frame on desktop, full screen on phones */
+  .frame { width: 375px; height: min(812px, calc(100vh - 40px)); margin: 20px auto; border-radius: 36px; overflow: hidden; box-shadow: 0 20px 60px rgba(0,0,0,0.25); background: #fff; position: relative; }
+  @media (max-width: 600px) { .frame { width: 100vw; height: 100dvh; margin: 0; border-radius: 0; box-shadow: none; } }
+  .after { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 16px; color: #111; }
+  .after button { border: none; background: #D03C3B; color: #fff; font: inherit; font-weight: 700; padding: 12px 22px; border-radius: 14px; cursor: pointer; }
+  .loader-demo { display: flex; align-items: center; gap: 10px; font-size: 13px; color: #777; }
+</style>
+</head>
+<body>
+  <div class="frame">
+    <div class="after">
+      <b>Your first screen goes here</b>
+      <div class="loader-demo"><div class="mpesa-anim" id="miniAnim" style="width:56px;height:56px"></div> small loader version</div>
+      <button onclick="play()">Play splash again</button>
+    </div>
+    <div id="splash" style="position:absolute;inset:0"></div>
+  </div>
+
+  <script src="assets/mpesa-lottie-data.js"></script>
+  <script src="mpesa-splash.js"></script>
+  <script>
+    function play() {
+      const el = document.getElementById('splash');
+      el.className = ''; el.style.display = '';
+      MpesaSplash.mount(el, {
+        loops: 2,
+        tagline: 'Send money home, fast',
+        onDone: () => { el.style.display = 'none'; }
+      });
+    }
+    play();
+    MpesaSplash.anim(document.getElementById('miniAnim'));
+  </script>
+</body>
+</html>

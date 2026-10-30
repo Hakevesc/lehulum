@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Activate Errif — M-PESA</title>
+<link rel="stylesheet" href="styles/design-tokens.css">
+<link rel="stylesheet" href="styles/base.css">
+<link rel="stylesheet" href="styles/component-status-bar.css">
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@400;500;600&display=swap');
+  @import url('https://api.fontshare.com/v2/css?f[]=switzer@400,500,600,700,800&display=swap');
+
+  /* Activate Errif (from the Errif offer): the limit, the terms as numbered
+     cards, agree, then Agree & Activate → M-PESA PIN → Errif activated.
+     ?view=terms shows the terms only (from an active Errif). */
+  :root { --Font: 'Switzer', 'Inter', sans-serif; }
+  body { font-family: var(--Font); }
+  .app-content { display: flex; flex-direction: column; gap: 12px; padding-bottom: 0 !important; }
+  .app-content > * { flex-shrink: 0; }
+
+  .header-nav { display: flex; align-items: center; justify-content: space-between; padding: 0 0 2px; }
+  .icon-btn { width: 36px; height: 36px; border-radius: 50%; background: transparent; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+  .icon-btn:hover { background: rgba(0,0,0,0.05); }
+  .icon-btn svg { width: 22px; height: 22px; stroke: var(--On-Surface, #1C1C21); stroke-width: 1.8; fill: none; stroke-linecap: round; stroke-linejoin: round; }
+  .header-title { color: var(--On-Surface, #1C1C21); font-size: 17px; font-weight: 500; letter-spacing: 0.3px; flex: 1; text-align: center; }
+
+  .limit { display: flex; align-items: center; gap: 12px; padding: 14px; border-radius: 18px; background: #FFF; box-shadow: 0 4px 16px rgba(15,23,42,0.06); }
+  .limit i { width: 44px; height: 44px; border-radius: 13px; background: #FFF1F2; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+  .limit i img { width: 26px; height: 26px; }
+  .limit small { display: block; font-size: 12px; color: var(--On-Surface-Low, #7C7C87); }
+  .limit b { display: block; margin-top: 2px; font-size: 20px; font-weight: 700; color: var(--On-Surface, #1C1C21); }
+  .limit b span { font-size: 12px; font-weight: 500; color: var(--On-Surface-Low, #7C7C87); margin-left: 3px; }
+  .limit .tag { margin-left: auto; padding: 4px 9px; border-radius: 999px; background: #E8F9EE; color: #167C2A; font-size: 11px; font-weight: 600; white-space: nowrap; }
+
+  .sec { font-size: 15px; font-weight: 600; color: var(--On-Surface, #1C1C21); margin: 4px 2px -2px; }
+  .term { display: flex; gap: 12px; padding: 14px; border-radius: 18px; background: #FFF; box-shadow: 0 2px 12px rgba(0,0,0,0.04); }
+  .term .n { width: 30px; height: 30px; border-radius: 10px; background: var(--Primary, #FE353D); color: #FFF; font-size: 13px; font-weight: 700; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+  .term b { display: block; font-size: 13.5px; font-weight: 600; color: var(--On-Surface, #1C1C21); }
+  .term p { margin-top: 3px; font-size: 12px; line-height: 1.5; color: #55555E; }
+
+  .agree { display: flex; align-items: flex-start; gap: 10px; padding: 4px 2px; cursor: pointer; }
+  .agree .box { width: 20px; height: 20px; border-radius: 6px; border: 2px solid #C9C9D0; flex-shrink: 0; margin-top: 1px; display: flex; align-items: center; justify-content: center; }
+  .agree .box svg { width: 12px; height: 12px; stroke: #FFF; stroke-width: 3.2; fill: none; stroke-linecap: round; stroke-linejoin: round; opacity: 0; }
+  .agree.on .box { background: var(--Primary, #FE353D); border-color: var(--Primary, #FE353D); }
+  .agree.on .box svg { opacity: 1; }
+  .agree p { font-size: 12.5px; line-height: 1.5; color: #55555E; }
+  .agree p a { color: var(--Primary, #FE353D); font-weight: 600; cursor: pointer; }
+
+  .bottom-bar { position: sticky; bottom: 0; margin: 0 -16px; padding: 10px 16px 18px; background: var(--Background, #F5F5F5); }
+  .btn-primary { width: 100%; height: 52px; border: none; border-radius: 14px; background: var(--Primary, #FE353D); color: #FFF; font-family: 'Poppins', sans-serif; font-size: 15px; font-weight: 500; cursor: pointer; box-shadow: 0 4px 16px rgba(254,53,61,0.25); }
+  .btn-primary:disabled { background: #E0E0E0; color: #7C7C87; box-shadow: none; cursor: default; }
+  .terms-only .agree, .terms-only .limit { display: none; }
+</style>
+<link rel="stylesheet" href="styles/device.css">
+<style>@media (max-width: 480px) { .app-content { padding-top: 2px; } }</style>
+</head>
+<body>
+<div class="phone-frame">
+  <div class="status-bar">
+    <span class="time">10:00</span>
+    <div class="status-icons">
+      <svg data-name="icon-wifi" viewBox="0 0 24 24" fill="none"><path d="M1 9l2 2c4.97-4.97 13.03-4.97 18 0l2-2C16.93 2.93 7.08 2.93 1 9z" fill="#1C1C21"/><path d="M5 13l2 2c2.76-2.76 7.24-2.76 10 0l2-2C15.14 9.14 8.87 9.14 5 13z" fill="#1C1C21"/><path d="M9 17l2 2c1.1-1.1 2.9-1.1 4 0l2-2c-2.21-2.21-5.79-2.21-8 0z" fill="#1C1C21"/></svg>
+      <svg data-name="icon-signal" viewBox="0 0 24 24" fill="none"><rect x="2" y="6" width="4" height="12" rx="1" fill="#1C1C21"/><rect x="8" y="4" width="4" height="14" rx="1" fill="#1C1C21"/><rect x="14" y="2" width="4" height="16" rx="1" fill="#1C1C21"/><rect x="20" y="0" width="4" height="18" rx="1" fill="#1C1C21" opacity="0.3"/></svg>
+      <svg data-name="icon-battery" viewBox="0 0 28 14" fill="none"><rect x="0" y="1" width="22" height="12" rx="2.5" stroke="#1C1C21" stroke-width="1.5"/><rect x="2" y="3" width="16" height="8" rx="1" fill="#1C1C21"/><rect x="24" y="4" width="2" height="6" rx="1" fill="#1C1C21"/></svg>
+    </div>
+  </div>
+
+  <div class="app-content" id="page">
+    <div class="header-nav">
+      <button class="icon-btn" onclick="location.href='Overdraft.html'" aria-label="Back"><svg data-name="icon-arrow-left" viewBox="0 0 24 24"><path d="M19 12H5M12 19l-7-7 7-7"/></svg></button>
+      <span class="header-title" id="title">Activate Errif</span>
+      <div style="width:36px"></div>
+    </div>
+
+    <div class="limit">
+      <i><img src="assets/Overdraft.svg" alt=""></i>
+      <span><small>Your Errif limit</small><b id="limit"></b></span>
+      <span class="tag">Pre-approved</span>
+    </div>
+
+    <p class="sec">Terms &amp; Conditions</p>
+    <div id="terms"></div>
+
+    <div class="agree" id="agree" onclick="this.classList.toggle('on'); $('go').disabled = !this.classList.contains('on')">
+      <span class="box"><svg viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg></span>
+      <p>I have read and agree to the Errif Overdraft Terms &amp; Conditions and the <a onclick="event.stopPropagation(); location.href='Tariffs & Fees.html'">Tariffs &amp; Fees</a>.</p>
+    </div>
+
+    <div class="bottom-bar"><button class="btn-primary" id="go" disabled onclick="activate()">Agree &amp; Activate</button></div>
+  </div>
+</div>
+
+<script src="term-loan-store.js"></script>
+<script>
+  const $ = id => document.getElementById(id);
+  const E = TL.errifLoad(), F = TL.ERRIF_FEES, fmt = TL.fmt;
+  $('limit').innerHTML = fmt(E.limit) + '<span>ETB</span>';
+  const TERMS = [
+    ['Credit limit', E.limit >= F.maxLimit
+      ? `Your Errif limit is ${fmt(E.limit)} ETB, the maximum. It is set from how you use M-PESA and repay, so it can change over time.`
+      : `Your Errif limit is ${fmt(E.limit)} ETB. Limits go up to ${fmt(F.maxLimit)} ETB and are set from how you use M-PESA and repay, so yours can grow over time.`],
+    ['When Errif is used', 'Only when a payment is more than your balance — Errif covers the missing amount, nothing more.'],
+    ['Repayment', `What Errif covers is repaid automatically from the next money you receive, and must be cleared within ${F.days} days.`],
+    ['Fees', `A ${F.access * 100}% access fee on each amount covered, a daily maintenance fee of up to ${fmt(F.dailyMax)} ETB, and ${F.penalty * 100}% a day if repaid late.`],
+    ['Turning it off', 'You can turn Errif off any time once nothing is owed. Errif may be suspended if these terms are not met.']
+  ];
+  $('terms').outerHTML = TERMS.map(([t, p], i) => `<div class="term"><span class="n">${i + 1}</span><span><b>${t}</b><p>${p}</p></span></div>`).join('');
+
+  // Terms only (from an active Errif): no limit card, agree or button
+  if (new URLSearchParams(location.search).get('view') === 'terms') {
+    $('page').classList.add('terms-only');
+    $('title').textContent = 'Errif Terms';
+    document.querySelector('.bottom-bar').innerHTML = '<button class="btn-primary" onclick="location.href=\'Overdraft.html\'">Done</button>';
+  }
+
+  function activate() {
+    sessionStorage.setItem('termLoanData', JSON.stringify({
+      kind: 'errif-activate', title: 'Activate Errif', logo: 'assets/Overdraft.svg', amount: E.limit,
+      back: 'Overdraft - Activate.html', next: 'Overdraft - Activated.html'
+    }));
+    location.href = 'Term Loan - Enter PIN.html';
+  }
+</script>
+<!-- Export to Figma button (shared exporter) -->
+<script src="figma-export.js"></script>
+<script src="test-scenarios-data.js"></script>
+<script src="test-scenarios.js"></script>
+</body>
+</html>

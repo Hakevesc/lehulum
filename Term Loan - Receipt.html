@@ -398,12 +398,21 @@
   const data = JSON.parse(sessionStorage.getItem('termLoanData') || '{}');
   const $ = id => document.getElementById(id);
   const fmt = n => parseFloat(n || 0).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
-  const isRepay = data.kind === 'repay';
+  const isErrif = data.kind === 'errif-repay';       // Errif overdraft repayment
+  const isRepay = data.kind === 'repay' || isErrif;
   const amount = parseFloat(data.amount || 0);
   const dstr = v => new Date(v).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
 
   // Disbursement or repayment rows
-  const rows = isRepay ? [
+  const rows = isErrif ? [
+    ["Payer's Name", 'Aster Mequanent'],
+    ["Payer's Phone Number", '0712 *** *78'],
+    ['Paid To', 'Errif Overdraft'],
+    ['Amount Repaid', fmt(amount) + ' ETB'],
+    ['Still Owed', fmt(data.remaining) + ' ETB'],
+    ['Fee', '0.00 ETB'],
+    ['Transaction Type', 'Overdraft Repayment']
+  ] : isRepay ? [
     ["Payer's Name", 'Aster Mequanent'],
     ["Payer's Phone Number", '0712 *** *78'],
     ['Lender', data.lender],
@@ -439,7 +448,7 @@
   $('detailDate').textContent = stamp(new Date());
 
   const qrData = encodeURIComponent(JSON.stringify({
-    type: isRepay ? 'Loan Repayment' : 'Term Loan Disbursement',
+    type: isErrif ? 'Overdraft Repayment' : isRepay ? 'Loan Repayment' : 'Term Loan Disbursement',
     txId: $('transactionId').textContent,
     amount: fmt(amount) + ' ETB'
   }));
@@ -501,13 +510,23 @@
 
   function downloadReceipt() { showToast('Downloading receipt as PDF...'); }
   // PayPal withdrawals return to the PayPal hub; other top-ups to Home
-  function goHome() { window.location.href = 'Term Loan.html?done=' + (isRepay ? 'repay' : 'apply'); }
+  function goHome() { window.location.href = (isErrif ? 'Overdraft.html' : 'Term Loan.html') + '?done=' + (isErrif && data.turnOff ? 'off' : isRepay ? 'repay' : 'apply'); }
   function addToFavorite() { showToast('Added to favorites!'); }
-  function addAgain() { window.location.href = 'Term Loan - Details.html?id=' + (data.loanId || ''); }
+  function addAgain() { window.location.href = isErrif ? 'Overdraft.html' : 'Term Loan - Details.html?id=' + (data.loanId || ''); }
+  if (isErrif) $('againLbl').textContent = 'View Errif';
 
   // Book it once (by transaction ID): a new loan, or the repaid instalments
   (function record() {
     if (!data.ref || data.recorded === data.ref) return;
+    if (isErrif) {
+      const e = TL.errifLoad();
+      e.used = Math.max(0, Math.round((e.used - amount) * 100) / 100);
+      e.history.push({ kind: 'repay', what: 'Repaid from main account', amount, at: new Date().toISOString() });
+      if (data.turnOff && e.used <= 0) e.active = false;     // "Pay Now" from Turn off Errif
+      TL.errifSave(e);
+      data.recorded = data.ref; sessionStorage.setItem('termLoanData', JSON.stringify(data));
+      return;
+    }
     const loans = TL.load();
     if (isRepay) {
       const l = loans.find(x => x.id === data.loanId);
@@ -515,7 +534,7 @@
     } else {
       data.loanId = 'L' + Date.now().toString().slice(-6);
       loans.unshift({ id: data.loanId, offer: data.offer, lender: data.lender, logo: data.logo, product: data.product,
-        amount: amount, total: Math.round(data.total * 100) / 100, disbursed: new Date().toISOString(), instalments: data.instalments });
+        amount: amount, total: Math.round(data.total * 100) / 100, days: data.days, disbursed: new Date().toISOString(), instalments: data.instalments });
     }
     TL.save(loans);
     data.recorded = data.ref;

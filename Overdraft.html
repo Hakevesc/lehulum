@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Errif Overdraft — M-PESA</title>
+<link rel="stylesheet" href="styles/design-tokens.css">
+<link rel="stylesheet" href="styles/base.css">
+<link rel="stylesheet" href="styles/component-status-bar.css">
+<link rel="stylesheet" href="styles/component-sc-card.css">
+<link rel="stylesheet" href="styles/component-transactions.css">
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@400;500;600&display=swap');
+  @import url('https://api.fontshare.com/v2/css?f[]=switzer@400,500,600,700,800&display=swap');
+
+  /* Errif Overdraft (Saving & Credit → Over Draft). Active: the shared white
+     card (available / used, limit level), Repay Now + Terms tiles, fees and
+     recent usage; How Errif works lives in the ⋯ menu; Repay → sheet → PIN → receipt. Not active:
+     the offer (limit, benefits, fees) → Activate. State: TL.errifLoad(). */
+  :root { --Font: 'Switzer', 'Inter', sans-serif; }
+  body { font-family: var(--Font); }
+  .app-content { display: flex; flex-direction: column; gap: 12px; }
+  .app-content > * { flex-shrink: 0; }
+  .view { display: none; flex-direction: column; gap: 12px; }
+  .view.show { display: flex; }
+  .view > * { flex-shrink: 0; }
+
+  .header-nav { display: flex; align-items: center; justify-content: space-between; padding: 0 0 2px; }
+  .icon-btn { width: 36px; height: 36px; border-radius: 50%; background: transparent; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+  .icon-btn:hover { background: rgba(0,0,0,0.05); }
+  .icon-btn svg { width: 22px; height: 22px; stroke: var(--On-Surface, #1C1C21); stroke-width: 1.8; fill: none; stroke-linecap: round; stroke-linejoin: round; }
+  .header-title { color: var(--On-Surface, #1C1C21); font-size: 17px; font-weight: 500; letter-spacing: 0.3px; flex: 1; text-align: center; }
+
+  .tiles { margin-bottom: 0; }
+  .card { background: #FFF; border-radius: 22px; padding: 16px; box-shadow: 0 4px 16px rgba(15,23,42,0.06); }
+  .card-title { font-size: 15px; font-weight: 600; color: var(--On-Surface, #1C1C21); }
+  .card-head { display: flex; align-items: baseline; justify-content: space-between; }
+  .card-head a { font-size: 12.5px; font-weight: 600; color: var(--Primary, #FE353D); cursor: pointer; }
+
+  /* Limit level (top right of the card, in place of an illustration) */
+  .level { position: absolute; right: 14px; top: 14px; width: 104px; padding: 0; border: none; background: none; cursor: pointer; font-family: var(--Font); text-align: center; }
+  .medal { display: block; width: 48px; height: 53px; margin: 0 auto; }
+  .level b { display: block; margin-top: 4px; font-size: 13px; font-weight: 700; color: var(--On-Surface, #1C1C21); }
+  .level small { display: block; margin-top: 1px; font-size: 10.5px; color: var(--On-Surface-Low, #7C7C87); }
+
+  /* Levels sheet */
+  .lv-row { display: flex; align-items: center; gap: 12px; padding: 11px 4px; }
+  .lv-row + .lv-row { border-top: 1px solid #F1F1F4; }
+  .lv-row .n { width: 30px; height: 30px; border-radius: 10px; background: #F3F3F6; color: #8A8A94; font-size: 13px; font-weight: 700; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+  .lv-row.done .n { background: var(--Primary, #FE353D); color: #FFF; }
+  .lv-row .t { flex: 1; font-size: 14px; font-weight: 600; color: var(--On-Surface, #1C1C21); }
+  .lv-row .t em { font-style: normal; margin-left: 6px; padding: 2px 8px; border-radius: 999px; background: #FFF1F2; color: var(--Primary, #FE353D); font-size: 10.5px; font-weight: 700; }
+  .lv-row .v { font-size: 13.5px; font-weight: 700; color: var(--On-Surface, #1C1C21); }
+  .lv-row:not(.done) .v { color: #A0A0AA; }
+  .lv-tip { margin-top: 10px; padding: 12px 14px; border-radius: 14px; background: #F7F7F9; font-size: 12px; line-height: 1.5; color: #55555E; }
+
+  /* Turn off sheet */
+  .off-ic { width: 64px; height: 64px; margin: 4px auto 12px; border-radius: 20px; background: #FFF1F2; display: flex; align-items: center; justify-content: center; }
+  .off-ic svg { width: 30px; height: 30px; stroke: var(--Primary, #FE353D); stroke-width: 1.9; fill: none; stroke-linecap: round; stroke-linejoin: round; }
+  .off-title { text-align: center; font-size: 17px; font-weight: 700; color: var(--On-Surface, #1C1C21); }
+  .off-text { margin: 6px auto 0; max-width: 280px; text-align: center; font-size: 13px; line-height: 1.5; color: var(--On-Surface-Low, #7C7C87); }
+  .owed { margin: 16px 0 14px; display: flex; align-items: center; justify-content: space-between; padding: 14px 16px; border-radius: 16px; background: #FFF6F6; }
+  .owed span { font-size: 13px; color: #55555E; }
+  .owed b { font-size: 18px; font-weight: 700; color: var(--On-Surface, #1C1C21); }
+  .owed b small { font-size: 12px; font-weight: 500; color: var(--On-Surface-Low, #7C7C87); margin-left: 3px; }
+  .btn-ghost { width: 100%; height: 48px; margin-top: 8px; border: none; border-radius: 14px; background: none; font-family: var(--Font); font-size: 14px; font-weight: 600; color: #55555E; cursor: pointer; }
+
+  /* How it works: numbered steps */
+  .steps { margin-top: 12px; display: flex; flex-direction: column; gap: 12px; }
+  .step { display: flex; align-items: flex-start; gap: 12px; }
+  .step .n { width: 30px; height: 30px; border-radius: 10px; background: var(--Primary, #FE353D); color: #FFF; font-size: 13px; font-weight: 700; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+  .step b { display: block; font-size: 13.5px; font-weight: 600; color: var(--On-Surface, #1C1C21); }
+  .step small { display: block; margin-top: 2px; font-size: 12px; line-height: 1.4; color: var(--On-Surface-Low, #7C7C87); }
+
+  /* Fees */
+  .fees { margin-top: 10px; }
+  .fee { display: flex; justify-content: space-between; align-items: center; padding: 10px 0; font-size: 13px; color: #55555E; }
+  .fee b { font-weight: 700; color: var(--On-Surface, #1C1C21); }
+  .fee-line { display: block; height: 1px; background: #F1F1F4; }
+
+  .recent-transactions { margin-bottom: 8px; }
+  .transaction-card .logo.sc { background: #FFF1F2; }
+  .transaction-card .logo.sc svg { width: 20px; height: 20px; stroke: var(--Primary, #FE353D); stroke-width: 1.9; fill: none; stroke-linecap: round; stroke-linejoin: round; }
+
+  /* Offer (not active) */
+  .offer-hero { position: relative; overflow: hidden; border-radius: 22px; padding: 20px 18px; color: #FFF;
+    background: linear-gradient(135deg, #FF3B40 0%, #E0262D 55%, #B3131A 100%); box-shadow: 0 8px 22px rgba(224,38,45,0.28); }
+  .offer-hero .art { position: absolute; right: -6px; top: 6px; width: 120px; height: 105px; opacity: 0.95; }
+  .offer-hero small { display: block; font-size: 12.5px; color: rgba(255,255,255,0.88); }
+  .offer-hero h2 { margin-top: 4px; font-size: 20px; font-weight: 700; max-width: 190px; line-height: 1.25; }
+  .offer-hero .lim { margin-top: 14px; font-size: 12px; color: rgba(255,255,255,0.85); }
+  .offer-hero .lim b { display: block; margin-top: 2px; font-size: 26px; font-weight: 700; color: #FFF; letter-spacing: -0.4px; }
+  .offer-hero .lim b span { font-size: 13px; font-weight: 500; margin-left: 4px; color: rgba(255,255,255,0.85); }
+  .benefit { display: flex; align-items: center; gap: 12px; padding: 10px 0; }
+  .benefit + .benefit { border-top: 1px solid #F1F1F4; }
+  .benefit i { width: 40px; height: 40px; border-radius: 12px; background: #FFF1F2; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+  .benefit i svg { width: 21px; height: 21px; stroke: var(--Primary, #FE353D); stroke-width: 1.8; fill: none; stroke-linecap: round; stroke-linejoin: round; }
+  .benefit b { display: block; font-size: 13.5px; font-weight: 600; color: var(--On-Surface, #1C1C21); }
+  .benefit small { display: block; margin-top: 2px; font-size: 12px; color: var(--On-Surface-Low, #7C7C87); }
+  .btn-primary { width: 100%; height: 52px; border: none; border-radius: 14px; background: var(--Primary, #FE353D); color: #FFF; font-family: 'Poppins', sans-serif; font-size: 15px; font-weight: 500; cursor: pointer; box-shadow: 0 4px 16px rgba(254,53,61,0.25); }
+  .btn-primary:disabled { background: #E0E0E0; color: #7C7C87; box-shadow: none; cursor: default; }
+
+  /* Sheets */
+  .scrim { position: absolute; inset: 0; z-index: 100; background: rgba(0,0,0,0.42); opacity: 0; visibility: hidden; transition: opacity 0.22s, visibility 0.22s; }
+  .scrim.show { opacity: 1; visibility: visible; }
+  .sheet { position: absolute; left: 0; right: 0; bottom: 0; z-index: 101; background: #FFF; border-radius: 28px 28px 0 0; padding: 10px 16px 22px; transform: translateY(100%); transition: transform 0.28s cubic-bezier(.2,.8,.2,1); }
+  .sheet.show { transform: translateY(0); }
+  .sheet-grip { width: 40px; height: 4px; border-radius: 2px; background: #D8D8DE; margin: 0 auto 14px; }
+  .sheet-title { font-size: 16px; font-weight: 700; color: var(--On-Surface, #1C1C21); margin: 0 4px 12px; }
+  .opt { width: 100%; display: flex; align-items: center; gap: 12px; padding: 14px; margin-bottom: 10px; border: 1.5px solid #ECECF0; border-radius: 16px; background: #FFF; cursor: pointer; text-align: left; font-family: var(--Font); }
+  .opt.on { border-color: var(--Primary, #FE353D); background: #FFF8F8; }
+  .opt .radio { width: 20px; height: 20px; border-radius: 50%; border: 2px solid #D0D0D6; flex-shrink: 0; display: flex; align-items: center; justify-content: center; }
+  .opt.on .radio { border-color: var(--Primary, #FE353D); }
+  .opt.on .radio::after { content: ''; width: 10px; height: 10px; border-radius: 50%; background: var(--Primary, #FE353D); }
+  .opt .t { flex: 1; min-width: 0; }
+  .opt .t b { display: block; font-size: 14px; font-weight: 600; color: var(--On-Surface, #1C1C21); }
+  .opt .t small { display: block; margin-top: 2px; font-size: 12px; color: var(--On-Surface-Low, #7C7C87); }
+  .opt .v { font-size: 14px; font-weight: 700; color: var(--On-Surface, #1C1C21); white-space: nowrap; }
+  .opt input { width: 110px; border: none; outline: none; background: transparent; text-align: right; font-family: var(--Font); font-size: 15px; font-weight: 700; color: var(--On-Surface, #1C1C21); }
+  .from { display: flex; justify-content: space-between; margin: 4px 4px 14px; font-size: 12.5px; color: var(--On-Surface-Low, #7C7C87); }
+  .from b { color: var(--On-Surface, #1C1C21); font-weight: 600; }
+  .warn { display: none; margin: -6px 4px 12px; font-size: 12px; font-weight: 600; color: var(--Primary, #FE353D); }
+  .warn.show { display: block; }
+  .menu-item { width: 100%; display: flex; align-items: center; gap: 12px; padding: 13px 4px; border: none; background: none; text-align: left; cursor: pointer; font-family: var(--Font); }
+  .menu-item + .menu-item { border-top: 1px solid #ECECEF; }
+  .menu-item i { width: 38px; height: 38px; border-radius: 11px; background: #FFF1F2; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+  .menu-item i svg { width: 19px; height: 19px; stroke: var(--Primary, #FE353D); stroke-width: 1.9; fill: none; stroke-linecap: round; stroke-linejoin: round; }
+  .menu-item b { flex: 1; font-size: 14px; font-weight: 600; color: var(--On-Surface, #1C1C21); }
+
+  .toast { position: absolute; bottom: 40px; left: 50%; transform: translateX(-50%) translateY(20px); background: #1C1C21; color: #FFF; padding: 11px 18px; border-radius: 12px; font-size: 13px; font-weight: 500; opacity: 0; pointer-events: none; transition: all 0.3s ease; z-index: 1000; white-space: nowrap; }
+  .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+</style>
+<link rel="stylesheet" href="styles/device.css">
+<style>@media (max-width: 480px) { .app-content { padding-top: 2px; } }</style>
+</head>
+<body>
+<div class="phone-frame">
+  <div class="status-bar">
+    <span class="time">10:00</span>
+    <div class="status-icons">
+      <svg data-name="icon-wifi" viewBox="0 0 24 24" fill="none"><path d="M1 9l2 2c4.97-4.97 13.03-4.97 18 0l2-2C16.93 2.93 7.08 2.93 1 9z" fill="#1C1C21"/><path d="M5 13l2 2c2.76-2.76 7.24-2.76 10 0l2-2C15.14 9.14 8.87 9.14 5 13z" fill="#1C1C21"/><path d="M9 17l2 2c1.1-1.1 2.9-1.1 4 0l2-2c-2.21-2.21-5.79-2.21-8 0z" fill="#1C1C21"/></svg>
+      <svg data-name="icon-signal" viewBox="0 0 24 24" fill="none"><rect x="2" y="6" width="4" height="12" rx="1" fill="#1C1C21"/><rect x="8" y="4" width="4" height="14" rx="1" fill="#1C1C21"/><rect x="14" y="2" width="4" height="16" rx="1" fill="#1C1C21"/><rect x="20" y="0" width="4" height="18" rx="1" fill="#1C1C21" opacity="0.3"/></svg>
+      <svg data-name="icon-battery" viewBox="0 0 28 14" fill="none"><rect x="0" y="1" width="22" height="12" rx="2.5" stroke="#1C1C21" stroke-width="1.5"/><rect x="2" y="3" width="16" height="8" rx="1" fill="#1C1C21"/><rect x="24" y="4" width="2" height="6" rx="1" fill="#1C1C21"/></svg>
+    </div>
+  </div>
+
+  <div class="app-content">
+    <div class="header-nav">
+      <button class="icon-btn" onclick="location.href='Credit & Saving.html'" aria-label="Back"><svg data-name="icon-arrow-left" viewBox="0 0 24 24"><path d="M19 12H5M12 19l-7-7 7-7"/></svg></button>
+      <span class="header-title">Errif Overdraft</span>
+      <button class="icon-btn" id="menuBtn" onclick="openSheet('menu')" aria-label="Menu"><svg data-name="icon-more" viewBox="0 0 24 24"><circle cx="12" cy="5" r="1.2"/><circle cx="12" cy="12" r="1.2"/><circle cx="12" cy="19" r="1.2"/></svg></button>
+    </div>
+
+    <!-- ── Active ── -->
+    <section class="view" id="vActive">
+      <div class="sc-card">
+        <button class="level" type="button" onclick="openSheet('levels')" aria-label="Errif limit level">
+          <svg class="medal" id="medal" viewBox="0 0 58 64" aria-hidden="true"></svg>
+          <b id="lvName"></b>
+        </button>
+        <div class="s-label">Available Errif <button class="eye" id="eyeBtn" title="Show balances"><svg viewBox="0 0 24 24"><path d="M1 12s4-7.5 11-7.5S23 12 23 12s-4 7.5-11 7.5S1 12 1 12z"/><circle cx="12" cy="12" r="3"/></svg></button></div>
+        <div class="s-amount"><span class="mask" id="availAmt" data-value="">******</span><small>ETB</small></div>
+        <div class="s-row"><div><span>Used</span><b><span class="mask" id="usedAmt" data-value="" style="display:inline;font-size:inherit;color:inherit">****</span><small id="limitTxt"></small></b></div><span class="s-pct" id="usedPct"></span></div>
+        <div class="s-bar"><i id="usedBar"></i></div>
+      </div>
+
+      <div class="tiles">
+        <div class="tile" onclick="openSheet('repay')">
+          <span class="t-ic"><svg viewBox="0 0 24 24"><rect x="2.5" y="6" width="19" height="12" rx="2.5"/><circle cx="12" cy="12" r="2.6"/><path d="M6 9.5v5M18 9.5v5"/></svg></span>
+          <span class="t-txt"><b>Repay Now</b></span><svg class="cv" viewBox="0 0 24 24"><path d="M9 6l6 6-6 6"/></svg>
+        </div>
+        <div class="tile" onclick="location.href='Overdraft - Activate.html?view=terms'">
+          <span class="t-ic"><svg viewBox="0 0 24 24"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5M9 13h6M9 17h4"/></svg></span>
+          <span class="t-txt"><b>Errif Terms</b></span><svg class="cv" viewBox="0 0 24 24"><path d="M9 6l6 6-6 6"/></svg>
+        </div>
+      </div>
+
+     <div class="card">
+        <div class="card-head"><span class="card-title">Fees</span><a onclick="location.href='Tariffs & Fees.html'">All tariffs</a></div>
+        <div class="fees" id="fees"></div>
+      </div>
+
+      <div class="recent-transactions">
+        <div class="header"><span class="transactions-title">Recent Usage</span><span class="see-all" onclick="location.href='Transaction History.html'" style="cursor:pointer">See all</span></div>
+        <div class="transactions-list" id="history"></div>
+      </div>
+    </section>
+
+    <!-- ── Not active: offer ── -->
+    <section class="view" id="vOffer">
+      <div class="offer-hero">
+        <svg class="art" viewBox="0 0 128 112" aria-hidden="true">
+          <rect x="34" y="34" width="66" height="22" rx="6" fill="rgba(255,255,255,0.35)" transform="rotate(-8 67 45)"/>
+          <rect x="26" y="42" width="78" height="46" rx="10" fill="rgba(255,255,255,0.22)"/>
+          <rect x="78" y="56" width="30" height="18" rx="6" fill="rgba(255,255,255,0.35)"/>
+          <circle cx="88" cy="65" r="3.5" fill="#FFF"/>
+          <circle cx="54" cy="28" r="14" fill="#FFD66B"/><path d="M54 22v12M51 25h4.5a2 2 0 0 1 0 4H51" fill="none" stroke="#C47D10" stroke-width="1.8" stroke-linecap="round"/>
+        </svg>
+        <small>Errif Overdraft</small>
+        <h2>You're eligible for Errif</h2>
+        <div class="lim">Pre-approved limit<b><span id="offerLimit"></span><span>ETB</span></b></div>
+      </div>
+      <div class="card">
+        <div class="benefit"><i><svg viewBox="0 0 24 24"><path d="M13 2 4 14h6l-1 8 9-12h-6z"/></svg></i><span><b>Never miss a payment</b><small>Bills and airtime go through even when you're short</small></span></div>
+        <div class="benefit"><i><svg viewBox="0 0 24 24"><path d="M21 12a9 9 0 1 1-2.6-6.4"/><path d="M21 4v5h-5"/></svg></i><span><b>Repays itself</b><small>Cleared automatically from the next money you receive</small></span></div>
+        <div class="benefit"><i><svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></svg></i><span><b>Only pay for what you use</b><small>No charge until Errif covers a payment</small></span></div>
+      </div>
+      <div class="card">
+        <div class="card-head"><span class="card-title">Fees</span><a onclick="location.href='Tariffs & Fees.html'">All tariffs</a></div>
+        <div class="fees" id="fees2"></div>
+      </div>
+      <button class="btn-primary" onclick="location.href='Overdraft - Activate.html'">Activate Errif</button>
+    </section>
+  </div>
+
+  <!-- Menu -->
+  <div class="scrim" id="scrim" onclick="closeSheets()"></div>
+  <div class="sheet" id="menu" role="dialog" aria-label="Errif menu">
+    <div class="sheet-grip"></div>
+    <button class="menu-item" onclick="closeSheets(); openSheet('how')"><i><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M9.6 9.3a2.5 2.5 0 0 1 4.8.9c0 1.7-2.4 2.2-2.4 3.6"/><path d="M12 17h.01"/></svg></i><b>How Errif works</b></button>
+    <button class="menu-item" onclick="location.href='Overdraft - Activate.html?view=terms'"><i><svg viewBox="0 0 24 24"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5"/></svg></i><b>Terms &amp; Conditions</b></button>
+    <button class="menu-item" onclick="location.href='Tariffs & Fees.html'"><i><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 8v5M12 16h.01"/></svg></i><b>Fees &amp; Charges</b></button>
+    <button class="menu-item" onclick="deactivate()"><i><svg viewBox="0 0 24 24"><path d="M18.36 6.64a9 9 0 1 1-12.73 0"/><path d="M12 2v10"/></svg></i><b>Turn off Errif</b></button>
+  </div>
+
+  <!-- How Errif works -->
+  <div class="sheet" id="how" role="dialog" aria-label="How Errif works">
+    <div class="sheet-grip"></div>
+    <p class="sheet-title">How Errif works</p>
+    <div class="steps">
+          <div class="step"><span class="n">1</span><span><b>Pay even when you're short</b><small>Bills, airtime and merchants go through when your balance is low.</small></span></div>
+          <div class="step"><span class="n">2</span><span><b>Errif covers the gap</b><small>Only the missing amount is taken from your Errif limit.</small></span></div>
+          <div class="step"><span class="n">3</span><span><b>Repays itself</b><small>The next money you receive clears it automatically, or repay any time.</small></span></div>
+        </div>
+  </div>
+
+  <!-- Turn off: repay first if anything is owed -->
+  <div class="sheet" id="off" role="dialog" aria-label="Turn off Errif">
+    <div class="sheet-grip"></div>
+    <div class="off-ic"><svg viewBox="0 0 24 24"><path d="M18.36 6.64a9 9 0 1 1-12.73 0"/><path d="M12 2v10"/></svg></div>
+    <p class="off-title" id="offTitle"></p>
+    <p class="off-text" id="offText"></p>
+    <div class="owed" id="owedRow"><span>Remaining to repay</span><b><span id="owedAmt"></span><small>ETB</small></b></div>
+    <button class="btn-primary" id="offGo" style="margin-top:16px"></button>
+    <button class="btn-ghost" onclick="closeSheets()">Keep Errif</button>
+  </div>
+
+  <!-- Limit levels -->
+  <div class="sheet" id="levels" role="dialog" aria-label="Errif limit levels">
+    <div class="sheet-grip"></div>
+    <p class="sheet-title">Your Errif level <span id="lvOf" style="font-size:12px;font-weight:500;color:var(--On-Surface-Low)"></span></p>
+    <div id="lvList"></div>
+    <p class="lv-tip" id="lvTip"></p>
+  </div>
+
+  <!-- Repay -->
+  <div class="sheet" id="repay" role="dialog" aria-label="Repay Errif">
+    <div class="sheet-grip"></div>
+    <p class="sheet-title">Repay Errif</p>
+    <button class="opt on" type="button" data-o="full" onclick="pick('full')"><span class="radio"></span><span class="t"><b>Full balance</b><small>Clear everything you owe</small></span><span class="v" id="fullAmt"></span></button>
+    <div class="opt" data-o="custom" onclick="pick('custom')"><span class="radio"></span><span class="t"><b>Other amount</b><small>Pay part now</small></span><input id="customAmt" inputmode="decimal" placeholder="0.00" oninput="pick('custom')"></div>
+    <div class="from"><span>From</span><b>Main account · 20,000.00 ETB</b></div>
+    <p class="warn" id="warn"></p>
+    <button class="btn-primary" id="repayGo" onclick="confirmRepay()">Continue</button>
+  </div>
+  <div class="toast" id="toast"></div>
+</div>
+
+<script src="term-loan-store.js"></script>
+<script>
+  const $ = id => document.getElementById(id);
+  const { fmt } = TL;
+  const BALANCE = 20000;
+  const E = TL.errifLoad(), F = TL.ERRIF_FEES;
+  const avail = Math.max(0, E.limit - E.used);
+
+  // Fees (both views)
+  const FEES = [['Access fee', (F.access * 100) + '% of what Errif covers'], ['Daily maintenance', 'Up to ' + fmt(F.dailyMax) + ' ETB'], ['Late repayment', (F.penalty * 100) + '% / day after ' + F.days + ' days']];
+  ['fees', 'fees2'].forEach(id => { $(id).innerHTML = FEES.map(([k, v], i) => `${i ? '<span class="fee-line" data-shape="line" data-name="line"></span>' : ''}<div class="fee"><span>${k}</span><b>${v}</b></div>`).join(''); });
+
+  if (!E.active) {
+    $('vOffer').classList.add('show');
+    $('menuBtn').style.visibility = 'hidden';
+    $('offerLimit').textContent = fmt(E.limit);
+  } else {
+    $('vActive').classList.add('show');
+    $('availAmt').dataset.value = fmt(avail);
+    $('usedAmt').dataset.value = fmt(E.used);
+    $('limitTxt').textContent = 'of ' + fmt(E.limit) + ' ETB';
+    const pct = Math.round(E.used / E.limit * 100);
+    $('usedPct').textContent = pct + '%';
+    $('usedBar').style.width = Math.max(pct, 1) + '%';
+    $('fullAmt').textContent = fmt(E.used) + ' ETB';
+
+    // Limit level: ascending bars, filled up to the customer's level
+    const L = TL.ERRIF_LEVELS, k = TL.errifLevel(E.limit);
+    // Medal in the level's metal on red ribbons, with a star
+    const METAL = [['#E4E4EA', '#B9B9C4'], ['#F0B07A', '#B8692F'], ['#EEF1F5', '#A9B2BF'], ['#FFE08A', '#E3A21F'], ['#F4F6FA', '#8D97A8']][k];
+    $('medal').innerHTML = `<defs><linearGradient id="mG" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="${METAL[0]}"/><stop offset="1" stop-color="${METAL[1]}"/></linearGradient></defs>
+      <path d="M17 34 10 60l9-5 5 8 7-25z" fill="#C8161D"/><path d="M41 34l7 26-9-5-5 8-7-25z" fill="#FE353D"/>
+      <circle cx="29" cy="25" r="22" fill="url(#mG)"/><circle cx="29" cy="25" r="16.5" fill="none" stroke="#FFF" stroke-opacity="0.7" stroke-width="2"/>
+      <path d="m29 15 3 6.4 7 .8-5.2 4.8 1.4 6.9L29 30.4l-6.2 3.5 1.4-6.9-5.2-4.8 7-.8z" fill="#FFF"/>`;
+    $('lvName').textContent = L[k].name;
+    $('lvOf').textContent = `· ${k + 1} of ${L.length}`;
+    $('lvList').innerHTML = L.slice().reverse().map((l, r) => { const i = L.length - 1 - r;
+      return `<div class="lv-row${i <= k ? ' done' : ''}"><span class="n">${i + 1}</span><span class="t">${l.name}${i === k ? '<em>You</em>' : ''}</span><span class="v">${fmt(l.limit)} ETB</span></div>`; }).join('');
+    $('lvTip').textContent = k === L.length - 1
+      ? 'You have the highest Errif limit. Keep repaying on time to stay here.'
+      : `Use M-PESA often and let Errif repay on time to reach ${L[k + 1].name} (${fmt(L[k + 1].limit)} ETB).`;
+
+    const IC = {
+      use: '<svg viewBox="0 0 24 24"><path d="M12 20V8M7 13l5-5 5 5"/></svg>',
+      repay: '<svg viewBox="0 0 24 24"><path d="M12 4v12M7 11l5 5 5-5"/></svg>'
+    };
+    const when = d => { const n = Math.round((Date.now() - new Date(d)) / 864e5); return n <= 0 ? 'Today' : n === 1 ? 'Yesterday' : TL.dateStr(d).replace(/ \d{4}$/, ''); };
+    $('history').innerHTML = E.history.slice().reverse().slice(0, 5).map(h => `<div class="transaction-card">
+      <div class="left"><div class="logo sc">${IC[h.kind]}</div>
+        <div class="name-type"><span class="name">${h.what}</span><span class="type">${h.kind === 'use' ? 'Covered by Errif' : 'Repayment'}</span></div></div>
+      <div class="right"><span class="amount ${h.kind === 'use' ? 'negative' : 'positive'}">${h.kind === 'use' ? '-' : '+'}${fmt(h.amount)}</span><span class="date">${when(h.at)}</span></div></div>`).join('');
+
+    // Eye: amounts hidden until tapped
+    const btn = $('eyeBtn'), on = btn.innerHTML, vals = document.querySelectorAll('.sc-card .mask'), masks = [...vals].map(v => v.textContent);
+    const off = '<svg viewBox="0 0 24 24"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 19.5C5 19.5 1 12 1 12a18.5 18.5 0 0 1 5.06-5.94"/><path d="M9.9 4.74A9.1 9.1 0 0 1 12 4.5c7 0 11 7.5 11 7.5a18.5 18.5 0 0 1-2.16 3.19"/><path d="M14.12 14.12a3 3 0 1 1-4.24-4.24"/><path d="M1 1l22 22"/></svg>';
+    let shown = false;
+    btn.addEventListener('click', () => { shown = !shown; vals.forEach((v, k) => { v.textContent = shown ? v.dataset.value : masks[k]; }); btn.innerHTML = shown ? off : on; });
+  }
+
+  // Sheets
+  function openSheet(id) {
+    if (id === 'repay' && E.used <= 0) { showToast('Nothing to repay'); return; }
+    $('scrim').classList.add('show'); $(id).classList.add('show');
+    if (id === 'repay') pick('full');
+  }
+  function closeSheets() { $('scrim').classList.remove('show'); document.querySelectorAll('.sheet').forEach(s => s.classList.remove('show')); }
+  document.addEventListener('keydown', e => { if (e.key === 'Escape') closeSheets(); });
+
+  // Repay: full balance or another amount (up to what is owed and the balance)
+  let choice = 'full';
+  function pick(o) {
+    choice = o;
+    document.querySelectorAll('#repay .opt').forEach(x => x.classList.toggle('on', x.dataset.o === o));
+    const amt = repayAmount(), bad = !(amt > 0) || amt > E.used || amt > BALANCE;
+    $('warn').textContent = amt > E.used ? 'You only owe ' + fmt(E.used) + ' ETB' : amt > BALANCE ? 'Not enough balance in your main account' : '';
+    $('warn').classList.toggle('show', !!$('warn').textContent);
+    $('repayGo').disabled = bad;
+    $('repayGo').textContent = amt > 0 && !bad ? 'Repay ' + fmt(amt) + ' ETB' : 'Continue';
+  }
+  const repayAmount = () => choice === 'full' ? E.used : parseFloat(($('customAmt').value || '').replace(/,/g, '')) || 0;
+  function confirmRepay(full, turnOff) {
+    const amt = typeof full === 'number' ? full : repayAmount();
+    sessionStorage.setItem('termLoanData', JSON.stringify({
+      kind: 'errif-repay', title: 'Repay Errif', lender: 'Errif Overdraft', logo: 'assets/Overdraft.svg', product: 'Errif Overdraft',
+      amount: amt, remaining: E.used - amt, turnOff: !!turnOff, back: 'Overdraft.html', next: 'Term Loan - Receipt.html'
+    }));
+    location.href = 'Term Loan - Enter PIN.html';
+  }
+
+  // Turn off: if something is owed, show what remains and pay it now (Errif turns
+  // off once the receipt books the full repayment); otherwise just confirm
+  function deactivate() {
+    closeSheets();
+    const owes = E.used > 0;
+    $('offTitle').textContent = owes ? 'Repay to turn off Errif' : 'Turn off Errif?';
+    $('offText').textContent = owes
+      ? 'You still owe on Errif. Pay the remaining balance now and Errif will be turned off.'
+      : 'Payments will no longer go through when your balance is short. You can turn it on again any time.';
+    $('owedRow').style.display = owes ? '' : 'none';
+    $('owedAmt').textContent = fmt(E.used);
+    $('offGo').textContent = owes ? 'Pay Now · ' + fmt(E.used) + ' ETB' : 'Turn Off';
+    $('offGo').onclick = owes ? () => confirmRepay(E.used, true) : () => { E.active = false; TL.errifSave(E); location.href = 'Overdraft.html?done=off'; };
+    setTimeout(() => openSheet('off'), 120);
+  }
+
+  const done = new URLSearchParams(location.search).get('done');
+  if (done) setTimeout(() => showToast(done === 'off' ? 'Errif is turned off' : 'Repayment received'), 300);
+  let tt;
+  function showToast(m) { const t = $('toast'); t.textContent = m; t.classList.add('show'); clearTimeout(tt); tt = setTimeout(() => t.classList.remove('show'), 2200); }
+</script>
+<script src="components/keyboard.js"></script>
+<!-- Export to Figma button (shared exporter) -->
+<script src="figma-export.js"></script>
+<script src="test-scenarios-data.js"></script>
+<script src="test-scenarios.js"></script>
+</body>
+</html>
