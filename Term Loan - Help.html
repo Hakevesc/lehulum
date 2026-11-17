@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Term Loan · Help — M-PESA</title>
+<link rel="stylesheet" href="styles/design-tokens.css">
+<link rel="stylesheet" href="styles/base.css">
+<link rel="stylesheet" href="styles/component-status-bar.css">
+<style>
+  @import url('https://api.fontshare.com/v2/css?f[]=switzer@400,500,600,700,800&display=swap');
+
+  /* Term Loan help (from the Term Loan ⋯ menu): ?view=faq — questions as an
+     accordion (first one open); ?view=terms — the terms as numbered sections (Got It).
+     Both in one white card under a pill title; Done → Term Loan. */
+  :root { --Font: Switzer, sans-serif; }
+  body { font-family: var(--Font); }
+  .phone-frame { display: flex; flex-direction: column; }
+  .phone-frame > .status-bar { flex-shrink: 0; }
+  .app-content { display: flex; flex-direction: column; gap: 12px; flex: 1 1 auto; min-height: 0; height: auto; padding-bottom: 0 !important; }
+  .app-content > * { flex-shrink: 0; }
+
+  .header-nav { display: flex; align-items: center; padding: 0 0 2px; }
+  .icon-btn { width: 36px; height: 36px; border-radius: 50%; background: transparent; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+  .icon-btn svg { width: 22px; height: 22px; stroke: var(--On-Surface, #1C1C21); stroke-width: 1.8; fill: none; stroke-linecap: round; stroke-linejoin: round; }
+  .header-title { flex: 1; text-align: center; margin-right: 36px; font-size: 17px; font-weight: 500; color: var(--On-Surface, #1C1C21); }
+
+  .card { background: #FFF; border-radius: 22px; padding: 16px 18px 6px; box-shadow: 0 4px 16px rgba(15,23,42,0.06); }
+  .pill { display: block; width: fit-content; margin: 0 auto 6px; padding: 7px 16px; border-radius: 999px; background: #EFEFF3; font-size: 11.5px; font-weight: 600; letter-spacing: 1px; color: #55555E; text-transform: uppercase; }
+
+  /* FAQ accordion */
+  .qa + .qa { border-top: 1px solid #F1F1F4; }
+  .q { width: 100%; display: flex; align-items: center; gap: 12px; padding: 15px 0; border: none; background: none; cursor: pointer; text-align: left; font-family: var(--Font); }
+  .q b { flex: 1; font-size: 14px; font-weight: 600; line-height: 1.35; color: var(--On-Surface, #1C1C21); }
+  .q svg { width: 18px; height: 18px; flex-shrink: 0; stroke: #8A8A94; stroke-width: 2; fill: none; stroke-linecap: round; stroke-linejoin: round; transition: transform 0.2s; }
+  .qa.open .q svg { transform: rotate(180deg); stroke: var(--Primary, #FE353D); }
+  .a { display: none; padding: 0 0 15px; font-size: 13px; line-height: 1.55; color: #55555E; }
+  .qa.open .a { display: block; }
+  .a b { color: var(--On-Surface, #1C1C21); font-weight: 600; }
+
+  /* Terms: numbered uppercase headings with plain paragraphs */
+  .sec { padding: 12px 0 4px; }
+  .sec h3 { font-size: 14px; font-weight: 700; letter-spacing: 0.2px; color: var(--On-Surface, #1C1C21); text-transform: uppercase; }
+  .sec p { margin-top: 8px; font-size: 12.5px; line-height: 1.6; color: #55555E; }
+  .sec ul { margin-top: 6px; list-style: none; }
+  .sec li { font-size: 12.5px; line-height: 1.9; color: #55555E; }
+  .sec li b { color: var(--On-Surface, #1C1C21); font-weight: 600; }
+  .updated { padding: 10px 0 12px; font-size: 11.5px; color: var(--On-Surface-Low, #7C7C87); }
+  .scroll { flex: 1 1 auto; min-height: 0; overflow-y: auto; scrollbar-width: none; margin: 0 -15px; padding: 2px 15px 12px; }
+  .scroll::-webkit-scrollbar { display: none; }
+  .bottom-bar { margin: 0 -15px; padding: 10px 16px 18px; background: var(--Background, #F5F5F5); }
+  .btn-primary { width: 100%; height: 52px; border: none; border-radius: 14px; background: var(--Primary, #FE353D); color: #FFF; font-family: var(--Font); font-size: 15px; font-weight: 500; cursor: pointer; box-shadow: 0 4px 16px rgba(254,53,61,0.25); }
+</style>
+<link rel="stylesheet" href="styles/device.css">
+</head>
+<body>
+<div class="phone-frame">
+  <div class="status-bar">
+    <span class="time">10:00</span>
+    <div class="status-icons">
+      <svg data-name="icon-wifi" viewBox="0 0 24 24" fill="none"><path d="M1 9l2 2c4.97-4.97 13.03-4.97 18 0l2-2C16.93 2.93 7.08 2.93 1 9z" fill="#1C1C21"/><path d="M5 13l2 2c2.76-2.76 7.24-2.76 10 0l2-2C15.14 9.14 8.87 9.14 5 13z" fill="#1C1C21"/><path d="M9 17l2 2c1.1-1.1 2.9-1.1 4 0l2-2c-2.21-2.21-5.79-2.21-8 0z" fill="#1C1C21"/></svg>
+      <svg data-name="icon-signal" viewBox="0 0 24 24" fill="none"><rect x="2" y="6" width="4" height="12" rx="1" fill="#1C1C21"/><rect x="8" y="4" width="4" height="14" rx="1" fill="#1C1C21"/><rect x="14" y="2" width="4" height="16" rx="1" fill="#1C1C21"/><rect x="20" y="0" width="4" height="18" rx="1" fill="#1C1C21" opacity="0.3"/></svg>
+      <svg data-name="icon-battery" viewBox="0 0 28 14" fill="none"><rect x="0" y="1" width="22" height="12" rx="2.5" stroke="#1C1C21" stroke-width="1.5"/><rect x="2" y="3" width="16" height="8" rx="1" fill="#1C1C21"/><rect x="24" y="4" width="2" height="6" rx="1" fill="#1C1C21"/></svg>
+    </div>
+  </div>
+
+  <div class="app-content">
+    <div class="header-nav">
+      <button class="icon-btn" onclick="back()" aria-label="Back"><svg data-name="icon-arrow-left" viewBox="0 0 24 24"><path d="M19 12H5M12 19l-7-7 7-7"/></svg></button>
+      <span class="header-title">Term Loan</span>
+    </div>
+
+    <div class="scroll">
+      <div class="card">
+        <span class="pill" id="pill"></span>
+        <div id="body"></div>
+      </div>
+    </div>
+
+    <div class="bottom-bar"><button class="btn-primary" onclick="back()">Done</button></div>
+  </div>
+</div>
+
+<script src="term-loan-store.js"></script>
+<script>
+  const $ = id => document.getElementById(id);
+  // Fees from the offers, so answers match the screens
+  const o = TL.OFFERS[0], pct = (v, d) => (v * 100).toFixed(d) + '%';
+  const DOWN = '<svg viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg>';
+
+  const FAQ = [
+    ['What is a Term Loan?', 'A loan from one of our partner banks, sent straight to your M-PESA balance. You repay it in one or more instalments over a fixed period, such as 10, 30 or 60 days.'],
+    ['How do I apply?', 'Open <b>Term Loan</b>, pick an offer, enter the amount and choose how long to repay. Check the summary, then confirm with your M-PESA PIN. The money arrives in seconds.'],
+    ['How much can I borrow?', 'Your <b>available limit</b> is shown at the top of Term Loan. It is set from how you use M-PESA, your repayments and your credit score. Each offer also has its own minimum and maximum.'],
+    ['What does it cost?', `A one-time <b>access fee of ${pct(o.access, 0)}</b> and a <b>daily fee of ${pct(o.daily, 2)}</b> for each day of the loan. You see the full amount to repay before you confirm — there are no hidden charges.`],
+    ['How do I repay?', 'Tap <b>Repay Loan</b>, then <b>Repay</b> on the loan. Choose <b>Continue Partially</b> to pay part of the next instalment, or <b>Repay All</b> to clear it. You can also pay part of an instalment and the rest later.'],
+    ['Can I repay early?', 'Yes. You can repay part or all of your loan at any time, with no extra charge.'],
+    ['What if I repay late?', `A late penalty of <b>${pct(o.penalty, 1)} per day</b> is added to what you owe, and late repayment lowers your credit score — which can reduce your limit.`],
+    ['How can I get a higher limit?', 'Repay on time, use M-PESA regularly and keep money in your account. You can also <b>upload a bank statement</b> from Credit Score for a fresh review.']
+  ];
+  // [heading, paragraph(s), optional list of [label, value]]
+  const TERMS = [
+    ['Agreement to terms', 'By applying for or using a Term Loan through M-PESA, you agree to these Terms and Conditions. If you do not agree with any part of them, please do not use the service.'],
+    ['Eligibility', 'You must be a registered M-PESA customer with an active account and a valid national ID, and have an approved Term Loan limit. Loans are offered by our partner banks, who make the final lending decision.'],
+    ['Loan offers and limits', 'Your available limit is set from your M-PESA activity, repayment history and credit score, and may go up or down over time. Each offer has its own minimum, maximum and repayment period.'],
+    ['Fees and charges', 'All fees are shown before you confirm a loan and on your receipt.',
+      [['Access fee', `${pct(o.access, 0)} of the loan, charged once`], ['Daily maintenance fee', `${pct(o.daily, 2)} of the loan per day`], ['Late penalty', `${pct(o.penalty, 1)} of the amount due per day`]]],
+    ['Disbursement', 'Once you confirm with your M-PESA PIN, the loan amount is sent to your M-PESA balance. You will receive an SMS and an in-app receipt.'],
+    ['Repayment', 'Repay each instalment by its due date from your M-PESA balance. You can repay in full or in part at any time from Loan Details.'],
+    ['Late repayment', 'If an instalment is not paid by its due date, the late penalty is added daily until it is cleared. Late repayment is reported to the partner bank and lowers your credit score, which can reduce your limit.'],
+    ['Credit score and data', 'To assess and manage your loan, we share your loan and M-PESA activity details with the partner bank, as described in the M-PESA Privacy Policy. If you upload a bank statement, it is used only to work out your score.'],
+    ['Early repayment and closure', 'You may repay your loan early at no extra cost. Your loan closes once all instalments are paid. We may suspend new loans if these terms are not met.'],
+    ['Contact and complaints', 'For help, call 0707 or visit any M-PESA agent or partner bank branch. Complaints are handled within 5 working days.']
+  ];
+
+  const terms = new URLSearchParams(location.search).get('view') === 'terms';
+  $('pill').textContent = terms ? 'Terms & Conditions' : 'Frequently asked questions';
+  $('body').innerHTML = terms
+    ? TERMS.map(([t, p, list], i) => `<div class="sec"><h3>${i + 1}. ${t}</h3><p>${p}</p>${list ? `<ul>${list.map(([k, v]) => `<li><b>${k}:</b> ${v}</li>`).join('')}</ul>` : ''}</div>`).join('')
+      + '<p class="updated">Last updated: 1 November 2026</p>'
+    : FAQ.map(([q, a], i) => `<div class="qa${i ? '' : ' open'}"><button class="q" type="button" onclick="this.parentElement.classList.toggle('open')"><b>${q}</b>${DOWN}</button><div class="a">${a}</div></div>`).join('');
+
+  if (terms) document.querySelector('.bottom-bar .btn-primary').textContent = 'Got It';
+  function back() { location.href = 'Term Loan.html'; }
+</script>
+<!-- Export to Figma button (shared exporter) -->
+<script src="figma-export.js"></script>
+<script src="test-scenarios-data.js"></script>
+<script src="test-scenarios.js"></script>
+</body>
+</html>

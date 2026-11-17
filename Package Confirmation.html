@@ -5,12 +5,11 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Package Purchase - Confirmation</title>
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@400;500;600&family=Barlow:wght@400&display=swap');
-  @import url('https://api.fontshare.com/v2/css?f[]=switzer@400,500,600,700&display=swap');
+  @import url('https://api.fontshare.com/v2/css?f[]=switzer@400,500,600,700,800&display=swap');
 
   :root { --Primary: #FE353D; --On-Surface: #1C1C21; --On-Surface-Low: #7C7C87; --Gray-0: #FFF; --Primary-Light: #FFF1F2; --Success: #1FC83B; }
   * { margin: 0; padding: 0; box-sizing: border-box; }
-  body { font-family: 'Inter', sans-serif; background: transparent; display: flex; justify-content: center; align-items: center; min-height: 100vh; padding: 20px; }
+  body { font-family: Switzer, sans-serif; background: transparent; display: flex; justify-content: center; align-items: center; min-height: 100vh; padding: 20px; }
   .phone-frame { width: 360px; height: 780px; background: #F5F5F5; border-radius: 30px; overflow: hidden; position: relative; box-shadow: 0 20px 60px rgba(0,0,0,0.15); }
   .app-content { height: 100%; position: relative; display: flex; flex-direction: column; }
 
@@ -23,7 +22,7 @@
   .close-btn { display: flex; align-items: center; justify-content: center; width: 36px; height: 36px; border-radius: 50%; background: transparent; border: none; cursor: pointer; transition: all 0.2s; }
   .close-btn:hover { background: rgba(0,0,0,0.05); }
   .close-btn svg { width: 22px; height: 22px; stroke: var(--On-Surface); stroke-width: 1.8px; }
-  .header-title { color: var(--On-Surface); font-family: 'Switzer', sans-serif; font-size: 17px; font-weight: 500; letter-spacing: 0.3px; flex: 1; text-align: center; }
+  .header-title { color: var(--On-Surface); font-family: Switzer, sans-serif; font-size: 17px; font-weight: 500; letter-spacing: 0.3px; flex: 1; text-align: center; }
   .header-actions { display: flex; gap: 4px; }
   .header-action-btn { display: flex; align-items: center; justify-content: center; width: 36px; height: 36px; border-radius: 50%; background: transparent; border: none; cursor: pointer; transition: all 0.2s; }
   .header-action-btn:hover { background: rgba(0,0,0,0.05); }
@@ -36,8 +35,8 @@
   .success-icon-wrapper { position: absolute; top: -32px; left: 50%; transform: translateX(-50%); width: 64px; height: 64px; border-radius: 50%; background: var(--Success); display: flex; align-items: center; justify-content: center; border: 4px solid #F5F5F5; z-index: 10; box-shadow: 0 4px 12px rgba(31,200,59,0.3); }
 
   .receipt-header { text-align: center; margin-bottom: 20px; }
-  .receipt-header h2 { color: var(--On-Surface); font-family: 'Switzer', sans-serif; font-size: 20px; font-weight: 700; margin-bottom: 6px; letter-spacing: 0.2px; }
-  .receipt-header p { color: var(--On-Surface-Low); font-family: 'Switzer', sans-serif; font-size: 12px; font-weight: 400; letter-spacing: 0.2px; }
+  .receipt-header h2 { color: var(--On-Surface); font-family: Switzer, sans-serif; font-size: 20px; font-weight: 700; margin-bottom: 6px; letter-spacing: 0.2px; }
+  .receipt-header p { color: var(--On-Surface-Low); font-family: Switzer, sans-serif; font-size: 12px; font-weight: 400; letter-spacing: 0.2px; }
 
   .dashed-divider { width: calc(100% + 40px); margin: 0 -20px 20px; border: none; border-top: 2px dashed #E0E0E0; position: relative; }
   .dashed-divider::before, .dashed-divider::after { content: ''; position: absolute; top: 50%; transform: translateY(-50%); width: 20px; height: 20px; background: #F5F5F5; border-radius: 50%; }
@@ -46,12 +45,12 @@
 
   .transaction-details { width: 100%; display: flex; flex-direction: column; gap: 14px; margin-bottom: 20px; }
   .detail-row { display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; }
-  .detail-row .label { color: var(--On-Surface-Low); font-family: 'Switzer', sans-serif; font-size: 12px; font-weight: 400; letter-spacing: 0.1px; flex-shrink: 0; max-width: 140px; }
-  .detail-row .value { color: var(--On-Surface); font-family: 'Switzer', sans-serif; font-size: 13px; font-weight: 500; text-align: right; word-break: break-all; flex: 1; }
+  .detail-row .label { color: var(--On-Surface-Low); font-family: Switzer, sans-serif; font-size: 12px; font-weight: 400; letter-spacing: 0.1px; flex-shrink: 0; max-width: 140px; }
+  .detail-row .value { color: var(--On-Surface); font-family: Switzer, sans-serif; font-size: 13px; font-weight: 500; text-align: right; word-break: break-all; flex: 1; }
   .detail-row .value.copyable { display: flex; align-items: center; gap: 8px; justify-content: flex-end; }
   .copy-btn { display: flex; align-items: center; gap: 4px; padding: 4px 8px; background: transparent; border: none; cursor: pointer; transition: all 0.2s; border-radius: 6px; }
   .copy-btn:hover { background: var(--Primary-Light); }
-  .copy-btn .copy-text { color: var(--Primary); font-family: 'Switzer', sans-serif; font-size: 11px; font-weight: 500; }
+  .copy-btn .copy-text { color: var(--Primary); font-family: Switzer, sans-serif; font-size: 11px; font-weight: 500; }
   .copy-btn i { width: 14px !important; height: 14px !important; color: var(--Primary); stroke-width: 2px; }
   .copy-btn.copied .copy-text { color: var(--Success); }
   .copy-btn.copied i { color: var(--Success); }
@@ -60,10 +59,10 @@
   .stamp-watermark img { width: 100%; height: 100%; object-fit: contain; }
 
   .amount-section { width: 100%; text-align: center; padding-top: 16px; border-top: 1px solid #F0F0F0; margin-top: 4px; position: relative; z-index: 2; }
-  .beneficiary-name { color: var(--On-Surface); font-family: 'Switzer', sans-serif; font-size: 15px; font-weight: 600; margin-bottom: 8px; letter-spacing: 0.2px; }
+  .beneficiary-name { color: var(--On-Surface); font-family: Switzer, sans-serif; font-size: 15px; font-weight: 600; margin-bottom: 8px; letter-spacing: 0.2px; }
   .amount-display { display: flex; align-items: baseline; justify-content: center; gap: 8px; margin-bottom: 20px; }
-  .amount-value { color: var(--Primary); font-family: 'Switzer', sans-serif; font-size: 36px; font-weight: 700; letter-spacing: -0.5px; line-height: 1; }
-  .amount-currency { color: var(--Primary); font-family: 'Switzer', sans-serif; font-size: 16px; font-weight: 500; padding-left: 8px; border-left: 2px solid var(--Primary); line-height: 1; }
+  .amount-value { color: var(--Primary); font-family: Switzer, sans-serif; font-size: 36px; font-weight: 700; letter-spacing: -0.5px; line-height: 1; }
+  .amount-currency { color: var(--Primary); font-family: Switzer, sans-serif; font-size: 16px; font-weight: 500; padding-left: 8px; border-left: 2px solid var(--Primary); line-height: 1; }
   .qr-wrapper { padding: 8px; border: 3px solid var(--Primary); border-radius: 16px; background: #FFF; display: inline-block; position: relative; z-index: 2; }
   .qr-wrapper img { width: 80px; height: 80px; display: block; }
 
@@ -74,9 +73,9 @@
   .action-icon { width: 46px; height: 46px; border-radius: 13px; border: 1.5px solid var(--Primary); background: transparent; display: flex; align-items: center; justify-content: center; transition: all 0.2s; }
   .action-btn:hover .action-icon { background: var(--Primary-Light); }
   .action-icon svg, .action-icon i { width: 22px !important; height: 22px !important; color: var(--Primary); stroke: var(--Primary); stroke-width: 2px; }
-  .action-label { color: var(--On-Surface); font-family: 'Switzer', sans-serif; font-size: 11px; font-weight: 500; letter-spacing: 0.1px; }
+  .action-label { color: var(--On-Surface); font-family: Switzer, sans-serif; font-size: 11px; font-weight: 500; letter-spacing: 0.1px; }
 
-  .toast { position: fixed; bottom: 80px; left: 50%; transform: translateX(-50%) translateY(20px); background: var(--On-Surface); color: #FFF; padding: 12px 24px; border-radius: 12px; font-family: 'Switzer', sans-serif; font-size: 13px; font-weight: 500; opacity: 0; pointer-events: none; transition: all 0.3s ease; z-index: 1000; box-shadow: 0 4px 16px rgba(0,0,0,0.2); }
+  .toast { position: fixed; bottom: 80px; left: 50%; transform: translateX(-50%) translateY(20px); background: var(--On-Surface); color: #FFF; padding: 12px 24px; border-radius: 12px; font-family: Switzer, sans-serif; font-size: 13px; font-weight: 500; opacity: 0; pointer-events: none; transition: all 0.3s ease; z-index: 1000; box-shadow: 0 4px 16px rgba(0,0,0,0.2); }
   .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
 
   /* ── Share sheet ── */
@@ -90,12 +89,12 @@
   .sheet-grip { width: 44px; height: 4px; border-radius: 2px; background: #D8D8DE; margin: 0 auto 4px; }
   .sheet-close { position: absolute; top: 12px; right: 16px; width: 28px; height: 28px; border-radius: 50%; background: var(--Field, #F5F5F5); border: none; display: flex; align-items: center; justify-content: center; cursor: pointer; }
   .sheet-close svg { width: 15px; height: 15px; stroke: var(--On-Surface-Low); stroke-width: 2; fill: none; }
-  .sheet-title { font-family: 'Switzer', sans-serif; font-size: 17px; font-weight: 700; color: var(--On-Surface); text-align: center; }
+  .sheet-title { font-family: Switzer, sans-serif; font-size: 17px; font-weight: 700; color: var(--On-Surface); text-align: center; }
   .share-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px 8px; padding: 4px 0 6px; }
   .share-item { display: flex; flex-direction: column; align-items: center; gap: 7px; background: none; border: none; padding: 0; cursor: pointer; }
   .share-item .ico { width: 50px; height: 50px; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0; box-shadow: inset 0 0 0 1px rgba(0,0,0,0.06); }
   .share-item .ico svg { width: 22px; height: 22px; }
-  .share-item span { font-family: 'Switzer', sans-serif; font-size: 11px; color: var(--On-Surface-Low); text-align: center; }
+  .share-item span { font-family: Switzer, sans-serif; font-size: 11px; color: var(--On-Surface-Low); text-align: center; }
 </style>
 <script src="assets/qrcode.min.js"></script>
 <script src="assets/qr.js"></script>

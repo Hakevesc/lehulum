@@ -34,7 +34,7 @@
   const ICON = {
     emoji: '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9.5"/><path d="M8 14.5c1 1.4 2.3 2 4 2s3-.6 4-2"/><circle cx="9" cy="10" r=".6" fill="currentColor"/><circle cx="15" cy="10" r=".6" fill="currentColor"/></svg>',
     sticker: '<svg viewBox="0 0 24 24"><path d="M20 12V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h6"/><path d="M20 12c-4.5 0-8 3.5-8 8"/><path d="M8.5 13.5c.8 1 1.9 1.5 3.5 1.5"/><circle cx="9" cy="9.5" r=".6" fill="currentColor"/><circle cx="15" cy="9.5" r=".6" fill="currentColor"/></svg>',
-    gif: '<svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="3"/><text x="12" y="15.2" text-anchor="middle" font-size="6.5" font-weight="700" font-family="Arial, sans-serif" fill="currentColor" stroke="none">GIF</text></svg>',
+    gif: '<svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="3"/><text x="12" y="15.2" text-anchor="middle" font-size="6.5" font-weight="700" font-family="Switzer, sans-serif" fill="currentColor" stroke="none">GIF</text></svg>',
     mic: '<svg viewBox="0 0 24 24"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5.5 11a6.5 6.5 0 0 0 13 0M12 17.5V21"/></svg>',
     gear: '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>',
     shift: '<svg viewBox="0 0 24 24"><path d="M12 4 4 12.5h4.5V20h7v-7.5H20z"/></svg>',
@@ -43,7 +43,7 @@
 
   const CSS = `
   .mkb { position: absolute; left: 0; right: 0; bottom: 0; z-index: 200; background: #0B0B0C; color: #EDEDED;
-    font-family: Roboto, 'Inter', system-ui, sans-serif; user-select: none; -webkit-user-select: none; touch-action: manipulation;
+    font-family: Switzer, sans-serif; user-select: none; -webkit-user-select: none; touch-action: manipulation;
     transform: translateY(100%); transition: transform .26s cubic-bezier(.2,.8,.2,1); padding-bottom: 6px; }
   .mkb.open { transform: translateY(0); }
   .mkb-bar { height: 40px; display: flex; align-items: center; justify-content: space-around; background: #141415; padding: 0 6px; }
@@ -56,7 +56,7 @@
   .mkb-switch.off { background: #48484C; }
   .mkb-switch.off::after { left: 3px; }
   .mkb-toast { position: absolute; left: 50%; bottom: 24px; transform: translate(-50%, 8px); z-index: 210; max-width: 86%; padding: 10px 14px; border-radius: 12px;
-    background: rgba(28,28,33,.94); color: #FFF; font: 500 12.5px/1.35 'Switzer', 'Inter', sans-serif; text-align: center; opacity: 0; pointer-events: none; transition: opacity .2s, transform .2s; }
+    background: rgba(28,28,33,.94); color: #FFF; font: 500 12.5px/1.35 Switzer, sans-serif; text-align: center; opacity: 0; pointer-events: none; transition: opacity .2s, transform .2s; }
   .mkb-toast.show { opacity: 1; transform: translate(-50%, 0); }
   .mkb-keys { padding: 6px 4px 0; display: flex; flex-direction: column; gap: 7px; }
   .mkb-row { display: flex; gap: 5px; justify-content: center; }

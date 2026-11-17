@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Deposit — M-PESA</title>
+<link rel="stylesheet" href="styles/design-tokens.css">
+<link rel="stylesheet" href="styles/base.css">
+<link rel="stylesheet" href="styles/component-status-bar.css">
+<link rel="stylesheet" href="styles/component-sc-card.css">
+<link rel="stylesheet" href="styles/savings.css">
+<style>
+  @import url('https://api.fontshare.com/v2/css?f[]=switzer@400,500,600,700,800&display=swap');
+
+  /* Deposit to / withdraw from a saving (?id=&kind=deposit|withdraw). Shows
+     the limit (wallet or saving balance), quick amounts, blocks over-limit
+     amounts → PIN → done. */
+  .from { display: flex; align-items: center; gap: 12px; }
+  .from i { width: 42px; height: 42px; border-radius: 13px; background: #FFF1F2; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+  .from i svg { width: 22px; height: 22px; stroke: var(--Primary); stroke-width: 1.8; fill: none; stroke-linecap: round; stroke-linejoin: round; }
+  .from span { flex: 1; min-width: 0; }
+  .from b { display: block; font-size: 14px; font-weight: 600; color: var(--On-Surface); }
+  .from small { display: block; margin-top: 2px; font-size: 12px; color: var(--On-Surface-Low); }
+  .flow { display: flex; align-items: center; justify-content: space-between; padding: 12px 14px; border-radius: 14px; background: #F7F7F9; font-size: 12.5px; color: #55555E; }
+  .flow b { color: var(--On-Surface); }
+</style>
+<link rel="stylesheet" href="styles/device.css">
+</head>
+<body>
+<div class="phone-frame">
+  <div class="status-bar">
+    <span class="time">10:00</span>
+    <div class="status-icons">
+      <svg data-name="icon-wifi" viewBox="0 0 24 24" fill="none"><path d="M1 9l2 2c4.97-4.97 13.03-4.97 18 0l2-2C16.93 2.93 7.08 2.93 1 9z" fill="#1C1C21"/><path d="M5 13l2 2c2.76-2.76 7.24-2.76 10 0l2-2C15.14 9.14 8.87 9.14 5 13z" fill="#1C1C21"/><path d="M9 17l2 2c1.1-1.1 2.9-1.1 4 0l2-2c-2.21-2.21-5.79-2.21-8 0z" fill="#1C1C21"/></svg>
+      <svg data-name="icon-signal" viewBox="0 0 24 24" fill="none"><rect x="2" y="6" width="4" height="12" rx="1" fill="#1C1C21"/><rect x="8" y="4" width="4" height="14" rx="1" fill="#1C1C21"/><rect x="14" y="2" width="4" height="16" rx="1" fill="#1C1C21"/><rect x="20" y="0" width="4" height="18" rx="1" fill="#1C1C21" opacity="0.3"/></svg>
+      <svg data-name="icon-battery" viewBox="0 0 28 14" fill="none"><rect x="0" y="1" width="22" height="12" rx="2.5" stroke="#1C1C21" stroke-width="1.5"/><rect x="2" y="3" width="16" height="8" rx="1" fill="#1C1C21"/><rect x="24" y="4" width="2" height="6" rx="1" fill="#1C1C21"/></svg>
+    </div>
+  </div>
+
+  <div class="app-content">
+    <div class="header-nav">
+      <button class="icon-btn" onclick="history.back()" aria-label="Back"><svg data-name="icon-arrow-left" viewBox="0 0 24 24"><path d="M19 12H5M12 19l-7-7 7-7"/></svg></button>
+      <span class="header-title" id="hTitle">Deposit</span>
+      <span class="spacer"></span>
+    </div>
+
+    <div class="card from"><i id="pIc"></i><span><b id="pName"></b><small id="pSub"></small></span></div>
+    <label class="field"><span id="amtLbl">Amount</span><div class="amount-in"><input id="amt" inputmode="decimal" placeholder="0.00" oninput="check()" autofocus><small>ETB</small></div></label>
+    <p class="hint" id="hint"></p>
+    <div class="quick" id="quick"></div>
+    <div class="flow" id="flow"></div>
+    <div class="bottom-bar"><button class="btn-primary" id="go" disabled onclick="next()">Continue</button></div>
+  </div>
+
+</div>
+
+<script src="savings-store.js"></script>
+<script>
+  const $ = id => document.getElementById(id);
+  const fmt = SV.fmt;
+  let tt;
+  function toast(m) { const t = $('toast'); if (!t) return; t.textContent = m; t.classList.add('show'); clearTimeout(tt); tt = setTimeout(() => t.classList.remove('show'), 2000); }
+  const IC = {
+    target: '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1.2"/></svg>',
+    individual: '<svg viewBox="0 0 24 24"><path d="M19 9.5a6 6 0 0 0-6-4H10a6 6 0 0 0-6 6c0 2 1 3.6 2.5 4.6V19h3v-2h3.5v2h3v-2.6A5.6 5.6 0 0 0 19 14h2v-4z"/><path d="M15.5 10h.01"/></svg>',
+    cal: '<svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/></svg>',
+    group: '<svg viewBox="0 0 24 24"><circle cx="9" cy="8" r="3.5"/><path d="M2.5 20a6.5 6.5 0 0 1 13 0"/><circle cx="17" cy="9" r="2.6"/><path d="M15.5 14.2A5 5 0 0 1 21.5 19"/></svg>'
+  };
+  const q = new URLSearchParams(location.search);
+  const S = SV.load(), grp = q.get('group') ? SV.groupsOf(S).find(x => x.id === q.get('group')) : null;
+  const p = grp || S.pockets.find(x => x.id === q.get('id')) || S.pockets[0];
+  const dep = grp ? true : q.get('kind') !== 'withdraw', bal = SV.balanceOf(p), max = dep ? S.wallet : bal;
+  $('hTitle').textContent = grp ? 'Contribute' : dep ? 'Deposit' : 'Withdraw'; document.title = $('hTitle').textContent + ' — M-PESA';
+  $('pIc').innerHTML = IC[p.kind];
+  $('pName').textContent = p.name;
+  $('pSub').textContent = grp ? `Group balance: ${fmt(bal)} of ${fmt(grp.target.amount)} ETB` : 'Saving balance: ' + fmt(bal) + ' ETB';
+  $('amtLbl').textContent = grp ? 'How much do you want to put in?' : dep ? 'How much do you want to save?' : 'How much do you want to take out?';
+  $('flow').innerHTML = dep ? `<span>From</span><b>M-PESA wallet · ${fmt(S.wallet)} ETB</b>` : `<span>To</span><b>M-PESA wallet</b>`;
+  const QUICK = dep ? [500, 1000, 5000] : [Math.floor(bal / 2), bal].filter(v => v > 0);
+  $('quick').innerHTML = QUICK.map((v, i) => `<button type="button" onclick="$('amt').value='${v}';check()">${!dep && i === QUICK.length - 1 ? 'All' : fmt(v).replace('.00', '')}</button>`).join('');
+  function check() {
+    const a = parseFloat(($('amt').value || '').replace(/,/g, '')) || 0;
+    const over = a > max;
+    $('hint').textContent = over ? `Not enough balance. Max ${fmt(max)} ETB` : dep ? `Earns ${SV.RATE}% a year. Withdraw any time.` : 'Paid to your M-PESA wallet.';
+    $('hint').classList.toggle('err', over);
+    $('go').disabled = !(a > 0) || over;
+  }
+  function next() {
+    const a = parseFloat(($('amt').value || '').replace(/,/g, ''));
+    sessionStorage.setItem('termLoanData', JSON.stringify({ kind: grp ? 'sav-grp-contribute' : dep ? 'sav-deposit' : 'sav-withdraw', title: (grp ? 'Contribute to ' : dep ? 'Deposit to ' : 'Withdraw from ') + p.name, id: p.id, name: p.name, amount: a,
+      back: location.pathname.split('/').pop() + location.search, next: 'Savings - Done.html' }));
+    location.href = 'Term Loan - Enter PIN.html';
+  }
+  check();
+</script>
+<script src="components/keyboard.js"></script>
+<!-- Export to Figma button (shared exporter) -->
+<script src="figma-export.js"></script>
+<script src="test-scenarios-data.js"></script>
+<script src="test-scenarios.js"></script>
+</body>
+</html>

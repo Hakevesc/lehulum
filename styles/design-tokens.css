@@ -1,10 +1,10 @@
+@import url('https://api.fontshare.com/v2/css?f[]=switzer@400,500,600,700,800&display=swap');
 /* ============================================================
    M-PESA Design Tokens (CSS Custom Properties)
    Import this first in your main stylesheet
    Use this file to export to Figma JSON for design system sync
    ============================================================ */
 
-@import url('https://fonts.googleapis.com/css2?family=Switzer:wght@300;400;500;600&display=swap');
 
 :root {
   /* ---- Brand Colors ---- */
@@ -31,7 +31,7 @@
 
   /* ---- Typography ---- */
   --Font-Family: 'Switzer', sans-serif;
-  --Font-Weight-Light: 300;
+  --Font-Weight-Light: 400;
   --Font-Weight-Regular: 400;
   --Font-Weight-Medium: 500;
   --Font-Weight-SemiBold: 600;

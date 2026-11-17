@@ -5,7 +5,6 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Tariffs &amp; Fees</title>
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@400;500;600&display=swap');
   @import url('https://api.fontshare.com/v2/css?f[]=switzer@400,500,600,700,800&display=swap');
 
   /* Tariffs & Fees: red header, then grouped cards. Each service shows its fee
@@ -18,7 +17,7 @@
     --Background: #F5F5F5;
   }
   * { margin: 0; padding: 0; box-sizing: border-box; }
-  body { font-family: 'Inter', sans-serif; background: transparent; display: flex; justify-content: center; align-items: center; min-height: 100vh; padding: 20px; }
+  body { font-family: Switzer, sans-serif; background: transparent; display: flex; justify-content: center; align-items: center; min-height: 100vh; padding: 20px; }
   .phone-frame { width: 360px; height: 780px; background: var(--Background); border-radius: 30px; overflow: hidden; position: relative; box-shadow: 0 20px 60px rgba(0,0,0,0.15); }
   .app-content { height: 100%; overflow-y: auto; display: flex; flex-direction: column; scrollbar-width: none; }
   .app-content::-webkit-scrollbar { width: 0; }
@@ -36,12 +35,12 @@
   .tf-back { width: 36px; height: 36px; margin: 2px 0 0 -8px; border: none; border-radius: 50%; background: transparent; display: flex; align-items: center; justify-content: center; cursor: pointer; }
   .tf-back:hover { background: rgba(255,255,255,0.14); }
   .tf-back svg { width: 22px; height: 22px; stroke: #FFF; stroke-width: 2.2; fill: none; }
-  .tf-title { margin-top: 6px; font-family: 'Switzer', sans-serif; font-size: 26px; font-weight: 800; letter-spacing: -0.3px; line-height: 1.15; }
-  .tf-sub { margin-top: 8px; font-family: 'Switzer', sans-serif; font-size: 13px; line-height: 1.5; color: rgba(255,255,255,0.92); max-width: 300px; }
+  .tf-title { margin-top: 6px; font-family: Switzer, sans-serif; font-size: 26px; font-weight: 800; letter-spacing: -0.3px; line-height: 1.15; }
+  .tf-sub { margin-top: 8px; font-family: Switzer, sans-serif; font-size: 13px; line-height: 1.5; color: rgba(255,255,255,0.92); max-width: 300px; }
 
   /* ── Groups ── */
   .main-content { padding: 16px 16px 24px; display: flex; flex-direction: column; gap: 18px; }
-  .group-label { margin: 0 4px 8px; font-family: 'Switzer', sans-serif; font-size: 12.5px; font-weight: 600; color: #8A8A94; }
+  .group-label { margin: 0 4px 8px; font-family: Switzer, sans-serif; font-size: 12.5px; font-weight: 600; color: #8A8A94; }
   .fee-card { background: #FFF; border-radius: 18px; padding: 4px 16px; box-shadow: 0 4px 14px rgba(15,23,42,0.05); }
   .fee-row { display: flex; align-items: center; gap: 8px; padding: 14px 0; cursor: pointer; }
   .fee-card > .fee-row:not(:first-child) { border-top: 1px solid #ECECEF; }
@@ -49,9 +48,9 @@
   .fee-icon { width: 42px; height: 42px; border-radius: 12px; background: var(--Primary-Light); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
   .fee-icon svg { width: 22px; height: 22px; stroke: var(--Primary); stroke-width: 1.8; fill: none; stroke-linecap: round; stroke-linejoin: round; }
   .fee-info { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px; }
-  .fee-name { font-family: 'Switzer', sans-serif; font-size: 14px; font-weight: 700; color: var(--On-Surface); line-height: 1.25; }
-  .fee-sub { font-family: 'Switzer', sans-serif; font-size: 12px; color: #8A8A94; }
-  .fee-value { flex-shrink: 0; padding: 4px 8px; border-radius: 999px; background: var(--Primary-Light); color: var(--On-Surface); font-family: 'Switzer', sans-serif; font-size: 10.5px; font-weight: 700; white-space: nowrap; }
+  .fee-name { font-family: Switzer, sans-serif; font-size: 14px; font-weight: 700; color: var(--On-Surface); line-height: 1.25; }
+  .fee-sub { font-family: Switzer, sans-serif; font-size: 12px; color: #8A8A94; }
+  .fee-value { flex-shrink: 0; padding: 4px 8px; border-radius: 999px; background: var(--Primary-Light); color: var(--On-Surface); font-family: Switzer, sans-serif; font-size: 10.5px; font-weight: 700; white-space: nowrap; }
   .fee-value.free { background: #E8F9EE; color: #16A34A; }
   .chev { width: 17px; height: 17px; stroke: var(--Primary); stroke-width: 2.2; fill: none; flex-shrink: 0; margin-left: -2px; transition: transform 0.2s ease; }
   .fee-row[aria-expanded="true"] .chev { transform: rotate(180deg); }
@@ -60,14 +59,14 @@
   .fee-panel { margin: 0 0 14px; padding: 10px 16px 6px; background: #F5F5F7; border-radius: 14px; animation: panelIn 0.2s ease; }
   .fee-panel[hidden] { display: none; }
   @keyframes panelIn { from { opacity: 0; transform: translateY(-4px); } to { opacity: 1; transform: none; } }
-  .band { display: flex; justify-content: space-between; align-items: center; padding: 9px 0; border-top: 1px solid #E4E4E8; font-family: 'Switzer', sans-serif; font-size: 12px; color: #55555E; font-variant-numeric: tabular-nums; }
+  .band { display: flex; justify-content: space-between; align-items: center; padding: 9px 0; border-top: 1px solid #E4E4E8; font-family: Switzer, sans-serif; font-size: 12px; color: #55555E; font-variant-numeric: tabular-nums; }
   .band.head { border-top: none; font-size: 11.5px; color: #8A8A94; }
   .band b { font-weight: 700; color: var(--On-Surface); }
   .band.head b { font-weight: 400; color: #8A8A94; }
   .band b.free { color: #16A34A; }
   /* Remark under a fee table (caps, who is charged, availability) */
-  .band-note { padding: 9px 0 6px; border-top: 1px solid #E4E4E8; font-family: 'Switzer', sans-serif; font-size: 11.5px; line-height: 1.45; color: #8A8A94; }
-  .disclaimer { display: flex; gap: 8px; align-items: flex-start; padding: 12px 14px; border-radius: 14px; background: #ECECF0; font-family: 'Switzer', sans-serif; font-size: 11.5px; line-height: 1.55; color: var(--On-Surface-Low); }
+  .band-note { padding: 9px 0 6px; border-top: 1px solid #E4E4E8; font-family: Switzer, sans-serif; font-size: 11.5px; line-height: 1.45; color: #8A8A94; }
+  .disclaimer { display: flex; gap: 8px; align-items: flex-start; padding: 12px 14px; border-radius: 14px; background: #ECECF0; font-family: Switzer, sans-serif; font-size: 11.5px; line-height: 1.55; color: var(--On-Surface-Low); }
   .disclaimer svg { width: 15px; height: 15px; stroke: var(--On-Surface-Low); stroke-width: 2; fill: none; flex-shrink: 0; margin-top: 1px; }
 </style>
 <link rel="stylesheet" href="styles/device.css">

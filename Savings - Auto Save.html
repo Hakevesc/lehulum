@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Auto-Save — M-PESA</title>
+<link rel="stylesheet" href="styles/design-tokens.css">
+<link rel="stylesheet" href="styles/base.css">
+<link rel="stylesheet" href="styles/component-status-bar.css">
+<link rel="stylesheet" href="styles/component-sc-card.css">
+<link rel="stylesheet" href="styles/savings.css">
+<style>
+  @import url('https://api.fontshare.com/v2/css?f[]=switzer@400,500,600,700,800&display=swap');
+
+  /* Auto-save for a saving (?id=) or my contributions to a group (?group=):
+     amount (≥ 50 ETB), how often (daily / weekly / monthly) and the first
+     transfer. For a goal it suggests the amount that lands on it and shows
+     when it gets there. Save → PIN → done. An existing one can be stopped. */
+  .who { display: flex; align-items: center; gap: 12px; }
+  .who span:not(.p-ic) { flex: 1; min-width: 0; }
+  .who b { display: block; font-size: 14px; font-weight: 600; color: var(--On-Surface); }
+  .who small { display: block; margin-top: 2px; font-size: 12px; color: var(--On-Surface-Low); }
+  .sugg { display: none; align-items: center; gap: 10px; padding: 12px 14px; border-radius: 14px; background: #FFF; box-shadow: 0 2px 12px rgba(0,0,0,0.04); font-size: 12.5px; line-height: 1.45; color: #55555E; }
+  .sugg.show { display: flex; }
+  .sugg svg { width: 18px; height: 18px; stroke: var(--Primary); stroke-width: 1.9; fill: none; stroke-linecap: round; stroke-linejoin: round; flex-shrink: 0; }
+  .sugg span { flex: 1; }
+  .sugg b { color: var(--On-Surface); }
+  .sugg button { height: 32px; padding: 0 12px; border: 1.5px solid var(--Primary); border-radius: 10px; background: #FFF; color: var(--Primary); font-family: Switzer, sans-serif; font-size: 12.5px; font-weight: 600; cursor: pointer; white-space: nowrap; }
+</style>
+<link rel="stylesheet" href="styles/device.css">
+</head>
+<body>
+<div class="phone-frame">
+  <div class="status-bar">
+    <span class="time">10:00</span>
+    <div class="status-icons">
+      <svg data-name="icon-wifi" viewBox="0 0 24 24" fill="none"><path d="M1 9l2 2c4.970-4.970 13.030-4.970 18 0l2-2C16.930 2.930 7.080 2.930 1 9z" fill="#1C1C21"/><path d="M5 13l2 2c2.760-2.760 7.240-2.760 10 0l2-2C15.140 9.140 8.870 9.140 5 13z" fill="#1C1C21"/><path d="M9 17l2 2c1.100-1.100 2.900-1.100 4 0l2-2c-2.210-2.210-5.790-2.210-8 0z" fill="#1C1C21"/></svg>
+      <svg data-name="icon-signal" viewBox="0 0 24 24" fill="none"><rect x="2" y="6" width="4" height="12" rx="1" fill="#1C1C21"/><rect x="8" y="4" width="4" height="14" rx="1" fill="#1C1C21"/><rect x="14" y="2" width="4" height="16" rx="1" fill="#1C1C21"/><rect x="20" y="0" width="4" height="18" rx="1" fill="#1C1C21" opacity="0.3"/></svg>
+      <svg data-name="icon-battery" viewBox="0 0 28 14" fill="none"><rect x="0" y="1" width="22" height="12" rx="2.5" stroke="#1C1C21" stroke-width="1.5"/><rect x="2" y="3" width="16" height="8" rx="1" fill="#1C1C21"/><rect x="24" y="4" width="2" height="6" rx="1" fill="#1C1C21"/></svg>
+    </div>
+  </div>
+
+  <div class="app-content">
+    <div class="header-nav">
+      <button class="icon-btn" onclick="goBack()" aria-label="Back"><svg data-name="icon-arrow-left" viewBox="0 0 24 24"><path d="M19 12H5M12 19l-7-7 7-7"/></svg></button>
+      <span class="header-title" id="hTitle">Set Up Auto-Save</span>
+      <span class="spacer"></span>
+    </div>
+
+    <div class="card who"><span class="p-ic" id="wIc"></span><span><b id="wName"></b><small id="wSub"></small></span></div>
+    <label class="field"><span>Amount each time</span><div class="amount-in"><input id="amt" inputmode="decimal" placeholder="0.00" oninput="paint()"><small>ETB</small></div></label>
+    <p class="hint" id="hint">Minimum 50 ETB</p>
+    <div class="field"><span>How often</span><div class="quick" id="freq"><button type="button" data-f="daily">Daily</button><button type="button" data-f="weekly">Weekly</button><button type="button" data-f="monthly">Monthly</button></div></div>
+    <label class="field"><span>First transfer</span><input class="input" id="start" type="date" onchange="paint()"></label>
+    <div class="sugg" id="sugg"><svg viewBox="0 0 24 24"><path d="M3 17l6-6 4 4 8-8"/><path d="M14 7h7v7"/></svg><span id="suggTxt"></span><button type="button" onclick="useSuggested()">Use</button></div>
+    <div class="card rows" id="sum"></div>
+    <div class="bottom-bar"><button class="btn-primary" id="go" disabled onclick="saveAuto()">Turn On Auto-Save</button><button class="btn-ghost" id="stopBtn" style="display:none;color:var(--Primary)" onclick="openSheet('stopSheet')">Stop Auto-Save</button></div>
+  </div>
+
+  <div class="scrim" id="scrim" onclick="closeSheets()"></div>
+  <div class="sheet" id="stopSheet" role="dialog" aria-label="Stop auto-save">
+    <div class="sheet-grip"></div>
+    <div class="cf-ic"><svg viewBox="0 0 24 24"><path d="M17 2l4 4-4 4"/><path d="M3 11V9a3 3 0 0 1 3-3h15"/><path d="M7 22l-4-4 4-4"/><path d="M21 13v2a3 3 0 0 1-3 3H3"/></svg></div>
+    <p class="cf-t">Stop auto-save?</p>
+    <p class="cf-p" id="stopTxt"></p>
+    <button class="btn-primary" onclick="stopAuto()">Stop Auto-Save</button>
+    <button class="btn-ghost" onclick="closeSheets()">Keep It On</button>
+  </div>
+  <div class="toast" id="toast"></div>
+</div>
+
+<script src="savings-store.js"></script>
+<script src="savings-ui.js"></script>
+<script>
+  const $ = id => document.getElementById(id);
+  const fmt = SV.fmt, IC = SVUI.IC;
+  let tt;
+  function toast(m) { const t = $('toast'); if (!t) return; t.textContent = m; t.classList.add('show'); clearTimeout(tt); tt = setTimeout(() => t.classList.remove('show'), 2200); }
+  function openSheet(id) { const s = $('scrim'); if (s) s.classList.add('show'); $(id).classList.add('show'); }
+  function closeSheets() { const s = $('scrim'); if (s) s.classList.remove('show'); document.querySelectorAll('.sheet').forEach(x => x.classList.remove('show')); }
+  document.addEventListener('keydown', e => { if (e.key === 'Escape') closeSheets(); });
+  // Hand an action to the shared PIN screen, which returns to Savings - Done.html
+  function toPin(data) { sessionStorage.setItem('termLoanData', JSON.stringify(Object.assign({ next: 'Savings - Done.html', back: location.pathname.split('/').pop() + location.search }, data))); location.href = 'Term Loan - Enter PIN.html'; }
+
+  const q = new URLSearchParams(location.search), S = SV.load();
+  const grp = q.get('group') ? SV.groupsOf(S).find(g => g.id === q.get('group')) : null;
+  const acc = grp || S.pockets.find(p => p.id === q.get('id')) || S.pockets[0];
+  const goal = acc.target, saved = grp ? SV.balanceOf(grp) : SV.balanceOf(acc);
+  const ymd = d => new Date(d).toISOString().slice(0, 10);
+  const back = grp ? `Group Saving - Group.html?id=${grp.id}` : `Savings - Pocket.html?id=${acc.id}`;
+  let freq = acc.auto ? acc.auto.freq : 'monthly';
+
+  $('hTitle').textContent = acc.auto ? 'Edit Auto-Save' : 'Set Up Auto-Save';
+  $('wIc').innerHTML = IC[grp ? 'group' : acc.kind];
+  $('wName').textContent = acc.name;
+  $('wSub').textContent = goal ? `${fmt(saved)} of ${fmt(goal.amount)} ETB · by ${SV.dateStr(goal.by)}` : `Balance ${fmt(saved)} ETB · ${SV.RATE}% a year`;
+  $('start').min = ymd(Date.now() + 864e5);
+  $('start').value = acc.auto ? ymd(acc.auto.next) : ymd(Date.now() + 864e5);
+  if (acc.auto) { $('amt').value = acc.auto.amount; $('stopBtn').style.display = ''; $('go').textContent = 'Save Changes';
+    $('stopTxt').textContent = `No more ${SV.autoLine(acc.auto)} into ${acc.name}. What is already saved stays there.`; }
+  document.querySelectorAll('#freq button').forEach(b => b.onclick = () => { freq = b.dataset.f; paint(); });
+
+  const amount = () => parseFloat(($('amt').value || '').replace(/,/g, '')) || 0;
+  const startIso = () => new Date($('start').value || Date.now() + 864e5).toISOString();
+  // For a group the goal is shared: my suggested share is the gap split across joined members
+  const share = grp ? SV.joined(grp).length : 1;
+  const sugg = () => goal ? Math.max(SV.AUTO_MIN, Math.ceil(SV.suggested(goal.amount, saved, startIso(), goal.by, freq) / share)) : 0;
+  function useSuggested() { $('amt').value = sugg(); paint(); }
+  function paint() {
+    document.querySelectorAll('#freq button').forEach(b => b.classList.toggle('on', b.dataset.f === freq));
+    const a = amount(), low = a > 0 && a < SV.AUTO_MIN;
+    $('hint').textContent = low ? 'The minimum is 50 ETB' : `Minimum 50 ETB · from your M-PESA wallet (${fmt(S.wallet)} ETB)`;
+    $('hint').classList.toggle('err', low);
+    if (goal && new Date(goal.by) > new Date(startIso())) {
+      $('sugg').classList.add('show');
+      $('suggTxt').innerHTML = `${grp ? 'Your share' : 'Save'} <b>${fmt(sugg())} ETB ${SV.FREQS[freq].label.toLowerCase()}</b> to reach ${fmt(goal.amount)} ETB by ${SV.dateStr(goal.by)}${grp ? ` with ${share} members` : ''}.`;
+    } else $('sugg').classList.remove('show');
+    const rows = [['From', 'M-PESA wallet'], ['Amount', a ? fmt(a) + ' ETB' : '—'], ['How often', SV.FREQS[freq].label], ['First transfer', SV.dateStr(startIso())]];
+    if (goal && a >= SV.AUTO_MIN && !grp) { const on = SV.reachesOn(goal.amount, saved, { amount: a, freq, next: startIso() });
+      rows.push(['Reaches the goal', on ? SV.dateStr(on) + (new Date(on) > new Date(goal.by) ? ' · after the target date' : '') : 'Already reached']); }
+    $('sum').innerHTML = rows.map(([k, v]) => `<div class="row"><span>${k}</span><b>${v}</b></div>`).join('');
+    $('go').disabled = !(a >= SV.AUTO_MIN) || !$('start').value;
+  }
+  function saveAuto() {
+    const a = amount();
+    toPin({ kind: 'sav-auto-set', title: (acc.auto ? 'Update auto-save · ' : 'Auto-save to ') + acc.name, id: acc.id, group: !!grp, name: acc.name,
+      amount: a, auto: { amount: a, freq, start: startIso(), next: startIso() }, sub: `<b>Auto-save:</b> ${fmt(a)} ETB ${SV.FREQS[freq].label.toLowerCase()}` });
+  }
+  function stopAuto() { acc.auto = null; SV.save(S); location.href = back + '&done=autostop'; }
+  function goBack() { location.href = back; }
+  paint();
+</script>
+<script src="components/keyboard.js"></script>
+<!-- Export to Figma button (shared exporter) -->
+<script src="figma-export.js"></script>
+<script src="test-scenarios-data.js"></script>
+<script src="test-scenarios.js"></script>
+</body>
+</html>

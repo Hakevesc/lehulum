@@ -5,8 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Bill Payment - Confirmation</title>
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@400;500;600&family=Barlow:wght@400&display=swap');
-  @import url('https://api.fontshare.com/v2/css?f[]=switzer@400,500,600,700&display=swap');
+  @import url('https://api.fontshare.com/v2/css?f[]=switzer@400,500,600,700,800&display=swap');
 
   :root {
     --Primary: #FE353D;
@@ -22,7 +21,7 @@
   * { margin: 0; padding: 0; box-sizing: border-box; }
 
   body {
-    font-family: 'Inter', sans-serif;
+    font-family: Switzer, sans-serif;
     background: transparent;
     display: flex; justify-content: center; align-items: center;
     min-height: 100vh; padding: 20px;
@@ -62,7 +61,7 @@
   .close-btn svg { width: 22px; height: 22px; stroke: var(--On-Surface); stroke-width: 1.8px; }
   .header-action-btn svg { width: 20px; height: 20px; stroke: var(--On-Surface); stroke-width: 1.8px; }
   .header-title {
-    color: var(--On-Surface); font-family: 'Switzer', sans-serif;
+    color: var(--On-Surface); font-family: Switzer, sans-serif;
     font-size: 17px; font-weight: 500; letter-spacing: 0.3px;
     flex: 1; text-align: center;
   }
@@ -97,11 +96,11 @@
   /* Receipt Header */
   .receipt-header { text-align: center; margin-bottom: 18px; }
   .receipt-header h2 {
-    color: var(--On-Surface); font-family: 'Switzer', sans-serif;
+    color: var(--On-Surface); font-family: Switzer, sans-serif;
     font-size: 19px; font-weight: 700; margin-bottom: 5px; letter-spacing: 0.2px;
   }
   .receipt-header p {
-    color: var(--On-Surface-Low); font-family: 'Switzer', sans-serif;
+    color: var(--On-Surface-Low); font-family: Switzer, sans-serif;
     font-size: 12px; font-weight: 400; letter-spacing: 0.2px;
   }
 
@@ -114,11 +113,11 @@
   .token-head { display: flex; align-items: center; gap: 7px; margin-bottom: 7px; }
   .token-head svg { width: 15px; height: 15px; stroke: var(--Primary); stroke-width: 2; fill: none; }
   .token-head span {
-    color: var(--On-Surface-Low); font-family: 'Switzer', sans-serif;
+    color: var(--On-Surface-Low); font-family: Switzer, sans-serif;
     font-size: 12px; font-weight: 400;
   }
   .token-value {
-    color: var(--On-Surface); font-family: 'Switzer', sans-serif;
+    color: var(--On-Surface); font-family: Switzer, sans-serif;
     font-size: 19px; font-weight: 700; letter-spacing: 1.2px;
     text-align: left; margin-bottom: 9px; word-break: break-all;
   }
@@ -130,7 +129,7 @@
     flex: 1; display: flex; align-items: center; justify-content: center; gap: 6px;
     background: transparent; border: none; cursor: pointer;
     padding: 9px 4px; transition: background 0.15s;
-    font-family: 'Switzer', sans-serif; font-size: 12px; font-weight: 500; color: var(--On-Surface);
+    font-family: Switzer, sans-serif; font-size: 12px; font-weight: 500; color: var(--On-Surface);
   }
   .token-btn:hover { background: rgba(254,53,61,0.06); }
   .token-btn svg { width: 14px; height: 14px; stroke: var(--Primary); stroke-width: 2; fill: none; flex-shrink: 0; }
@@ -145,12 +144,12 @@
   #detailLeadRows, #detailExtraRows { display: contents; }
   .detail-row { display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; }
   .detail-row .label {
-    color: var(--On-Surface-Low); font-family: 'Switzer', sans-serif;
+    color: var(--On-Surface-Low); font-family: Switzer, sans-serif;
     font-size: 12px; font-weight: 400; letter-spacing: 0.1px;
     flex-shrink: 0; max-width: 150px;
   }
   .detail-row .value {
-    color: var(--On-Surface); font-family: 'Switzer', sans-serif;
+    color: var(--On-Surface); font-family: Switzer, sans-serif;
     font-size: 13px; font-weight: 500;
     text-align: right; overflow-wrap: break-word; flex: 1;
   }
@@ -166,7 +165,7 @@
     cursor: pointer; transition: all 0.2s; border-radius: 6px;
   }
   .copy-btn:hover { background: var(--Primary-Light); }
-  .copy-btn .copy-text { color: var(--Primary); font-family: 'Switzer', sans-serif; font-size: 11px; font-weight: 500; }
+  .copy-btn .copy-text { color: var(--Primary); font-family: Switzer, sans-serif; font-size: 11px; font-weight: 500; }
   .copy-btn i { width: 14px !important; height: 14px !important; color: var(--Primary); stroke-width: 2px; }
   .copy-btn.copied .copy-text, .copy-btn.copied i { color: var(--Success); }
 
@@ -187,16 +186,16 @@
     margin-top: 2px; position: relative; z-index: 2;
   }
   .beneficiary-name {
-    color: var(--On-Surface); font-family: 'Switzer', sans-serif;
+    color: var(--On-Surface); font-family: Switzer, sans-serif;
     font-size: 16px; font-weight: 600; margin-bottom: 6px; letter-spacing: 0.2px;
   }
   .amount-display { display: flex; align-items: center; justify-content: center; gap: 10px; margin-bottom: 18px; }
   .amount-value {
-    color: var(--Primary); font-family: 'Switzer', sans-serif;
+    color: var(--Primary); font-family: Switzer, sans-serif;
     font-size: 38px; font-weight: 700; letter-spacing: -0.5px; line-height: 1;
   }
   .amount-currency {
-    color: var(--Primary); font-family: 'Switzer', sans-serif;
+    color: var(--Primary); font-family: Switzer, sans-serif;
     font-size: 16px; font-weight: 500;
     padding-left: 10px; border-left: 2px solid var(--Primary); line-height: 1.1;
   }
@@ -231,7 +230,7 @@
   .action-btn:hover .action-icon { background: var(--Primary-Light); }
   .action-icon i { width: 22px !important; height: 22px !important; color: var(--Primary); stroke-width: 2px; }
   .action-label {
-    color: var(--On-Surface); font-family: 'Switzer', sans-serif;
+    color: var(--On-Surface); font-family: Switzer, sans-serif;
     font-size: 11px; font-weight: 500; letter-spacing: 0.1px;
   }
 
@@ -241,7 +240,7 @@
     transform: translateX(-50%) translateY(20px);
     background: var(--On-Surface); color: #FFF;
     padding: 11px 22px; border-radius: 12px;
-    font-family: 'Switzer', sans-serif; font-size: 13px; font-weight: 500;
+    font-family: Switzer, sans-serif; font-size: 13px; font-weight: 500;
     opacity: 0; pointer-events: none; transition: all 0.3s ease;
     z-index: 1000; box-shadow: 0 4px 16px rgba(0,0,0,0.2);
   }
@@ -258,12 +257,12 @@
   .sheet-grip { width: 44px; height: 4px; border-radius: 2px; background: #D8D8DE; margin: 0 auto 4px; }
   .sheet-close { position: absolute; top: 12px; right: 16px; width: 28px; height: 28px; border-radius: 50%; background: var(--Field, #F5F5F5); border: none; display: flex; align-items: center; justify-content: center; cursor: pointer; }
   .sheet-close svg { width: 15px; height: 15px; stroke: var(--On-Surface-Low); stroke-width: 2; fill: none; }
-  .sheet-title { font-family: 'Switzer', sans-serif; font-size: 17px; font-weight: 700; color: var(--On-Surface); text-align: center; }
+  .sheet-title { font-family: Switzer, sans-serif; font-size: 17px; font-weight: 700; color: var(--On-Surface); text-align: center; }
   .share-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px 8px; padding: 4px 0 6px; }
   .share-item { display: flex; flex-direction: column; align-items: center; gap: 7px; background: none; border: none; padding: 0; cursor: pointer; }
   .share-item .ico { width: 50px; height: 50px; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0; box-shadow: inset 0 0 0 1px rgba(0,0,0,0.06); }
   .share-item .ico svg { width: 22px; height: 22px; }
-  .share-item span { font-family: 'Switzer', sans-serif; font-size: 11px; color: var(--On-Surface-Low); text-align: center; }
+  .share-item span { font-family: Switzer, sans-serif; font-size: 11px; color: var(--On-Surface-Low); text-align: center; }
 </style>
 <script src="assets/qrcode.min.js"></script>
 <script src="assets/qr.js"></script>

@@ -5,8 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>PayPal · Transactions</title>
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@400;500;600&display=swap');
-  @import url('https://api.fontshare.com/v2/css?f[]=switzer@400,500,600,700&display=swap');
+  @import url('https://api.fontshare.com/v2/css?f[]=switzer@400,500,600,700,800&display=swap');
 
   /* PayPal transactions (Super App flow): withdrawals grouped by day; tap one
      for its details (ID, status, ETB and USD, rate, fee, reference). */
@@ -18,7 +17,7 @@
     --Background: #F5F5F5;
   }
   * { margin: 0; padding: 0; box-sizing: border-box; }
-  body { font-family: 'Inter', sans-serif; background: transparent; display: flex; justify-content: center; align-items: center; min-height: 100vh; padding: 20px; }
+  body { font-family: Switzer, sans-serif; background: transparent; display: flex; justify-content: center; align-items: center; min-height: 100vh; padding: 20px; }
   button, input { font-family: inherit; }
   .phone-frame { width: 360px; height: 780px; background: var(--Background); border-radius: 30px; overflow: hidden; position: relative; box-shadow: 0 20px 60px rgba(0,0,0,0.15); display: flex; flex-direction: column; }
   .app-content { height: 100%; display: flex; flex-direction: column; }
@@ -31,14 +30,14 @@
   .back-btn { width: 36px; height: 36px; border-radius: 50%; background: transparent; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; }
   .back-btn:hover { background: rgba(0,0,0,0.05); }
   .back-btn svg { width: 22px; height: 22px; stroke: var(--On-Surface); stroke-width: 1.8px; fill: none; }
-  .header-title { color: var(--On-Surface); font-family: 'Switzer', sans-serif; font-size: 17px; font-weight: 500; letter-spacing: 0.3px; flex: 1; text-align: center; }
+  .header-title { color: var(--On-Surface); font-family: Switzer, sans-serif; font-size: 17px; font-weight: 500; letter-spacing: 0.3px; flex: 1; text-align: center; }
 
   .search { flex-shrink: 0; margin: 0 16px 10px; height: 46px; display: flex; align-items: center; gap: 10px; padding: 0 14px; background: #FFF; border-radius: 14px; box-shadow: 0 2px 8px rgba(15,23,42,0.04); }
   .search svg { width: 18px; height: 18px; stroke: var(--On-Surface-Low); stroke-width: 2; fill: none; }
-  .search input { flex: 1; min-width: 0; border: none; outline: none; background: transparent; font-family: 'Switzer', sans-serif; font-size: 14px; color: var(--On-Surface); }
+  .search input { flex: 1; min-width: 0; border: none; outline: none; background: transparent; font-family: Switzer, sans-serif; font-size: 14px; color: var(--On-Surface); }
   .scroll { flex: 1; min-height: 0; overflow-y: auto; padding: 0 16px 20px; scrollbar-width: none; }
   .scroll::-webkit-scrollbar { width: 0; }
-  .day { margin: 14px 4px 8px; font-family: 'Switzer', sans-serif; font-size: 12px; font-weight: 600; letter-spacing: 0.6px; color: #8A8A94; text-transform: uppercase; }
+  .day { margin: 14px 4px 8px; font-family: Switzer, sans-serif; font-size: 12px; font-weight: 600; letter-spacing: 0.6px; color: #8A8A94; text-transform: uppercase; }
   .day:first-child { margin-top: 4px; }
   .tx-list { background: #FFF; border-radius: 18px; padding: 2px 14px; box-shadow: 0 4px 14px rgba(15,23,42,0.05); }
   .tx { width: 100%; display: flex; align-items: center; gap: 12px; padding: 12px 0; border: none; background: none; text-align: left; cursor: pointer; }
@@ -46,12 +45,12 @@
   .tx-ic { width: 40px; height: 40px; border-radius: 12px; background: #E8F9EE; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
   .tx-ic svg { width: 19px; height: 19px; stroke: #16A34A; stroke-width: 2; fill: none; }
   .tx-info { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px; }
-  .tx-info b { font-family: 'Switzer', sans-serif; font-size: 14px; font-weight: 600; color: var(--On-Surface); }
-  .tx-info small { font-family: 'Switzer', sans-serif; font-size: 12px; color: var(--On-Surface-Low); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-  .tx-amt { text-align: right; font-family: 'Switzer', sans-serif; font-variant-numeric: tabular-nums; }
+  .tx-info b { font-family: Switzer, sans-serif; font-size: 14px; font-weight: 600; color: var(--On-Surface); }
+  .tx-info small { font-family: Switzer, sans-serif; font-size: 12px; color: var(--On-Surface-Low); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .tx-amt { text-align: right; font-family: Switzer, sans-serif; font-variant-numeric: tabular-nums; }
   .tx-amt b { display: block; font-size: 14px; font-weight: 700; color: #16A34A; }
   .tx-amt small { font-size: 11.5px; color: var(--On-Surface-Low); }
-  .empty { padding: 40px 0; text-align: center; font-family: 'Switzer', sans-serif; font-size: 13px; color: var(--On-Surface-Low); }
+  .empty { padding: 40px 0; text-align: center; font-family: Switzer, sans-serif; font-size: 13px; color: var(--On-Surface-Low); }
 
   /* Detail sheet */
   .scrim { position: absolute; inset: 0; z-index: 100; background: rgba(0,0,0,0.42); opacity: 0; visibility: hidden; transition: opacity 0.22s, visibility 0.22s; }
@@ -62,16 +61,16 @@
   .d-head { display: flex; flex-direction: column; align-items: center; text-align: center; }
   .d-head .tx-ic { width: 52px; height: 52px; border-radius: 16px; }
   .d-head .tx-ic svg { width: 24px; height: 24px; }
-  .d-head h3 { margin-top: 10px; font-family: 'Switzer', sans-serif; font-size: 13px; font-weight: 600; letter-spacing: 0.6px; color: #8A8A94; text-transform: uppercase; }
-  .d-head b { margin-top: 4px; font-family: 'Switzer', sans-serif; font-size: 28px; font-weight: 700; color: #16A34A; font-variant-numeric: tabular-nums; }
-  .d-head small { font-family: 'Switzer', sans-serif; font-size: 12.5px; color: var(--On-Surface-Low); }
+  .d-head h3 { margin-top: 10px; font-family: Switzer, sans-serif; font-size: 13px; font-weight: 600; letter-spacing: 0.6px; color: #8A8A94; text-transform: uppercase; }
+  .d-head b { margin-top: 4px; font-family: Switzer, sans-serif; font-size: 28px; font-weight: 700; color: #16A34A; font-variant-numeric: tabular-nums; }
+  .d-head small { font-family: Switzer, sans-serif; font-size: 12.5px; color: var(--On-Surface-Low); }
   .d-rows { margin: 14px 0 16px; border-top: 1px solid #EFEFF2; }
-  .d-row { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 11px 0; border-bottom: 1px solid #EFEFF2; font-family: 'Switzer', sans-serif; }
+  .d-row { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 11px 0; border-bottom: 1px solid #EFEFF2; font-family: Switzer, sans-serif; }
   .d-row span { font-size: 12.5px; color: #55555E; }
   .d-row b { font-size: 12.5px; font-weight: 700; color: var(--On-Surface); font-variant-numeric: tabular-nums; text-align: right; }
   .status { display: inline-flex; align-items: center; gap: 5px; padding: 3px 9px; border-radius: 999px; background: #E8F9EE; color: #167C2A; font-size: 11.5px !important; }
   .status::before { content: ''; width: 6px; height: 6px; border-radius: 50%; background: currentColor; }
-  .btn-primary { width: 100%; height: 52px; border: none; border-radius: 14px; background: var(--Primary); color: #FFF; font-family: 'Poppins', sans-serif; font-size: 15px; font-weight: 500; cursor: pointer; box-shadow: 0 4px 16px rgba(254,53,61,0.25); }
+  .btn-primary { width: 100%; height: 52px; border: none; border-radius: 14px; background: var(--Primary); color: #FFF; font-family: Switzer, sans-serif; font-size: 15px; font-weight: 500; cursor: pointer; box-shadow: 0 4px 16px rgba(254,53,61,0.25); }
 </style>
 <link rel="stylesheet" href="styles/device.css">
 </head>

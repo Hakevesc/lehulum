@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Loan Transactions — M-PESA</title>
+<link rel="stylesheet" href="styles/design-tokens.css">
+<link rel="stylesheet" href="styles/base.css">
+<link rel="stylesheet" href="styles/component-status-bar.css">
+<style>
+  @import url('https://api.fontshare.com/v2/css?f[]=switzer@400,500,600,700,800&display=swap');
+
+  /* Loan transactions (Term Loan ⋯ → Loan Transactions, Loan Details →
+     Transactions): every term-loan and Errif movement, newest first, grouped by
+     day (Today / Yesterday / date). Money in (disbursed) is green, money out
+     (repayments) red. Search by name, amount or reference. Built live from
+     term-loan-store.js. */
+  :root { --Font: Switzer, sans-serif; --Up: #16A34A; }
+  body { font-family: var(--Font); }
+  .phone-frame { display: flex; flex-direction: column; }
+  .phone-frame > .status-bar { flex-shrink: 0; }
+  .app-content { display: flex; flex-direction: column; gap: 12px; flex: 1 1 auto; min-height: 0; height: auto; }
+  .app-content > * { flex-shrink: 0; }
+
+  .header-nav { display: flex; align-items: center; justify-content: space-between; padding: 0 0 2px; }
+  .icon-btn { width: 36px; height: 36px; border-radius: 50%; background: transparent; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+  .icon-btn svg { width: 22px; height: 22px; stroke: var(--On-Surface, #1C1C21); stroke-width: 1.8; fill: none; stroke-linecap: round; stroke-linejoin: round; }
+  .header-title { flex: 1; text-align: center; font-size: 17px; font-weight: 500; color: var(--On-Surface, #1C1C21); }
+
+  .search { display: flex; align-items: center; gap: 10px; height: 48px; padding: 0 14px; border: 1px solid #E6E6EA; border-radius: 16px; background: #FFF; }
+  .search svg { width: 20px; height: 20px; stroke: #1C1C21; stroke-width: 1.9; fill: none; stroke-linecap: round; flex-shrink: 0; }
+  .search input { flex: 1; min-width: 0; border: none; outline: none; background: transparent; font-family: var(--Font); font-size: 14px; color: var(--On-Surface, #1C1C21); }
+  .search input::placeholder { color: #A0A0AA; }
+
+  .day { font-size: 15px; font-weight: 600; color: var(--On-Surface, #1C1C21); margin: 4px 2px -4px; }
+  .group { background: #FFF; border-radius: 20px; padding: 4px 14px; box-shadow: 0 2px 12px rgba(0,0,0,0.04); }
+  .tx { display: flex; align-items: center; gap: 12px; padding: 11px 0; cursor: pointer; }
+  .tx + .tx { border-top: 1px solid #F4F4F6; }
+  .tx .ic { width: 40px; height: 40px; border-radius: 12px; background: #FFE4E5; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+  .tx .ic svg { width: 18px; height: 18px; stroke: var(--Primary, #FE353D); stroke-width: 2.2; fill: none; stroke-linecap: round; stroke-linejoin: round; }
+  .tx .info { flex: 1; min-width: 0; }
+  .tx .info b { display: block; font-size: 13.5px; font-weight: 500; color: var(--On-Surface, #1C1C21); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .tx .info small { display: block; margin-top: 2px; font-size: 11.5px; color: var(--On-Surface-Low, #7C7C87); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .tx .right { text-align: right; flex-shrink: 0; }
+  .tx .right b { display: block; font-size: 13.5px; font-weight: 700; color: var(--Primary, #FE353D); white-space: nowrap; }
+  .tx.in .right b { color: var(--Up); }
+  .tx .right small { display: block; margin-top: 2px; font-size: 11px; color: var(--On-Surface-Low, #7C7C87); }
+  .empty { padding: 40px 20px; text-align: center; font-size: 13px; color: var(--On-Surface-Low, #7C7C87); }
+</style>
+<link rel="stylesheet" href="styles/device.css">
+</head>
+<body>
+<div class="phone-frame">
+  <div class="status-bar">
+    <span class="time">10:00</span>
+    <div class="status-icons">
+      <svg data-name="icon-wifi" viewBox="0 0 24 24" fill="none"><path d="M1 9l2 2c4.97-4.97 13.03-4.97 18 0l2-2C16.93 2.93 7.08 2.93 1 9z" fill="#1C1C21"/><path d="M5 13l2 2c2.76-2.76 7.24-2.76 10 0l2-2C15.14 9.14 8.87 9.14 5 13z" fill="#1C1C21"/><path d="M9 17l2 2c1.1-1.1 2.9-1.1 4 0l2-2c-2.21-2.21-5.79-2.21-8 0z" fill="#1C1C21"/></svg>
+      <svg data-name="icon-signal" viewBox="0 0 24 24" fill="none"><rect x="2" y="6" width="4" height="12" rx="1" fill="#1C1C21"/><rect x="8" y="4" width="4" height="14" rx="1" fill="#1C1C21"/><rect x="14" y="2" width="4" height="16" rx="1" fill="#1C1C21"/><rect x="20" y="0" width="4" height="18" rx="1" fill="#1C1C21" opacity="0.3"/></svg>
+      <svg data-name="icon-battery" viewBox="0 0 28 14" fill="none"><rect x="0" y="1" width="22" height="12" rx="2.5" stroke="#1C1C21" stroke-width="1.5"/><rect x="2" y="3" width="16" height="8" rx="1" fill="#1C1C21"/><rect x="24" y="4" width="2" height="6" rx="1" fill="#1C1C21"/></svg>
+    </div>
+  </div>
+
+  <div class="app-content">
+    <div class="header-nav">
+      <button class="icon-btn" onclick="history.length > 1 ? history.back() : location.href='Term Loan.html'" aria-label="Back"><svg data-name="icon-arrow-left" viewBox="0 0 24 24"><path d="M19 12H5M12 19l-7-7 7-7"/></svg></button>
+      <span class="header-title">Loan Transactions</span>
+      <div style="width:36px"></div>
+    </div>
+
+    <label class="search"><svg data-name="icon-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg><input id="q" placeholder="Search by reference number or amount" oninput="render()"></label>
+
+    <div id="list"></div>
+  </div>
+</div>
+
+<script src="term-loan-store.js"></script>
+<script>
+  const $ = id => document.getElementById(id);
+  const fmt = TL.fmt, DAY = 864e5;
+  const OUT = '<svg viewBox="0 0 24 24"><path d="M7 17 17 7M9 7h8v8"/></svg>';   // money out ↗
+  const IN = '<svg viewBox="0 0 24 24"><path d="M17 7 7 17M15 17H7V9"/></svg>';   // money in ↙
+
+  // Every movement on term loans and Errif (term-loan-store.js)
+  // ?type=loan (from Repay) leaves out Errif, which has its own page
+  const TX = TL.transactions().filter(t => new URLSearchParams(location.search).get('type') !== 'loan' || !t.errif);
+
+  const dayLabel = d => {
+    const t = new Date(); t.setHours(0, 0, 0, 0);
+    const x = new Date(d); x.setHours(0, 0, 0, 0);
+    const n = Math.round((t - x) / DAY);
+    return n === 0 ? 'Today' : n === 1 ? 'Yesterday' : x.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
+  };
+  const time = d => d.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
+
+  function render() {
+    const q = ($('q').value || '').trim().toLowerCase().replace(/,/g, '');
+    const list = TX.filter(t => !q || (t.name + ' ' + t.sub + ' ' + t.ref + ' ' + Math.abs(t.amt).toFixed(2)).toLowerCase().includes(q));
+    if (!list.length) { $('list').innerHTML = '<p class="empty">No transactions match your search.</p>'; return; }
+    const groups = [];
+    list.forEach(t => { const d = dayLabel(t.when); const g = groups[groups.length - 1]; if (g && g.d === d) g.items.push(t); else groups.push({ d, items: [t] }); });
+    $('list').innerHTML = groups.map(g => `<p class="day">${g.d}</p><div class="group">${g.items.map(t => `
+      <div class="tx${t.amt > 0 ? ' in' : ''}" onclick="location.href='${t.link}'">
+        <span class="ic">${t.amt > 0 ? IN : OUT}</span>
+        <span class="info"><b>${t.name}</b><small>${t.sub}</small></span>
+        <span class="right"><b>${t.amt > 0 ? '+' : '-'}${fmt(Math.abs(t.amt))}${t.amt > 0 ? ' ETB' : ''}</b><small>${time(t.when)}</small></span>
+      </div>`).join('')}</div>`).join('');
+    $('list').style.display = 'flex'; $('list').style.flexDirection = 'column'; $('list').style.gap = '12px';
+  }
+  render();
+</script>
+<script src="components/keyboard.js"></script>
+<!-- Export to Figma button (shared exporter) -->
+<script src="figma-export.js"></script>
+<script src="test-scenarios-data.js"></script>
+<script src="test-scenarios.js"></script>
+</body>
+</html>

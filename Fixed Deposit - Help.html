@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Fixed Deposit · FAQs — M-PESA</title>
+<link rel="stylesheet" href="styles/design-tokens.css">
+<link rel="stylesheet" href="styles/base.css">
+<link rel="stylesheet" href="styles/component-status-bar.css">
+<link rel="stylesheet" href="styles/component-sc-card.css">
+<link rel="stylesheet" href="styles/savings.css">
+<style>
+  @import url('https://api.fontshare.com/v2/css?f[]=switzer@400,500,600,700,800&display=swap');
+
+  /* Fixed deposit FAQs (⋯ → FAQs): the terms next to my own numbers, then
+     the common questions as an accordion. Done → back. */
+  .pill { display: block; width: fit-content; margin: 0 auto 8px; padding: 7px 16px; border-radius: 999px; background: #EFEFF3; font-size: 11.5px; font-weight: 600; letter-spacing: 1px; color: #55555E; text-transform: uppercase; }
+  .tbl .tr { display: flex; justify-content: space-between; gap: 12px; padding: 11px 0; }
+  .tbl .tr + .tr { border-top: 1px solid #F1F1F4; }
+  .tbl .tr b { display: block; font-size: 13px; font-weight: 600; color: var(--On-Surface); }
+  .tbl .tr small { display: block; margin-top: 2px; font-size: 11.5px; line-height: 1.4; color: var(--On-Surface-Low); }
+  .tbl .tr em { font-style: normal; font-size: 13px; font-weight: 700; color: var(--On-Surface); text-align: right; white-space: nowrap; }
+  .tbl .tr em.lost { color: var(--Primary); }
+  .qa + .qa { border-top: 1px solid #F1F1F4; }
+  .q { width: 100%; display: flex; align-items: center; gap: 12px; padding: 15px 0; border: none; background: none; cursor: pointer; text-align: left; font-family: Switzer, sans-serif; }
+  .q b { flex: 1; font-size: 14px; font-weight: 600; line-height: 1.35; color: var(--On-Surface); }
+  .q svg { width: 18px; height: 18px; flex-shrink: 0; stroke: #8A8A94; stroke-width: 2; fill: none; stroke-linecap: round; stroke-linejoin: round; transition: transform 0.2s; }
+  .qa.open .q svg { transform: rotate(180deg); stroke: var(--Primary); }
+  .a { display: none; padding: 0 0 15px; font-size: 13px; line-height: 1.55; color: #55555E; }
+  .qa.open .a { display: block; }
+  .a b { color: var(--On-Surface); font-weight: 600; }
+</style>
+<link rel="stylesheet" href="styles/device.css">
+</head>
+<body>
+<div class="phone-frame">
+  <div class="status-bar">
+    <span class="time">10:00</span>
+    <div class="status-icons">
+      <svg data-name="icon-wifi" viewBox="0 0 24 24" fill="none"><path d="M1 9l2 2c4.970-4.970 13.030-4.970 18 0l2-2C16.930 2.930 7.080 2.930 1 9z" fill="#1C1C21"/><path d="M5 13l2 2c2.760-2.760 7.240-2.760 10 0l2-2C15.140 9.140 8.870 9.140 5 13z" fill="#1C1C21"/><path d="M9 17l2 2c1.100-1.100 2.900-1.100 4 0l2-2c-2.210-2.210-5.790-2.210-8 0z" fill="#1C1C21"/></svg>
+      <svg data-name="icon-signal" viewBox="0 0 24 24" fill="none"><rect x="2" y="6" width="4" height="12" rx="1" fill="#1C1C21"/><rect x="8" y="4" width="4" height="14" rx="1" fill="#1C1C21"/><rect x="14" y="2" width="4" height="16" rx="1" fill="#1C1C21"/><rect x="20" y="0" width="4" height="18" rx="1" fill="#1C1C21" opacity="0.3"/></svg>
+      <svg data-name="icon-battery" viewBox="0 0 28 14" fill="none"><rect x="0" y="1" width="22" height="12" rx="2.5" stroke="#1C1C21" stroke-width="1.5"/><rect x="2" y="3" width="16" height="8" rx="1" fill="#1C1C21"/><rect x="24" y="4" width="2" height="6" rx="1" fill="#1C1C21"/></svg>
+    </div>
+  </div>
+
+  <div class="app-content">
+    <div class="header-nav">
+      <button class="icon-btn" onclick="history.length > 1 ? history.back() : location.href='Fixed Deposit.html'" aria-label="Back"><svg data-name="icon-arrow-left" viewBox="0 0 24 24"><path d="M19 12H5M12 19l-7-7 7-7"/></svg></button>
+      <span class="header-title" id="hTitle">Fixed Deposit</span>
+      <span class="spacer"></span>
+    </div>
+
+    <div class="card"><span class="pill">Fixed deposit terms</span><div class="tbl" id="tbl"></div></div>
+    <div class="card" style="padding-bottom:6px"><span class="pill">Frequent questions</span><div id="faq"></div></div>
+    <div class="bottom-bar"><button class="btn-primary" onclick="history.length > 1 ? history.back() : location.href='Fixed Deposit.html'">Done</button></div>
+  </div>
+
+  <div class="toast" id="toast"></div>
+</div>
+
+<script src="savings-store.js"></script>
+<script src="savings-ui.js"></script>
+<script>
+  const $ = id => document.getElementById(id);
+  const fmt = SV.fmt, IC = SVUI.IC;
+  let tt;
+  function toast(m) { const t = $('toast'); if (!t) return; t.textContent = m; t.classList.add('show'); clearTimeout(tt); tt = setTimeout(() => t.classList.remove('show'), 2200); }
+  function openSheet(id) { const s = $('scrim'); if (s) s.classList.add('show'); $(id).classList.add('show'); }
+  function closeSheets() { const s = $('scrim'); if (s) s.classList.remove('show'); document.querySelectorAll('.sheet').forEach(x => x.classList.remove('show')); }
+  document.addEventListener('keydown', e => { if (e.key === 'Escape') closeSheets(); });
+  // Hand an action to the shared PIN screen, which returns to Savings - Done.html
+  function toPin(data) { sessionStorage.setItem('termLoanData', JSON.stringify(Object.assign({ next: 'Savings - Done.html', back: location.pathname.split('/').pop() + location.search }, data))); location.href = 'Term Loan - Enter PIN.html'; }
+
+  const S = SV.load(), open = (S.deposits || []).filter(a => !a.closed);
+  const next = open.filter(a => SV.fdStatus(a) === 'active').sort((a, b) => new Date(SV.maturityOf(a)) - new Date(SV.maturityOf(b)))[0];
+  const P = SV.PLANS;
+  const TERMS = [
+    ['Lock period', 'How long the money stays locked', `${P[0].months} – ${P[P.length - 1].months} months`],
+    ['Minimum deposit', 'Smallest amount, by period', `From ${fmt(P[0].min).replace('.00', '')} ETB`],
+    ['Interest rate', 'Fixed yearly rate — longer earns more', `${P[0].rate}% – ${P[P.length - 1].rate}%`],
+    ['Total locked', 'Your active fixed deposits', fmt(open.reduce((s, a) => s + a.principal, 0)) + ' ETB'],
+    ['Accrued interest', 'Built up so far, paid at maturity', fmt(open.reduce((s, a) => s + SV.accrued(a), 0)) + ' ETB'],
+    ['Next maturity', 'When your next deposit ends', next ? SV.dateStr(SV.maturityOf(next)) : '—'],
+    ['Early withdrawal', 'Returns only the deposit', '<em class="lost">Interest lost</em>']
+  ];
+  $('tbl').innerHTML = TERMS.map(([t, s, v]) => `<div class="tr"><span><b>${t}</b><small>${s}</small></span>${v.startsWith('<em') ? v : '<em>' + v + '</em>'}</div>`).join('');
+  const DOWN = '<svg viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg>';
+  const QA = [
+    ['What is a fixed deposit?', 'You lock an amount with Awash Bank for a set period — 3, 6, 9 or 12 months — at a fixed interest rate. The rate does not change during the term.'],
+    ['How much interest will I earn?', `From <b>${P[0].rate}%</b> a year for 3 months up to <b>${P[P.length - 1].rate}%</b> for 12 months. Interest builds up daily and you see the exact amount before you confirm.`],
+    ['What is the minimum deposit?', P.map(p => `<b>${p.months} months:</b> ${fmt(p.min).replace('.00', '')} ETB`).join(' · ')],
+    ['Can I withdraw early?', 'Yes, but you get back <b>only your deposit</b> — all the interest built up is lost. You are asked to confirm before it happens.'],
+    ['What happens at maturity?', 'You get your deposit plus the interest. Withdraw it to your M-PESA wallet or a saving, or <b>roll it over</b> into a new term.'],
+    ['Can I add money to a deposit?', 'No. The amount is fixed for the term. Open another fixed deposit any time.'],
+    ['How do I close one?', 'Open the deposit, tap <b>⋯ → Close Deposit</b>, check what you get, and confirm with your M-PESA PIN.']
+  ];
+  $('faq').innerHTML = QA.map(([q, a], i) => `<div class="qa${i ? '' : ' open'}"><button class="q" type="button" onclick="this.parentElement.classList.toggle('open')"><b>${q}</b>${DOWN}</button><div class="a">${a}</div></div>`).join('');
+</script>
+<!-- Export to Figma button (shared exporter) -->
+<script src="figma-export.js"></script>
+<script src="test-scenarios-data.js"></script>
+<script src="test-scenarios.js"></script>
+</body>
+</html>

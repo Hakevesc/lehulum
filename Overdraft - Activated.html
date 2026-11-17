@@ -3,17 +3,16 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Errif Activated — M-PESA</title>
+<title>Opted In to Errif — M-PESA</title>
 <link rel="stylesheet" href="styles/design-tokens.css">
 <link rel="stylesheet" href="styles/base.css">
 <link rel="stylesheet" href="styles/component-status-bar.css">
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@400;500;600&display=swap');
   @import url('https://api.fontshare.com/v2/css?f[]=switzer@400,500,600,700,800&display=swap');
 
   /* Errif activated (after Activate → PIN): marks Errif active, shows the limit
      and what happens next, then Go to Errif. */
-  :root { --Font: 'Switzer', 'Inter', sans-serif; }
+  :root { --Font: Switzer, sans-serif; }
   body { font-family: var(--Font); }
   .app-content { display: flex; flex-direction: column; align-items: center; text-align: center; padding-bottom: 0 !important; }
   .app-content > * { flex-shrink: 0; }
@@ -40,7 +39,7 @@
   .row p b { color: var(--On-Surface, #1C1C21); font-weight: 600; }
 
   .bottom-bar { margin-top: auto; width: calc(100% + 32px); padding: 10px 16px 18px; background: var(--Background, #F5F5F5); }
-  .btn-primary { width: 100%; height: 52px; border: none; border-radius: 14px; background: var(--Primary, #FE353D); color: #FFF; font-family: 'Poppins', sans-serif; font-size: 15px; font-weight: 500; cursor: pointer; box-shadow: 0 4px 16px rgba(254,53,61,0.25); }
+  .btn-primary { width: 100%; height: 52px; border: none; border-radius: 14px; background: var(--Primary, #FE353D); color: #FFF; font-family: Switzer, sans-serif; font-size: 15px; font-weight: 500; cursor: pointer; box-shadow: 0 4px 16px rgba(254,53,61,0.25); }
 </style>
 <link rel="stylesheet" href="styles/device.css">
 </head>
@@ -57,7 +56,7 @@
 
   <div class="app-content">
     <div class="ok"><span><svg data-name="icon-check" viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg></span></div>
-    <h1>Errif is active</h1>
+    <h1>You're opted in to Errif</h1>
     <p class="sub">Your payments will now go through even when your balance is short.</p>
 
     <div class="lim"><small>Your Errif limit</small><b id="limit"></b></div>

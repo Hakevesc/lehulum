@@ -10,14 +10,13 @@
 <link rel="stylesheet" href="styles/component-status-bar.css">
 <link rel="stylesheet" href="styles/component-sc-card.css">
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@400;500;600&display=swap');
   @import url('https://api.fontshare.com/v2/css?f[]=switzer@400,500,600,700,800&display=swap');
 
   /* Term Loan dashboard (the green product mockups, in Lehulum style): the red
      limit card with the credit-score chip, how much of the limit is used, the
-     loans taken (swipe), and loan offers filtered by lender and type — each with
-     its conditions and Apply. ?partner=boa shows the M-PESA × BOA co-brand. */
-  :root { --Font: 'Switzer', 'Inter', sans-serif; --Primary: #FE353D; --Primary-Light: #FFF1F2; --On-Surface: #1C1C21; --On-Surface-Low: #7C7C87; }
+     loans taken (swipe), and loan offers as a list of banks (All Banks / loan type
+     dropdowns) — a bank opens Term Loan - Offers.html with only its offers. ?partner=boa shows the M-PESA × BOA co-brand. */
+  :root { --Font: Switzer, sans-serif; --Primary: #FE353D; --Primary-Light: #FFF1F2; --On-Surface: #1C1C21; --On-Surface-Low: #7C7C87; }
   body { font-family: var(--Font); }
   .app-content { display: flex; flex-direction: column; }
   .app-content > * { flex-shrink: 0; }
@@ -57,31 +56,42 @@
   .chip { flex-shrink: 0; height: 34px; padding: 0 14px; border-radius: 999px; border: 1px solid #E6E6EA; background: #FFF; font-family: var(--Font); font-size: 12.5px; font-weight: 600; color: #55555E; cursor: pointer; }
   .chip.on { background: var(--Primary); border-color: var(--Primary); color: #FFF; box-shadow: 0 3px 10px rgba(254,53,61,0.25); }
   .chips.second { margin-bottom: 12px; }
-  .chips.second .chip { height: 30px; font-size: 12px; background: transparent; }
-  .chips.second .chip.on { background: var(--Primary-Light); border-color: #F7C6CA; color: var(--Primary); box-shadow: none; }
+  .chips.second .chip { height: 34px; padding: 0 16px; font-size: 13px; font-weight: 500; color: #3A3A44; background: #FFF; }
+  .chips.second .chip.on { background: var(--Primary-Light); border: 1.5px solid var(--Primary); color: var(--Primary); font-weight: 600; box-shadow: none; }
+  /* Bank + loan type dropdowns */
+  .drops { position: relative; z-index: 20; display: flex; gap: 10px; margin-bottom: 12px; }
+  .drop { flex: 1; min-width: 0; height: 42px; display: flex; align-items: center; gap: 8px; padding: 0 12px; border: 1px solid #E6E6EA; border-radius: 14px; background: #FFF; cursor: pointer; font-family: var(--Font); text-align: left; }
+  .drop.set { border-color: #F7C6CA; background: #FFF8F8; }
+  .drop .ic { width: 18px; height: 18px; flex-shrink: 0; stroke: var(--On-Surface); stroke-width: 1.8; fill: none; stroke-linecap: round; stroke-linejoin: round; }
+  .drop span { flex: 1; min-width: 0; font-size: 13px; font-weight: 500; color: var(--On-Surface); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .drop .cv { width: 16px; height: 16px; flex-shrink: 0; stroke: #55555E; stroke-width: 2.2; fill: none; stroke-linecap: round; stroke-linejoin: round; transition: transform 0.2s; }
+  .drop.open { border-color: var(--Primary); }
+  .drop.open .cv { transform: rotate(180deg); stroke: var(--Primary); }
+  /* The dropdown menu opens under its button */
+  .pop { position: absolute; top: 48px; z-index: 30; max-height: 330px; overflow-y: auto; scrollbar-width: none; padding: 6px; border: 1px solid #ECECF0; border-radius: 16px; background: #FFF; box-shadow: 0 12px 32px rgba(15,23,42,0.16); opacity: 0; visibility: hidden; transform: translateY(-6px); transition: opacity 0.16s, transform 0.16s, visibility 0.16s; }
+  .pop::-webkit-scrollbar { display: none; }
+  .pop.show { opacity: 1; visibility: visible; transform: none; }
+  .pop .bank { padding: 9px 8px; border-radius: 12px; gap: 10px; }
+  .pop .bank + .bank { border-top: none; }
+  .pop .bank:hover { background: #F7F7F9; }
+  .pop .bank.on { background: var(--Primary-Light); }
+  .pop .bank .logo { width: 32px; height: 32px; border-radius: 9px; }
+  .pop .bank .logo img { width: 24px; height: 24px; }
+  .pop .bank b { font-size: 13.5px; white-space: nowrap; }
+  .pop .bank .tick { width: 18px; height: 18px; flex-shrink: 0; stroke: var(--Primary); stroke-width: 2.6; fill: none; stroke-linecap: round; stroke-linejoin: round; visibility: hidden; }
+  .pop .bank.on .tick { visibility: visible; }
+  .hdr-note { font-size: 12px; color: var(--On-Surface-Low); }
 
-  /* Offer card */
-  .offers { display: flex; flex-direction: column; gap: 10px; margin-bottom: 10px; }
-  .offer { background: #FFF; border-radius: 20px; padding: 14px; box-shadow: 0 4px 16px rgba(15,23,42,0.06); }
-  .offer-top { display: flex; align-items: center; gap: 12px; }
-  .offer-top .info { flex: 1; min-width: 0; }
-  .offer-top b { display: block; font-size: 14.5px; font-weight: 700; color: var(--On-Surface); }
-  .offer-top small { display: block; margin-top: 2px; font-size: 12px; color: var(--On-Surface-Low); }
-  .tag { flex-shrink: 0; padding: 3px 8px; border-radius: 999px; background: #EDEDF0; font-size: 10.5px; font-weight: 600; color: #55555E; }
-  .offer-limit { margin-top: 12px; display: flex; gap: 8px; }
-  .offer-limit div { flex: 1; padding: 8px 10px; border-radius: 12px; background: #F7F7F9; }
-  .offer-limit small { display: block; font-size: 10.5px; color: var(--On-Surface-Low); }
-  .offer-limit b { display: block; margin-top: 2px; font-size: 12.5px; font-weight: 700; color: var(--On-Surface); white-space: nowrap; }
-  .offer-foot { margin-top: 12px; padding-top: 10px; border-top: 1px solid #F1F1F4; display: flex; align-items: center; justify-content: space-between; }
-  .cond-btn { display: inline-flex; align-items: center; gap: 4px; border: none; background: none; font-family: var(--Font); font-size: 12.5px; font-weight: 600; color: #55555E; cursor: pointer; padding: 0; }
-  .cond-btn svg { width: 15px; height: 15px; stroke: var(--Primary); stroke-width: 2.2; fill: none; transition: transform 0.2s; }
-  .offer.open .cond-btn svg { transform: rotate(180deg); }
-  .apply { height: 34px; padding: 0 18px; border: none; border-radius: 999px; background: var(--Primary); color: #FFF; font-family: 'Poppins', sans-serif; font-size: 12.5px; font-weight: 500; cursor: pointer; box-shadow: 0 3px 10px rgba(254,53,61,0.25); }
-  .conds { display: none; margin-top: 10px; padding: 4px 12px; border-radius: 12px; background: #F7F7F9; }
-  .offer.open .conds { display: block; }
-  .cond { display: flex; justify-content: space-between; padding: 7px 0; font-size: 12px; color: #55555E; }
-  .cond + .cond { border-top: 1px solid #ECECEF; }
-  .cond b { color: var(--On-Surface); font-weight: 600; }
+  /* Banks: one row each — tap for that bank's offers */
+  .banks { display: flex; flex-direction: column; gap: 10px; margin-bottom: 10px; }
+  .bk { width: 100%; display: flex; align-items: center; gap: 14px; padding: 14px; border: none; border-radius: 20px; background: #FFF; box-shadow: 0 4px 16px rgba(15,23,42,0.06); cursor: pointer; text-align: left; font-family: var(--Font); }
+  .bk .logo { width: 48px; height: 48px; border-radius: 14px; }
+  .bk .logo img { width: 36px; height: 36px; }
+  .bk .info { flex: 1; min-width: 0; }
+  .bk b { display: block; font-size: 15px; font-weight: 700; color: var(--On-Surface); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .bk small { display: block; margin-top: 3px; font-size: 12.5px; color: var(--On-Surface-Low); }
+  .bk small em { font-style: normal; font-weight: 700; color: #167C2A; }
+  .bk .chev { width: 18px; height: 18px; flex-shrink: 0; stroke: var(--On-Surface); stroke-width: 2.2; fill: none; stroke-linecap: round; stroke-linejoin: round; }
   .no-offers { padding: 22px; text-align: center; font-size: 13px; color: var(--On-Surface-Low); background: #FFF; border-radius: 18px; }
 
   /* Menu sheet */
@@ -97,7 +107,7 @@
   .menu-item b { flex: 1; font-size: 14px; font-weight: 600; color: var(--On-Surface); }
   .menu-item .chev { width: 17px; height: 17px; stroke: #A0A0AA; stroke-width: 2.2; fill: none; }
 
-  /* More banks sheet */
+  /* Rows in the bank / loan type dropdown */
   .sheet-title { font-size: 16px; font-weight: 700; color: var(--On-Surface); margin: 0 4px 4px; }
   .sheet-sub { font-size: 12px; color: var(--On-Surface-Low); margin: 0 4px 8px; }
   .bank-list { max-height: 400px; overflow-y: auto; scrollbar-width: none; }
@@ -111,7 +121,6 @@
   .bank .radio { width: 20px; height: 20px; border-radius: 50%; border: 2px solid #D0D0D6; flex-shrink: 0; display: flex; align-items: center; justify-content: center; }
   .bank.on .radio { border-color: var(--Primary); }
   .bank.on .radio::after { content: ''; width: 10px; height: 10px; border-radius: 50%; background: var(--Primary); }
-  .chip .caret { width: 12px; height: 12px; margin-left: 3px; vertical-align: -1px; stroke: currentColor; stroke-width: 2.6; fill: none; stroke-linecap: round; stroke-linejoin: round; }
 
   .toast { position: absolute; bottom: 40px; left: 50%; transform: translateX(-50%) translateY(20px); background: #1C1C21; color: #FFF; padding: 11px 18px; border-radius: 12px; font-size: 13px; font-weight: 500; opacity: 0; pointer-events: none; transition: all 0.3s ease; z-index: 1000; white-space: nowrap; }
   .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
@@ -156,55 +165,50 @@
     <!-- Shortcuts -->
     <div class="tiles">
       <div class="tile" onclick="location.href='Active Accounts.html?tab=credit'">
-        <span class="t-ic"><svg viewBox="0 0 24 24"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5M9 13h6M9 17h4"/></svg></span>
-        <span class="t-txt"><b>My Loans</b></span><svg class="cv" viewBox="0 0 24 24"><path d="M9 6l6 6-6 6"/></svg>
-      </div>
-      <div class="tile" id="repayTile">
         <span class="t-ic"><svg viewBox="0 0 24 24"><rect x="2.5" y="6" width="19" height="12" rx="2.5"/><circle cx="12" cy="12" r="2.6"/><path d="M6 9.5v5M18 9.5v5"/></svg></span>
         <span class="t-txt"><b>Repay Loan</b></span><svg class="cv" viewBox="0 0 24 24"><path d="M9 6l6 6-6 6"/></svg>
       </div>
+      <div class="tile" onclick="location.href='Credit Score.html'">
+        <span class="t-ic"><svg viewBox="0 0 24 24"><path d="M4 18a8 8 0 0 1 16 0"/><path d="M12 18l4-5"/></svg></span>
+        <span class="t-txt"><b>Credit Score</b></span><svg class="cv" viewBox="0 0 24 24"><path d="M9 6l6 6-6 6"/></svg>
+      </div>
     </div>
 
-    <!-- Loan offers -->
+    <!-- Loan offers: banks (tap → that bank's offers) -->
     <div class="section-hdr">
       <span class="section-title">Loan Offers</span>
-      <span style="font-size:12px;color:var(--On-Surface-Low)" id="offerCount"></span>
+      <span class="hdr-note" id="bankCount"></span>
     </div>
-    <div class="chips" id="lenderChips">
-      <button class="chip on" data-v="all">All Banks</button>
-      <button class="chip" data-v="abyssinia">Abyssinia</button>
-      <button class="chip" data-v="awash">Awash</button>
-      <button class="chip" data-v="more" id="moreChip"><span id="moreTxt">More</span><svg class="caret" viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg></button>
+    <div class="drops">
+      <button class="drop" id="bankDrop" type="button" onclick="openPick('bank')">
+        <svg class="ic" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg>
+        <span id="bankTxt">All Banks</span><svg class="cv" viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></svg>
+      </button>
+      <button class="drop" id="typeDrop" type="button" onclick="openPick('type')">
+        <svg class="ic" viewBox="0 0 24 24"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5M9 13h6M9 17h4"/></svg>
+        <span id="typeTxt">Loan Type</span><svg class="cv" viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></svg>
+      </button>
+      <div class="pop" id="pop" role="listbox"></div>
     </div>
-    <div class="chips second" id="typeChips">
-      <button class="chip on" data-v="all">All</button>
-      <button class="chip" data-v="cash">Cash Loan</button>
-      <button class="chip" data-v="salary">Salary Advance</button>
-      <button class="chip" data-v="bnpl">BNPL</button>
-    </div>
-    <div class="offers" id="offers"></div>
+    <div class="banks" id="offers"></div>
   </div>
 
   <!-- Menu -->
   <div class="scrim" id="scrim" onclick="closeMenu()"></div>
   <div class="sheet" id="sheet" role="dialog" aria-label="Term loan menu">
     <div class="sheet-grip"></div>
-    <button class="menu-item" onclick="location.href='Active Accounts.html?tab=credit'"><i><svg viewBox="0 0 24 24"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20"/></svg></i><b>My Loans</b><svg class="chev" viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg></button>
     <button class="menu-item" onclick="location.href='Credit Score.html'"><i><svg viewBox="0 0 24 24"><path d="M4 18a8 8 0 0 1 16 0"/><path d="M12 18l4-5"/></svg></i><b>Credit Score</b><svg class="chev" viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg></button>
-    <button class="menu-item" onclick="location.href='Transaction History.html'"><i><svg viewBox="0 0 24 24"><path d="M4 6h16M4 12h16M4 18h10"/></svg></i><b>Loan Transactions</b><svg class="chev" viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg></button>
-    <button class="menu-item" onclick="location.href='Tariffs & Fees.html'"><i><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 8v5M12 16h.01"/></svg></i><b>Fees &amp; Conditions</b><svg class="chev" viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg></button>
-  </div>
-  <!-- More banks -->
-  <div class="scrim" id="bankScrim" onclick="closeBanks()"></div>
-  <div class="sheet" id="bankSheet" role="dialog" aria-label="More banks">
-    <div class="sheet-grip"></div>
-    <p class="sheet-title">More Banks</p>
-    <p class="sheet-sub">Choose a bank to see its loan offers</p>
-    <div class="bank-list" id="bankList"></div>
+    <button class="menu-item" onclick="location.href='Loan Transactions.html'"><i><svg viewBox="0 0 24 24"><path d="M4 6h16M4 12h16M4 18h10"/></svg></i><b>Loan Transactions</b><svg class="chev" viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg></button>
+    <button class="menu-item" onclick="location.href='Term Loan - Help.html?view=faq'"><i><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M9.6 9.3a2.5 2.5 0 0 1 4.8.9c0 1.7-2.4 2.2-2.4 3.6"/><path d="M12 17h.01"/></svg></i><b>FAQ</b><svg class="chev" viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg></button>
+    <button class="menu-item" onclick="location.href='Term Loan - Help.html?view=terms'"><i><svg viewBox="0 0 24 24"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5M9 13h6M9 17h4"/></svg></i><b>Terms &amp; Conditions</b><svg class="chev" viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg></button>
   </div>
   <div class="toast" id="toast"></div>
 </div>
 
+<script>
+  // First visit: activate Term Loan before the dashboard
+  try { if (!sessionStorage.getItem('termLoanActive')) location.replace('Term Loan - Activate.html'); } catch (e) {}
+</script>
 <script src="term-loan-store.js"></script>
 <script>
   const $ = id => document.getElementById(id);
@@ -226,15 +230,12 @@
   $('usedPct').textContent = pct + '%';
   const dueWhen = d => /\d/.test(d) ? 'due in ' + d : d === 'Today' ? 'due today' : 'overdue';
   $('dueNote').textContent = nextAll
-    ? `${live.length} active loan${live.length === 1 ? '' : 's'} · next ${fmt(nextAll.amount)} ETB ${dueWhen(TL.dueIn(nextAll.due))}`
+    ? `${live.length} active loan${live.length === 1 ? '' : 's'} · next ${fmt(TL.instLeft(nextAll))} ETB ${dueWhen(TL.dueIn(nextAll.due))}`
     : 'No loans due — your full limit is available';
 
-  // Shortcuts: my loans, and repay the loan that is due next
   // Score gauge (300–900 scale)
   $('gScore').textContent = TL.SCORE.value; $('gLabel').textContent = TL.SCORE.label;
   $('gArc').setAttribute('stroke-dasharray', `${Math.round((TL.SCORE.value - 300) / 6)} 100`);
-  const nextLoan = live.find(l => TL.nextDue(l) === nextAll);
-  $('repayTile').onclick = () => location.href = nextLoan ? `Term Loan - Details.html?id=${nextLoan.id}` : 'Term Loan - Apply.html';
 
   // Eye toggle: amounts hidden until tapped
   (function () {
@@ -250,84 +251,66 @@
     });
   })();
 
-  // Offers, filtered by lender and type
-  let lender = 'all', type = 'all';
-  const DOWN = '<svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>';
+  // Loan offers by bank. The loan type dropdown narrows the banks to those that
+  // offer it (and their "Up to"); All Banks narrows to one. A bank opens its offers.
+  let bank = 'all', type = 'all';
+  const TYPES = [{ v: 'all', name: 'All Loan Types' }, { v: 'cash', name: 'Cash Loan' }, { v: 'salary', name: 'Salary Advance' }, { v: 'bnpl', name: 'BNPL' }];
+  const n0 = v => fmt(v).replace('.00', '');
+  const ofType = o => type === 'all' || o.product === type;
+  // Every bank with offers, in offer order
+  const BANKS = [];
+  TL.OFFERS.forEach(o => { if (!BANKS.some(b => b.name === o.lender)) BANKS.push({ name: o.lender, logo: o.logo }); });
+  const offersOf = name => TL.OFFERS.filter(o => o.lender === name && ofType(o));
+  const CHEV = '<svg class="chev" viewBox="0 0 24 24"><path d="M9 6l6 6-6 6"/></svg>';
   function renderOffers() {
-    const list = TL.OFFERS.filter(o => (lender === 'all' || o.key === lender || o.lender === lender) && (type === 'all' || o.product === type));
-    $('offerCount').textContent = list.length + (list.length === 1 ? ' offer' : ' offers');
-    $('offers').innerHTML = list.length ? list.map(o => `
-      <div class="offer" id="of-${o.id}">
-        <div class="offer-top"><span class="logo"><img src="${o.logo}" alt=""></span>
-          <span class="info"><b>${o.name}</b><small>${o.lender}</small></span><span class="tag">${o.productLabel}</span></div>
-        <div class="offer-limit">
-          <div><small>Credit limit</small><b>${fmt(o.min).replace('.00', '')} – ${fmt(o.max).replace('.00', '')} ETB</b></div>
-          <div><small>Repay in</small><b>${o.days.join(' / ')} days</b></div>
-        </div>
-        <div class="conds">
-          <div class="cond"><span>Access fee</span><b>${(o.access * 100).toFixed(0)}%</b></div>
-          <div class="cond"><span>Daily maintenance fee</span><b>${(o.daily * 100).toFixed(2)}% / day</b></div>
-          <div class="cond"><span>Late penalty</span><b>${(o.penalty * 100).toFixed(1)}% / day</b></div>
-          <div class="cond"><span>Instalments</span><b>${o.inst}</b></div>
-          ${o.note ? `<div class="cond"><span>Eligibility</span><b>${o.note}</b></div>` : ''}
-        </div>
-        <div class="offer-foot">
-          <button class="cond-btn" type="button" onclick="this.closest('.offer').classList.toggle('open')">Loan conditions ${DOWN}</button>
-          <button class="apply" type="button" onclick="location.href='Term Loan - Apply.html?offer=${o.id}'">Apply</button>
-        </div>
-      </div>`).join('') : '<div class="no-offers">No offers match these filters.</div>';
+    const list = BANKS.filter(b => (bank === 'all' || b.name === bank) && offersOf(b.name).length);
+    $('bankCount').textContent = list.length + (list.length === 1 ? ' Bank' : ' Banks') + ' Available';
+    $('offers').innerHTML = list.length ? list.map(b => `<button class="bk" type="button" onclick="openBank('${b.name}')">
+        <span class="logo"><img src="${b.logo}" alt=""></span>
+        <span class="info"><b>${b.name}</b><small>Up to <em>${n0(Math.max(...offersOf(b.name).map(o => o.max)))} ETB</em></small></span>${CHEV}</button>`).join('')
+      : '<div class="no-offers">No bank offers this loan type yet.</div>';
   }
-  function bindChips(id, set) {
-    $(id).querySelectorAll('.chip').forEach(c => c.addEventListener('click', () => {
-      if (c.dataset.v === 'more') { openBanks(); return; }   // More opens the bank list
-      $(id).querySelectorAll('.chip').forEach(x => x.classList.toggle('on', x === c));
-      if (id === 'lenderChips') $('moreTxt').textContent = 'More';
-      set(c.dataset.v); renderOffers();
-    }));
-  }
+  function openBank(name) { location.href = `Term Loan - Offers.html?bank=${encodeURIComponent(name)}` + (type !== 'all' ? '&type=' + type : ''); }
 
-  // More banks: every other lender, with how many offers each has
-  const BANK_DIR = 'assets/banks logo/';
-  const MORE_BANKS = [
-    { name: 'Commercial Bank of Ethiopia', short: 'CBE', logo: 'cbe-logo.png' },
-    { name: 'Dashen Bank', short: 'Dashen', logo: 'dashen-bank.png' },
-    { name: 'Coopbank', short: 'Coopbank', logo: 'coop-bank.png' },
-    { name: 'Hibret Bank', short: 'Hibret', logo: 'Hibret-bank.png' },
-    { name: 'Amhara Bank', short: 'Amhara', logo: 'amhara-bank.png' },
-    { name: 'Nib International Bank', short: 'Nib', logo: 'nib-bank.png' },
-    { name: 'Oromia Bank', short: 'Oromia', logo: 'oromia-i-bank.png' },
-    { name: 'Wegagen Bank', short: 'Wegagen', logo: 'wegagen-bank.png' },
-    { name: 'Zemen Bank', short: 'Zemen', logo: 'zemen-bank.png' }
-  ];
-  function renderBanks() {
-    $('bankList').innerHTML = MORE_BANKS.map((b, k) => {
-      const n = TL.OFFERS.filter(o => o.lender === b.name).length;
-      return `<button class="bank${lender === b.name ? ' on' : ''}" type="button" onclick="pickBank(${k})">
-        <span class="logo"><img src="${BANK_DIR}${b.logo}" alt=""></span>
-        <span class="info"><b>${b.name}</b><small${n ? ' class="has"' : ''}>${n ? n + (n === 1 ? ' offer' : ' offers') : 'No offers yet'}</small></span>
-        <span class="radio"></span></button>`;
-    }).join('');
+  // Bank / loan type dropdowns: the menu opens under the tapped button and stays open
+  // until that button is tapped again (picking an option keeps it open)
+  let picking = null;
+  const TICK = '<svg class="tick" viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg>';
+  function openPick(what) {
+    if (picking === what) return closePick();
+    picking = what;
+    const btn = $(what + 'Drop'), pop = $('pop');
+    pop.innerHTML = what === 'bank'
+      ? [{ name: 'all' }].concat(BANKS).map(b => `<button class="bank${bank === b.name ? ' on' : ''}" type="button" onclick="pick('${b.name}')">
+            <span class="logo">${b.logo ? `<img src="${b.logo}" alt="">` : '<svg viewBox="0 0 24 24" style="width:18px;height:18px;stroke:var(--Primary);stroke-width:1.8;fill:none;stroke-linecap:round;stroke-linejoin:round"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg>'}</span>
+            <span class="info"><b>${b.name === 'all' ? 'All Banks' : b.name}</b></span>${TICK}</button>`).join('')
+      : TYPES.map(t => `<button class="bank${type === t.v ? ' on' : ''}" type="button" onclick="pick('${t.v}')">
+            <span class="info"><b>${t.name}</b></span>${TICK}</button>`).join('');
+    // Bank menu hangs from the left edge, loan type from the right; at least as wide as its button
+    pop.style.left = what === 'bank' ? '0' : 'auto';
+    pop.style.right = what === 'bank' ? 'auto' : '0';
+    pop.style.width = Math.max(btn.offsetWidth, what === 'bank' ? 240 : 200) + 'px';
+    document.querySelectorAll('.drop').forEach(d => d.classList.toggle('open', d === btn));
+    pop.classList.add('show');
   }
-  function openBanks() { renderBanks(); $('bankScrim').classList.add('show'); $('bankSheet').classList.add('show'); }
-  function closeBanks() { $('bankScrim').classList.remove('show'); $('bankSheet').classList.remove('show'); }
-  function pickBank(k) {
-    const b = MORE_BANKS[k];
-    lender = b.name;
-    $('lenderChips').querySelectorAll('.chip').forEach(x => x.classList.toggle('on', x.id === 'moreChip'));
-    $('moreTxt').textContent = b.short;
-    renderOffers(); closeBanks();
+  function closePick() { picking = null; $('pop').classList.remove('show'); document.querySelectorAll('.drop').forEach(d => d.classList.remove('open')); }
+  function pick(v) {
+    const what = picking;
+    if (what === 'bank') { bank = v; $('bankTxt').textContent = v === 'all' ? 'All Banks' : v; $('bankDrop').classList.toggle('set', v !== 'all'); }
+    else { type = v; $('typeTxt').textContent = v === 'all' ? 'Loan Type' : TYPES.find(t => t.v === v).name; $('typeDrop').classList.toggle('set', v !== 'all'); }
+    renderOffers();
+    $('pop').querySelectorAll('.bank').forEach(b => b.classList.toggle('on', b.getAttribute('onclick') === `pick('${v}')`));
   }
-  bindChips('lenderChips', v => lender = v);
-  bindChips('typeChips', v => type = v);
   renderOffers();
 
   function openMenu() { $('scrim').classList.add('show'); $('sheet').classList.add('show'); }
   function closeMenu() { $('scrim').classList.remove('show'); $('sheet').classList.remove('show'); }
-  document.addEventListener('keydown', e => { if (e.key === 'Escape') { closeMenu(); closeBanks(); } });
+  document.addEventListener('keydown', e => { if (e.key === 'Escape') closeMenu(); });
   let tt;
   function showToast(m) { const t = $('toast'); t.textContent = m; t.classList.add('show'); clearTimeout(tt); tt = setTimeout(() => t.classList.remove('show'), 2000); }
   if (params.get('done') === 'apply') showToast('Loan sent to your M-PESA balance');
   if (params.get('done') === 'repay') showToast('Repayment received');
+  if (params.get('done') === 'activated') showToast('Term Loan activated');
 </script>
 <script src="figma-export.js"></script>
 <script src="test-scenarios-data.js"></script>

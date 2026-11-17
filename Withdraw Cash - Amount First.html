@@ -5,8 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Withdraw Cash · Amount First</title>
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@400;500;600&display=swap');
-  @import url('https://api.fontshare.com/v2/css?f[]=switzer@400,500,600,700&display=swap');
+  @import url('https://api.fontshare.com/v2/css?f[]=switzer@400,500,600,700,800&display=swap');
 
   :root {
     --Primary: #FE353D;
@@ -18,7 +17,7 @@
     --Field: #F7F7F9;
   }
   * { margin: 0; padding: 0; box-sizing: border-box; }
-  body { font-family: 'Inter', sans-serif; background: transparent; display: flex; justify-content: center; align-items: center; min-height: 100vh; padding: 20px; }
+  body { font-family: Switzer, sans-serif; background: transparent; display: flex; justify-content: center; align-items: center; min-height: 100vh; padding: 20px; }
   .phone-frame { width: 360px; height: 780px; background: var(--Background); border-radius: 30px; overflow: hidden; position: relative; box-shadow: 0 20px 60px rgba(0,0,0,0.15); display: flex; flex-direction: column; }
   .app-content { height: 100%; display: flex; flex-direction: column; }
 
@@ -31,22 +30,22 @@
   .back-btn { width: 36px; height: 36px; border-radius: 50%; background: transparent; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: background 0.2s; }
   .back-btn:hover { background: rgba(0,0,0,0.05); }
   .back-btn svg { width: 22px; height: 22px; stroke: var(--On-Surface); stroke-width: 1.8px; fill: none; }
-  .header-title { color: var(--On-Surface); font-family: 'Switzer', sans-serif; font-size: 17px; font-weight: 500; letter-spacing: 0.3px; flex: 1; text-align: center; }
+  .header-title { color: var(--On-Surface); font-family: Switzer, sans-serif; font-size: 17px; font-weight: 500; letter-spacing: 0.3px; flex: 1; text-align: center; }
 
   .card { background: #FFF; border-radius: 16px; padding: 16px; box-shadow: 0 4px 14px rgba(15,23,42,0.05); }
-  .field-label { display: block; font-family: 'Switzer', sans-serif; font-size: 14px; font-weight: 600; color: var(--On-Surface); margin-bottom: 8px; }
+  .field-label { display: block; font-family: Switzer, sans-serif; font-size: 14px; font-weight: 600; color: var(--On-Surface); margin-bottom: 8px; }
   .field { height: 52px; background: var(--Field); border: 1.5px solid var(--Border); border-radius: 14px; padding: 0 8px 0 14px; display: flex; align-items: center; gap: 8px; transition: border-color 0.2s, box-shadow 0.2s, background 0.2s; }
   .field:focus-within { border-color: var(--Primary); background: #FFF; box-shadow: 0 4px 12px rgba(254,53,61,0.12); }
   .field.err { border-color: var(--Primary); background: #FFF; }
-  .field input { flex: 1; min-width: 0; border: none; outline: none; background: transparent; font-family: 'Switzer', sans-serif; font-size: 16px; font-weight: 700; letter-spacing: 0.4px; color: var(--On-Surface); }
+  .field input { flex: 1; min-width: 0; border: none; outline: none; background: transparent; font-family: Switzer, sans-serif; font-size: 16px; font-weight: 700; letter-spacing: 0.4px; color: var(--On-Surface); }
   .field input::placeholder { color: var(--On-Surface-Low); font-size: 15px; font-weight: 400; letter-spacing: 0; }
-  .suffix { font-family: 'Switzer', sans-serif; font-size: 13px; font-weight: 600; color: var(--On-Surface-Low); }
+  .suffix { font-family: Switzer, sans-serif; font-size: 13px; font-weight: 600; color: var(--On-Surface-Low); }
 
-  .btn-primary { width: 100%; height: 52px; border: none; border-radius: 14px; background: var(--Primary); color: #FFF; font-family: 'Poppins', sans-serif; font-size: 15px; font-weight: 500; cursor: pointer; box-shadow: 0 4px 16px rgba(254,53,61,0.25); transition: background 0.2s, transform 0.12s; }
+  .btn-primary { width: 100%; height: 52px; border: none; border-radius: 14px; background: var(--Primary); color: #FFF; font-family: Switzer, sans-serif; font-size: 15px; font-weight: 500; cursor: pointer; box-shadow: 0 4px 16px rgba(254,53,61,0.25); transition: background 0.2s, transform 0.12s; }
   .btn-primary:active { transform: scale(0.98); }
   .btn-primary:disabled { background: #E0E0E0; color: var(--On-Surface-Low); box-shadow: none; cursor: not-allowed; }
   .chev { width: 20px; height: 20px; stroke: var(--On-Surface-Low); stroke-width: 2; fill: none; flex-shrink: 0; }
-  .section-title { font-family: 'Switzer', sans-serif; font-size: 14px; font-weight: 600; color: var(--On-Surface); letter-spacing: 0.2px; }
+  .section-title { font-family: Switzer, sans-serif; font-size: 14px; font-weight: 600; color: var(--On-Surface); letter-spacing: 0.2px; }
 
   .scroll { flex: 1; min-height: 0; overflow-y: auto; padding: 4px 16px 20px; display: flex; flex-direction: column; gap: 16px; }
   .scroll::-webkit-scrollbar { width: 0; }
@@ -54,16 +53,16 @@
   /* ── Amount first: the field, a balance hint and quick amounts ── */
   .clear-btn { width: 28px; height: 28px; border: none; border-radius: 50%; background: #E8E8EC; display: flex; align-items: center; justify-content: center; cursor: pointer; flex-shrink: 0; }
   .clear-btn svg { width: 12px; height: 12px; stroke: var(--On-Surface); stroke-width: 2.6; fill: none; }
-  .balance-hint { font-family: 'Switzer', sans-serif; font-size: 12px; color: var(--On-Surface-Low); margin-top: 8px; }
+  .balance-hint { font-family: Switzer, sans-serif; font-size: 12px; color: var(--On-Surface-Low); margin-top: 8px; }
   .balance-hint b { font-weight: 600; color: var(--On-Surface); }
   .amount-label { margin-top: 16px; }
-  .quick-title { font-family: 'Switzer', sans-serif; font-size: 12.5px; font-weight: 600; color: var(--On-Surface-Low); margin: 16px 0 8px; }
+  .quick-title { font-family: Switzer, sans-serif; font-size: 12.5px; font-weight: 600; color: var(--On-Surface-Low); margin: 16px 0 8px; }
   .amounts { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
   /* Quick amounts: same cards as Airtime's amount grid — big bold number;
      the picked one turns solid red */
   .chip { display: flex; align-items: center; justify-content: center; gap: 4px; height: 52px; padding: 0 6px; border: 1px solid #EFEFF2; border-radius: 14px; background: #FFF; cursor: pointer; box-shadow: 0 2px 8px rgba(0,0,0,0.04); transition: all 0.18s; }
   .chip:hover { transform: translateY(-1px); box-shadow: 0 4px 12px rgba(0,0,0,0.08); }
-  .chip .amt-val { font-family: 'Switzer', sans-serif; font-size: 19px; font-weight: 700; color: var(--On-Surface); line-height: 1.2; }
+  .chip .amt-val { font-family: Switzer, sans-serif; font-size: 19px; font-weight: 700; color: var(--On-Surface); line-height: 1.2; }
   .chip.selected { background: var(--Primary); border-color: var(--Primary); box-shadow: 0 4px 16px rgba(254,53,61,0.25); }
   .chip.selected .amt-val { color: #FFF; }
 
@@ -75,8 +74,8 @@
   .opt-ic svg { width: 22px; height: 22px; stroke: #FFF; stroke-width: 1.9; fill: none; }
   .opt-ic.dark { background: var(--On-Surface); }
   .opt-txt { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px; }
-  .opt-txt b { font-family: 'Switzer', sans-serif; font-size: 14.5px; font-weight: 600; color: var(--On-Surface); }
-  .opt-txt small { font-family: 'Switzer', sans-serif; font-size: 12px; color: var(--On-Surface-Low); }
+  .opt-txt b { font-family: Switzer, sans-serif; font-size: 14.5px; font-weight: 600; color: var(--On-Surface); }
+  .opt-txt small { font-family: Switzer, sans-serif; font-size: 12px; color: var(--On-Surface-Low); }
   .option { border-radius: 0; position: relative; }
   .bottom-bar { flex-shrink: 0; padding: 12px 16px 20px; background: var(--Background); }
 
@@ -87,7 +86,7 @@
   .sheet { position: relative; width: 100%; background: #FFF; border-radius: 24px 24px 0 0; padding: 12px 20px 22px; display: flex; flex-direction: column; transform: translateY(100%); transition: transform 0.3s cubic-bezier(0.2, 0.8, 0.3, 1); }
   .sheet-overlay.show .sheet { transform: translateY(0); }
   .sheet-grip { width: 44px; height: 4px; border-radius: 2px; background: #D8D8DE; margin: 0 auto 14px; }
-  .sheet-title { text-align: center; font-family: 'Switzer', sans-serif; font-size: 17px; font-weight: 700; color: var(--On-Surface); margin-bottom: 16px; }
+  .sheet-title { text-align: center; font-family: Switzer, sans-serif; font-size: 17px; font-weight: 700; color: var(--On-Surface); margin-bottom: 16px; }
   .sheet-back { position: absolute; top: 18px; left: 16px; width: 32px; height: 32px; border: none; border-radius: 50%; background: var(--Field); display: flex; align-items: center; justify-content: center; cursor: pointer; }
   .sheet-back svg { width: 16px; height: 16px; stroke: var(--On-Surface); stroke-width: 2.2; fill: none; }
   .step[hidden] { display: none; }
@@ -97,26 +96,26 @@
   .bank-logo { width: 42px; height: 42px; border-radius: 50%; border: 1px solid var(--Border); background: #FFF; display: flex; align-items: center; justify-content: center; overflow: hidden; flex-shrink: 0; }
   .bank-logo img { width: 28px; height: 28px; object-fit: contain; }
   .bank-txt { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px; }
-  .bank-txt b { font-family: 'Switzer', sans-serif; font-size: 14.5px; font-weight: 600; color: var(--On-Surface); }
-  .bank-txt small { font-family: 'Switzer', sans-serif; font-size: 12px; color: var(--On-Surface-Low); }
+  .bank-txt b { font-family: Switzer, sans-serif; font-size: 14.5px; font-weight: 600; color: var(--On-Surface); }
+  .bank-txt small { font-family: Switzer, sans-serif; font-size: 12px; color: var(--On-Surface-Low); }
 
   .party-card { position: relative; border: 1.5px solid var(--Border); border-radius: 14px; padding: 14px; display: flex; align-items: center; gap: 12px; margin: 6px 0 16px; }
-  .party-badge { position: absolute; top: -11px; right: 14px; background: #EDEDF0; color: var(--On-Surface-Low); font-family: 'Switzer', sans-serif; font-size: 9.5px; font-weight: 700; letter-spacing: 0.6px; padding: 4px 9px; border-radius: 6px; }
+  .party-badge { position: absolute; top: -11px; right: 14px; background: #EDEDF0; color: var(--On-Surface-Low); font-family: Switzer, sans-serif; font-size: 9.5px; font-weight: 700; letter-spacing: 0.6px; padding: 4px 9px; border-radius: 6px; }
   .party-avatar { width: 44px; height: 44px; border-radius: 50%; background: #FFF; border: 1px solid var(--Border); display: flex; align-items: center; justify-content: center; flex-shrink: 0; overflow: hidden; }
   .party-avatar img { width: 30px; height: 30px; object-fit: contain; }
   .party-info { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 3px; }
-  .party-name { font-family: 'Switzer', sans-serif; font-size: 15px; font-weight: 700; color: var(--On-Surface); }
-  .party-sub { font-family: 'Switzer', sans-serif; font-size: 12.5px; color: var(--On-Surface-Low); }
+  .party-name { font-family: Switzer, sans-serif; font-size: 15px; font-weight: 700; color: var(--On-Surface); }
+  .party-sub { font-family: Switzer, sans-serif; font-size: 12.5px; color: var(--On-Surface-Low); }
   .sum-row { display: flex; align-items: center; justify-content: space-between; padding: 13px 2px; border-bottom: 1px solid #F0F0F3; }
   .sum-row.total { border-bottom: none; }
-  .sum-key { font-family: 'Switzer', sans-serif; font-size: 13px; color: var(--On-Surface-Low); }
-  .sum-val { font-family: 'Switzer', sans-serif; font-size: 13.5px; font-weight: 700; color: var(--On-Surface); }
+  .sum-key { font-family: Switzer, sans-serif; font-size: 13px; color: var(--On-Surface-Low); }
+  .sum-val { font-family: Switzer, sans-serif; font-size: 13.5px; font-weight: 700; color: var(--On-Surface); }
   .sum-row.total .sum-val { color: var(--Primary); font-size: 15px; }
   .sum-edit { display: flex; align-items: center; gap: 8px; }
   .edit-amt { width: 28px; height: 28px; border: none; border-radius: 8px; background: var(--Primary-Light); display: flex; align-items: center; justify-content: center; cursor: pointer; }
   .edit-amt svg { width: 14px; height: 14px; stroke: var(--Primary); stroke-width: 2.2; fill: none; }
   .sheet-actions { display: flex; gap: 12px; margin-top: 18px; }
-  .sheet-btn { flex: 1; height: 50px; border-radius: 12px; background: #FFF; cursor: pointer; font-family: 'Switzer', sans-serif; font-size: 14.5px; font-weight: 500; transition: background 0.15s, transform 0.12s; }
+  .sheet-btn { flex: 1; height: 50px; border-radius: 12px; background: #FFF; cursor: pointer; font-family: Switzer, sans-serif; font-size: 14.5px; font-weight: 500; transition: background 0.15s, transform 0.12s; }
   .sheet-btn:active { transform: scale(0.98); }
   .sheet-btn.cancel { border: 1.5px solid var(--Border); color: var(--On-Surface-Low); }
   .sheet-btn.confirm { border: none; background: var(--Primary); color: #FFF; font-weight: 600; box-shadow: 0 4px 14px rgba(254,53,61,0.25); }
@@ -134,7 +133,7 @@
   .opt-txt small { font-size: 13px; }
   .opt-chev { width: 20px; height: 20px; stroke: var(--Primary); stroke-width: 2.4; fill: none; flex-shrink: 0; }
 
-  .scan-btn { width: 100%; height: 52px; border: none; border-radius: 14px; background: var(--On-Surface); color: #FFF; display: flex; align-items: center; justify-content: center; gap: 10px; font-family: 'Poppins', sans-serif; font-size: 15px; font-weight: 500; cursor: pointer; box-shadow: 0 4px 16px rgba(0,0,0,0.18); transition: transform .15s, background .15s; }
+  .scan-btn { width: 100%; height: 52px; border: none; border-radius: 14px; background: var(--On-Surface); color: #FFF; display: flex; align-items: center; justify-content: center; gap: 10px; font-family: Switzer, sans-serif; font-size: 15px; font-weight: 500; cursor: pointer; box-shadow: 0 4px 16px rgba(0,0,0,0.18); transition: transform .15s, background .15s; }
   .scan-btn:hover { background: #000; }
   .scan-btn:active { transform: scale(0.98); }
   .scan-btn .qr-ic { width: 24px; height: 20px; flex-shrink: 0; }

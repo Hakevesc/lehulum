@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Early Withdrawal — M-PESA</title>
+<link rel="stylesheet" href="styles/design-tokens.css">
+<link rel="stylesheet" href="styles/base.css">
+<link rel="stylesheet" href="styles/component-status-bar.css">
+<link rel="stylesheet" href="styles/component-sc-card.css">
+<link rel="stylesheet" href="styles/savings.css">
+<style>
+  @import url('https://api.fontshare.com/v2/css?f[]=switzer@400,500,600,700,800&display=swap');
+
+  /* Early withdrawal (?id=): when it would mature, what comes back (the
+     principal) and what is lost (the interest), where the money goes, and a
+     consent box that unlocks Withdraw → PIN. Keep My Deposit cancels. */
+  .consent { display: flex; gap: 12px; align-items: flex-start; cursor: pointer; }
+  .consent input { position: absolute; opacity: 0; pointer-events: none; }
+  .consent .box { width: 22px; height: 22px; margin-top: 1px; border-radius: 7px; border: 1.5px solid #D0D0D6; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+  .consent .box svg { width: 14px; height: 14px; stroke: #FFF; stroke-width: 3; fill: none; stroke-linecap: round; stroke-linejoin: round; opacity: 0; }
+  .consent.on .box { background: var(--Primary); border-color: var(--Primary); }
+  .consent.on .box svg { opacity: 1; }
+  .consent span { font-size: 13px; line-height: 1.5; color: #3A3A44; }
+  .dest { display: flex; align-items: center; gap: 12px; cursor: pointer; }
+  .dest span:not(.p-ic) { flex: 1; min-width: 0; }
+  .dest small { display: block; font-size: 11.5px; color: var(--On-Surface-Low); }
+  .dest b { display: block; margin-top: 1px; font-size: 14px; font-weight: 600; color: var(--On-Surface); }
+  .dest .cv { width: 16px; height: 16px; stroke: #8A8A94; stroke-width: 2.2; fill: none; }
+</style>
+<link rel="stylesheet" href="styles/device.css">
+</head>
+<body>
+<div class="phone-frame">
+  <div class="status-bar">
+    <span class="time">10:00</span>
+    <div class="status-icons">
+      <svg data-name="icon-wifi" viewBox="0 0 24 24" fill="none"><path d="M1 9l2 2c4.970-4.970 13.030-4.970 18 0l2-2C16.930 2.930 7.080 2.930 1 9z" fill="#1C1C21"/><path d="M5 13l2 2c2.760-2.760 7.240-2.760 10 0l2-2C15.140 9.140 8.870 9.140 5 13z" fill="#1C1C21"/><path d="M9 17l2 2c1.100-1.100 2.900-1.100 4 0l2-2c-2.210-2.210-5.790-2.210-8 0z" fill="#1C1C21"/></svg>
+      <svg data-name="icon-signal" viewBox="0 0 24 24" fill="none"><rect x="2" y="6" width="4" height="12" rx="1" fill="#1C1C21"/><rect x="8" y="4" width="4" height="14" rx="1" fill="#1C1C21"/><rect x="14" y="2" width="4" height="16" rx="1" fill="#1C1C21"/><rect x="20" y="0" width="4" height="18" rx="1" fill="#1C1C21" opacity="0.3"/></svg>
+      <svg data-name="icon-battery" viewBox="0 0 28 14" fill="none"><rect x="0" y="1" width="22" height="12" rx="2.5" stroke="#1C1C21" stroke-width="1.5"/><rect x="2" y="3" width="16" height="8" rx="1" fill="#1C1C21"/><rect x="24" y="4" width="2" height="6" rx="1" fill="#1C1C21"/></svg>
+    </div>
+  </div>
+
+  <div class="app-content">
+    <div class="header-nav">
+      <button class="icon-btn" onclick="history.length > 1 ? history.back() : location.href='Fixed Deposit.html'" aria-label="Back"><svg data-name="icon-arrow-left" viewBox="0 0 24 24"><path d="M19 12H5M12 19l-7-7 7-7"/></svg></button>
+      <span class="header-title" id="hTitle">Early Withdrawal</span>
+      <span class="spacer"></span>
+    </div>
+
+    <div class="notice warn"><svg viewBox="0 0 24 24"><path d="M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"/><path d="M12 9v4M12 17h.01"/></svg><span id="alert"></span></div>
+    <div class="card rows" id="rows"></div>
+    <div class="card dest" onclick="pickDest()"><span class="p-ic" id="dIc"></span><span><small>Send to</small><b id="dName">M-PESA Wallet</b></span><svg class="cv" viewBox="0 0 24 24"><path d="M9 6l6 6-6 6"/></svg></div>
+    <label class="card consent" id="consent"><input type="checkbox" id="agree"><i class="box"><svg viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg></i><span id="cTxt"></span></label>
+    <div class="bottom-bar"><button class="btn-primary" id="go" disabled onclick="withdraw()">Withdraw</button><button class="btn-ghost" onclick="keep()">Keep My Deposit</button></div>
+  </div>
+
+  <div class="scrim" id="scrim" onclick="closeSheets()"></div>
+  <div class="sheet" id="destSheet" role="dialog" aria-label="Send money to">
+    <div class="sheet-grip"></div>
+    <p class="sheet-title">Send money to</p>
+    <div id="destList"></div>
+  </div>
+  <div class="toast" id="toast"></div>
+</div>
+
+<script src="savings-store.js"></script>
+<script src="savings-ui.js"></script>
+<script>
+  const $ = id => document.getElementById(id);
+  const fmt = SV.fmt, IC = SVUI.IC;
+  let tt;
+  function toast(m) { const t = $('toast'); if (!t) return; t.textContent = m; t.classList.add('show'); clearTimeout(tt); tt = setTimeout(() => t.classList.remove('show'), 2200); }
+  function openSheet(id) { const s = $('scrim'); if (s) s.classList.add('show'); $(id).classList.add('show'); }
+  function closeSheets() { const s = $('scrim'); if (s) s.classList.remove('show'); document.querySelectorAll('.sheet').forEach(x => x.classList.remove('show')); }
+  document.addEventListener('keydown', e => { if (e.key === 'Escape') closeSheets(); });
+  // Hand an action to the shared PIN screen, which returns to Savings - Done.html
+  function toPin(data) { sessionStorage.setItem('termLoanData', JSON.stringify(Object.assign({ next: 'Savings - Done.html', back: location.pathname.split('/').pop() + location.search }, data))); location.href = 'Term Loan - Enter PIN.html'; }
+
+  // Payout destination: the M-PESA wallet, or any saving pocket
+  function destRows(sel, pick) {
+    const S2 = SV.load();
+    const opts = [{ id: 'wallet', name: 'M-PESA Wallet', sub: 'Balance ' + fmt(S2.wallet) + ' ETB', ic: IC.wallet }]
+      .concat(S2.pockets.map(p => ({ id: p.id, name: p.name, sub: (p.kind === 'target' ? 'Target Saving' : 'Individual Saving') + ' · ' + fmt(SV.balanceOf(p)) + ' ETB', ic: IC[p.kind] })));
+    $('destList').innerHTML = opts.map(o => `<button class="mp-row${o.id === sel ? ' on' : ''}" data-id="${o.id}"><span class="p-ic">${o.ic}</span><span><b>${o.name}</b><small>${o.sub}</small></span><i class="box">${IC.check}</i></button>`).join('');
+    $('destList').querySelectorAll('.mp-row').forEach(b => b.onclick = () => { closeSheets(); pick(b.dataset.id, opts.find(o => o.id === b.dataset.id).name); });
+    openSheet('destSheet');
+  }
+  const S = SV.load(), a = (S.deposits || []).find(x => x.id === new URLSearchParams(location.search).get('id')) || (S.deposits || [])[0];
+  // A deposit that has matured in the meantime goes the normal way
+  if (SV.fdStatus(a) !== 'active') location.replace('Fixed Deposit - Account.html?id=' + a.id);
+  const intr = SV.accrued(a), mat = SV.maturityOf(a);
+  let dest = 'wallet', destName = 'M-PESA Wallet';
+  $('alert').innerHTML = `Your deposit matures on <b>${SV.dateStr(mat)}</b>, ${SV.daysToMaturity(a)} days from now. Withdrawing now returns your principal only.`;
+  $('rows').innerHTML = [['Deposit', a.name], ['Principal returned', fmt(a.principal) + ' ETB'], ['Accrued interest', '<b class="lost">-' + fmt(intr) + ' ETB · lost</b>'], ['Maturity date', SV.dateStr(mat)], ['Status', 'Active → Closed']]
+    .map(([k, v]) => `<div class="row"><span>${k}</span><b>${v}</b></div>`).join('');
+  $('rows').querySelectorAll('b b').forEach(b => b.parentElement.replaceWith(b));
+  $('cTxt').innerHTML = `I understand that I will lose <b>${fmt(intr)} ETB</b> in interest by withdrawing before the maturity date.`;
+  $('dIc').innerHTML = IC.wallet;
+  $('agree').onchange = () => { $('consent').classList.toggle('on', $('agree').checked); $('go').disabled = !$('agree').checked; };
+  function pickDest() { destRows(dest, (id, name) => { dest = id; destName = name; $('dName').textContent = name; const p = S.pockets.find(x => x.id === id); $('dIc').innerHTML = p ? IC[p.kind] : IC.wallet; }); }
+  function withdraw() { toPin({ kind: 'sav-fd-early', title: 'Early withdraw ' + a.name, id: a.id, amount: a.principal, lost: Math.round(intr * 100) / 100, dest, destName }); }
+  function keep() { location.href = 'Fixed Deposit - Account.html?id=' + a.id + '&cancel=1'; }
+</script>
+<!-- Export to Figma button (shared exporter) -->
+<script src="figma-export.js"></script>
+<script src="test-scenarios-data.js"></script>
+<script src="test-scenarios.js"></script>
+</body>
+</html>

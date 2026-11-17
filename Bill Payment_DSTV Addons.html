@@ -5,8 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>DSTV</title>
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@400;500;600&display=swap');
-  @import url('https://api.fontshare.com/v2/css?f[]=switzer@400,500,600,700&display=swap');
+  @import url('https://api.fontshare.com/v2/css?f[]=switzer@400,500,600,700,800&display=swap');
 
   :root {
     --Primary: #FE353D;
@@ -16,7 +15,7 @@
     --Field-Border: #EFEFF1;
   }
   * { margin: 0; padding: 0; box-sizing: border-box; }
-  body { font-family: 'Inter', sans-serif; background: transparent; display: flex; justify-content: center; align-items: center; min-height: 100vh; padding: 20px; }
+  body { font-family: Switzer, sans-serif; background: transparent; display: flex; justify-content: center; align-items: center; min-height: 100vh; padding: 20px; }
   .phone-frame { width: 360px; height: 780px; background: var(--Background); border-radius: 30px; overflow: hidden; position: relative; box-shadow: 0 20px 60px rgba(0,0,0,0.15); display: flex; flex-direction: column; }
   .app-content { height: 100%; display: flex; flex-direction: column; }
 
@@ -29,7 +28,7 @@
   .back-btn { width: 36px; height: 36px; border-radius: 50%; background: transparent; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: background 0.2s; }
   .back-btn:hover { background: rgba(0,0,0,0.05); }
   .back-btn svg { width: 22px; height: 22px; stroke: var(--On-Surface); stroke-width: 1.8px; fill: none; }
-  .header-title { color: var(--On-Surface); font-family: 'Switzer', sans-serif; font-size: 17px; font-weight: 500; letter-spacing: 0.3px; flex: 1; text-align: center; }
+  .header-title { color: var(--On-Surface); font-family: Switzer, sans-serif; font-size: 17px; font-weight: 500; letter-spacing: 0.3px; flex: 1; text-align: center; }
 
   .scroll { flex: 1; overflow-y: auto; padding: 4px 16px 16px; display: flex; flex-direction: column; gap: 14px; }
   .scroll::-webkit-scrollbar { width: 0; }
@@ -37,18 +36,18 @@
   .current-card { background: #FFF; border-radius: 16px; padding: 16px; box-shadow: 0 2px 8px rgba(0,0,0,0.04); display: flex; flex-direction: column; gap: 14px; flex-shrink: 0; }
   .current-head { display: flex; align-items: center; gap: 10px; }
   .current-head svg { width: 20px; height: 20px; stroke: var(--On-Surface); stroke-width: 1.7; fill: none; }
-  .current-head span { font-family: 'Switzer', sans-serif; font-size: 15px; font-weight: 500; color: var(--On-Surface); }
+  .current-head span { font-family: Switzer, sans-serif; font-size: 15px; font-weight: 500; color: var(--On-Surface); }
   .current-item { position: relative; border: 1px solid var(--Field-Border); border-radius: 14px; padding: 14px; display: flex; align-items: center; gap: 14px; }
-  .active-badge { position: absolute; top: -11px; right: 14px; background: #EDEDF0; color: var(--On-Surface-Low); font-family: 'Switzer', sans-serif; font-size: 9.5px; font-weight: 700; letter-spacing: 0.6px; padding: 4px 9px; border-radius: 6px; }
+  .active-badge { position: absolute; top: -11px; right: 14px; background: #EDEDF0; color: var(--On-Surface-Low); font-family: Switzer, sans-serif; font-size: 9.5px; font-weight: 700; letter-spacing: 0.6px; padding: 4px 9px; border-radius: 6px; }
   .logo { width: 40px; height: 40px; border-radius: 50%; background: #FFF; display: flex; align-items: center; justify-content: center; overflow: hidden; flex-shrink: 0; box-shadow: 0 2px 6px rgba(0,0,0,0.14); }
   .logo img { width: 100%; height: 100%; object-fit: contain; }
   .item-info { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px; }
-  .item-name { font-family: 'Switzer', sans-serif; font-size: 15px; font-weight: 700; color: var(--On-Surface); }
-  .item-sub { font-family: 'Switzer', sans-serif; font-size: 12.5px; color: var(--On-Surface-Low); }
+  .item-name { font-family: Switzer, sans-serif; font-size: 15px; font-weight: 700; color: var(--On-Surface); }
+  .item-sub { font-family: Switzer, sans-serif; font-size: 12.5px; color: var(--On-Surface-Low); }
 
-  .section-title { font-family: 'Switzer', sans-serif; font-size: 14px; font-weight: 500; color: var(--On-Surface); padding: 0 2px; }
+  .section-title { font-family: Switzer, sans-serif; font-size: 14px; font-weight: 500; color: var(--On-Surface); padding: 0 2px; }
   .periods { display: flex; flex-wrap: wrap; gap: 8px; }
-  .pill { height: 36px; padding: 0 13px; border: none; border-radius: 999px; background: #ADADB5; color: #FFF; font-family: 'Switzer', sans-serif; font-size: 12.5px; font-weight: 600; white-space: nowrap; cursor: pointer; display: flex; align-items: center; gap: 6px; transition: background 0.18s, transform 0.12s; }
+  .pill { height: 36px; padding: 0 13px; border: none; border-radius: 999px; background: #ADADB5; color: #FFF; font-family: Switzer, sans-serif; font-size: 12.5px; font-weight: 600; white-space: nowrap; cursor: pointer; display: flex; align-items: center; gap: 6px; transition: background 0.18s, transform 0.12s; }
   .pill:hover { background: #9B9BA4; }
   .pill:active { transform: scale(0.97); }
   .pill.selected { background: var(--Primary); }
@@ -60,14 +59,14 @@
   .option-row { background: #FFF; border: 1.5px solid transparent; border-radius: 14px; padding: 14px; display: flex; align-items: center; gap: 14px; cursor: pointer; box-shadow: 0 2px 8px rgba(0,0,0,0.04); transition: border-color 0.2s, box-shadow 0.2s, transform 0.15s; }
   .option-row:hover { box-shadow: 0 6px 18px rgba(0,0,0,0.08); transform: translateY(-1px); }
   .option-row.selected { border-color: var(--Primary); }
-  .option-action { font-family: 'Switzer', sans-serif; font-size: 13px; font-weight: 700; color: var(--Primary); flex-shrink: 0; }
+  .option-action { font-family: Switzer, sans-serif; font-size: 13px; font-weight: 700; color: var(--Primary); flex-shrink: 0; }
   .option-row.selected .option-action { display: none; }
   .option-check { display: none; width: 24px; height: 24px; border-radius: 50%; border: 1.8px solid var(--Primary); align-items: center; justify-content: center; flex-shrink: 0; }
   .option-check svg { width: 13px; height: 13px; stroke: var(--Primary); stroke-width: 3; fill: none; }
   .option-row.selected .option-check { display: flex; }
 
   .bottom-bar { flex-shrink: 0; padding: 10px 16px 18px; background: var(--Background); }
-  .confirm-btn { width: 100%; height: 52px; border-radius: 14px; border: none; background: #E0E0E0; color: var(--On-Surface-Low); font-family: 'Poppins', sans-serif; font-size: 15px; font-weight: 500; cursor: not-allowed; transition: all 0.2s; }
+  .confirm-btn { width: 100%; height: 52px; border-radius: 14px; border: none; background: #E0E0E0; color: var(--On-Surface-Low); font-family: Switzer, sans-serif; font-size: 15px; font-weight: 500; cursor: not-allowed; transition: all 0.2s; }
   .confirm-btn.active { background: var(--Primary); color: #FFF; cursor: pointer; box-shadow: 0 4px 16px rgba(254,53,61,0.25); }
   .confirm-btn.active:hover { background: #E5303A; box-shadow: 0 6px 20px rgba(254,53,61,0.35); transform: translateY(-1px); }
   .confirm-btn.active:active { transform: scale(0.98) translateY(0); }

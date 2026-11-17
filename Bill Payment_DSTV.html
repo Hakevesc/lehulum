@@ -5,8 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>DSTV</title>
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@400;500;600&display=swap');
-  @import url('https://api.fontshare.com/v2/css?f[]=switzer@400,500,600,700&display=swap');
+  @import url('https://api.fontshare.com/v2/css?f[]=switzer@400,500,600,700,800&display=swap');
 
   :root {
     --Primary: #FE353D;
@@ -16,7 +15,7 @@
     --Field-Border: #EFEFF1;
   }
   * { margin: 0; padding: 0; box-sizing: border-box; }
-  body { font-family: 'Inter', sans-serif; background: transparent; display: flex; justify-content: center; align-items: center; min-height: 100vh; padding: 20px; }
+  body { font-family: Switzer, sans-serif; background: transparent; display: flex; justify-content: center; align-items: center; min-height: 100vh; padding: 20px; }
   .phone-frame { width: 360px; height: 780px; background: var(--Background); border-radius: 30px; overflow: hidden; position: relative; box-shadow: 0 20px 60px rgba(0,0,0,0.15); display: flex; flex-direction: column; }
   .app-content { height: 100%; display: flex; flex-direction: column; }
 
@@ -29,7 +28,7 @@
   .back-btn { width: 36px; height: 36px; border-radius: 50%; background: transparent; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: background 0.2s; }
   .back-btn:hover { background: rgba(0,0,0,0.05); }
   .back-btn svg { width: 22px; height: 22px; stroke: var(--On-Surface); stroke-width: 1.8px; fill: none; }
-  .header-title { color: var(--On-Surface); font-family: 'Switzer', sans-serif; font-size: 17px; font-weight: 500; letter-spacing: 0.3px; flex: 1; text-align: center; }
+  .header-title { color: var(--On-Surface); font-family: Switzer, sans-serif; font-size: 17px; font-weight: 500; letter-spacing: 0.3px; flex: 1; text-align: center; }
 
   .scroll { flex: 1; overflow-y: auto; padding: 4px 16px 18px; display: flex; flex-direction: column; gap: 16px; }
   .scroll::-webkit-scrollbar { width: 0; }
@@ -40,21 +39,21 @@
   .account-head .logo { width: 44px; height: 44px; border-radius: 50%; background: #FFF; display: flex; align-items: center; justify-content: center; overflow: hidden; flex-shrink: 0; box-shadow: 0 2px 6px rgba(0,0,0,0.14); }
   .account-head .logo img { width: 100%; height: 100%; object-fit: contain; }
   .account-head .info { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 3px; }
-  .account-head .nm { font-family: 'Switzer', sans-serif; font-size: 15px; font-weight: 700; color: var(--On-Surface); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-  .account-head .sub { font-family: 'Switzer', sans-serif; font-size: 12.5px; color: var(--On-Surface-Low); }
+  .account-head .nm { font-family: Switzer, sans-serif; font-size: 15px; font-weight: 700; color: var(--On-Surface); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .account-head .sub { font-family: Switzer, sans-serif; font-size: 12.5px; color: var(--On-Surface-Low); }
 
   .package-row { border-top: 1px solid #F0F0F3; padding-top: 14px; display: flex; align-items: center; gap: 12px; }
   .package-row .ico { width: 40px; height: 40px; border-radius: 12px; background: #F1F1F4; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
   .package-row .ico svg { width: 20px; height: 20px; stroke: var(--On-Surface-Low); stroke-width: 1.7; fill: none; }
   .package-row .info { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px; }
-  .package-row .label { font-family: 'Switzer', sans-serif; font-size: 11.5px; color: var(--On-Surface-Low); }
-  .package-row .value { font-family: 'Switzer', sans-serif; font-size: 15px; font-weight: 700; color: var(--On-Surface); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-  .view-link { display: flex; align-items: center; gap: 4px; font-family: 'Switzer', sans-serif; font-size: 13px; font-weight: 600; color: var(--Primary); cursor: pointer; flex-shrink: 0; transition: opacity 0.2s; }
+  .package-row .label { font-family: Switzer, sans-serif; font-size: 11.5px; color: var(--On-Surface-Low); }
+  .package-row .value { font-family: Switzer, sans-serif; font-size: 15px; font-weight: 700; color: var(--On-Surface); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .view-link { display: flex; align-items: center; gap: 4px; font-family: Switzer, sans-serif; font-size: 13px; font-weight: 600; color: var(--Primary); cursor: pointer; flex-shrink: 0; transition: opacity 0.2s; }
   .view-link:hover { opacity: 0.7; }
   .view-link svg { width: 15px; height: 15px; stroke: var(--Primary); stroke-width: 2.4; fill: none; }
 
   /* ── Services ── */
-  .section-title { font-family: 'Switzer', sans-serif; font-size: 14px; font-weight: 500; color: var(--On-Surface); padding: 0 2px; }
+  .section-title { font-family: Switzer, sans-serif; font-size: 14px; font-weight: 500; color: var(--On-Surface); padding: 0 2px; }
   .services-card { background: #FFF; border-radius: 16px; padding: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.04); display: flex; flex-direction: column; gap: 10px; flex-shrink: 0; }
   .service-row { border: 1px solid var(--Field-Border); border-radius: 14px; padding: 14px 12px; display: flex; align-items: center; gap: 14px; cursor: pointer; transition: border-color 0.2s, box-shadow 0.2s, transform 0.15s; }
   .service-row:hover { border-color: var(--Primary); box-shadow: 0 6px 18px rgba(0,0,0,0.07); transform: translateY(-1px); }
@@ -62,8 +61,8 @@
   .service-row .ico { width: 40px; height: 40px; border-radius: 12px; background: #FFE9EA; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
   .service-row .ico svg { width: 20px; height: 20px; stroke: var(--Primary); stroke-width: 1.8; fill: none; }
   .service-row .info { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px; }
-  .service-row .nm { font-family: 'Switzer', sans-serif; font-size: 15px; font-weight: 700; color: var(--On-Surface); }
-  .service-row .desc { font-family: 'Switzer', sans-serif; font-size: 12px; color: var(--On-Surface-Low); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .service-row .nm { font-family: Switzer, sans-serif; font-size: 15px; font-weight: 700; color: var(--On-Surface); }
+  .service-row .desc { font-family: Switzer, sans-serif; font-size: 12px; color: var(--On-Surface-Low); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
   .chev { width: 18px; height: 18px; stroke: var(--Primary); stroke-width: 2.4; fill: none; flex-shrink: 0; }
 </style>
 <link rel="stylesheet" href="styles/device.css">

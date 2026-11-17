@@ -5,8 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Withdraw at ATM</title>
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@400;500;600&display=swap');
-  @import url('https://api.fontshare.com/v2/css?f[]=switzer@400,500,600,700&display=swap');
+  @import url('https://api.fontshare.com/v2/css?f[]=switzer@400,500,600,700,800&display=swap');
 
   /* Withdraw at ATM (cardless): enter the amount, confirm in the sheet, then
      the PIN. The voucher code arrives by SMS and works at any partner ATM. */
@@ -20,7 +19,7 @@
     --Field: #F7F7F9;
   }
   * { margin: 0; padding: 0; box-sizing: border-box; }
-  body { font-family: 'Inter', sans-serif; background: transparent; display: flex; justify-content: center; align-items: center; min-height: 100vh; padding: 20px; }
+  body { font-family: Switzer, sans-serif; background: transparent; display: flex; justify-content: center; align-items: center; min-height: 100vh; padding: 20px; }
   button, input { font-family: inherit; }
   .phone-frame { width: 360px; height: 780px; background: var(--Background); border-radius: 30px; overflow: hidden; position: relative; box-shadow: 0 20px 60px rgba(0,0,0,0.15); display: flex; flex-direction: column; }
   .app-content { height: 100%; display: flex; flex-direction: column; }
@@ -34,7 +33,7 @@
   .back-btn { width: 36px; height: 36px; border-radius: 50%; background: transparent; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: background 0.2s; }
   .back-btn:hover { background: rgba(0,0,0,0.05); }
   .back-btn svg { width: 22px; height: 22px; stroke: var(--On-Surface); stroke-width: 1.8px; fill: none; }
-  .header-title { color: var(--On-Surface); font-family: 'Switzer', sans-serif; font-size: 17px; font-weight: 500; letter-spacing: 0.3px; flex: 1; text-align: center; }
+  .header-title { color: var(--On-Surface); font-family: Switzer, sans-serif; font-size: 17px; font-weight: 500; letter-spacing: 0.3px; flex: 1; text-align: center; }
 
   .body { flex: 1; min-height: 0; display: flex; flex-direction: column; padding: 0 16px 16px; gap: 12px; }
 
@@ -42,18 +41,18 @@
   .service { display: flex; align-items: center; gap: 12px; background: #FFF; border-radius: 16px; padding: 14px; box-shadow: 0 4px 14px rgba(15,23,42,0.05); flex-shrink: 0; }
   .s-ic { width: 42px; height: 42px; border-radius: 12px; background: var(--Primary-Light); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
   .s-ic svg, .cf-ic svg { width: 22px; height: 22px; stroke: var(--Primary); stroke-width: 1.9; fill: none; }
-  .service b { font-family: 'Switzer', sans-serif; font-size: 15px; font-weight: 700; color: var(--On-Surface); }
+  .service b { font-family: Switzer, sans-serif; font-size: 15px; font-weight: 700; color: var(--On-Surface); }
 
   .card { background: #FFF; border-radius: 16px; padding: 16px; box-shadow: 0 4px 14px rgba(15,23,42,0.05); flex-shrink: 0; }
-  .field-label { display: block; font-family: 'Switzer', sans-serif; font-size: 15px; font-weight: 500; color: var(--On-Surface); margin-bottom: 10px; }
+  .field-label { display: block; font-family: Switzer, sans-serif; font-size: 15px; font-weight: 500; color: var(--On-Surface); margin-bottom: 10px; }
   .field { height: 54px; background: var(--Field); border: 1.5px solid var(--Border); border-radius: 12px; padding: 0 14px; display: flex; align-items: center; gap: 8px; transition: border-color 0.2s, box-shadow 0.2s, background 0.2s; }
   .field:focus-within { border-color: var(--Primary); background: #FFF; box-shadow: 0 4px 12px rgba(254,53,61,0.12); }
-  .field input { flex: 1; min-width: 0; border: none; outline: none; background: transparent; font-family: 'Switzer', sans-serif; font-size: 16px; font-weight: 700; letter-spacing: 0.4px; color: var(--On-Surface); }
+  .field input { flex: 1; min-width: 0; border: none; outline: none; background: transparent; font-family: Switzer, sans-serif; font-size: 16px; font-weight: 700; letter-spacing: 0.4px; color: var(--On-Surface); }
   .field input::placeholder { color: var(--On-Surface-Low); font-size: 15px; font-weight: 400; letter-spacing: 0; }
-  .balance { margin-top: 8px; font-family: 'Switzer', sans-serif; font-size: 12px; color: var(--On-Surface-Low); }
+  .balance { margin-top: 8px; font-family: Switzer, sans-serif; font-size: 12px; color: var(--On-Surface-Low); }
   .balance b { font-weight: 600; color: var(--On-Surface); }
 
-  .btn-primary { width: 100%; height: 52px; border: none; border-radius: 14px; background: var(--Primary); color: #FFF; font-family: 'Poppins', sans-serif; font-size: 15px; font-weight: 500; cursor: pointer; box-shadow: 0 4px 16px rgba(254,53,61,0.25); transition: background 0.2s, transform 0.12s; margin-top: auto; flex-shrink: 0; }
+  .btn-primary { width: 100%; height: 52px; border: none; border-radius: 14px; background: var(--Primary); color: #FFF; font-family: Switzer, sans-serif; font-size: 15px; font-weight: 500; cursor: pointer; box-shadow: 0 4px 16px rgba(254,53,61,0.25); transition: background 0.2s, transform 0.12s; margin-top: auto; flex-shrink: 0; }
   .btn-primary:active { transform: scale(0.98); }
   .btn-primary:disabled { background: #E0E0E0; color: var(--On-Surface-Low); box-shadow: none; cursor: not-allowed; }
 
@@ -65,17 +64,17 @@
   .sheet-grip { width: 40px; height: 4px; border-radius: 2px; background: #D8D8DE; margin: 0 auto 18px; }
   .cf-merchant { position: relative; display: flex; align-items: center; gap: 12px; border: 1px solid #E6E6EA; border-radius: 16px; padding: 14px; }
   .cf-ic { width: 42px; height: 42px; border-radius: 50%; background: var(--Primary-Light); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
-  .cf-merchant b { display: block; font-family: 'Switzer', sans-serif; font-size: 15px; font-weight: 700; color: var(--On-Surface); }
-  .cf-merchant small { font-family: 'Switzer', sans-serif; font-size: 12.5px; color: var(--On-Surface-Low); }
-  .cf-badge { position: absolute; top: -11px; right: 14px; padding: 4px 10px; border-radius: 999px; background: #EDEDF0; color: #3A3A42; font-family: 'Switzer', sans-serif; font-size: 10px; font-weight: 700; letter-spacing: 0.5px; }
+  .cf-merchant b { display: block; font-family: Switzer, sans-serif; font-size: 15px; font-weight: 700; color: var(--On-Surface); }
+  .cf-merchant small { font-family: Switzer, sans-serif; font-size: 12.5px; color: var(--On-Surface-Low); }
+  .cf-badge { position: absolute; top: -11px; right: 14px; padding: 4px 10px; border-radius: 999px; background: #EDEDF0; color: #3A3A42; font-family: Switzer, sans-serif; font-size: 10px; font-weight: 700; letter-spacing: 0.5px; }
   .cf-rows { margin: 10px 0 20px; }
-  .cf-row { display: flex; align-items: center; justify-content: space-between; padding: 15px 0; border-bottom: 1px solid #EFEFF2; font-family: 'Switzer', sans-serif; }
+  .cf-row { display: flex; align-items: center; justify-content: space-between; padding: 15px 0; border-bottom: 1px solid #EFEFF2; font-family: Switzer, sans-serif; }
   .cf-row:last-child { border-bottom: none; }
   .cf-row span { font-size: 12.5px; color: #55555E; }
   .cf-row b { font-size: 12.5px; font-weight: 700; color: var(--On-Surface); }
   .cf-row b.red { font-size: 14px; color: var(--Primary); }
   .cf-actions { display: flex; gap: 12px; }
-  .cf-btn { flex: 1; height: 52px; border-radius: 14px; background: #FFF; font-family: 'Poppins', sans-serif; font-size: 15px; font-weight: 500; cursor: pointer; }
+  .cf-btn { flex: 1; height: 52px; border-radius: 14px; background: #FFF; font-family: Switzer, sans-serif; font-size: 15px; font-weight: 500; cursor: pointer; }
   .cf-btn:active { transform: scale(0.98); }
   .cf-btn.cancel { border: 1.5px solid #E0E0E4; color: #55555E; }
   .cf-btn.confirm { border: 1.5px solid var(--Primary); color: var(--Primary); }

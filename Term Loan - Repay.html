@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Repay Loan</title>
+<style>
+  @import url('https://api.fontshare.com/v2/css?f[]=switzer@400,500,600,700,800&display=swap');
+
+  /* Repay a loan (Repayment → Repay, or Loan Details): the loan, the next
+     instalment, then Choose Repayment — type a partial amount, or tap Repay In
+     Full to put the full amount in the box — Continue → confirm sheet → PIN →
+     receipt. Repay In Full is the instalment, or with ?mode=all (Loan Details'
+     Repay All) the whole loan. ?id=<loan>. */
+  :root {
+    --Primary: #FE353D;
+    --Primary-Light: #FFF1F2;
+    --On-Surface: #1C1C21;
+    --On-Surface-Low: #7C7C87;
+    --Background: #F5F5F5;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: Switzer, sans-serif; background: transparent; display: flex; justify-content: center; align-items: center; min-height: 100vh; padding: 20px; }
+  button, input { font-family: inherit; }
+  .phone-frame { width: 360px; height: 780px; background: var(--Background); border-radius: 30px; overflow: hidden; position: relative; box-shadow: 0 20px 60px rgba(0,0,0,0.15); display: flex; flex-direction: column; }
+  .app-content { flex: 1 1 auto; min-height: 0; display: flex; flex-direction: column; }
+
+  .status-bar { display: flex; justify-content: space-between; align-items: center; padding: 14px 24px 8px; background: var(--Background); flex-shrink: 0; }
+  .status-bar .time { font-size: 14px; font-weight: 600; color: var(--On-Surface); }
+  .status-icons { display: flex; align-items: center; gap: 6px; }
+  .status-icons svg { width: 18px; height: 18px; }
+  .header-nav { display: flex; align-items: center; padding: 8px 16px 12px; flex-shrink: 0; }
+  .icon-btn { width: 36px; height: 36px; border-radius: 50%; background: transparent; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+  .icon-btn:hover { background: rgba(0,0,0,0.05); }
+  .icon-btn svg { width: 22px; height: 22px; stroke: var(--On-Surface); stroke-width: 1.8px; fill: none; stroke-linecap: round; stroke-linejoin: round; }
+  .header-title { flex: 1; margin-right: 36px; text-align: center; color: var(--On-Surface); font-size: 17px; font-weight: 500; letter-spacing: 0.3px; }
+
+  .scroll { flex: 1; min-height: 0; overflow-y: auto; padding: 4px 16px 12px; display: flex; flex-direction: column; gap: 12px; scrollbar-width: none; }
+  .scroll::-webkit-scrollbar { width: 0; }
+  .scroll > * { flex-shrink: 0; }
+  .card { background: #FFF; border-radius: 22px; box-shadow: 0 4px 16px rgba(15,23,42,0.06); }
+
+  /* Loan */
+  .loan { display: flex; align-items: center; gap: 12px; padding: 14px 16px; }
+  .loan .logo { width: 44px; height: 44px; border-radius: 12px; border: 1px solid #EFEFF2; background: #FFF; display: flex; align-items: center; justify-content: center; overflow: hidden; flex-shrink: 0; }
+  .loan .logo img { width: 30px; height: 30px; object-fit: contain; }
+  .loan .info { flex: 1; min-width: 0; }
+  .loan b { display: block; font-size: 15px; font-weight: 700; color: var(--On-Surface); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .loan small { display: block; margin-top: 2px; font-size: 12.5px; color: var(--On-Surface-Low); }
+  .loan .tag { padding: 4px 10px; border-radius: 999px; background: #EDEDF0; color: #55555E; font-size: 11px; font-weight: 600; white-space: nowrap; }
+
+  /* Instalments */
+  .inst { padding: 16px; }
+  .inst-top { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+  .inst-top b { font-size: 15px; font-weight: 700; color: var(--On-Surface); }
+  .inst-body { display: flex; justify-content: space-between; gap: 12px; margin-top: 16px; }
+  .inst-body small { display: block; font-size: 12px; color: var(--On-Surface-Low); }
+  .inst-body b { display: block; margin-top: 4px; font-size: 16px; font-weight: 700; color: var(--On-Surface); white-space: nowrap; }
+  .inst-body .r { text-align: right; }
+  .inst-body .late, #instDue { color: var(--Primary); }
+  .inst-note { margin-top: 12px; padding-top: 10px; border-top: 1px solid #F1F1F4; font-size: 11.5px; color: #55555E; }
+  .inst-note b { color: #C2610C; }
+
+  /* Choose Repayment */
+  .sec { margin: 6px 2px -4px; font-size: 15px; font-weight: 600; color: var(--On-Surface); }
+  .choose { display: flex; flex-direction: column; gap: 12px; padding: 14px; }
+  .lbl { font-size: 15px; font-weight: 500; color: var(--On-Surface); }
+  .amount { display: flex; align-items: center; gap: 8px; height: 54px; padding: 0 16px; border: 1px solid #E6E6EA; border-radius: 14px; background: #F3F3F5; }
+  .amount:focus-within { border-color: var(--Primary); background: #FFF; }
+  .amount input { flex: 1; min-width: 0; border: none; outline: none; background: transparent; font-size: 17px; font-weight: 600; color: var(--On-Surface); }
+  .amount input::placeholder { font-weight: 400; color: #A0A0AA; }
+  .amount small { font-size: 13px; font-weight: 600; color: var(--On-Surface-Low); }
+  .bal { margin-top: -4px; font-size: 12px; color: var(--On-Surface-Low); }
+  .bal b { color: var(--On-Surface); font-weight: 600; }
+  .bal.err { color: var(--Primary); font-weight: 600; }
+  /* Repay In Full: tap to put the full amount in the box */
+  .opt { width: 100%; display: flex; align-items: center; gap: 14px; padding: 14px; border: 1px solid #ECECF0; border-radius: 18px; background: #FFF; cursor: pointer; text-align: left; }
+  .opt.on { border-color: var(--Primary); background: var(--Primary-Light); }
+  .opt > i { width: 40px; height: 40px; border-radius: 12px; background: var(--Primary-Light); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+  .opt.on > i { background: #FFF; }
+  .opt > i svg { width: 21px; height: 21px; stroke: var(--Primary); stroke-width: 1.9; fill: none; stroke-linecap: round; stroke-linejoin: round; }
+  .opt > span { flex: 1; min-width: 0; }
+  .opt b { display: block; font-size: 15px; font-weight: 700; color: var(--On-Surface); }
+  .opt small { display: block; margin-top: 3px; font-size: 12px; color: #55555E; }
+
+  .bottom-bar { padding: 10px 16px 18px; flex-shrink: 0; }
+  .btn-primary { width: 100%; height: 52px; border: none; border-radius: 14px; background: var(--Primary); color: #FFF; font-size: 15px; font-weight: 500; cursor: pointer; box-shadow: 0 4px 16px rgba(254,53,61,0.25); }
+  .btn-primary:disabled { background: #E0E0E0; color: #7C7C87; box-shadow: none; cursor: default; }
+
+  /* Confirm sheet (before the PIN): the loan, what it cost, what is paid now */
+  .scrim { position: absolute; inset: 0; z-index: 100; background: rgba(0,0,0,0.42); opacity: 0; visibility: hidden; transition: opacity 0.22s, visibility 0.22s; }
+  .scrim.show { opacity: 1; visibility: visible; }
+  .sheet { position: absolute; left: 0; right: 0; bottom: 0; z-index: 101; background: #FFF; border-radius: 28px 28px 0 0; padding: 10px 16px 22px; transform: translateY(100%); transition: transform 0.28s cubic-bezier(.2,.8,.2,1); }
+  .sheet.show { transform: translateY(0); }
+  .sheet-grip { width: 40px; height: 4px; border-radius: 2px; background: #D8D8DE; margin: 0 auto 18px; }
+  .cf-head { position: relative; display: flex; align-items: center; gap: 12px; padding: 14px; border: 1px solid #E6E6EA; border-radius: 16px; }
+  .cf-head .logo { width: 42px; height: 42px; border-radius: 12px; border: 1px solid #EFEFF2; display: flex; align-items: center; justify-content: center; overflow: hidden; flex-shrink: 0; }
+  .cf-head .logo img { width: 30px; height: 30px; object-fit: contain; }
+  .cf-head b { display: block; font-size: 15px; font-weight: 700; color: var(--On-Surface); }
+  .cf-head small { display: block; margin-top: 2px; font-size: 12.5px; color: var(--On-Surface-Low); }
+  .cf-badge { position: absolute; top: -11px; right: 14px; padding: 4px 10px; border-radius: 999px; background: #EDEDF0; color: #3A3A42; font-size: 10px; font-weight: 700; letter-spacing: 0.5px; }
+  .cf-rows { margin: 8px 0 18px; }
+  .cf-row { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 12px 0; border-bottom: 1px solid #EFEFF2; }
+  .cf-row:last-child { border-bottom: none; }
+  .cf-row span { font-size: 12.5px; color: #55555E; }
+  .cf-row b { font-size: 12.5px; font-weight: 700; color: var(--On-Surface); white-space: nowrap; }
+  .cf-row.total b { font-size: 15px; color: var(--Primary); }
+  .cf-actions { display: flex; gap: 12px; }
+  .cf-btn { flex: 1; height: 52px; border-radius: 14px; background: #FFF; font-size: 15px; font-weight: 500; cursor: pointer; }
+  .cf-btn.cancel { border: 1.5px solid #E0E0E4; color: #55555E; }
+  .cf-btn.confirm { border: 1.5px solid var(--Primary); color: var(--Primary); }
+</style>
+<link rel="stylesheet" href="styles/device.css">
+</head>
+<body>
+<div class="phone-frame">
+  <div class="status-bar">
+    <span class="time">10:00</span>
+    <div class="status-icons">
+      <svg data-name="icon-wifi" viewBox="0 0 24 24" fill="none"><path d="M1 9l2 2c4.97-4.97 13.03-4.97 18 0l2-2C16.93 2.93 7.08 2.93 1 9z" fill="#1C1C21"/><path d="M5 13l2 2c2.76-2.76 7.24-2.76 10 0l2-2C15.14 9.14 8.87 9.14 5 13z" fill="#1C1C21"/><path d="M9 17l2 2c1.1-1.1 2.9-1.1 4 0l2-2c-2.21-2.21-5.79-2.21-8 0z" fill="#1C1C21"/></svg>
+      <svg data-name="icon-signal" viewBox="0 0 24 24" fill="none"><rect x="2" y="6" width="4" height="12" rx="1" fill="#1C1C21"/><rect x="8" y="4" width="4" height="14" rx="1" fill="#1C1C21"/><rect x="14" y="2" width="4" height="16" rx="1" fill="#1C1C21"/><rect x="20" y="0" width="4" height="18" rx="1" fill="#1C1C21" opacity="0.3"/></svg>
+      <svg data-name="icon-battery" viewBox="0 0 28 14" fill="none"><rect x="0" y="1" width="22" height="12" rx="2.5" stroke="#1C1C21" stroke-width="1.5"/><rect x="2" y="3" width="16" height="8" rx="1" fill="#1C1C21"/><rect x="24" y="4" width="2" height="6" rx="1" fill="#1C1C21"/></svg>
+    </div>
+  </div>
+
+  <div class="app-content">
+    <div class="header-nav">
+      <button class="icon-btn" onclick="history.length > 1 ? history.back() : location.href='Active Accounts.html?tab=credit'" aria-label="Back"><svg data-name="icon-arrow-left" viewBox="0 0 24 24"><path d="M19 12H5M12 19l-7-7 7-7"/></svg></button>
+      <span class="header-title">Repay Loan</span>
+    </div>
+
+    <div class="scroll">
+      <div class="card loan">
+        <span class="logo"><img id="logo" src="" alt=""></span>
+        <span class="info"><b id="product"></b><small id="lender"></small></span>
+        <span class="tag" id="tag"></span>
+      </div>
+
+      <div class="card inst">
+        <div class="inst-top"><b id="instT"></b></div>
+        <div class="inst-body">
+          <div><small>Repayment amount</small><b id="instAmt"></b></div>
+          <div class="r"><small id="dueIn"></small><b id="instDue"></b></div>
+        </div>
+        <p class="inst-note" id="instNote" style="display:none"></p>
+      </div>
+
+      <p class="sec">Choose Repayment</p>
+      <div class="card choose">
+        <label class="lbl" for="amt">Set Partial Amount</label>
+        <div class="amount"><input id="amt" inputmode="decimal" placeholder="e.g 1,200.00" oninput="paint()"><small>ETB</small></div>
+        <p class="bal" id="bal"></p>
+        <button class="opt" id="fullOpt" type="button" onclick="fillFull()">
+          <i><svg viewBox="0 0 24 24"><path d="M2 12.5l4.5 4.5L15 8.5"/><path d="M11 15l2 2 9-9"/></svg></i>
+          <span><b>Repay In Full</b><small id="fullSub"></small></span>
+        </button>
+      </div>
+    </div>
+
+    <div class="bottom-bar"><button class="btn-primary" id="go" onclick="next()" disabled>Continue</button></div>
+  </div>
+
+  <!-- Confirm before the PIN -->
+  <div class="scrim" id="scrim" onclick="closeConfirm()"></div>
+  <div class="sheet" id="sheet" role="dialog" aria-label="Confirm repayment">
+    <div class="sheet-grip"></div>
+    <div class="cf-head"><span class="cf-badge">REPAYMENT</span><span class="logo"><img id="cfLogo" src="" alt=""></span><span><b id="cfBank"></b><small id="cfProduct"></small></span></div>
+    <div class="cf-rows" id="cfRows"></div>
+    <div class="cf-actions"><button class="cf-btn cancel" type="button" onclick="closeConfirm()">Cancel</button><button class="cf-btn confirm" type="button" onclick="confirmPay()">Confirm</button></div>
+  </div>
+</div>
+
+<script src="term-loan-store.js"></script>
+<script>
+  const $ = id => document.getElementById(id);
+  const fmt = TL.fmt;
+  const BALANCE = 12580;   // M-PESA main balance (same as Home and Loan Details)
+  const q = new URLSearchParams(location.search), L = TL.load();
+  const loan = L.find(l => l.id === q.get('id')) || TL.active(L)[0];
+  const offer = TL.OFFERS.find(o => o.id === loan.offer) || {};
+  const unpaid = loan.instalments.filter(i => !i.paid), nx = unpaid[0];
+  if (!nx) location.replace('Term Loan - Details.html?id=' + loan.id);
+  const total = TL.remainingOf(loan), nxLeft = nx ? TL.instLeft(nx) : 0;
+  // Repay In Full clears the next instalment — or, from Loan Details' Repay All, the whole loan
+  const wholeLoan = q.get('mode') === 'all' && unpaid.length > 1;
+  const full = wholeLoan ? total : nxLeft;   // what Repay In Full pays
+  const num = () => parseFloat(($('amt').value || '').replace(/,/g, '')) || 0;
+
+  $('logo').src = loan.logo;
+  $('product').textContent = loan.product;
+  $('lender').textContent = loan.lender;
+  $('tag').textContent = offer.productLabel || 'Loan';
+  $('fullSub').textContent = fmt(full) + ' ETB' + (wholeLoan ? ' · the whole loan' : '');
+
+  // The next instalment — payments always go to the earliest one first
+  function showInst() {
+    const i = nx, paid = TL.instPaid(i), d = TL.dueIn(i.due);
+    $('instT').textContent = `Instalment ${i.n} of ${loan.instalments.length}`;
+    $('instAmt').textContent = fmt(TL.instLeft(i)) + ' ETB';
+    $('dueIn').textContent = d === 'Overdue' ? 'Overdue' : d === 'Today' ? 'Due today' : 'Due in ' + d;
+    $('dueIn').classList.toggle('late', d === 'Overdue');
+    $('instDue').textContent = TL.dateStr(i.due);
+    const note = paid > 0 ? `Partly paid: <b>${fmt(paid)} of ${fmt(i.amount)} ETB</b>` : '';
+    $('instNote').innerHTML = note; $('instNote').style.display = note ? '' : 'none';
+  }
+
+  // Repay In Full puts the full amount in the box; any smaller amount is a part payment
+  function fillFull() { $('amt').value = fmt(full); paint(); }
+  const isFull = a => Math.abs(a - full) < 0.005;
+  function paint() {
+    const a = num(), fullOn = a > 0 && isFull(a);
+    const tooBig = a > 0 && !fullOn && a >= nxLeft - 0.004, low = a > BALANCE;
+    $('fullOpt').classList.toggle('on', fullOn);
+    $('bal').className = 'bal' + (tooBig || low ? ' err' : '');
+    $('bal').innerHTML = tooBig ? `Up to ${fmt(nxLeft - 0.01)} ETB as a part payment — or tap Repay In Full`
+      : low ? `Not enough balance. Balance: <b>${fmt(BALANCE)} ETB</b>` : `Balance: <b>${fmt(BALANCE)} ETB</b>`;
+    $('go').disabled = !(a > 0) || tooBig || low;
+  }
+  function next() {
+    const a = Math.round(num() * 100) / 100;
+    if (isFull(a)) toPin(full, wholeLoan || unpaid.length === 1 ? 'all' : nx.n, false);
+    else toPin(a, nx.n, true);
+  }
+
+  // Confirm sheet: the loan and its fees, the instalment, and what is paid now
+  let pending = null;
+  function toPin(amount, which, part) {
+    pending = { amount, which, part };
+    const days = loan.days, access = offer.access || 0, daily = offer.daily || 0, idx = loan.instalments.indexOf(nx) + 1;
+    const pct = v => (v * 100).toFixed(2).replace(/\.?0+$/, '');
+    const rows = [['From', 'Main account'], ['Loan Amount', fmt(loan.amount) + ' ETB'],
+      [`Access Fee (${pct(access)}%)`, fmt(loan.amount * access) + ' ETB'],
+      [`Maintenance Fee (${pct(daily)}%)`, fmt(loan.amount * daily * days) + ' ETB']];
+    if (which === 'all' && unpaid.length > 1) rows.push(['Left on the loan', fmt(total) + ' ETB'], ['Final instalment due', TL.dateStr(unpaid[unpaid.length - 1].due)]);
+    else {
+      rows.push([`Instalment ${idx} of ${loan.instalments.length}`, fmt(nxLeft) + ' ETB']);
+      if (part) rows.push(['Left on instalment after', fmt(nxLeft - amount) + ' ETB']);
+      rows.push(['Repay By', TL.dateStr(nx.due)]);
+    }
+    rows.push([part ? 'Paying Now' : 'Total Repayment', fmt(amount) + ' ETB']);
+    $('cfLogo').src = loan.logo; $('cfBank').textContent = loan.lender; $('cfProduct').textContent = loan.product;
+    $('cfRows').innerHTML = rows.map(([k, v], i) => `<div class="cf-row${i === rows.length - 1 ? ' total' : ''}"><span>${k}:</span><b>${v}</b></div>`).join('');
+    $('scrim').classList.add('show'); $('sheet').classList.add('show');
+  }
+  function closeConfirm() { $('scrim').classList.remove('show'); $('sheet').classList.remove('show'); }
+  document.addEventListener('keydown', e => { if (e.key === 'Escape') closeConfirm(); });
+  function confirmPay() {
+    const { amount, which, part } = pending;
+    sessionStorage.setItem('termLoanData', JSON.stringify({
+      kind: 'repay', loanId: loan.id, which, lender: loan.lender, logo: loan.logo, product: loan.product,
+      amount, part, instLeftAfter: which === 'all' ? 0 : Math.max(0, nxLeft - amount),
+      remaining: total - amount, back: location.pathname.split('/').pop() + location.search
+    }));
+    location.href = 'Term Loan - Enter PIN.html';
+  }
+  if (nx) { showInst(); if (wholeLoan) fillFull(); paint(); }
+</script>
+<script src="components/keyboard.js"></script>
+<!-- Export to Figma button (shared exporter) -->
+<script src="figma-export.js"></script>
+<script src="test-scenarios-data.js"></script>
+<script src="test-scenarios.js"></script>
+</body>
+</html>

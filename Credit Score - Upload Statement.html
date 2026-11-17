@@ -5,12 +5,11 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Update Credit Score</title>
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@400;500;600&display=swap');
   @import url('https://api.fontshare.com/v2/css?f[]=switzer@400,500,600,700,800&display=swap');
 
   /* Update credit score (from Credit Score → Update score): pick the bank and
-     statement period, upload the PDF statement (with its password if it has
-     one), agree, Submit → analysing → new score → back to Credit Score. */
+     statement period, upload the PDF statement, agree, Update My Score → processing → Done; the score updates a little later
+     with the new score. */
   :root {
     --Primary: #FE353D;
     --Primary-Light: #FFF1F2;
@@ -20,7 +19,7 @@
     --Line: #E6E6EA;
   }
   * { margin: 0; padding: 0; box-sizing: border-box; }
-  body { font-family: 'Switzer', 'Inter', sans-serif; background: transparent; display: flex; justify-content: center; align-items: center; min-height: 100vh; padding: 20px; }
+  body { font-family: Switzer, sans-serif; background: transparent; display: flex; justify-content: center; align-items: center; min-height: 100vh; padding: 20px; }
   button, input { font-family: inherit; }
   .phone-frame { width: 360px; height: 780px; background: var(--Background); border-radius: 30px; overflow: hidden; position: relative; box-shadow: 0 20px 60px rgba(0,0,0,0.15); display: flex; flex-direction: column; }
   .app-content { height: 100%; display: flex; flex-direction: column; }
@@ -98,7 +97,8 @@
   .safe svg { width: 16px; height: 16px; stroke: #16A34A; stroke-width: 2; fill: none; stroke-linecap: round; stroke-linejoin: round; flex-shrink: 0; }
 
   .bottom-bar { flex-shrink: 0; padding: 10px 16px 18px; background: var(--Background); }
-  .btn-primary { width: 100%; height: 52px; border: none; border-radius: 14px; background: var(--Primary); color: #FFF; font-family: 'Poppins', sans-serif; font-size: 15px; font-weight: 500; cursor: pointer; box-shadow: 0 4px 16px rgba(254,53,61,0.25); }
+  .bottom-bar .consent { margin: 2px 2px 12px; }
+  .btn-primary { width: 100%; height: 52px; border: none; border-radius: 14px; background: var(--Primary); color: #FFF; font-family: Switzer, sans-serif; font-size: 15px; font-weight: 500; cursor: pointer; box-shadow: 0 4px 16px rgba(254,53,61,0.25); }
   .btn-primary:disabled { background: #E0E0E0; color: var(--On-Surface-Low); box-shadow: none; cursor: default; }
 
   /* Bank sheet */
@@ -108,43 +108,29 @@
   .sheet.show { transform: translateY(0); }
   .sheet-grip { width: 40px; height: 4px; border-radius: 2px; background: #D8D8DE; margin: 0 auto 14px; }
   .sheet-title { font-size: 16px; font-weight: 700; color: var(--On-Surface); margin: 0 4px 8px; }
-  .bank-list { max-height: 440px; overflow-y: auto; scrollbar-width: none; }
+  .search { display: flex; align-items: center; gap: 10px; height: 46px; margin: 4px 0 14px; padding: 0 14px; border: 1px solid #E6E6EA; border-radius: 14px; background: #F7F7F9; }
+  .search svg { width: 18px; height: 18px; stroke: #8A8A94; stroke-width: 2; fill: none; stroke-linecap: round; flex-shrink: 0; }
+  .search input { flex: 1; min-width: 0; border: none; outline: none; background: transparent; font-family: inherit; font-size: 14px; color: var(--On-Surface); }
+  .bank-list { max-height: 430px; overflow-y: auto; scrollbar-width: none; display: grid; grid-template-columns: 1fr 1fr; gap: 10px; padding: 2px 2px 6px; }
   .bank-list::-webkit-scrollbar { display: none; }
-  .bank { width: 100%; display: flex; align-items: center; gap: 12px; padding: 11px 4px; border: none; background: none; text-align: left; cursor: pointer; }
-  .bank + .bank { border-top: 1px solid #ECECEF; }
-  .bank .logo { width: 38px; height: 38px; border-radius: 11px; border: 1px solid #EFEFF2; background: #FFF; display: flex; align-items: center; justify-content: center; overflow: hidden; flex-shrink: 0; }
-  .bank .logo img { width: 30px; height: 30px; object-fit: contain; }
-  .bank b { flex: 1; font-size: 14px; font-weight: 600; color: var(--On-Surface); }
-  .bank .radio { width: 20px; height: 20px; border-radius: 50%; border: 2px solid #D0D0D6; flex-shrink: 0; display: flex; align-items: center; justify-content: center; }
-  .bank.on .radio { border-color: var(--Primary); }
-  .bank.on .radio::after { content: ''; width: 10px; height: 10px; border-radius: 50%; background: var(--Primary); }
+  .bank { min-width: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; height: 92px; padding: 10px 8px; border: 1.5px solid #ECECF0; border-radius: 16px; background: #FFF; cursor: pointer; box-shadow: 0 2px 8px rgba(15,23,42,0.05); font-family: inherit; }
+  .bank.on { border-color: var(--Primary); background: #FFF8F8; }
+  .bank img { width: 34px; height: 34px; object-fit: contain; }
+  .bank b { font-size: 11.5px; font-weight: 600; line-height: 1.25; text-align: center; color: var(--On-Surface); }
+  .no-bank { grid-column: 1 / -1; padding: 18px 0; text-align: center; font-size: 13px; color: var(--On-Surface-Low); }
 
-  /* Analysing → result */
-  .stage { position: absolute; inset: 0; z-index: 120; background: var(--Background); display: none; flex-direction: column; align-items: center; justify-content: center; padding: 30px 28px; text-align: center; }
+  /* Processing: the review runs in the background; the score updates later */
+  .stage { position: absolute; inset: 0; z-index: 120; background: var(--Background); display: none; flex-direction: column; padding: 0 16px 18px; text-align: center; }
   .stage.show { display: flex; }
-  .scan { position: relative; width: 96px; height: 116px; border-radius: 14px; background: #FFF; box-shadow: 0 8px 24px rgba(15,23,42,0.08); overflow: hidden; padding: 18px 16px; display: flex; flex-direction: column; gap: 9px; }
-  .scan i { display: block; height: 6px; border-radius: 3px; background: #ECECF0; }
-  .scan i:nth-child(2) { width: 70%; } .scan i:nth-child(4) { width: 85%; } .scan i:nth-child(6) { width: 55%; }
-  .scan::after { content: ''; position: absolute; left: 0; right: 0; top: 0; height: 26px; background: linear-gradient(180deg, rgba(254,53,61,0) 0%, rgba(254,53,61,0.28) 100%); border-bottom: 2px solid var(--Primary); animation: scan 1.4s ease-in-out infinite alternate; }
+  .stage .mid { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+  .doc { position: relative; width: 96px; height: 116px; border-radius: 14px; background: #FFF; box-shadow: 0 8px 24px rgba(15,23,42,0.08); overflow: hidden; padding: 18px 16px; display: flex; flex-direction: column; gap: 9px; }
+  .doc i { display: block; height: 6px; border-radius: 3px; background: #ECECF0; }
+  .doc i:nth-child(2) { width: 70%; } .doc i:nth-child(4) { width: 85%; } .doc i:nth-child(6) { width: 55%; }
+  .doc::after { content: ''; position: absolute; left: 0; right: 0; top: 0; height: 26px; background: linear-gradient(180deg, rgba(254,53,61,0) 0%, rgba(254,53,61,0.28) 100%); border-bottom: 2px solid var(--Primary); animation: scan 1.4s ease-in-out infinite alternate; }
   @keyframes scan { from { transform: translateY(-26px); } to { transform: translateY(116px); } }
-  .stage h2 { margin-top: 22px; font-size: 19px; font-weight: 700; color: var(--On-Surface); }
-  .stage > p { margin-top: 6px; font-size: 13px; color: var(--On-Surface-Low); }
-  .checks { margin-top: 20px; width: 100%; max-width: 250px; display: flex; flex-direction: column; gap: 12px; text-align: left; }
-  .checks div { display: flex; align-items: center; gap: 10px; font-size: 13px; color: #A0A0AA; }
-  .checks span { width: 22px; height: 22px; border-radius: 50%; border: 2px solid #D8D8DE; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
-  .checks span svg { width: 12px; height: 12px; stroke: #FFF; stroke-width: 3.2; fill: none; stroke-linecap: round; stroke-linejoin: round; opacity: 0; }
-  .checks div.on { color: var(--On-Surface); font-weight: 600; }
-  .checks div.on span { background: #16A34A; border-color: #16A34A; }
-  .checks div.on span svg { opacity: 1; }
+  .stage h2 { margin-top: 24px; font-size: 19px; font-weight: 700; line-height: 1.3; color: var(--On-Surface); }
+  .stage .mid p { margin-top: 8px; font-size: 13px; color: var(--On-Surface-Low); }
 
-  .result .badge-up { width: 84px; height: 84px; border-radius: 50%; background: #E8F9EE; display: flex; align-items: center; justify-content: center; }
-  .result .badge-up svg { width: 40px; height: 40px; stroke: #16A34A; stroke-width: 2.2; fill: none; stroke-linecap: round; stroke-linejoin: round; }
-  .score-row { margin-top: 18px; display: flex; align-items: center; gap: 14px; padding: 14px 20px; border-radius: 18px; background: #FFF; box-shadow: 0 4px 16px rgba(15,23,42,0.06); }
-  .score-row .old { font-size: 18px; font-weight: 600; color: #A0A0AA; text-decoration: line-through; }
-  .score-row .arrow { width: 20px; height: 20px; stroke: #A0A0AA; stroke-width: 2.2; fill: none; stroke-linecap: round; stroke-linejoin: round; }
-  .score-row .new { font-size: 30px; font-weight: 800; color: var(--On-Surface); }
-  .score-row .delta { padding: 4px 9px; border-radius: 999px; background: #E8F9EE; color: #167C2A; font-size: 12px; font-weight: 700; }
-  .result .btn-primary { position: absolute; left: 16px; right: 16px; bottom: 18px; width: auto; }
 </style>
 <link rel="stylesheet" href="styles/device.css">
 </head>
@@ -183,7 +169,7 @@
       </div>
 
       <div>
-        <p class="field-label">Statement period</p>
+        <p class="field-label">Statement Period</p>
         <div class="chips" id="period">
           <button class="chip" type="button" data-v="3">3 months</button>
           <button class="chip on" type="button" data-v="6">6 months</button>
@@ -192,7 +178,7 @@
       </div>
 
       <div>
-        <p class="field-label">Statement file</p>
+        <p class="field-label">Statement File</p>
         <button class="drop" id="drop" type="button" onclick="$('fileIn').click()">
           <span class="ic"><svg viewBox="0 0 24 24"><path d="M12 16V4M7 9l5-5 5 5"/><path d="M4 16v3a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-3"/></svg></span>
           <b>Tap to upload statement</b>
@@ -206,50 +192,36 @@
         </div>
       </div>
 
-      <div>
-        <p class="field-label">PDF password <span style="font-weight:400;color:var(--On-Surface-Low)">(optional)</span></p>
-        <input class="input" id="pwd" type="password" placeholder="Only if your statement is locked" autocomplete="off">
-        <p class="hint">Many banks lock statements with your account or phone number.</p>
-      </div>
+    </div>
 
+    <div class="bottom-bar">
       <div class="consent" id="consent" onclick="this.classList.toggle('on'); check()">
         <span class="box"><svg viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg></span>
         <p>I allow M-PESA and its partner banks to read this statement to work out my credit score and loan limit.</p>
       </div>
-      <div class="safe"><svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></svg>Your statement is encrypted and only used for your score.</div>
+      <button class="btn-primary" id="submit" disabled onclick="submit()">Update My Score</button>
     </div>
-
-    <div class="bottom-bar"><button class="btn-primary" id="submit" disabled onclick="submit()">Update My Score</button></div>
   </div>
 
   <!-- Bank list -->
   <div class="scrim" id="scrim" onclick="closeBanks()"></div>
   <div class="sheet" id="sheet" role="dialog" aria-label="Select bank">
     <div class="sheet-grip"></div>
-    <p class="sheet-title">Select your bank</p>
+    <p class="sheet-title" style="text-align:center">Select Bank</p>
+    <label class="search"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg><input id="bankQ" placeholder="Search by bank name" oninput="renderBanks()"></label>
     <div class="bank-list" id="bankList"></div>
   </div>
 
-  <!-- Analysing -->
+  <!-- Processing -->
   <div class="stage" id="stage">
-    <div class="scan"><i></i><i></i><i></i><i></i><i></i><i></i></div>
-    <h2>Analysing your statement</h2>
-    <p>This takes a few seconds</p>
-    <div class="checks" id="checks">
-      <div><span><svg viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg></span>Reading transactions</div>
-      <div><span><svg viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg></span>Checking income &amp; spending</div>
-      <div><span><svg viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg></span>Updating your score</div>
+    <div class="mid">
+      <div class="doc"><i></i><i></i><i></i><i></i><i></i><i></i></div>
+      <h2>We are Processing<br>Your Request</h2>
+      <p>You will receive confirmation by SMS</p>
     </div>
+    <button class="btn-primary" type="button" onclick="location.href='Credit & Saving.html'">Done</button>
   </div>
 
-  <!-- Result -->
-  <div class="stage result" id="result">
-    <span class="badge-up"><svg viewBox="0 0 24 24"><path d="M3 17l6-6 4 4 8-8"/><path d="M14 7h7v7"/></svg></span>
-    <h2>Your score went up!</h2>
-    <p id="resMsg"></p>
-    <div class="score-row"><span class="old" id="oldScore"></span><svg class="arrow" viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg><span class="new" id="newScore"></span><span class="delta" id="delta"></span></div>
-    <button class="btn-primary" onclick="location.href='Credit Score.html?updated=1'">View My Score</button>
-  </div>
 </div>
 
 <script src="term-loan-store.js"></script>
@@ -264,9 +236,14 @@
   let bank = null, file = null, uploading = false;
 
   // Bank
+  function renderBanks() {
+    const q = ($('bankQ').value || '').trim().toLowerCase();
+    const list = BANKS.map((b, k) => [b, k]).filter(([[n]]) => n.toLowerCase().includes(q));
+    $('bankList').innerHTML = list.length ? list.map(([[n, l], k]) => `<button class="bank${bank === k ? ' on' : ''}" type="button" onclick="pickBank(${k})">
+      <img src="${BANK_DIR}${l}" alt=""><b>${n}</b></button>`).join('') : '<p class="no-bank">No bank matches your search</p>';
+  }
   function openBanks() {
-    $('bankList').innerHTML = BANKS.map(([n, l], k) => `<button class="bank${bank === k ? ' on' : ''}" type="button" onclick="pickBank(${k})">
-      <span class="logo"><img src="${BANK_DIR}${l}" alt=""></span><b>${n}</b><span class="radio"></span></button>`).join('');
+    $('bankQ').value = ''; renderBanks();
     $('scrim').classList.add('show'); $('sheet').classList.add('show');
   }
   function closeBanks() { $('scrim').classList.remove('show'); $('sheet').classList.remove('show'); }
@@ -311,18 +288,11 @@
 
   function check() { $('submit').disabled = !(bank !== null && file && !uploading && $('consent').classList.contains('on')); }
 
-  // Submit → analysing (ticks) → result
+  // Submit → processing: the bank reviews the statement in the background and the
+  // new score arrives a little later (term-loan-store.js queueScore / watchScore)
   function submit() {
+    TL.queueScore(30);
     $('stage').classList.add('show');
-    const rows = [...$('checks').children];
-    rows.forEach((r, k) => setTimeout(() => r.classList.add('on'), 900 * (k + 1)));
-    setTimeout(() => {
-      const old = TL.SCORE.value, now = Math.min(900, old + 15);
-      TL.setScore(now);
-      $('oldScore').textContent = old; $('newScore').textContent = now; $('delta').textContent = '+' + (now - old);
-      $('resMsg').textContent = `Thanks to your ${BANKS[bank][0]} statement`;
-      $('stage').classList.remove('show'); $('result').classList.add('show');
-    }, 900 * rows.length + 600);
   }
   document.addEventListener('keydown', e => { if (e.key === 'Escape') closeBanks(); });
 </script>

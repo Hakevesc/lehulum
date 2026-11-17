@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Fixed Deposit — M-PESA</title>
+<link rel="stylesheet" href="styles/design-tokens.css">
+<link rel="stylesheet" href="styles/base.css">
+<link rel="stylesheet" href="styles/component-status-bar.css">
+<link rel="stylesheet" href="styles/component-sc-card.css">
+<link rel="stylesheet" href="styles/savings.css">
+<style>
+  @import url('https://api.fontshare.com/v2/css?f[]=switzer@400,500,600,700,800&display=swap');
+
+  /* Fixed Deposit home (Savings → Fixed Deposit). Total locked card, a banner
+     per matured deposit, My Fixed Deposits, How it works (only when nothing is
+     locked), the closed ones, and New Fixed Deposit. ⋯ → FAQs, Close Deposit. */
+  .partner { display: inline-flex; align-items: center; gap: 6px; margin-top: 12px; padding: 4px 10px 4px 4px; border-radius: 999px; background: #FFF; border: 1px solid #EFEFF2; font-size: 11.5px; font-weight: 600; color: #3A3A44; }
+  .partner img { width: 20px; height: 20px; border-radius: 50%; object-fit: contain; }
+  .mat { display: flex; align-items: center; gap: 12px; padding: 13px 14px; border-radius: 18px; background: #E8F9EE; cursor: pointer; }
+  .mat i { width: 38px; height: 38px; border-radius: 12px; background: #FFF; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+  .mat i svg { width: 20px; height: 20px; stroke: #16A34A; stroke-width: 2; fill: none; stroke-linecap: round; stroke-linejoin: round; }
+  .mat span { flex: 1; min-width: 0; }
+  .mat b { display: block; font-size: 13.5px; font-weight: 700; color: #14532D; }
+  .mat small { display: block; margin-top: 2px; font-size: 12px; color: #166534; }
+  .mat .cv { width: 16px; height: 16px; stroke: #16A34A; stroke-width: 2.2; fill: none; }
+  .how h3 { font-size: 14.5px; font-weight: 700; color: var(--On-Surface); margin-bottom: 4px; }
+  .step { display: flex; gap: 12px; padding: 10px 0; }
+  .step em { width: 26px; height: 26px; border-radius: 50%; background: #FFF1F2; color: var(--Primary); font-style: normal; font-size: 12.5px; font-weight: 700; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+  .step b { display: block; font-size: 13.5px; font-weight: 600; color: var(--On-Surface); }
+  .step small { display: block; margin-top: 2px; font-size: 12px; line-height: 1.45; color: var(--On-Surface-Low); }
+  .pick-row { width: 100%; display: flex; align-items: center; gap: 12px; padding: 12px 4px; border: none; background: none; text-align: left; cursor: pointer; font-family: Switzer, sans-serif; }
+  .pick-row + .pick-row { border-top: 1px solid #F1F1F4; }
+  .pick-row span { flex: 1; min-width: 0; }
+  .pick-row b { display: block; font-size: 14px; font-weight: 600; color: var(--On-Surface); }
+  .pick-row small { display: block; margin-top: 2px; font-size: 12px; color: var(--On-Surface-Low); }
+  .pick-row .cv { width: 16px; height: 16px; stroke: #8A8A94; stroke-width: 2.2; fill: none; }
+</style>
+<link rel="stylesheet" href="styles/device.css">
+</head>
+<body>
+<div class="phone-frame">
+  <div class="status-bar">
+    <span class="time">10:00</span>
+    <div class="status-icons">
+      <svg data-name="icon-wifi" viewBox="0 0 24 24" fill="none"><path d="M1 9l2 2c4.970-4.970 13.030-4.970 18 0l2-2C16.930 2.930 7.080 2.930 1 9z" fill="#1C1C21"/><path d="M5 13l2 2c2.760-2.760 7.240-2.760 10 0l2-2C15.140 9.140 8.870 9.140 5 13z" fill="#1C1C21"/><path d="M9 17l2 2c1.100-1.100 2.900-1.100 4 0l2-2c-2.210-2.210-5.790-2.210-8 0z" fill="#1C1C21"/></svg>
+      <svg data-name="icon-signal" viewBox="0 0 24 24" fill="none"><rect x="2" y="6" width="4" height="12" rx="1" fill="#1C1C21"/><rect x="8" y="4" width="4" height="14" rx="1" fill="#1C1C21"/><rect x="14" y="2" width="4" height="16" rx="1" fill="#1C1C21"/><rect x="20" y="0" width="4" height="18" rx="1" fill="#1C1C21" opacity="0.3"/></svg>
+      <svg data-name="icon-battery" viewBox="0 0 28 14" fill="none"><rect x="0" y="1" width="22" height="12" rx="2.5" stroke="#1C1C21" stroke-width="1.5"/><rect x="2" y="3" width="16" height="8" rx="1" fill="#1C1C21"/><rect x="24" y="4" width="2" height="6" rx="1" fill="#1C1C21"/></svg>
+    </div>
+  </div>
+
+  <div class="app-content">
+    <div class="header-nav">
+      <button class="icon-btn" onclick="location.href='Savings.html'" aria-label="Back"><svg data-name="icon-arrow-left" viewBox="0 0 24 24"><path d="M19 12H5M12 19l-7-7 7-7"/></svg></button>
+      <span class="header-title" id="hTitle">Fixed Deposit</span>
+      <button class="icon-btn" id="menuBtn" onclick="openSheet('menu')" aria-label="Menu"><svg data-name="icon-more" viewBox="0 0 24 24"><circle cx="12" cy="5" r="1.2"/><circle cx="12" cy="12" r="1.2"/><circle cx="12" cy="19" r="1.2"/></svg></button>
+    </div>
+
+    <div class="sc-card">
+      <div class="s-label">Total Locked Savings <button class="eye" id="eyeBtn" title="Show balances"><svg viewBox="0 0 24 24"><path d="M1 12s4-7.5 11-7.5S23 12 23 12s-4 7.5-11 7.5S1 12 1 12z"/><circle cx="12" cy="12" r="3"/></svg></button></div>
+      <div class="s-amount"><span data-mask="" id="tLocked">******</span><small>ETB</small></div>
+      <div class="s-stats">
+        <div class="s-stat"><small>Accrued interest</small><b class="up" id="tInt"></b></div>
+        <div class="s-stat"><span class="split" data-shape="line" data-name="line"></span><small>Active accounts</small><b id="tCount"></b></div>
+      </div>
+      <span class="partner"><img src="assets/banks logo/awass-bank.png" alt="">With Awash Bank · up to 10% a year</span>
+    </div>
+    <div id="banners" class="list"></div>
+    <div class="sec-head"><b>My Fixed Deposits</b><small id="cnt"></small></div>
+    <div class="list" id="list"></div>
+    <div class="card how" id="how">
+      <h3>How it works</h3>
+      <div class="step"><em>1</em><span><b>Choose a period</b><small>Lock for 3, 6, 9 or 12 months. Longer earns more.</small></span></div>
+      <div class="step"><em>2</em><span><b>Deposit and earn daily</b><small>Interest builds up every day at a fixed rate.</small></span></div>
+      <div class="step"><em>3</em><span><b>Collect or roll over</b><small>At maturity, withdraw it all or start a new term. Withdrawing early loses the interest.</small></span></div>
+    </div>
+    <div id="closedWrap" style="display:none"><div class="sec-head" style="margin-bottom:10px"><b>Closed</b></div><div class="list" id="closed"></div></div>
+    <div class="bottom-bar"><button class="btn-primary" onclick="location.href='Fixed Deposit - Plans.html'">New Fixed Deposit</button></div>
+  </div>
+
+  <div class="scrim" id="scrim" onclick="closeSheets()"></div>
+  <div class="sheet" id="menu" role="dialog" aria-label="Fixed deposit menu">
+    <div class="sheet-grip"></div>
+    <button class="menu-item" onclick="location.href='Fixed Deposit - Help.html'"><i><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M9.5 9a2.5 2.5 0 1 1 3.5 2.3c-.6.3-1 .9-1 1.6v.6M12 17h.01"/></svg></i><b>FAQs</b></button>
+    <button class="menu-item" id="closeItem" onclick="pickToClose()"><i><svg viewBox="0 0 24 24"><path d="M18 6 6 18M6 6l12 12"/></svg></i><b>Close Deposit</b></button>
+  </div>
+  <div class="sheet" id="pickSheet" role="dialog" aria-label="Choose a deposit to close">
+    <div class="sheet-grip"></div>
+    <p class="sheet-title">Which deposit do you want to close?</p>
+    <div id="pickList"></div>
+  </div>
+  <div class="toast" id="toast"></div>
+</div>
+
+<script src="savings-store.js"></script>
+<script src="savings-ui.js"></script>
+<script>
+  const $ = id => document.getElementById(id);
+  const fmt = SV.fmt, IC = SVUI.IC;
+  let tt;
+  function toast(m) { const t = $('toast'); if (!t) return; t.textContent = m; t.classList.add('show'); clearTimeout(tt); tt = setTimeout(() => t.classList.remove('show'), 2200); }
+  function openSheet(id) { const s = $('scrim'); if (s) s.classList.add('show'); $(id).classList.add('show'); }
+  function closeSheets() { const s = $('scrim'); if (s) s.classList.remove('show'); document.querySelectorAll('.sheet').forEach(x => x.classList.remove('show')); }
+  document.addEventListener('keydown', e => { if (e.key === 'Escape') closeSheets(); });
+  // Hand an action to the shared PIN screen, which returns to Savings - Done.html
+  function toPin(data) { sessionStorage.setItem('termLoanData', JSON.stringify(Object.assign({ next: 'Savings - Done.html', back: location.pathname.split('/').pop() + location.search }, data))); location.href = 'Term Loan - Enter PIN.html'; }
+
+  // Eye toggle: masks every [data-mask] value until tapped
+  function eyeFor(btnId) {
+    const btn = $(btnId); if (!btn) return; const on = btn.innerHTML;
+    const off = '<svg viewBox="0 0 24 24"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 19.5C5 19.5 1 12 1 12a18.5 18.5 0 0 1 5.06-5.94"/><path d="M9.9 4.74A9.1 9.1 0 0 1 12 4.5c7 0 11 7.5 11 7.5a18.5 18.5 0 0 1-2.16 3.19"/><path d="M14.12 14.12a3 3 0 1 1-4.24-4.24"/><path d="M1 1l22 22"/></svg>';
+    let shown = false;
+    const paint = () => document.querySelectorAll('[data-mask]').forEach(v => v.textContent = shown ? v.dataset.mask : '******');
+    btn.onclick = () => { shown = !shown; paint(); btn.innerHTML = shown ? off : on; };
+    paint();
+  }
+  const S = SV.load(), all = S.deposits || [];
+  const open = all.filter(a => !a.closed), shut = all.filter(a => a.closed);
+  $('tLocked').dataset.mask = fmt(open.reduce((s, a) => s + a.principal, 0));
+  $('tInt').textContent = '+' + fmt(open.reduce((s, a) => s + SV.accrued(a), 0));
+  $('tCount').textContent = open.length;
+  eyeFor('eyeBtn');
+
+  // Matured first, then by nearest maturity
+  const order = open.slice().sort((a, b) => (SV.fdStatus(b) === 'matured') - (SV.fdStatus(a) === 'matured') || new Date(SV.maturityOf(a)) - new Date(SV.maturityOf(b)));
+  $('banners').innerHTML = order.filter(a => SV.fdStatus(a) === 'matured').map(a => `<div class="mat" onclick="location.href='Fixed Deposit - Account.html?id=${a.id}'"><i>${IC.check}</i>
+    <span><b>${a.name} has matured</b><small>${fmt(SV.maturedTotal(a))} ETB is ready to withdraw or roll over</small></span>${IC.cv}</div>`).join('');
+  if (!$('banners').innerHTML) $('banners').style.display = 'none';
+  $('cnt').textContent = open.length ? open.length + ' active' : '';
+  $('list').innerHTML = order.length ? order.map(SVUI.depositCard).join('') : SVUI.empty('fixed');
+  $('how').style.display = open.length ? 'none' : '';
+  if (shut.length) { $('closedWrap').style.display = ''; $('closed').innerHTML = shut.slice().reverse().map(SVUI.depositCard).join(''); }
+  if (!open.length) $('closeItem').style.display = 'none';
+
+  // ⋯ → Close Deposit: one open deposit goes straight to it, several open a picker
+  function pickToClose() {
+    closeSheets();
+    if (open.length === 1) return location.href = `Fixed Deposit - Account.html?id=${open[0].id}&close=1`;
+    $('pickList').innerHTML = order.map(a => `<button class="pick-row" onclick="location.href='Fixed Deposit - Account.html?id=${a.id}&close=1'"><span class="p-ic">${IC.fixed}</span>
+      <span><b>${a.name}</b><small>${fmt(a.principal)} ETB · ${SV.fdStatus(a) === 'matured' ? 'Matured' : SV.daysToMaturity(a) + ' days to maturity'}</small></span>${IC.cv}</button>`).join('');
+    setTimeout(() => openSheet('pickSheet'), 120);
+  }
+</script>
+<!-- Export to Figma button (shared exporter) -->
+<script src="figma-export.js"></script>
+<script src="test-scenarios-data.js"></script>
+<script src="test-scenarios.js"></script>
+</body>
+</html>

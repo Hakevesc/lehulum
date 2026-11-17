@@ -1,0 +1,32 @@
+# Dependencies & lock files
+node_modules/
+pnpm-lock.yaml
+
+# Environment & secrets
+.env
+.env.example
+
+# Git
+.git/
+.gitignore
+
+# Server-side code (Express API, AI builder, etc.) — not needed for static deployment
+api/
+utils/
+components/
+scripts/
+server.js
+
+# Build artifacts & dev tooling
+.next/
+.claude/
+.kilo/
+
+# Figma plugin dev dirs
+figma-css-inspector/
+figma-plugin/
+figma-plugin2/
+figma-to-html/
+html-to-figma/
+Jason-figma-plugin/
+next-smart-ui-designer/

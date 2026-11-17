@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+<link rel="stylesheet" href="https://api.fontshare.com/v2/css?f[]=switzer@400,500,600,700,800&display=swap">
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>M-PESA App</title>
@@ -46,13 +47,13 @@
   .story-slide .pic { position: relative; width: 100%; flex: 1; min-height: 0; max-height: 360px; border-radius: 28px; overflow: hidden; background: #FFF; box-shadow: 0 18px 44px rgba(15,23,42,0.12), 0 2px 8px rgba(15,23,42,0.05); animation: storyIn 0.4s ease; }
   .story-slide .pic img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: center 35%; display: block; }
   .story-slide .txt { text-align: center; color: #1C1C21; margin-top: 34px; animation: storyIn 0.45s ease; }
-  .story-slide h2 { font-family: 'Switzer', 'Inter', sans-serif; font-size: 40px; font-weight: 800; line-height: 1.0; letter-spacing: -1.2px; }
-  .story-slide p { margin: 14px auto 0; max-width: 270px; font-family: 'Switzer', 'Inter', sans-serif; font-size: 16px; line-height: 1.4; color: #8A8A94; }
+  .story-slide h2 { font-family: Switzer, sans-serif; font-size: 40px; font-weight: 800; line-height: 1.0; letter-spacing: -1.2px; }
+  .story-slide p { margin: 14px auto 0; max-width: 270px; font-family: Switzer, sans-serif; font-size: 16px; line-height: 1.4; color: #8A8A94; }
   @keyframes storyIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
   .story-tap { position: absolute; top: 76px; bottom: 110px; border: 0; background: none; z-index: 2; cursor: pointer; }
   .story-tap.prev { left: 0; width: 33%; }
   .story-tap.next { right: 0; width: 67%; }
-  .story-cta { position: absolute; left: 50%; bottom: 36px; transform: translateX(-50%); height: 56px; padding: 0 26px 0 30px; border: 0; border-radius: 28px; background: #FE353D; color: #FFFFFF; font-family: 'Poppins', 'Inter', sans-serif; font-size: 16px; font-weight: 600; z-index: 4; cursor: pointer; display: flex; align-items: center; gap: 8px; white-space: nowrap; box-shadow: 0 10px 24px rgba(254,53,61,0.32); }
+  .story-cta { position: absolute; left: 50%; bottom: 36px; transform: translateX(-50%); height: 56px; padding: 0 26px 0 30px; border: 0; border-radius: 28px; background: #FE353D; color: #FFFFFF; font-family: Switzer, sans-serif; font-size: 16px; font-weight: 600; z-index: 4; cursor: pointer; display: flex; align-items: center; gap: 8px; white-space: nowrap; box-shadow: 0 10px 24px rgba(254,53,61,0.32); }
   .story-cta svg { width: 18px; height: 18px; stroke: currentColor; stroke-width: 2.4; fill: none; stroke-linecap: round; stroke-linejoin: round; }
   .story-cta:active { transform: translateX(-50%) scale(0.97); }
 </style>
@@ -220,6 +221,12 @@
     // added, keeping the same height, so the home page doesn't change shape.
     actions: `
       <div class="actions">
+        <div class="primary-action" onclick="window.location.href='Send Money Menu.html'" style="cursor:pointer">
+          <div class="icon-container">
+            <img src="assets/Transfer Money.svg" alt="Transfer Money" style="width:40px;height:40px;object-fit:contain;">
+          </div>
+          <span class="label">Transfer<br>Money</span>
+        </div>
         <div class="primary-action" onclick="window.location.href='Pay Merchant.html'" style="cursor:pointer">
           <div class="icon-container">
             <img src="assets/Merchant Payemnt.svg" alt="Merchant Payment" style="width:40px;height:40px;object-fit:contain;">
@@ -237,12 +244,6 @@
             <img src="assets/Credit Saving.svg" alt="Credit & Saving" style="width:40px;height:40px;object-fit:contain;">
           </div>
           <span class="label">Credit &<br>Saving</span>
-        </div>
-        <div class="primary-action" onclick="window.location.href='Send Money Menu.html'" style="cursor:pointer">
-          <div class="icon-container">
-            <img src="assets/Transfer Money.svg" alt="Transfer Money" style="width:40px;height:40px;object-fit:contain;">
-          </div>
-          <span class="label">Transfer<br>Money</span>
         </div>
         <div class="primary-action" onclick="window.location.href='Airtime_Buy.html'" style="cursor:pointer">
           <div class="icon-container">

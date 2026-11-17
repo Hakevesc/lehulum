@@ -8,6 +8,20 @@
   const SCORE = { value: 720, label: 'Good' };
   try { const v = +sessionStorage.getItem('creditScore'); if (v) { SCORE.value = v; SCORE.label = bandOf(v); } } catch (e) {}
   function setScore(v) { SCORE.value = v; SCORE.label = bandOf(v); try { sessionStorage.setItem('creditScore', v); } catch (e) {} }
+  // A statement upload is reviewed in the background: the new score lands a little later
+  // (sessionStorage 'scorePending' = { points, at }). watchScore(cb) applies it when due.
+  const SCORE_DELAY = 15000;   // "a few minutes" in the prototype
+  function queueScore(points) { try { sessionStorage.setItem('scorePending', JSON.stringify({ points, at: Date.now() + SCORE_DELAY })); } catch (e) {} }
+  function scorePending() { try { return JSON.parse(sessionStorage.getItem('scorePending') || 'null'); } catch (e) { return null; } }
+  function watchScore(cb) {
+    const p = scorePending(); if (!p) return;
+    setTimeout(() => {
+      if (!scorePending()) return;   // another page already applied it
+      const old = SCORE.value; setScore(Math.min(900, old + p.points));
+      try { sessionStorage.removeItem('scorePending'); } catch (e) {}
+      cb(SCORE.value - old);
+    }, Math.max(0, p.at - Date.now()));
+  }
   const BANKS = 'assets/banks logo/';
 
   // Loan offers by lender and product. Fees follow the Tariffs & Fees loan rows.
@@ -33,16 +47,27 @@
   const dueIn = s => { const d = Math.ceil((new Date(s) - Date.now()) / DAY); return d > 1 ? d + ' days' : d === 1 ? '1 day' : d === 0 ? 'Today' : 'Overdue'; };
 
   // Sample loans: amounts chosen so amount + access fee + daily fee × days = total
-  const SEED_VERSION = 2;
+  const SEED_VERSION = 6;
   function seed() {
     return [
       { id: 'L1001', offer: 'boa60', lender: 'Bank of Abyssinia', logo: BANKS + 'abyssinya-bank.png', product: '60-Day Salary Advance',
         amount: 4424.78, total: 5000, days: 60, disbursed: iso(-10), instalments: [
           { n: 1, amount: 2500, due: iso(20), paid: false },
           { n: 2, amount: 2500, due: iso(50), paid: false }] },
+      // Two instalments, nothing paid yet: 4,000 + 4% access (160) + 0.15% × 30 days (180) = 4,340
+      { id: 'L1004', offer: 'awash30c', lender: 'Awash Bank', logo: BANKS + 'awass-bank.png', product: '30-Day Term Loan',
+        amount: 4000, total: 4340, days: 30, disbursed: iso(-10), instalments: [
+          { n: 1, amount: 2170, due: iso(5), paid: false },
+          { n: 2, amount: 2170, due: iso(20), paid: false }] },
       { id: 'L1002', offer: 'awash30', lender: 'Awash Bank', logo: BANKS + 'awass-bank.png', product: '30-Day Salary Advance',
-        amount: 6451.61, total: 7000, days: 30, disbursed: iso(-10), instalments: [
-          { n: 1, amount: 7000, due: iso(20), paid: false }] }
+        amount: 6451.61, total: 7000, days: 30, disbursed: iso(-33), instalments: [
+          { n: 1, amount: 7000, due: iso(-3), paid: false }] },   // overdue
+      // Partly repaid: instalment 1 paid, instalment 2 part-paid (paidAmt), 3 to come
+      { id: 'L1003', offer: 'dashen-bnpl', lender: 'Dashen Bank', logo: BANKS + 'dashen-bank.png', product: 'Buy Now, Pay Later',
+        amount: 4128.44, total: 4500, days: 60, disbursed: iso(-35), instalments: [
+          { n: 1, amount: 1500, due: iso(-15), paid: true, paidAmt: 1500 },
+          { n: 2, amount: 1500, due: iso(5), paid: false, paidAmt: 600 },
+          { n: 3, amount: 1500, due: iso(25), paid: false }] }
     ];
   }
   function load() {
@@ -54,7 +79,10 @@
     const s = seed(); save(s); return s;
   }
   function save(list) { try { sessionStorage.setItem('termLoans', JSON.stringify(list)); sessionStorage.setItem('termLoansV', SEED_VERSION); } catch (e) {} }
-  const paidOf = l => l.instalments.filter(i => i.paid).reduce((a, i) => a + i.amount, 0);
+  // An instalment can be part-paid: paidAmt holds what has gone in so far
+  const instPaid = i => i.paid ? i.amount : (i.paidAmt || 0);
+  const instLeft = i => Math.max(0, Math.round((i.amount - instPaid(i)) * 100) / 100);
+  const paidOf = l => l.instalments.reduce((a, i) => a + instPaid(i), 0);
   const remainingOf = l => l.total - paidOf(l);
   const nextDue = l => l.instalments.find(i => !i.paid);
   const active = list => list.filter(l => remainingOf(l) > 0.004);
@@ -95,6 +123,27 @@
   }
   function errifSave(e) { try { sessionStorage.setItem('errif', JSON.stringify(e)); } catch (x) {} }
 
-  window.TL = { LIMIT, SCORE, setScore, OFFERS, ERRIF_FEES, ERRIF_LEVELS, errifLevel, errifLoad, errifSave, fmt, dateStr, dueIn, load, save, paidOf, remainingOf, nextDue, active, outstanding, quote,
-    offer: id => OFFERS.find(o => o.id === id) };
+  // Every movement on term loans and Errif, newest first: { name, sub, amt (+ in / − out), when, link, ref }
+  function transactions() {
+    const at = (iso, h, m) => { const d = new Date(iso); d.setHours(h, m, 0, 0); return d; };
+    const ref = (p, s) => p + String(Math.abs(s.split('').reduce((a, c) => a * 31 + c.charCodeAt(0) | 0, 7))).slice(0, 8);
+    const TX = [];
+    load().forEach(l => {
+      const sub = 'Term Loan · ' + l.lender, link = `Term Loan - Details.html?id=${l.id}`;
+      TX.push({ name: 'Term Loan Disbursed', sub, amt: l.amount, when: at(l.disbursed, 13, 23), link, ref: ref('TL', l.id + 'd') });
+      l.instalments.forEach(i => {
+        const got = instPaid(i); if (!got) return;
+        const when = new Date(Math.min(new Date(i.due), Date.now() - DAY));   // paid on or before its due date
+        TX.push({ name: i.paid ? 'Term Loan Repayment' : 'Term Loan Part Payment', sub, amt: -got, when: at(when, 9, 41), link, ref: ref('TR', l.id + i.n) });
+      });
+    });
+    errifLoad().history.forEach((h, k) => {
+      TX.push({ errif: true, name: h.kind === 'use' ? 'Errif Disbursed' : 'Errif Repayment', sub: 'Over Draft · ' + h.what, amt: h.kind === 'use' ? h.amount : -h.amount,
+        when: at(h.at, 11 + k, 5 + k * 7), link: 'Overdraft.html', ref: ref('EF', h.at + k) });
+    });
+    return TX.sort((a, b) => b.when - a.when);
+  }
+
+  window.TL = { LIMIT, SCORE, setScore, queueScore, scorePending, watchScore, OFFERS, ERRIF_FEES, ERRIF_LEVELS, errifLevel, errifLoad, errifSave, fmt, dateStr, dueIn, load, save, instPaid, instLeft, paidOf, remainingOf, nextDue, active, outstanding, quote,
+    transactions, offer: id => OFFERS.find(o => o.id === id) };
 })();

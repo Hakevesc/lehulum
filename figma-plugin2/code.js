@@ -177,24 +177,27 @@ var loadedFonts = {};
 // Compact style names map to several real Figma style names. Figma's bundled
 // Inter exposes "Semi Bold"/"Extra Bold" (with a space), not "SemiBold", so
 // loading must try the spaced variants and degrade gracefully toward Regular.
-function styleCandidates(style) {
+// Switzer style names differ between installs (Fontshare: "Semibold",
+// Google-style: "SemiBold" / "Semi Bold") — try each spelling, then Regular.
+var FONT_FAMILY = 'Switzer';
+function switzerStyles(style) {
   var map = {
-    'ExtraBold': ['Extra Bold', 'ExtraBold', 'Bold'],
+    'ExtraBold': ['ExtraBold', 'Extrabold', 'Extra Bold', 'Bold'],
     'Bold':      ['Bold'],
-    'SemiBold':  ['Semi Bold', 'SemiBold', 'Bold', 'Medium'],
+    'SemiBold':  ['SemiBold', 'Semibold', 'Semi Bold', 'Bold', 'Medium'],
     'Medium':    ['Medium', 'Regular'],
-    'Light':     ['Light', 'Regular'],
     'Regular':   ['Regular']
   };
-  return map[style] || [style, 'Regular'];
+  return (map[style] || [style]).concat(['Regular']);
 }
+function styleCandidates(style) { return switzerStyles(style); }
 
 // Resolve to a font that is GUARANTEED loaded. Returns the actual { family,
 // style } that loaded (never a boolean) so callers assign exactly what's ready
 // — eliminating the "set unloaded font" crash. Tries the requested family, then
 // Inter, then a universal Regular fallback, across each style variant.
 function ensureFont(family, style) {
-  var families = (family && family !== 'Inter') ? [family, 'Inter'] : ['Inter'];
+  var families = [FONT_FAMILY];   // Switzer only
   var styles = styleCandidates(style);
   var candidates = [];
   for (var fi = 0; fi < families.length; fi++) {
@@ -247,8 +250,7 @@ function mapWeightToStyle(weight) {
   if (weight >= 700) return 'Bold';
   if (weight >= 600) return 'SemiBold';
   if (weight >= 500) return 'Medium';
-  if (weight >= 300) return 'Light';
-  return 'Regular';
+  return 'Regular';   // no Light: 400 and anything lighter are Regular
 }
 
 function buildFills(nodeData) {
@@ -804,7 +806,7 @@ function bindFillsToVariables(root) {
 function renderTextNode(nodeData, parent) {
   if (!nodeData.text) return Promise.resolve();
 
-  var family = nodeData.fontFamily || 'Inter';
+  var family = FONT_FAMILY;
   var weight = nodeData.fontWeight || 400;
   var styleName = mapWeightToStyle(weight);
 
@@ -1163,7 +1165,7 @@ var STYLE_TO_WEIGHT = {
 };
 
 function serializeTextNodeExport(node) {
-  var family = 'Inter';
+  var family = FONT_FAMILY;
   var weight = 400;
   if (node.fontName && node.fontName !== figma.mixed) {
     family = node.fontName.family;

@@ -4,15 +4,14 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>FAYDA Login — FAN/FCN</title>
-  <link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
   <style>
     .scroll-area::-webkit-scrollbar { display: none; }
     .scroll-area { -ms-overflow-style: none; scrollbar-width: none; }
   </style>
-  <link href="https://api.fontshare.com/v2/css?f[]=switzer@400,500,600,700&display=swap" rel="stylesheet" />
+  <link href="https://api.fontshare.com/v2/css?f[]=switzer@400,500,600,700,800&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="styles/field-error.css" />
 </head>
-<body style="margin:0;padding:0;font-family:'Barlow',sans-serif;background: transparent;display:flex;justify-content:center;align-items:center;min-height:100vh;padding:20px;box-sizing:border-box;">
+<body style="margin:0;padding:0;font-family:Switzer, sans-serif;background: transparent;display:flex;justify-content:center;align-items:center;min-height:100vh;padding:20px;box-sizing:border-box;">
 
 <div style="width:360px;height:780px;background:#1e5f6e;border-radius:30px;box-shadow:0 20px 60px rgba(0,0,0,0.15);overflow:hidden;position:relative;display:flex;flex-direction:column;">
 
@@ -34,13 +33,13 @@
       <img src="assets/fayda-logo-hq.png" alt="FAYDA" style="width:36px;height:36px;object-fit:contain;" onerror="this.style.display='none'" />
     </div>
     <div style="position:relative;">
-      <button id="navLangBtn" onclick="toggleNavLang(event)" style="display:flex;align-items:center;gap:7px;background:#1e6070;border:none;border-radius:22px;padding:7px 16px;cursor:pointer;font-family:'Barlow',sans-serif;font-size:13px;font-weight:600;color:#fff;">
+      <button id="navLangBtn" onclick="toggleNavLang(event)" style="display:flex;align-items:center;gap:7px;background:#1e6070;border:none;border-radius:22px;padding:7px 16px;cursor:pointer;font-family:Switzer, sans-serif;font-size:13px;font-weight:600;color:#fff;">
         English
         <svg viewBox="0 0 10 6" style="width:11px;height:11px;fill:#fff;"><path d="M0 0l5 6 5-6z"/></svg>
       </button>
       <div id="navLangDd" style="display:none;position:absolute;top:calc(100% + 5px);right:0;background:#fff;border:1px solid #e0e0e0;border-radius:10px;box-shadow:0 8px 24px rgba(0,0,0,0.12);overflow:hidden;min-width:130px;z-index:20;">
-        <button class="lang-opt active" onclick="selectNavLang('English')" style="display:flex;align-items:center;justify-content:space-between;padding:11px 16px;font-family:'Barlow',sans-serif;font-size:14px;font-weight:600;color:#1e6070;background:none;border:none;width:100%;cursor:pointer;border-bottom:1px solid #f0f0f0;">English <span style="color:#1e6070;">✓</span></button>
-        <button class="lang-opt" onclick="selectNavLang('አማርኛ')" style="display:flex;align-items:center;justify-content:space-between;padding:11px 16px;font-family:'Barlow',sans-serif;font-size:14px;font-weight:600;color:#333;background:none;border:none;width:100%;cursor:pointer;">አማርኛ <span style="color:#1e6070;opacity:0;">✓</span></button>
+        <button class="lang-opt active" onclick="selectNavLang('English')" style="display:flex;align-items:center;justify-content:space-between;padding:11px 16px;font-family:Switzer, sans-serif;font-size:14px;font-weight:600;color:#1e6070;background:none;border:none;width:100%;cursor:pointer;border-bottom:1px solid #f0f0f0;">English <span style="color:#1e6070;">✓</span></button>
+        <button class="lang-opt" onclick="selectNavLang('አማርኛ')" style="display:flex;align-items:center;justify-content:space-between;padding:11px 16px;font-family:Switzer, sans-serif;font-size:14px;font-weight:600;color:#333;background:none;border:none;width:100%;cursor:pointer;">አማርኛ <span style="color:#1e6070;opacity:0;">✓</span></button>
       </div>
     </div>
   </div>
@@ -67,8 +66,8 @@
         </div>
 
         <div style="padding:24px 22px 28px;width:100%;background:rgba(255,255,255,0.10);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border:1px solid rgba(255,255,255,0.18);border-radius:16px;box-sizing:border-box;">
-          <h2 style="font-size:20px;font-weight:700;color:#fff;line-height:1.35;margin:0 0 22px 0;font-family:'Barlow',sans-serif;">Enter your Fayda Number<br>(FAN or FCN)</h2>
-          <input id="fanInput" type="text" placeholder="Enter Your FAN or FCN" oninput="handleFanInput(this)" style="width:100%;padding:14px 16px;border:1.5px solid rgba(255,255,255,0.25);border-radius:10px;background:rgba(255,255,255,0.92);font-family:'Barlow',sans-serif;font-size:14px;font-weight:500;color:#1a1a1a;outline:none;margin-bottom:12px;box-sizing:border-box;" />
+          <h2 style="font-size:20px;font-weight:700;color:#fff;line-height:1.35;margin:0 0 22px 0;font-family:Switzer, sans-serif;">Enter your Fayda Number<br>(FAN or FCN)</h2>
+          <input id="fanInput" type="text" placeholder="Enter Your FAN or FCN" oninput="handleFanInput(this)" style="width:100%;padding:14px 16px;border:1.5px solid rgba(255,255,255,0.25);border-radius:10px;background:rgba(255,255,255,0.92);font-family:Switzer, sans-serif;font-size:14px;font-weight:500;color:#1a1a1a;outline:none;margin-bottom:12px;box-sizing:border-box;" />
           <div class="field-error" id="fanError" style="margin:0 0 8px;"><span class="fe-ic"><svg viewBox="0 0 24 24"><path d="M17 7 7 17M7 7l10 10"/></svg></span><span class="fe-txt"></span></div>
           <div id="fanValid" style="font-size:12.5px;font-weight:600;margin-bottom:8px;min-height:18px;"></div>
           <div onclick="showHelp()" style="display:flex;align-items:center;gap:6px;margin-bottom:22px;cursor:pointer;width:fit-content;">
@@ -79,7 +78,7 @@
             </svg>
             <span style="font-size:13px;font-weight:600;color:rgba(255,255,255,0.75);text-decoration:underline;">What is FAN/FCN?</span>
           </div>
-          <button id="sendBtn" disabled onclick="goToOtp()" style="width:100%;padding:16px;border-radius:10px;border:none;background:#1e4f60;color:rgba(255,255,255,0.45);font-family:'Barlow',sans-serif;font-size:15px;font-weight:700;letter-spacing:0.5px;cursor:not-allowed;box-sizing:border-box;">Send Code</button>
+          <button id="sendBtn" disabled onclick="goToOtp()" style="width:100%;padding:16px;border-radius:10px;border:none;background:#1e4f60;color:rgba(255,255,255,0.45);font-family:Switzer, sans-serif;font-size:15px;font-weight:700;letter-spacing:0.5px;cursor:not-allowed;box-sizing:border-box;">Send Code</button>
         </div>
       </div>
 
@@ -99,24 +98,24 @@
         </div>
 
         <div style="padding:24px 22px 28px;width:100%;background:rgba(255,255,255,0.10);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border:1px solid rgba(255,255,255,0.18);border-radius:16px;box-sizing:border-box;">
-          <div id="fanDisplay" style="width:100%;padding:12px 14px;border:1.5px solid rgba(255,255,255,0.25);border-radius:10px;background:rgba(255,255,255,0.08);font-family:'Barlow',sans-serif;font-size:15px;font-weight:600;color:#fff;margin-bottom:20px;letter-spacing:1px;box-sizing:border-box;"></div>
+          <div id="fanDisplay" style="width:100%;padding:12px 14px;border:1.5px solid rgba(255,255,255,0.25);border-radius:10px;background:rgba(255,255,255,0.08);font-family:Switzer, sans-serif;font-size:15px;font-weight:600;color:#fff;margin-bottom:20px;letter-spacing:1px;box-sizing:border-box;"></div>
           <div id="otpLineBoxes" style="display:flex;gap:8px;justify-content:center;margin-bottom:16px;">
-            <input class="otp-line-box" type="text" inputmode="numeric" maxlength="1" style="width:36px;height:44px;border:none;border-bottom:2px solid rgba(255,255,255,0.45);background:transparent;font-family:'Barlow',sans-serif;font-size:22px;font-weight:700;color:#fff;text-align:center;outline:none;caret-color:#2FC56D;box-sizing:border-box;" />
-            <input class="otp-line-box" type="text" inputmode="numeric" maxlength="1" style="width:36px;height:44px;border:none;border-bottom:2px solid rgba(255,255,255,0.45);background:transparent;font-family:'Barlow',sans-serif;font-size:22px;font-weight:700;color:#fff;text-align:center;outline:none;caret-color:#2FC56D;box-sizing:border-box;" />
-            <input class="otp-line-box" type="text" inputmode="numeric" maxlength="1" style="width:36px;height:44px;border:none;border-bottom:2px solid rgba(255,255,255,0.45);background:transparent;font-family:'Barlow',sans-serif;font-size:22px;font-weight:700;color:#fff;text-align:center;outline:none;caret-color:#2FC56D;box-sizing:border-box;" />
-            <input class="otp-line-box" type="text" inputmode="numeric" maxlength="1" style="width:36px;height:44px;border:none;border-bottom:2px solid rgba(255,255,255,0.45);background:transparent;font-family:'Barlow',sans-serif;font-size:22px;font-weight:700;color:#fff;text-align:center;outline:none;caret-color:#2FC56D;box-sizing:border-box;" />
-            <input class="otp-line-box" type="text" inputmode="numeric" maxlength="1" style="width:36px;height:44px;border:none;border-bottom:2px solid rgba(255,255,255,0.45);background:transparent;font-family:'Barlow',sans-serif;font-size:22px;font-weight:700;color:#fff;text-align:center;outline:none;caret-color:#2FC56D;box-sizing:border-box;" />
-            <input class="otp-line-box" type="text" inputmode="numeric" maxlength="1" style="width:36px;height:44px;border:none;border-bottom:2px solid rgba(255,255,255,0.45);background:transparent;font-family:'Barlow',sans-serif;font-size:22px;font-weight:700;color:#fff;text-align:center;outline:none;caret-color:#2FC56D;box-sizing:border-box;" />
+            <input class="otp-line-box" type="text" inputmode="numeric" maxlength="1" style="width:36px;height:44px;border:none;border-bottom:2px solid rgba(255,255,255,0.45);background:transparent;font-family:Switzer, sans-serif;font-size:22px;font-weight:700;color:#fff;text-align:center;outline:none;caret-color:#2FC56D;box-sizing:border-box;" />
+            <input class="otp-line-box" type="text" inputmode="numeric" maxlength="1" style="width:36px;height:44px;border:none;border-bottom:2px solid rgba(255,255,255,0.45);background:transparent;font-family:Switzer, sans-serif;font-size:22px;font-weight:700;color:#fff;text-align:center;outline:none;caret-color:#2FC56D;box-sizing:border-box;" />
+            <input class="otp-line-box" type="text" inputmode="numeric" maxlength="1" style="width:36px;height:44px;border:none;border-bottom:2px solid rgba(255,255,255,0.45);background:transparent;font-family:Switzer, sans-serif;font-size:22px;font-weight:700;color:#fff;text-align:center;outline:none;caret-color:#2FC56D;box-sizing:border-box;" />
+            <input class="otp-line-box" type="text" inputmode="numeric" maxlength="1" style="width:36px;height:44px;border:none;border-bottom:2px solid rgba(255,255,255,0.45);background:transparent;font-family:Switzer, sans-serif;font-size:22px;font-weight:700;color:#fff;text-align:center;outline:none;caret-color:#2FC56D;box-sizing:border-box;" />
+            <input class="otp-line-box" type="text" inputmode="numeric" maxlength="1" style="width:36px;height:44px;border:none;border-bottom:2px solid rgba(255,255,255,0.45);background:transparent;font-family:Switzer, sans-serif;font-size:22px;font-weight:700;color:#fff;text-align:center;outline:none;caret-color:#2FC56D;box-sizing:border-box;" />
+            <input class="otp-line-box" type="text" inputmode="numeric" maxlength="1" style="width:36px;height:44px;border:none;border-bottom:2px solid rgba(255,255,255,0.45);background:transparent;font-family:Switzer, sans-serif;font-size:22px;font-weight:700;color:#fff;text-align:center;outline:none;caret-color:#2FC56D;box-sizing:border-box;" />
           </div>
           <div class="field-error" id="fanOtpError" style="margin:0 0 6px;"><span class="fe-ic"><svg viewBox="0 0 24 24"><path d="M17 7 7 17M7 7l10 10"/></svg></span><span class="fe-txt"></span></div>
-          <p style="font-size:12px;color:rgba(255,255,255,0.60);text-align:center;margin:0 0 20px 0;line-height:1.5;font-family:'Barlow',sans-serif;">
+          <p style="font-size:12px;color:rgba(255,255,255,0.60);text-align:center;margin:0 0 20px 0;line-height:1.5;font-family:Switzer, sans-serif;">
             Code sent to: <strong id="maskedPhone" style="color:rgba(255,255,255,0.85);">XXXXXX9403</strong>
           </p>
-          <button id="verifyBtn" disabled onclick="verifyOtp()" style="width:100%;padding:16px;border-radius:10px;border:none;background:#1e4f60;color:rgba(255,255,255,0.45);font-family:'Barlow',sans-serif;font-size:15px;font-weight:700;letter-spacing:0.5px;cursor:not-allowed;margin-bottom:12px;box-sizing:border-box;">Verify</button>
+          <button id="verifyBtn" disabled onclick="verifyOtp()" style="width:100%;padding:16px;border-radius:10px;border:none;background:#1e4f60;color:rgba(255,255,255,0.45);font-family:Switzer, sans-serif;font-size:15px;font-weight:700;letter-spacing:0.5px;cursor:not-allowed;margin-bottom:12px;box-sizing:border-box;">Verify</button>
           <div style="text-align:center;font-size:12px;font-weight:600;color:rgba(255,255,255,0.55);">
             <span id="resendText">Resend code in </span>
             <span id="timerDisplay" style="font-weight:700;">04:51</span>
-            <button id="resendBtn" onclick="resendCode()" style="background:none;border:none;color:rgba(255,255,255,0.85);font-family:'Barlow',sans-serif;font-size:12px;font-weight:700;text-decoration:underline;cursor:pointer;padding:0;display:none;">Resend code</button>
+            <button id="resendBtn" onclick="resendCode()" style="background:none;border:none;color:rgba(255,255,255,0.85);font-family:Switzer, sans-serif;font-size:12px;font-weight:700;text-decoration:underline;cursor:pointer;padding:0;display:none;">Resend code</button>
           </div>
         </div>
       </div>
@@ -126,7 +125,7 @@
 
         <!-- Timer Banner -->
         <div style="text-align:center;margin-bottom:14px;">
-          <p style="font-size:14px;font-weight:600;color:rgba(255,255,255,0.90);margin:0 0 4px 0;font-family:'Barlow',sans-serif;">Please take appropriate action in</p>
+          <p style="font-size:14px;font-weight:600;color:rgba(255,255,255,0.90);margin:0 0 4px 0;font-family:Switzer, sans-serif;">Please take appropriate action in</p>
           <div id="consentTimer" style="font-size:34px;font-weight:800;color:#e87722;letter-spacing:2px;font-variant-numeric:tabular-nums;">09:51</div>
         </div>
 
@@ -148,33 +147,33 @@
         </div>
 
         <!-- Request text -->
-        <p style="font-size:15px;font-weight:600;color:#fff;text-align:center;line-height:1.55;margin:0 0 18px 0;font-family:'Barlow',sans-serif;">
+        <p style="font-size:15px;font-weight:600;color:#fff;text-align:center;line-height:1.55;margin:0 0 18px 0;font-family:Switzer, sans-serif;">
           <strong style="color:#fff;font-weight:800;">Fayda-partner-M-PESA</strong> is requesting<br>access to the following:
         </p>
 
         <!-- Essential Claims -->
         <div style="background:rgba(255,255,255,0.08);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border:1px solid rgba(255,255,255,0.14);border-radius:14px;overflow:hidden;margin-bottom:12px;width:100%;box-sizing:border-box;">
           <div style="display:flex;align-items:center;gap:6px;padding:12px 16px 10px;border-bottom:1px solid rgba(255,255,255,0.10);">
-            <h3 style="font-size:14px;font-weight:700;color:#fff;margin:0;font-family:'Barlow',sans-serif;">Essential Claims</h3>
+            <h3 style="font-size:14px;font-weight:700;color:#fff;margin:0;font-family:Switzer, sans-serif;">Essential Claims</h3>
           </div>
           <div style="padding:0 16px;">
-            <div class="claim-row" style="display:flex;align-items:center;justify-content:space-between;padding:11px 0;border-bottom:1px solid rgba(255,255,255,0.07);"><span style="font-size:13px;font-weight:500;color:rgba(255,255,255,0.90);font-family:'Barlow',sans-serif;">Birthdate</span><span style="font-size:11px;font-weight:600;color:rgba(255,255,255,0.45);text-transform:uppercase;letter-spacing:0.3px;font-family:'Barlow',sans-serif;">Required</span></div>
-            <div class="claim-row" style="display:flex;align-items:center;justify-content:space-between;padding:11px 0;border-bottom:1px solid rgba(255,255,255,0.07);"><span style="font-size:13px;font-weight:500;color:rgba(255,255,255,0.90);font-family:'Barlow',sans-serif;">Address</span><span style="font-size:11px;font-weight:600;color:rgba(255,255,255,0.45);text-transform:uppercase;letter-spacing:0.3px;font-family:'Barlow',sans-serif;">Required</span></div>
-            <div class="claim-row" style="display:flex;align-items:center;justify-content:space-between;padding:11px 0;border-bottom:1px solid rgba(255,255,255,0.07);"><span style="font-size:13px;font-weight:500;color:rgba(255,255,255,0.90);font-family:'Barlow',sans-serif;">Gender</span><span style="font-size:11px;font-weight:600;color:rgba(255,255,255,0.45);text-transform:uppercase;letter-spacing:0.3px;font-family:'Barlow',sans-serif;">Required</span></div>
-            <div class="claim-row" style="display:flex;align-items:center;justify-content:space-between;padding:11px 0;border-bottom:1px solid rgba(255,255,255,0.07);"><span style="font-size:13px;font-weight:500;color:rgba(255,255,255,0.90);font-family:'Barlow',sans-serif;">Nationality</span><span style="font-size:11px;font-weight:600;color:rgba(255,255,255,0.45);text-transform:uppercase;letter-spacing:0.3px;font-family:'Barlow',sans-serif;">Required</span></div>
-            <div class="claim-row" style="display:flex;align-items:center;justify-content:space-between;padding:11px 0;border-bottom:1px solid rgba(255,255,255,0.07);"><span style="font-size:13px;font-weight:500;color:rgba(255,255,255,0.90);font-family:'Barlow',sans-serif;">Full Name</span><span style="font-size:11px;font-weight:600;color:rgba(255,255,255,0.45);text-transform:uppercase;letter-spacing:0.3px;font-family:'Barlow',sans-serif;">Required</span></div>
-            <div class="claim-row" style="display:flex;align-items:center;justify-content:space-between;padding:11px 0;border-bottom:1px solid rgba(255,255,255,0.07);"><span style="font-size:13px;font-weight:500;color:rgba(255,255,255,0.90);font-family:'Barlow',sans-serif;">Phone Number</span><span style="font-size:11px;font-weight:600;color:rgba(255,255,255,0.45);text-transform:uppercase;letter-spacing:0.3px;font-family:'Barlow',sans-serif;">Required</span></div>
-            <div class="claim-row" style="display:flex;align-items:center;justify-content:space-between;padding:11px 0;"><span style="font-size:13px;font-weight:500;color:rgba(255,255,255,0.90);font-family:'Barlow',sans-serif;">Picture</span><span style="font-size:11px;font-weight:600;color:rgba(255,255,255,0.45);text-transform:uppercase;letter-spacing:0.3px;font-family:'Barlow',sans-serif;">Required</span></div>
+            <div class="claim-row" style="display:flex;align-items:center;justify-content:space-between;padding:11px 0;border-bottom:1px solid rgba(255,255,255,0.07);"><span style="font-size:13px;font-weight:500;color:rgba(255,255,255,0.90);font-family:Switzer, sans-serif;">Birthdate</span><span style="font-size:11px;font-weight:600;color:rgba(255,255,255,0.45);text-transform:uppercase;letter-spacing:0.3px;font-family:Switzer, sans-serif;">Required</span></div>
+            <div class="claim-row" style="display:flex;align-items:center;justify-content:space-between;padding:11px 0;border-bottom:1px solid rgba(255,255,255,0.07);"><span style="font-size:13px;font-weight:500;color:rgba(255,255,255,0.90);font-family:Switzer, sans-serif;">Address</span><span style="font-size:11px;font-weight:600;color:rgba(255,255,255,0.45);text-transform:uppercase;letter-spacing:0.3px;font-family:Switzer, sans-serif;">Required</span></div>
+            <div class="claim-row" style="display:flex;align-items:center;justify-content:space-between;padding:11px 0;border-bottom:1px solid rgba(255,255,255,0.07);"><span style="font-size:13px;font-weight:500;color:rgba(255,255,255,0.90);font-family:Switzer, sans-serif;">Gender</span><span style="font-size:11px;font-weight:600;color:rgba(255,255,255,0.45);text-transform:uppercase;letter-spacing:0.3px;font-family:Switzer, sans-serif;">Required</span></div>
+            <div class="claim-row" style="display:flex;align-items:center;justify-content:space-between;padding:11px 0;border-bottom:1px solid rgba(255,255,255,0.07);"><span style="font-size:13px;font-weight:500;color:rgba(255,255,255,0.90);font-family:Switzer, sans-serif;">Nationality</span><span style="font-size:11px;font-weight:600;color:rgba(255,255,255,0.45);text-transform:uppercase;letter-spacing:0.3px;font-family:Switzer, sans-serif;">Required</span></div>
+            <div class="claim-row" style="display:flex;align-items:center;justify-content:space-between;padding:11px 0;border-bottom:1px solid rgba(255,255,255,0.07);"><span style="font-size:13px;font-weight:500;color:rgba(255,255,255,0.90);font-family:Switzer, sans-serif;">Full Name</span><span style="font-size:11px;font-weight:600;color:rgba(255,255,255,0.45);text-transform:uppercase;letter-spacing:0.3px;font-family:Switzer, sans-serif;">Required</span></div>
+            <div class="claim-row" style="display:flex;align-items:center;justify-content:space-between;padding:11px 0;border-bottom:1px solid rgba(255,255,255,0.07);"><span style="font-size:13px;font-weight:500;color:rgba(255,255,255,0.90);font-family:Switzer, sans-serif;">Phone Number</span><span style="font-size:11px;font-weight:600;color:rgba(255,255,255,0.45);text-transform:uppercase;letter-spacing:0.3px;font-family:Switzer, sans-serif;">Required</span></div>
+            <div class="claim-row" style="display:flex;align-items:center;justify-content:space-between;padding:11px 0;"><span style="font-size:13px;font-weight:500;color:rgba(255,255,255,0.90);font-family:Switzer, sans-serif;">Picture</span><span style="font-size:11px;font-weight:600;color:rgba(255,255,255,0.45);text-transform:uppercase;letter-spacing:0.3px;font-family:Switzer, sans-serif;">Required</span></div>
           </div>
         </div>
 
         <!-- Voluntary Claims -->
         <div style="background:rgba(255,255,255,0.08);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border:1px solid rgba(255,255,255,0.14);border-radius:14px;overflow:hidden;margin-bottom:12px;width:100%;box-sizing:border-box;">
           <div style="display:flex;align-items:center;gap:6px;padding:12px 16px 10px;border-bottom:1px solid rgba(255,255,255,0.10);">
-            <h3 style="font-size:14px;font-weight:700;color:#fff;margin:0;font-family:'Barlow',sans-serif;">Voluntary Claims</h3>
+            <h3 style="font-size:14px;font-weight:700;color:#fff;margin:0;font-family:Switzer, sans-serif;">Voluntary Claims</h3>
           </div>
           <div style="display:flex;align-items:center;justify-content:space-between;padding:14px 16px;">
-            <span style="font-size:13px;font-weight:500;color:rgba(255,255,255,0.90);font-family:'Barlow',sans-serif;">Email Address</span>
+            <span style="font-size:13px;font-weight:500;color:rgba(255,255,255,0.90);font-family:Switzer, sans-serif;">Email Address</span>
             <label style="position:relative;width:40px;height:22px;flex-shrink:0;">
               <input type="checkbox" id="emailToggle" style="opacity:0;width:0;height:0;" />
               <span style="position:absolute;inset:0;background:rgba(255,255,255,0.20);border-radius:22px;cursor:pointer;transition:background 0.2s;"></span>
@@ -187,8 +186,8 @@
 
         <!-- Action Buttons -->
         <div style="display:flex;gap:12px;width:100%;">
-          <button onclick="declineConsent()" style="flex:1;max-width:220px;padding:14px;border-radius:50px;border:2px solid rgba(255,255,255,0.30);background:rgba(255,255,255,0.08);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);color:#fff;font-family:'Barlow',sans-serif;font-size:14px;font-weight:700;cursor:pointer;">Decline</button>
-          <button id="acceptBtn" onclick="acceptConsent()" style="flex:1;max-width:220px;padding:14px;border-radius:50px;border:none;background:#163f50;color:#fff;font-family:'Barlow',sans-serif;font-size:14px;font-weight:700;cursor:pointer;box-shadow:0 6px 20px rgba(0,0,0,0.25);">Accept</button>
+          <button onclick="declineConsent()" style="flex:1;max-width:220px;padding:14px;border-radius:50px;border:2px solid rgba(255,255,255,0.30);background:rgba(255,255,255,0.08);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);color:#fff;font-family:Switzer, sans-serif;font-size:14px;font-weight:700;cursor:pointer;">Decline</button>
+          <button id="acceptBtn" onclick="acceptConsent()" style="flex:1;max-width:220px;padding:14px;border-radius:50px;border:none;background:#163f50;color:#fff;font-family:Switzer, sans-serif;font-size:14px;font-weight:700;cursor:pointer;box-shadow:0 6px 20px rgba(0,0,0,0.25);">Accept</button>
         </div>
       </div>
 
@@ -209,18 +208,18 @@
 <!-- Success overlay -->
 <div id="successOverlay" style="display:none;position:fixed;inset:0;background:rgba(35,145,80,0.95);z-index:200;align-items:center;justify-content:center;flex-direction:column;gap:20px;padding:40px;text-align:center;">
   <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
-  <h2 style="color:#fff;font-size:24px;font-weight:800;margin:0;font-family:'Barlow',sans-serif;">Verification Complete</h2>
-  <p style="color:rgba(255,255,255,0.80);font-size:15px;line-height:1.6;margin:0;font-family:'Barlow',sans-serif;">Your M-PESA account has been successfully linked with your FAYDA ID.</p>
-  <button onclick="window.location.href='SignUp Confirmation.html'" style="margin-top:10px;padding:14px 32px;border-radius:50px;border:none;background:#fff;color:#239150;font-family:'Barlow',sans-serif;font-size:15px;font-weight:800;cursor:pointer;">Continue</button>
+  <h2 style="color:#fff;font-size:24px;font-weight:800;margin:0;font-family:Switzer, sans-serif;">Verification Complete</h2>
+  <p style="color:rgba(255,255,255,0.80);font-size:15px;line-height:1.6;margin:0;font-family:Switzer, sans-serif;">Your M-PESA account has been successfully linked with your FAYDA ID.</p>
+  <button onclick="window.location.href='SignUp Confirmation.html'" style="margin-top:10px;padding:14px 32px;border-radius:50px;border:none;background:#fff;color:#239150;font-family:Switzer, sans-serif;font-size:15px;font-weight:800;cursor:pointer;">Continue</button>
 </div>
 
 <!-- Help Modal -->
 <div id="helpModal" onclick="if(event.target===this)closeHelp()" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.50);z-index:100;align-items:center;justify-content:center;padding:20px;">
   <div style="background:#fff;border-radius:16px;padding:32px;max-width:360px;width:100%;position:relative;">
     <button onclick="closeHelp()" style="position:absolute;top:14px;right:16px;background:none;border:none;font-size:24px;color:#666;cursor:pointer;">&times;</button>
-    <h3 style="font-size:17px;font-weight:700;color:#1e5f6e;margin:0 0 14px 0;font-family:'Barlow',sans-serif;">What is FAN/FCN?</h3>
-    <p style="font-size:14px;color:#555;line-height:1.7;margin:0 0 10px 0;font-family:'Barlow',sans-serif;"><strong style="color:#333;">FAN (Fayda Alias Number)</strong> — A unique alias you set when registering for your FAYDA digital identity.</p>
-    <p style="font-size:14px;color:#555;line-height:1.7;margin:0;font-family:'Barlow',sans-serif;"><strong style="color:#333;">FCN (Fayda Card Number)</strong> — The 16-digit number printed on your FAYDA national ID card.</p>
+    <h3 style="font-size:17px;font-weight:700;color:#1e5f6e;margin:0 0 14px 0;font-family:Switzer, sans-serif;">What is FAN/FCN?</h3>
+    <p style="font-size:14px;color:#555;line-height:1.7;margin:0 0 10px 0;font-family:Switzer, sans-serif;"><strong style="color:#333;">FAN (Fayda Alias Number)</strong> — A unique alias you set when registering for your FAYDA digital identity.</p>
+    <p style="font-size:14px;color:#555;line-height:1.7;margin:0;font-family:Switzer, sans-serif;"><strong style="color:#333;">FCN (Fayda Card Number)</strong> — The 16-digit number printed on your FAYDA national ID card.</p>
   </div>
 </div>
 

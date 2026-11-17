@@ -80,12 +80,13 @@
     return effects;
   }
 
+  // Switzer only, never lighter than Regular (400)
   function mapFontWeight(w) {
     var n = parseInt(w, 10);
-    if (!isNaN(n)) return n;
-    var map = { normal: 400, bold: 700, lighter: 300, bolder: 700 };
-    return map[w] || 400;
+    if (isNaN(n)) n = { normal: 400, bold: 700, lighter: 400, bolder: 700 }[w] || 400;
+    return Math.max(400, n);
   }
+  var FONT_FAMILY = 'Switzer';
 
   // Pull the translation (tx, ty) out of a computed `transform` matrix so
   // pseudo-element offsets like translateY(-50%) land in the right place.
@@ -423,7 +424,7 @@
       h: Math.ceil(r.height),
       fontSize: parseFloat(style.fontSize) || 14,
       fontWeight: mapFontWeight(style.fontWeight),
-      fontFamily: style.fontFamily.split(',')[0].replace(/['"]/g, '').trim() || 'Inter',
+      fontFamily: FONT_FAMILY,
       color: parseCssColor(style.color) || { r: 0, g: 0, b: 0, a: 1 },
       lineHeight: style.lineHeight === 'normal' ? null : parseFloat(style.lineHeight),
       textAlign: style.textAlign === 'center' ? 'CENTER' : style.textAlign === 'right' ? 'RIGHT' : 'LEFT',
@@ -509,7 +510,7 @@
         w: node.w, h: node.h,
         fontSize: parseFloat(cs.fontSize) || 14,
         fontWeight: mapFontWeight(cs.fontWeight),
-        fontFamily: cs.fontFamily.split(',')[0].replace(/['"]/g, '').trim() || 'Inter',
+        fontFamily: FONT_FAMILY,
         color: parseCssColor(cs.color) || { r: 0, g: 0, b: 0, a: 1 },
         lineHeight: cs.lineHeight === 'normal' ? null : parseFloat(cs.lineHeight),
         textAlign: cs.textAlign === 'center' ? 'CENTER' : cs.textAlign === 'right' ? 'RIGHT' : 'LEFT',

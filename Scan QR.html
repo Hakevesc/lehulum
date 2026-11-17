@@ -7,10 +7,9 @@
 <link rel="stylesheet" href="styles/design-tokens.css">
 <link rel="stylesheet" href="styles/base.css">
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@400;500;600&display=swap');
-  @import url('https://api.fontshare.com/v2/css?f[]=switzer@400,500,600,700&display=swap');
+  @import url('https://api.fontshare.com/v2/css?f[]=switzer@400,500,600,700,800&display=swap');
 
-  body { font-family: 'Inter', sans-serif; }
+  body { font-family: Switzer, sans-serif; }
 
   /* Camera fills the whole phone frame */
   .camera { position: absolute; inset: 0; background: radial-gradient(120% 90% at 50% 30%, #2a2a31 0%, #161619 55%, #0a0a0c 100%); overflow: hidden; }
@@ -34,15 +33,15 @@
 
   /* Top bar */
   .cam-top { position: absolute; top: 0; left: 0; right: 0; z-index: 5; display: flex; align-items: center; justify-content: space-between; padding: 14px 18px; }
-  .cam-time { color: #fff; font-size: 14px; font-weight: 600; font-family: 'Switzer', sans-serif; }
+  .cam-time { color: #fff; font-size: 14px; font-weight: 600; font-family: Switzer, sans-serif; }
   .cam-icon-btn { width: 40px; height: 40px; border-radius: 50%; background: rgba(255,255,255,0.16); backdrop-filter: blur(6px); border: none; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: all 0.2s; }
   .cam-icon-btn:hover { background: rgba(255,255,255,0.28); }
   .cam-icon-btn.active { background: #FE353D; }
   .cam-icon-btn svg { width: 20px; height: 20px; stroke: #fff; stroke-width: 2; fill: none; }
 
-  .cam-title { position: absolute; top: 64px; left: 0; right: 0; text-align: center; z-index: 5; color: #fff; font-family: 'Switzer', sans-serif; font-size: 16px; font-weight: 600; }
+  .cam-title { position: absolute; top: 64px; left: 0; right: 0; text-align: center; z-index: 5; color: #fff; font-family: Switzer, sans-serif; font-size: 16px; font-weight: 600; }
 
-  .cam-hint { position: absolute; left: 0; right: 0; bottom: 160px; z-index: 5; text-align: center; color: rgba(255,255,255,0.85); font-family: 'Switzer', sans-serif; font-size: 13px; font-weight: 400; padding: 0 40px; line-height: 1.5; }
+  .cam-hint { position: absolute; left: 0; right: 0; bottom: 160px; z-index: 5; text-align: center; color: rgba(255,255,255,0.85); font-family: Switzer, sans-serif; font-size: 13px; font-weight: 400; padding: 0 40px; line-height: 1.5; }
 
   /* Detected result sheet — merchant-payment modal style */
   .sheet-overlay { position: absolute; inset: 0; background: rgba(0,0,0,0.45); display: flex; align-items: flex-end; opacity: 0; pointer-events: none; transition: opacity 0.25s; z-index: 50; }
@@ -51,12 +50,12 @@
   .sheet-overlay.show .sheet { transform: translateY(0); }
   .sheet-grip { width: 44px; height: 4px; border-radius: 2px; background: #D8D8DE; margin: 0 auto 18px; }
   .sheet-merchant { display: flex; align-items: center; gap: 14px; padding: 0 4px 20px; }
-  .sheet-merchant .avatar { width: 52px; height: 52px; border-radius: 14px; background: #FFE9EA; color: var(--Primary); display: flex; align-items: center; justify-content: center; flex-shrink: 0; font-family: 'Switzer', sans-serif; font-size: 16px; font-weight: 700; }
+  .sheet-merchant .avatar { width: 52px; height: 52px; border-radius: 14px; background: #FFE9EA; color: var(--Primary); display: flex; align-items: center; justify-content: center; flex-shrink: 0; font-family: Switzer, sans-serif; font-size: 16px; font-weight: 700; }
   .sheet-merchant .info { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 4px; }
-  .sheet-merchant .nm { font-family: 'Switzer', sans-serif; font-size: 16px; font-weight: 700; color: var(--On-Surface); }
-  .sheet-merchant .sub { font-family: 'Switzer', sans-serif; font-size: 13px; color: var(--On-Surface-Low); }
+  .sheet-merchant .nm { font-family: Switzer, sans-serif; font-size: 16px; font-weight: 700; color: var(--On-Surface); }
+  .sheet-merchant .sub { font-family: Switzer, sans-serif; font-size: 13px; color: var(--On-Surface-Low); }
   .sheet-actions { display: flex; gap: 12px; }
-  .sheet-btn { height: 52px; border-radius: 14px; border: none; cursor: pointer; font-family: 'Poppins', sans-serif; font-size: 15px; font-weight: 500; transition: background 0.15s, transform 0.12s; }
+  .sheet-btn { height: 52px; border-radius: 14px; border: none; cursor: pointer; font-family: Switzer, sans-serif; font-size: 15px; font-weight: 500; transition: background 0.15s, transform 0.12s; }
   .sheet-btn:active { transform: scale(0.98); }
   .sheet-btn.back { flex: 1; background: #F1F1F4; color: var(--On-Surface); }
   .sheet-btn.back:hover { background: #E9E9ED; }

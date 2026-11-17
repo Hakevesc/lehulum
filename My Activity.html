@@ -10,15 +10,14 @@
 <link rel="stylesheet" href="styles/component-status-bar.css">
 <link rel="stylesheet" href="styles/component-transactions.css">
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
   @import url('https://api.fontshare.com/v2/css?f[]=switzer@400,500,600,700,800&display=swap');
 
   /* My Activity (Saving & Credit → My Activity): a report of all saving and
      credit activity for a period (Week / Month / 6 Months / Year) — a Savings |
-     Credit line chart against the previous period, summary tiles, where the
-     money moved, credit health, monthly bars and recent activity. Credit
+     Credit line chart against the previous period, credit health, summary
+     tiles and recent activity. Credit
      figures come live from term-loan-store.js; savings figures are samples. */
-  :root { --Font: 'Switzer', 'Inter', sans-serif; --Up: #16A34A; }
+  :root { --Font: Switzer, sans-serif; --Up: #16A34A; }
   body { font-family: var(--Font); }
   .app-content { display: flex; flex-direction: column; gap: 12px; }
   .app-content > * { flex-shrink: 0; }
@@ -70,18 +69,6 @@
   .stile .top svg { width: 20px; height: 20px; stroke: var(--Primary, #FE353D); stroke-width: 1.8; fill: none; stroke-linecap: round; stroke-linejoin: round; }
   .stile b { display: block; margin-top: 8px; font-size: 16px; font-weight: 700; color: var(--On-Surface, #1C1C21); white-space: nowrap; }
   .stile b small { font-size: 11px; font-weight: 500; color: var(--On-Surface-Low, #7C7C87); margin-left: 3px; }
-  .stile em { display: block; margin-top: 3px; font-style: normal; font-size: 11px; font-weight: 600; color: var(--Up); }
-  .stile em.down { color: var(--Primary, #FE353D); }
-
-  /* Where it moved: split bar + legend */
-  .moves { margin-top: 6px; }
-  .move { padding: 10px 0; }
-  .move + .move { border-top: 1px solid #F3F3F6; }
-  .move-top { display: flex; align-items: baseline; justify-content: space-between; gap: 10px; }
-  .move-top span { font-size: 13px; color: #55555E; }
-  .move-top b { font-size: 13.5px; font-weight: 700; color: var(--On-Surface, #1C1C21); white-space: nowrap; }
-  .move-bar { margin-top: 7px; height: 6px; border-radius: 3px; background: #F3F3F6; overflow: hidden; }
-  .move-bar i { display: block; height: 100%; border-radius: 3px; background: var(--Primary, #FE353D); transition: width 0.35s ease; }
 
   /* Credit health: red gradient strip */
   .health { display: flex; align-items: center; gap: 12px; padding: 14px; border-radius: 18px; color: #FFF; cursor: pointer;
@@ -95,14 +82,6 @@
   .h-fig small { display: block; font-size: 11px; color: rgba(255,255,255,0.85); white-space: nowrap; }
   .h-fig b { display: block; margin-top: 2px; font-size: 14px; font-weight: 700; white-space: nowrap; }
   .health .cv { width: 16px; height: 16px; stroke: #FFF; stroke-width: 2.2; fill: none; stroke-linecap: round; stroke-linejoin: round; flex-shrink: 0; }
-
-  /* Monthly bars */
-  .bars { margin-top: 14px; height: 120px; display: flex; align-items: flex-end; gap: 10px; }
-  .bars .m { flex: 1; min-width: 0; height: 100%; display: flex; flex-direction: column; align-items: center; gap: 6px; }
-  .bars .pair { flex: 1; width: 100%; display: flex; align-items: flex-end; justify-content: center; gap: 3px; }
-  .bars .pair i { width: 9px; border-radius: 4px 4px 2px 2px; transition: height 0.35s ease; }
-  .bars small { font-size: 10px; font-weight: 600; color: #A0A0AA; }
-  .bars .m.cur small { color: var(--On-Surface, #1C1C21); }
 
   .recent-transactions { margin-bottom: 8px; }
   .transaction-card .logo.sc { background: #FFF1F2; }
@@ -158,15 +137,6 @@
       <div class="legend"><span><i style="background:#FE353D"></i><span id="lgNow"></span></span><span><i style="background:#C9C9D1"></i><span id="lgLast"></span></span></div>
     </div>
 
-    <!-- Summary -->
-    <div class="tiles4" id="tiles"></div>
-
-    <!-- Where the money moved -->
-    <div class="card">
-      <div class="card-head"><span class="card-title">Where your money moved</span><small id="mixTotal"></small></div>
-      <div class="moves" id="moves"></div>
-    </div>
-
     <!-- Credit health -->
     <div class="health" onclick="location.href='Credit Score.html'">
       <span class="mini"><svg viewBox="0 0 58 36"><path d="M5 32a24 24 0 0 1 48 0" fill="none" stroke="rgba(255,255,255,0.3)" stroke-width="6" stroke-linecap="round"/><path id="miniArc" d="M5 32a24 24 0 0 1 48 0" fill="none" stroke="#FFF" stroke-width="6" stroke-linecap="round" pathLength="100" stroke-dasharray="0 100"/></svg><b id="hScore"></b></span>
@@ -176,12 +146,8 @@
       <svg class="cv" viewBox="0 0 24 24"><path d="M9 6l6 6-6 6"/></svg>
     </div>
 
-    <!-- Last 6 months -->
-    <div class="card">
-      <div class="card-head"><span class="card-title">Last 6 months</span><small>Saved vs repaid</small></div>
-      <div class="bars" id="bars"></div>
-      <div class="legend"><span><i style="background:#FE353D"></i>Saved</span><span><i style="background:#FFB3B6"></i>Repaid</span></div>
-    </div>
+    <!-- Summary -->
+    <div class="tiles4" id="tiles"></div>
 
     <!-- Recent activity -->
     <div class="recent-transactions">
@@ -287,18 +253,7 @@
     // Tiles
     const borrowed = borrowedIn(P.days), repaid = SERIES[period].credit.now.at(-1);
     const T = [['Saved in', ICON.in, f.savedIn, f.d[0]], ['Withdrawn', ICON.out, f.withdrawn, f.d[1]], ['Borrowed', ICON.borrow, borrowed, f.d[2]], ['Repaid', ICON.repay, repaid, f.d[3]]];
-    $('tiles').innerHTML = T.map(([t, ic, v, d]) => `<div class="stile"><div class="top">${ic}${t}</div><b>${money(v)}<small>ETB</small></b>
-      <em class="${(t === 'Withdrawn' ? d > 0 : d < 0) ? 'down' : ''}">${d < 0 ? '▼' : '▲'} ${Math.abs(d)}% vs ${P.last.toLowerCase()}</em></div>`).join('');
-
-    // Where it moved
-    const M = [['Savings deposits', f.savedIn], ['Interest earned', f.interest], ['Loans disbursed', borrowed], ['Loan repayments', repaid], ['Overdraft', f.overdraft]].filter(m => m[1] > 0);
-    const sum = M.reduce((a, m) => a + m[1], 0) || 1;
-    $('mixTotal').textContent = money(sum) + ' ETB';
-    // One row per type, biggest first; the bar is its share of the total
-    const top = Math.max(...M.map(m => m[1]));
-    $('moves').innerHTML = M.sort((a, b) => b[1] - a[1]).map(m => `<div class="move">
-      <div class="move-top"><span>${m[0]}</span><b>${money(m[1])} ETB</b></div>
-      <div class="move-bar"><i style="width:${Math.max(2, m[1] / top * 100)}%"></i></div></div>`).join('');
+    $('tiles').innerHTML = T.map(([t, ic, v]) => `<div class="stile"><div class="top">${ic}${t}</div><b>${money(v)}<small>ETB</small></b></div>`).join('');
 
     renderRecent();
   }
@@ -307,15 +262,6 @@
   $('hScore').textContent = TL.SCORE.value; $('hLabel').textContent = TL.SCORE.label;
   $('miniArc').setAttribute('stroke-dasharray', `${Math.round((TL.SCORE.value - 300) / 6)} 100`);
   $('hUsed').textContent = Math.round(TL.outstanding(loans) / TL.LIMIT * 100) + '%';
-
-  // Last 6 months: saved vs repaid per month
-  (function () {
-    const saved = [2100, 3500, 2600, 2700, 2950, 4250], repaid = [1800, 2800, 2300, 2500, 2800, 3450 + repaidLive];
-    const top = Math.max(...saved, ...repaid);
-    $('bars').innerHTML = PERIOD.six.axis.map((m, i) => `<div class="m${i === 5 ? ' cur' : ''}"><div class="pair">
-      <i style="height:${saved[i] / top * 100}%;background:#FE353D" title="Saved ${money(saved[i])}"></i>
-      <i style="height:${repaid[i] / top * 100}%;background:#FFB3B6" title="Repaid ${money(repaid[i])}"></i></div><small>${m}</small></div>`).join('');
-  })();
 
   // Recent activity for the selected tab
   const RECENT = [

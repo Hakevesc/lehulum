@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Done — M-PESA</title>
+<link rel="stylesheet" href="styles/design-tokens.css">
+<link rel="stylesheet" href="styles/base.css">
+<link rel="stylesheet" href="styles/component-status-bar.css">
+<link rel="stylesheet" href="styles/component-sc-card.css">
+<link rel="stylesheet" href="styles/savings.css">
+<style>
+  @import url('https://api.fontshare.com/v2/css?f[]=switzer@400,500,600,700,800&display=swap');
+
+  /* Result after the PIN for every savings action — opt-in, individual /
+     target (create, deposit, withdraw, close), fixed deposit (open, roll over,
+     withdraw at maturity, early withdraw, balance, mini statement) and group
+     (create, contribute, withdraw, close, leave, approve). Books the action
+     once into savings-store.js, then shows the outcome and the next step. */
+  .app-content { align-items: center; text-align: center; padding-bottom: 0 !important; }
+  .header-nav { align-self: stretch; }
+  .ok { margin-top: 26px; width: 96px; height: 96px; border-radius: 50%; background: #E8F9EE; display: flex; align-items: center; justify-content: center; animation: pop 0.45s cubic-bezier(.2,1.4,.4,1) both; }
+  .ok span { width: 64px; height: 64px; border-radius: 50%; background: #16A34A; display: flex; align-items: center; justify-content: center; box-shadow: 0 8px 20px rgba(22,163,74,0.3); }
+  .ok svg { width: 32px; height: 32px; stroke: #FFF; stroke-width: 3; fill: none; stroke-linecap: round; stroke-linejoin: round; }
+  .ok.info { background: #FFF1F2; }
+  .ok.info span { background: var(--Primary); box-shadow: 0 8px 20px rgba(254,53,61,0.3); }
+  @keyframes pop { from { transform: scale(0.6); } to { transform: none; } }
+  h1 { margin-top: 18px; font-size: 21px; font-weight: 700; color: var(--On-Surface); }
+  .sub { margin-top: 6px; max-width: 290px; font-size: 13.5px; line-height: 1.5; color: var(--On-Surface-Low); }
+  .sum { margin-top: 20px; align-self: stretch; text-align: left; }
+  .row small { display: block; margin-top: 2px; font-weight: 400; font-size: 11.5px; color: var(--On-Surface-Low); }
+  .bottom-bar { align-self: stretch; }
+</style>
+<link rel="stylesheet" href="styles/device.css">
+</head>
+<body>
+<div class="phone-frame">
+  <div class="status-bar">
+    <span class="time">10:00</span>
+    <div class="status-icons">
+      <svg data-name="icon-wifi" viewBox="0 0 24 24" fill="none"><path d="M1 9l2 2c4.970-4.970 13.030-4.970 18 0l2-2C16.930 2.930 7.080 2.930 1 9z" fill="#1C1C21"/><path d="M5 13l2 2c2.760-2.760 7.240-2.760 10 0l2-2C15.140 9.140 8.870 9.140 5 13z" fill="#1C1C21"/><path d="M9 17l2 2c1.100-1.100 2.900-1.100 4 0l2-2c-2.210-2.210-5.790-2.210-8 0z" fill="#1C1C21"/></svg>
+      <svg data-name="icon-signal" viewBox="0 0 24 24" fill="none"><rect x="2" y="6" width="4" height="12" rx="1" fill="#1C1C21"/><rect x="8" y="4" width="4" height="14" rx="1" fill="#1C1C21"/><rect x="14" y="2" width="4" height="16" rx="1" fill="#1C1C21"/><rect x="20" y="0" width="4" height="18" rx="1" fill="#1C1C21" opacity="0.3"/></svg>
+      <svg data-name="icon-battery" viewBox="0 0 28 14" fill="none"><rect x="0" y="1" width="22" height="12" rx="2.5" stroke="#1C1C21" stroke-width="1.5"/><rect x="2" y="3" width="16" height="8" rx="1" fill="#1C1C21"/><rect x="24" y="4" width="2" height="6" rx="1" fill="#1C1C21"/></svg>
+    </div>
+  </div>
+
+  <div class="app-content">
+    <div class="header-nav">
+      <button class="icon-btn" onclick="finish()" aria-label="Back"><svg data-name="icon-arrow-left" viewBox="0 0 24 24"><path d="M19 12H5M12 19l-7-7 7-7"/></svg></button>
+      <span class="header-title" id="hTitle"></span>
+      <span class="spacer"></span>
+    </div>
+
+    <div class="ok" id="okIc"><span><svg data-name="icon-check" viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg></span></div>
+    <h1 id="title"></h1>
+    <p class="sub" id="sub"></p>
+    <div class="card sum rows" id="sum"></div>
+    <div class="bottom-bar"><button class="btn-primary" id="primary"></button><button class="btn-ghost" id="secondary" onclick="finish()">Done</button></div>
+  </div>
+
+  <div class="toast" id="toast"></div>
+</div>
+
+<script src="savings-store.js"></script>
+<script src="savings-ui.js"></script>
+<script>
+  const $ = id => document.getElementById(id);
+  const fmt = SV.fmt, IC = SVUI.IC;
+  let tt;
+  function toast(m) { const t = $('toast'); if (!t) return; t.textContent = m; t.classList.add('show'); clearTimeout(tt); tt = setTimeout(() => t.classList.remove('show'), 2200); }
+  function openSheet(id) { const s = $('scrim'); if (s) s.classList.add('show'); $(id).classList.add('show'); }
+  function closeSheets() { const s = $('scrim'); if (s) s.classList.remove('show'); document.querySelectorAll('.sheet').forEach(x => x.classList.remove('show')); }
+  document.addEventListener('keydown', e => { if (e.key === 'Escape') closeSheets(); });
+  // Hand an action to the shared PIN screen, which returns to Savings - Done.html
+  function toPin(data) { sessionStorage.setItem('termLoanData', JSON.stringify(Object.assign({ next: 'Savings - Done.html', back: location.pathname.split('/').pop() + location.search }, data))); location.href = 'Term Loan - Enter PIN.html'; }
+
+  const d = JSON.parse(sessionStorage.getItem('termLoanData') || '{}');
+  const S = SV.load(), now = new Date().toISOString();
+  S.deposits = S.deposits || []; S.groups = S.groups || [];
+  const P = id => S.pockets.find(x => x.id === id), A = id => S.deposits.find(x => x.id === id), G = id => S.groups.find(x => x.id === id);
+  // Money paid out of a deposit lands in the wallet or a saving pocket
+  function payInto(dest, amt) { const p = dest && dest !== 'wallet' && P(dest); if (p) p.txns.push({ type: 'DEPOSIT', amount: amt, on: now, by: 'fd' }); else S.wallet += amt; }
+
+  // ── Book the action once (by the PIN screen's ref) ──
+  if (d.ref && d.recorded !== d.ref) {
+    const p = P(d.id), a = A(d.id), g = G(d.id);
+    switch (d.kind) {
+      case 'sav-optin': S.optedIn = true; break;
+      case 'sav-create': d.id = SV.newId(); S.pockets.push({ id: d.id, kind: d.type, name: d.name, opened: now, target: d.target ? { amount: d.target.amount, from: now, by: d.target.by } : null, auto: d.auto || null, txns: [] }); break;
+      case 'sav-deposit': if (p) { p.txns.push({ type: 'DEPOSIT', amount: d.amount, on: now }); S.wallet -= d.amount; } break;
+      case 'sav-withdraw': if (p) { p.txns.push({ type: 'WITHDRAW', amount: d.amount, on: now }); S.wallet += d.amount; } break;
+      case 'sav-close': S.pockets = S.pockets.filter(x => x.id !== d.id); S.wallet += d.amount; break;
+      case 'sav-fd-open': { const pl = SV.PLANS[d.plan]; d.id = SV.newId('FD');
+        S.deposits.push({ id: d.id, name: d.name, months: pl.months, rate: pl.rate, principal: d.amount, opened: now, closed: null, txns: [{ type: 'DEPOSIT', amount: d.amount, on: now }] });
+        S.wallet -= d.amount; break; }
+      case 'sav-fd-roll': { const old = A(d.from), pl = SV.PLANS[d.plan];
+        d.interest = SV.accrued(old);
+        old.txns.push({ type: 'INTEREST POSTED', amount: d.interest, on: now }, { type: 'ROLLED OVER', amount: d.base, on: now });
+        old.closed = { on: now, paid: d.base, how: 'Rollover to a new term' };
+        d.id = SV.newId('FD');
+        S.deposits.push({ id: d.id, name: d.name, months: pl.months, rate: pl.rate, principal: d.amount, opened: now, closed: null, txns: [{ type: 'DEPOSIT', amount: d.amount, on: now }] });
+        S.wallet -= d.topUp; break; }
+      case 'sav-fd-mature': d.interest = SV.accrued(a); d.principal = a.principal;
+        a.txns.push({ type: 'INTEREST POSTED', amount: d.interest, on: now }, { type: 'WITHDRAW', amount: d.amount, on: now });
+        a.closed = { on: now, paid: d.amount, how: 'Maturity withdrawal' }; payInto(d.dest, d.amount); break;
+      case 'sav-fd-early':
+        a.txns.push({ type: 'WITHDRAW', amount: d.amount, on: now });
+        a.closed = { on: now, paid: d.amount, how: 'Early withdrawal', lost: d.lost }; payInto(d.dest, d.amount); break;
+      case 'sav-grp-create': d.id = SV.newId('GS');
+        S.groups.push({ id: d.id, kind: 'group', name: d.name, admin: 'me', opened: now, closed: null, target: { amount: d.target.amount, from: now, by: d.target.by },
+          members: [{ id: 'me' }].concat(d.members.map(id => ({ id, pending: true }))), leave: null, txns: [] }); break;
+      case 'sav-grp-contribute': g.txns.push({ type: 'DEPOSIT', amount: d.amount, on: now, by: 'me' }); S.wallet -= d.amount; break;
+      case 'sav-grp-withdraw': g.txns.push({ type: 'WITHDRAW', amount: d.amount, on: now, by: 'me', label: 'Withdrawn by you (admin)' });
+        g.closed = { on: now, paid: d.amount }; S.wallet += d.amount; break;
+      case 'sav-grp-close': d.mine = SV.memberTotal(g, 'me');
+        SV.joined(g).forEach(m => { const t = SV.memberTotal(g, m.id); if (t > 0) g.txns.push({ type: 'WITHDRAW', amount: t, on: now, by: m.id, label: 'Paid back to ' + (m.id === 'me' ? 'you' : SV.person(m.id).name) }); });
+        g.closed = { on: now, paid: d.amount }; S.wallet += d.mine; break;
+      case 'sav-auto-set': { const acc = d.group ? G(d.id) : P(d.id); if (acc) acc.auto = Object.assign({}, d.auto); break; }
+      case 'sav-grp-leave': g.leave = { who: 'me', approvals: [], on: now }; break;
+      case 'sav-grp-approve': {
+        if (!g.leave) break;
+        g.leave.approvals.push('me'); d.count = g.leave.approvals.length; d.who = g.leave.who;
+        if (d.count >= SV.LEAVE_NEEDED) {
+          const who = SV.person(d.who); d.paid = SV.leavePayout(g, d.who);
+          // Their own contributions leave the pot; the interest is paid on top
+          g.txns.push({ type: 'WITHDRAW', amount: SV.memberTotal(g, d.who), on: now, by: d.who, label: who.name + ' left the group' });
+          g.members = g.members.filter(m => m.id !== d.who); g.leave = null; d.completed = true;
+        }
+        break; }
+    }
+    SV.save(S); d.recorded = d.ref; sessionStorage.setItem('termLoanData', JSON.stringify(d));
+  }
+
+  // ── What to show ──
+  const p = P(d.id), a = A(d.id), g = G(d.id);
+  const rows = [];
+  const goPocket = (done) => () => location.href = `Savings - Pocket.html?id=${d.id}&done=${done}`;
+  const goAcct = () => location.href = `Fixed Deposit - Account.html?id=${d.id}&done=1`;
+  const goGroup = (done) => () => location.href = `Group Saving - Group.html?id=${d.id}` + (done ? '&done=' + done : '');
+  const C = {
+    'sav-optin': ['You\'re opted in', 'Start saving for your goals and earn ' + SV.RATE + '% a year.', 'Go to M-PESA Savings', () => location.href = 'Savings.html?done=optin'],
+    'sav-create': [`${d.name} is ready`, 'Make your first deposit to start saving.', 'Add Money', () => location.href = `Savings - Amount.html?id=${d.id}&kind=deposit`],
+    'sav-deposit': p && p.target && SV.balanceOf(p) >= p.target.amount
+      ? ['You have reached your target!', `${fmt(d.amount)} ETB added — ${d.name} now has ${fmt(SV.balanceOf(p))} ETB.`, 'View Saving', goPocket('deposit')]
+      : ['Money saved', `${fmt(d.amount)} ETB added to ${d.name}.`, 'View Saving', goPocket('deposit')],
+    'sav-withdraw': ['Money withdrawn', `${fmt(d.amount)} ETB sent to your M-PESA wallet.`, 'View Saving', goPocket('withdraw')],
+    'sav-close': ['Saving closed', `${fmt(d.amount)} ETB sent to your M-PESA wallet.`, 'Back to Savings', () => location.href = 'Savings.html?done=closed'],
+    'sav-fd-open': ['Deposit created', `${fmt(d.amount)} ETB is locked with Awash Bank.`, 'View Deposit', goAcct],
+    'sav-fd-roll': ['Deposit rolled over', 'Your new term has started.', 'View Deposit', goAcct],
+    'sav-fd-mature': ['Deposit closed', `${fmt(d.amount)} ETB sent to your ${d.destName || 'M-PESA wallet'}.`, 'Back to Fixed Deposit', () => location.href = 'Fixed Deposit.html'],
+    'sav-fd-early': ['Deposit closed', 'Closed before maturity — your deposit was returned.', 'Back to Fixed Deposit', () => location.href = 'Fixed Deposit.html'],
+    'sav-fd-balance': ['Balance', 'Balance as of ' + new Date().toLocaleString('en-GB', { day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' }), 'Mini Statement', () => { d.kind = 'sav-fd-mini'; sessionStorage.setItem('termLoanData', JSON.stringify(d)); location.reload(); }],
+    'sav-fd-mini': ['Mini statement', 'Your last five movements. Also sent to your phone by SMS.', 'Done', goAcct],
+    'sav-grp-create': [`${d.name} is ready`, `Invitations sent to ${(d.members || []).length} ${(d.members || []).length > 1 ? 'members' : 'member'}. Contribute to get the group started.`, 'Contribute', () => location.href = `Savings - Amount.html?group=${d.id}`],
+    'sav-grp-contribute': ['Contribution added', `${fmt(d.amount)} ETB added to ${g ? g.name : 'the group'}.`, 'View Group', goGroup('contribute')],
+    'sav-grp-withdraw': ['Money withdrawn', `${fmt(d.amount)} ETB sent to your M-PESA wallet. The group is now closed.`, 'Back to Group Saving', () => location.href = 'Group Saving.html'],
+    'sav-grp-close': ['Group closed', 'Every member got back what they put in.', 'Back to Group Saving', () => location.href = 'Group Saving.html'],
+    'sav-auto-set': ['Auto-save is on', `${fmt(d.amount)} ETB moves from your wallet to ${d.name} ${d.auto ? SV.FREQS[d.auto.freq].every : ''}.`, d.group ? 'View Group' : 'View Saving',
+      () => location.href = (d.group ? `Group Saving - Group.html?id=${d.id}` : `Savings - Pocket.html?id=${d.id}`) + '&done=auto'],
+    'sav-grp-leave': ['Leave request sent', `Once ${SV.LEAVE_NEEDED} members approve, ${fmt(d.amount)} ETB comes back to your wallet.`, 'View Group', goGroup('leave')],
+    'sav-grp-approve': d.completed ? [`${SV.person(d.who).name} has left`, `${fmt(d.paid)} ETB was paid back to them, with interest.`, 'View Group', goGroup('')]
+                                   : ['You approved', `${d.count || 1} of ${SV.LEAVE_NEEDED} members have approved.`, 'View Group', goGroup('approve')]
+  }[d.kind] || ['Done', '', 'Back to Savings', () => location.href = 'Savings.html'];
+  $('title').textContent = C[0]; $('sub').textContent = C[1];
+  $('primary').textContent = C[2]; $('primary').onclick = C[3];
+
+  const ETB = v => fmt(v) + ' ETB';
+  switch (d.kind) {
+    case 'sav-create': rows.push(['Saving', d.type === 'target' ? 'Target Saving' : 'Individual Saving'], ['Interest', SV.RATE + '% a year']); if (d.target) rows.push(['Goal', ETB(d.target.amount)], ['By', SV.dateStr(d.target.by)]);
+      if (d.auto) rows.push(['Auto-save', SV.autoLine(d.auto)], ['First transfer', SV.dateStr(d.auto.start)]); break;
+    case 'sav-deposit': case 'sav-withdraw': if (p) { rows.push(['Saving', d.name], ['Amount', ETB(d.amount)], ['Saving balance', ETB(SV.balanceOf(p))]); if (p.target) rows.push(['Goal progress', SV.pctOf(p) + '% of ' + ETB(p.target.amount)]); } break;
+    case 'sav-close': rows.push(['Saving', d.name], ['Paid to wallet', ETB(d.amount)]); break;
+    case 'sav-auto-set': { const acc = d.group ? G(d.id) : P(d.id);
+      rows.push([d.group ? 'Group' : 'Saving', d.name], ['Amount', ETB(d.amount)], ['How often', SV.FREQS[d.auto.freq].label], ['First transfer', SV.dateStr(d.auto.start)], ['From', 'M-PESA wallet']);
+      if (acc && acc.target && !d.group) { const on = SV.reachesOn(acc.target.amount, SV.balanceOf(acc), d.auto); if (on) rows.push(['Reaches the goal', SV.dateStr(on)]); }
+      break; }
+    case 'sav-fd-open': case 'sav-fd-roll': if (a) { const pr = SV.projected(SV.PLANS[d.plan], d.amount);
+      rows.push(['Deposit', a.name]);
+      if (d.kind === 'sav-fd-roll') { rows.push(['From matured deposit', ETB(d.base)]); if (d.topUp) rows.push(['Added from wallet', ETB(d.topUp)]); }
+      rows.push(['Locked amount', ETB(d.amount)], ['Interest rate', a.rate + '% a year'], ['Matures on', SV.dateStr(SV.maturityOf(a))], ['At maturity', ETB(d.amount + pr.interest)]); } break;
+    case 'sav-fd-mature': rows.push(['Deposit', ETB(d.principal || 0)], ['Interest earned', '+' + ETB(d.interest || 0)], ['Total paid', ETB(d.amount)], ['Sent to', d.destName || 'M-PESA Wallet']); break;
+    case 'sav-fd-early': rows.push(['Principal returned', ETB(d.amount)], ['Interest lost', '<b class="lost">-' + ETB(d.lost) + '</b>'], ['Sent to', d.destName || 'M-PESA Wallet'], ['Status', 'Closed before maturity']); break;
+    case 'sav-fd-balance': $('okIc').className = 'ok info'; $('secondary').textContent = 'Done'; $('secondary').onclick = goAcct;
+      rows.push(['Current balance', '<b>' + ETB(SV.maturedTotal(a)) + '</b>'], ['Principal', ETB(a.principal)], ['Accrued interest', '+' + ETB(SV.accrued(a))], ['Matures on', SV.dateStr(SV.maturityOf(a))]); break;
+    case 'sav-fd-mini': $('okIc').className = 'ok info'; $('secondary').style.display = 'none';
+      SV.history(a).reverse().slice(0, 5).forEach(t => rows.push([`${{ 'DEPOSIT': 'Deposit', 'INTEREST ACCRUED': 'Interest accrued', 'INTEREST POSTED': 'Interest posted', 'WITHDRAW': 'Withdrawn', 'ROLLED OVER': 'Rolled over' }[t.type]}<small>${SV.dateStr(t.on)}</small>`, (t.type === 'WITHDRAW' ? '-' : '+') + fmt(t.amount)])); break;
+    case 'sav-grp-create': $('secondary').textContent = 'Add Later'; $('secondary').onclick = goGroup('');
+      rows.push(['Group', d.name], ['Target', ETB(d.target.amount)], ['By', SV.dateStr(d.target.by)], ['Members', (d.members.length + 1) + ' including you']); break;
+    case 'sav-grp-contribute': if (g) rows.push(['Group', g.name], ['Amount', ETB(d.amount)], ['Group balance', ETB(SV.balanceOf(g))], ['Target progress', SV.pctOf(g) + '% of ' + ETB(g.target.amount)]); break;
+    case 'sav-grp-withdraw': rows.push(['Group', g ? g.name : ''], ['Sent to', 'M-PESA wallet'], ['Amount', ETB(d.amount)]); break;
+    case 'sav-grp-close': rows.push(['Group', g ? g.name : ''], ['Paid back in total', ETB(d.amount)], ['Your share to wallet', ETB(d.mine || 0)]); break;
+    case 'sav-grp-leave': case 'sav-grp-approve': if (g) rows.push(['Group', g.name]); rows.push([d.kind === 'sav-grp-leave' ? 'Paid back to you' : 'Paid back to them', ETB(d.completed ? d.paid : d.amount)]); break;
+  }
+  if (d.ref && !/balance|mini/.test(d.kind)) rows.push(['Transaction ID', d.ref]);
+  if (!/balance/.test(d.kind)) rows.push(['Date', new Date().toLocaleString('en-GB', { day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' })]);
+  $('sum').innerHTML = rows.map(([k, v]) => `<div class="row"><span>${k}</span><b>${v}</b></div>`).join('');
+  $('sum').querySelectorAll('.row > b > b').forEach(b => b.parentElement.replaceWith(b));
+  if (d.kind === 'sav-optin') { $('sum').style.display = 'none'; $('secondary').style.display = 'none'; }
+  function finish() {
+    const k = d.kind || '';
+    location.href = k === 'sav-deposit' || k === 'sav-withdraw' ? `Savings - Pocket.html?id=${d.id}`
+      : /^sav-fd-(open|roll|balance|mini)/.test(k) ? `Fixed Deposit - Account.html?id=${d.id}&done=1` : /^sav-fd/.test(k) ? 'Fixed Deposit.html'
+      : k === 'sav-auto-set' ? (d.group ? `Group Saving - Group.html?id=${d.id}` : `Savings - Pocket.html?id=${d.id}`)
+      : /^sav-grp-(create|contribute|leave|approve)/.test(k) && G(d.id) ? `Group Saving - Group.html?id=${d.id}` : /^sav-grp/.test(k) ? 'Group Saving.html' : 'Savings.html';
+  }
+</script>
+<!-- Export to Figma button (shared exporter) -->
+<script src="figma-export.js"></script>
+<script src="test-scenarios-data.js"></script>
+<script src="test-scenarios.js"></script>
+</body>
+</html>

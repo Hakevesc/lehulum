@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Loan Offers</title>
+<link rel="stylesheet" href="styles/design-tokens.css">
+<link rel="stylesheet" href="styles/base.css">
+<link rel="stylesheet" href="styles/component-status-bar.css">
+<style>
+  @import url('https://api.fontshare.com/v2/css?f[]=switzer@400,500,600,700,800&display=swap');
+
+  /* Loan offers from one bank (Term Loan → a bank): ?bank=<lender>&type=<cash|salary|bnpl>.
+     The bank's loan types as chips, then one card per offer with its limit,
+     repayment period, conditions and Apply. */
+  :root { --Font: Switzer, sans-serif; --Primary: #FE353D; --Primary-Light: #FFF1F2; --On-Surface: #1C1C21; --On-Surface-Low: #7C7C87; }
+  body { font-family: var(--Font); }
+  .app-content { display: flex; flex-direction: column; }
+  .app-content > * { flex-shrink: 0; }
+
+  .header-nav { display: flex; align-items: center; justify-content: space-between; padding: 0 0 12px; }
+  .icon-btn { width: 36px; height: 36px; border-radius: 50%; background: transparent; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+  .icon-btn:hover { background: rgba(0,0,0,0.05); }
+  .icon-btn svg { width: 22px; height: 22px; stroke: var(--On-Surface); stroke-width: 1.8; fill: none; stroke-linecap: round; stroke-linejoin: round; }
+  .header-title { color: var(--On-Surface); font-size: 17px; font-weight: 500; letter-spacing: 0.3px; flex: 1; text-align: center; }
+
+  .phone-frame { display: flex; flex-direction: column; }
+  .app-content { flex: 1 1 auto; min-height: 0; height: auto; }
+
+  /* Lender logo tile (offer cards) */
+  .logo { width: 38px; height: 38px; border-radius: 11px; background: #FFF; border: 1px solid #EFEFF2; display: flex; align-items: center; justify-content: center; overflow: hidden; flex-shrink: 0; }
+  .logo img { width: 30px; height: 30px; object-fit: contain; }
+
+
+  .section-hdr { display: flex; align-items: center; justify-content: space-between; padding: 0 2px; margin-bottom: 10px; }
+  .section-title { color: var(--On-Surface); font-size: 15px; font-weight: 600; }
+  /* Offer filters */
+  .chips { display: flex; gap: 8px; overflow-x: auto; scrollbar-width: none; margin: 0 -15px 8px; padding: 0 15px; }
+  .chips::-webkit-scrollbar { display: none; }
+  .chip { flex-shrink: 0; height: 34px; padding: 0 14px; border-radius: 999px; border: 1px solid #E6E6EA; background: #FFF; font-family: var(--Font); font-size: 12.5px; font-weight: 600; color: #55555E; cursor: pointer; }
+  .chip.on { background: var(--Primary); border-color: var(--Primary); color: #FFF; box-shadow: 0 3px 10px rgba(254,53,61,0.25); }
+  .chips.second { margin-bottom: 12px; }
+  .chips.second .chip { height: 34px; padding: 0 16px; font-size: 13px; font-weight: 500; color: #3A3A44; background: #FFF; }
+  .chips.second .chip.on { background: var(--Primary-Light); border: 1.5px solid var(--Primary); color: var(--Primary); font-weight: 600; box-shadow: none; }
+  /* Offer card */
+  .offers { display: flex; flex-direction: column; gap: 10px; margin-bottom: 10px; }
+  .offer { background: #FFF; border-radius: 20px; padding: 14px; box-shadow: 0 4px 16px rgba(15,23,42,0.06); }
+  .offer-top { display: flex; align-items: center; gap: 12px; }
+  .offer-top .info { flex: 1; min-width: 0; }
+  .offer-top b { display: block; font-size: 14.5px; font-weight: 700; color: var(--On-Surface); }
+  .offer-top small { display: block; margin-top: 2px; font-size: 12px; color: var(--On-Surface-Low); }
+  .tag { flex-shrink: 0; padding: 3px 8px; border-radius: 999px; background: #EDEDF0; font-size: 10.5px; font-weight: 600; color: #55555E; }
+  .offer-limit { margin-top: 12px; display: flex; gap: 8px; }
+  .offer-limit div { flex: 1; padding: 8px 10px; border-radius: 12px; background: #F7F7F9; }
+  .offer-limit small { display: block; font-size: 10.5px; color: var(--On-Surface-Low); }
+  .offer-limit b { display: block; margin-top: 2px; font-size: 12.5px; font-weight: 700; color: var(--On-Surface); white-space: nowrap; }
+  .offer-foot { margin-top: 12px; padding-top: 10px; border-top: 1px solid #F1F1F4; display: flex; align-items: center; justify-content: space-between; }
+  .cond-btn { display: inline-flex; align-items: center; gap: 4px; border: none; background: none; font-family: var(--Font); font-size: 12.5px; font-weight: 600; color: #55555E; cursor: pointer; padding: 0; }
+  .cond-btn svg { width: 15px; height: 15px; stroke: var(--Primary); stroke-width: 2.2; fill: none; transition: transform 0.2s; }
+  .offer.open .cond-btn svg { transform: rotate(180deg); }
+  .apply { height: 34px; padding: 0 18px; border: none; border-radius: 999px; background: var(--Primary); color: #FFF; font-family: Switzer, sans-serif; font-size: 12.5px; font-weight: 500; cursor: pointer; box-shadow: 0 3px 10px rgba(254,53,61,0.25); }
+  .conds { display: none; margin-top: 10px; padding: 4px 12px; border-radius: 12px; background: #F7F7F9; }
+  .offer.open .conds { display: block; }
+  .cond { display: flex; justify-content: space-between; padding: 7px 0; font-size: 12px; color: #55555E; }
+  .cond + .cond { border-top: 1px solid #ECECEF; }
+  .cond b { color: var(--On-Surface); font-weight: 600; }
+  .no-offers { padding: 22px; text-align: center; font-size: 13px; color: var(--On-Surface-Low); background: #FFF; border-radius: 18px; }
+
+</style>
+<link rel="stylesheet" href="styles/device.css">
+</head>
+<body>
+<div class="phone-frame">
+  <div class="status-bar">
+    <span class="time">10:00</span>
+    <div class="status-icons">
+      <svg viewBox="0 0 24 24" fill="none"><path d="M1 9l2 2c4.97-4.97 13.03-4.97 18 0l2-2C16.93 2.93 7.08 2.93 1 9z" fill="#1C1C21"/><path d="M5 13l2 2c2.76-2.76 7.24-2.76 10 0l2-2C15.14 9.14 8.87 9.14 5 13z" fill="#1C1C21"/><path d="M9 17l2 2c1.1-1.1 2.9-1.1 4 0l2-2c-2.21-2.21-5.79-2.21-8 0z" fill="#1C1C21"/></svg>
+      <svg viewBox="0 0 24 24" fill="none"><rect x="2" y="6" width="4" height="12" rx="1" fill="#1C1C21"/><rect x="8" y="4" width="4" height="14" rx="1" fill="#1C1C21"/><rect x="14" y="2" width="4" height="16" rx="1" fill="#1C1C21"/><rect x="20" y="0" width="4" height="18" rx="1" fill="#1C1C21" opacity="0.3"/></svg>
+      <svg viewBox="0 0 28 14" fill="none"><rect x="0" y="1" width="22" height="12" rx="2.5" stroke="#1C1C21" stroke-width="1.5"/><rect x="2" y="3" width="16" height="8" rx="1" fill="#1C1C21"/><rect x="24" y="4" width="2" height="6" rx="1" fill="#1C1C21"/></svg>
+    </div>
+  </div>
+
+  <div class="app-content">
+    <div class="header-nav">
+      <button class="icon-btn" onclick="location.href='Term Loan.html'" aria-label="Back"><svg viewBox="0 0 24 24"><path d="M19 12H5M12 19l-7-7 7-7"/></svg></button>
+      <span class="header-title" id="hTitle">Loan Offers</span>
+      <span style="width:36px"></span>
+    </div>
+
+    <div class="section-hdr">
+      <span class="section-title">Loan Offers</span>
+      <span style="font-size:12px;color:var(--On-Surface-Low)" id="offerCount"></span>
+    </div>
+    <div class="chips second" id="typeChips"></div>
+    <div class="offers" id="offers"></div>
+  </div>
+</div>
+
+<script src="term-loan-store.js"></script>
+<script>
+  const $ = id => document.getElementById(id);
+  const { fmt } = TL;
+  const q = new URLSearchParams(location.search);
+  const bank = q.get('bank') || TL.OFFERS[0].lender;
+  const mine = TL.OFFERS.filter(o => o.lender === bank);
+  // Chips: All + only the loan types this bank offers
+  const LABEL = { cash: 'Cash Loan', salary: 'Salary Advance', bnpl: 'BNPL' };
+  const types = [...new Set(mine.map(o => o.product))];
+  let type = types.includes(q.get('type')) ? q.get('type') : 'all';
+  $('hTitle').textContent = bank;
+  document.title = bank + ' · Loan Offers';
+  $('typeChips').innerHTML = ['all'].concat(types).map(t => `<button class="chip${t === type ? ' on' : ''}" data-v="${t}">${t === 'all' ? 'All' : LABEL[t]}</button>`).join('');
+  $('typeChips').style.display = types.length > 1 ? '' : 'none';
+  $('typeChips').querySelectorAll('.chip').forEach(c => c.onclick = () => {
+    type = c.dataset.v; $('typeChips').querySelectorAll('.chip').forEach(x => x.classList.toggle('on', x === c)); render();
+  });
+
+  const DOWN = '<svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>';
+  const n0 = v => fmt(v).replace('.00', '');
+  function render() {
+    const list = mine.filter(o => type === 'all' || o.product === type);
+    $('offerCount').textContent = list.length + (list.length === 1 ? ' offer' : ' offers');
+    $('offers').innerHTML = list.map(o => `
+      <div class="offer" id="of-${o.id}">
+        <div class="offer-top"><span class="logo"><img src="${o.logo}" alt=""></span>
+          <span class="info"><b>${o.name}</b><small>${o.lender}</small></span><span class="tag">${o.productLabel}</span></div>
+        <div class="offer-limit">
+          <div><small>Credit limit</small><b>${n0(o.min)} – ${n0(o.max)} ETB</b></div>
+          <div><small>Repay in</small><b>${o.days.join(' / ')} days</b></div>
+        </div>
+        <div class="conds">
+          <div class="cond"><span>Access fee</span><b>${(o.access * 100).toFixed(0)}%</b></div>
+          <div class="cond"><span>Daily maintenance fee</span><b>${(o.daily * 100).toFixed(2)}% / day</b></div>
+          <div class="cond"><span>Late penalty</span><b>${(o.penalty * 100).toFixed(1)}% / day</b></div>
+          <div class="cond"><span>Instalments</span><b>${o.inst}</b></div>
+          ${o.note ? `<div class="cond"><span>Eligibility</span><b>${o.note}</b></div>` : ''}
+        </div>
+        <div class="offer-foot">
+          <button class="cond-btn" type="button" onclick="this.closest('.offer').classList.toggle('open')">Loan conditions ${DOWN}</button>
+          <button class="apply" type="button" onclick="location.href='Term Loan - Apply.html?offer=${o.id}'">Apply</button>
+        </div>
+      </div>`).join('') || '<div class="no-offers">No offers of this type.</div>';
+  }
+  render();
+</script>
+<!-- Export to Figma button (shared exporter) -->
+<script src="figma-export.js"></script>
+<script src="test-scenarios-data.js"></script>
+<script src="test-scenarios.js"></script>
+</body>
+</html>

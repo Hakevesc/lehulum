@@ -5,8 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Account Status</title>
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@400;500;600&display=swap');
-  @import url('https://api.fontshare.com/v2/css?f[]=switzer@400,500,600,700&display=swap');
+  @import url('https://api.fontshare.com/v2/css?f[]=switzer@400,500,600,700,800&display=swap');
 
   :root {
     --Primary: #FE353D;
@@ -20,7 +19,7 @@
   * { margin: 0; padding: 0; box-sizing: border-box; }
 
   body {
-    font-family: 'Inter', sans-serif; background: transparent;
+    font-family: Switzer, sans-serif; background: transparent;
     display: flex; justify-content: center; align-items: center;
     min-height: 100vh; padding: 20px;
   }
@@ -56,20 +55,20 @@
   }
   .back-btn:hover { background: rgba(0,0,0,0.05); }
   .back-btn svg { width: 22px; height: 22px; stroke: var(--On-Surface); stroke-width: 1.8px; fill: none; }
-  .header-title { color: var(--On-Surface); font-family: 'Switzer', sans-serif; font-size: 17px; font-weight: 500; letter-spacing: 0.3px; flex: 1; text-align: center; }
+  .header-title { color: var(--On-Surface); font-family: Switzer, sans-serif; font-size: 17px; font-weight: 500; letter-spacing: 0.3px; flex: 1; text-align: center; }
   .header-spacer { width: 36px; height: 36px; flex-shrink: 0; }
 
   /* ── Main Content ── */
   .main-content { padding: 8px 16px 24px; display: flex; flex-direction: column; flex: 1; width: 100%; }
 
   /* ── Demo state switcher ── */
-  .preview-caption { color: var(--On-Surface-Low); font-family: 'Switzer', sans-serif; font-size: 11px; font-weight: 500; text-transform: uppercase; letter-spacing: 0.8px; margin: 6px 2px 8px; }
+  .preview-caption { color: var(--On-Surface-Low); font-family: Switzer, sans-serif; font-size: 11px; font-weight: 500; text-transform: uppercase; letter-spacing: 0.8px; margin: 6px 2px 8px; }
   .state-switch {
     display: flex; gap: 6px; background: #ECECEF; border-radius: 12px; padding: 4px; margin-bottom: 18px;
   }
   .state-tab {
     flex: 1; text-align: center; padding: 8px 4px; border-radius: 9px;
-    font-family: 'Switzer', sans-serif; font-size: 11.5px; font-weight: 500;
+    font-family: Switzer, sans-serif; font-size: 11.5px; font-weight: 500;
     color: var(--On-Surface-Low); cursor: pointer; transition: all 0.18s; border: none; background: transparent;
   }
   .state-tab.active { background: #FFF; color: var(--On-Surface); font-weight: 600; box-shadow: 0 1px 4px rgba(0,0,0,0.08); }
@@ -87,18 +86,18 @@
   .status-pill {
     display: inline-flex; align-items: center; gap: 7px;
     padding: 6px 14px; border-radius: 20px; margin-bottom: 14px;
-    font-family: 'Switzer', sans-serif; font-size: 13px; font-weight: 600; letter-spacing: 0.3px;
+    font-family: Switzer, sans-serif; font-size: 13px; font-weight: 600; letter-spacing: 0.3px;
   }
   .status-pill .pill-dot { width: 8px; height: 8px; border-radius: 50%; }
-  .status-message { color: var(--On-Surface); font-family: 'Switzer', sans-serif; font-size: 15px; font-weight: 600; line-height: 1.5; max-width: 280px; }
+  .status-message { color: var(--On-Surface); font-family: Switzer, sans-serif; font-size: 15px; font-weight: 600; line-height: 1.5; max-width: 280px; }
 
   /* ── Info card ── */
   .info-card {
     background: #FFF; border-radius: 16px; padding: 18px 16px;
     box-shadow: 0 2px 8px rgba(0,0,0,0.04); margin-bottom: 14px;
   }
-  .info-title { color: var(--On-Surface-Low); font-family: 'Switzer', sans-serif; font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.8px; margin-bottom: 10px; }
-  .info-desc { color: var(--On-Surface); font-family: 'Switzer', sans-serif; font-size: 13.5px; font-weight: 400; line-height: 1.6; }
+  .info-title { color: var(--On-Surface-Low); font-family: Switzer, sans-serif; font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.8px; margin-bottom: 10px; }
+  .info-desc { color: var(--On-Surface); font-family: Switzer, sans-serif; font-size: 13.5px; font-weight: 400; line-height: 1.6; }
 
   /* ── Restrictions list ── */
   .restrict-list { display: flex; flex-direction: column; gap: 10px; }
@@ -107,13 +106,13 @@
   .restrict-row .ic svg { width: 15px; height: 15px; stroke-width: 2.2; fill: none; stroke-linecap: round; stroke-linejoin: round; }
   .restrict-row .ic.allow { background: #EAFBEE; } .restrict-row .ic.allow svg { stroke: #1FC83B; }
   .restrict-row .ic.deny  { background: #FFF1F2; } .restrict-row .ic.deny svg  { stroke: var(--Primary); }
-  .restrict-row span { color: var(--On-Surface); font-family: 'Switzer', sans-serif; font-size: 13px; font-weight: 400; }
+  .restrict-row span { color: var(--On-Surface); font-family: Switzer, sans-serif; font-size: 13px; font-weight: 400; }
 
   /* ── CTA ── */
   .cta-area { margin-top: auto; padding-top: 14px; }
   .btn-primary {
     width: 100%; height: 50px; border-radius: 14px; background: var(--Primary); color: #FFF1F2;
-    font-family: 'Poppins', sans-serif; font-size: 14px; font-weight: 500;
+    font-family: Switzer, sans-serif; font-size: 14px; font-weight: 500;
     border: none; cursor: pointer; transition: all 0.2s; box-shadow: 0 4px 16px rgba(254,53,61,0.25);
     display: flex; align-items: center; justify-content: center; gap: 8px;
   }

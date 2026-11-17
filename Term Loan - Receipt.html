@@ -5,8 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Term Loan - Receipt</title>
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@400;500;600&family=Barlow:wght@400&display=swap');
-  @import url('https://api.fontshare.com/v2/css?f[]=switzer@400,500,600,700&display=swap');
+  @import url('https://api.fontshare.com/v2/css?f[]=switzer@400,500,600,700,800&display=swap');
 
   :root {
     --Primary: #FE353D;
@@ -22,7 +21,7 @@
   * { margin: 0; padding: 0; box-sizing: border-box; }
 
   body {
-    font-family: 'Inter', sans-serif;
+    font-family: Switzer, sans-serif;
     background: transparent;
     display: flex; justify-content: center; align-items: center;
     min-height: 100vh; padding: 20px;
@@ -62,7 +61,7 @@
   .close-btn svg { width: 22px; height: 22px; stroke: var(--On-Surface); stroke-width: 1.8px; }
   .header-action-btn svg { width: 20px; height: 20px; stroke: var(--On-Surface); stroke-width: 1.8px; }
   .header-title {
-    color: var(--On-Surface); font-family: 'Switzer', sans-serif;
+    color: var(--On-Surface); font-family: Switzer, sans-serif;
     font-size: 17px; font-weight: 500; letter-spacing: 0.3px;
     flex: 1; text-align: center;
   }
@@ -97,11 +96,11 @@
   /* Receipt Header */
   .receipt-header { width: 100%; text-align: center; margin-bottom: 18px; }
   .receipt-header h2 {
-    color: var(--On-Surface); font-family: 'Switzer', sans-serif;
+    color: var(--On-Surface); font-family: Switzer, sans-serif;
     font-size: 20px; font-weight: 700; letter-spacing: -0.2px; margin-bottom: 6px;
   }
   .receipt-header p {
-    color: var(--On-Surface-Low); font-family: 'Switzer', sans-serif;
+    color: var(--On-Surface-Low); font-family: Switzer, sans-serif;
     font-size: 12.5px; font-weight: 400;
   }
 
@@ -113,12 +112,12 @@
   .detail-row { display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; }
   #tlRows { display: flex; flex-direction: column; gap: 13px; }   /* same spacing as the rows below */
   .detail-row .label {
-    color: var(--On-Surface-Low); font-family: 'Switzer', sans-serif;
+    color: var(--On-Surface-Low); font-family: Switzer, sans-serif;
     font-size: 12px; font-weight: 400; letter-spacing: 0.1px;
     flex-shrink: 0; max-width: 150px;
   }
   .detail-row .value {
-    color: var(--On-Surface); font-family: 'Switzer', sans-serif;
+    color: var(--On-Surface); font-family: Switzer, sans-serif;
     font-size: 13px; font-weight: 500;
     text-align: right; overflow-wrap: break-word; flex: 1;
   }
@@ -130,7 +129,7 @@
     cursor: pointer; transition: all 0.2s; border-radius: 6px;
   }
   .copy-btn:hover { background: var(--Primary-Light); }
-  .copy-btn .copy-text { color: var(--Primary); font-family: 'Switzer', sans-serif; font-size: 11px; font-weight: 500; }
+  .copy-btn .copy-text { color: var(--Primary); font-family: Switzer, sans-serif; font-size: 11px; font-weight: 500; }
   .copy-btn svg { width: 14px !important; height: 14px !important; stroke: var(--Primary); stroke-width: 2; fill: none; }
   .copy-btn.copied .copy-text, .copy-btn.copied svg { stroke: var(--Success); color: var(--Success); }
 
@@ -151,16 +150,16 @@
     position: relative; z-index: 2;
   }
   .beneficiary-name {
-    color: var(--On-Surface); font-family: 'Switzer', sans-serif;
+    color: var(--On-Surface); font-family: Switzer, sans-serif;
     font-size: 16px; font-weight: 600; margin-bottom: 6px; letter-spacing: 0.2px;
   }
   .amount-display { display: flex; align-items: center; justify-content: center; gap: 10px; margin-bottom: 18px; }
   .amount-value {
-    color: var(--Success); font-family: 'Switzer', sans-serif;
+    color: var(--Success); font-family: Switzer, sans-serif;
     font-size: 38px; font-weight: 700; letter-spacing: -0.5px; line-height: 1;
   }
   .amount-currency {
-    color: var(--Success); font-family: 'Switzer', sans-serif;
+    color: var(--Success); font-family: Switzer, sans-serif;
     font-size: 16px; font-weight: 500;
     padding-left: 10px; border-left: 2px solid var(--Success); line-height: 1.1;
   }
@@ -187,16 +186,17 @@
   }
   .action-btn:hover { transform: translateY(-2px); }
   .action-btn:active { transform: scale(0.95); }
+  .action-sep { width: 1px; align-self: stretch; margin: 6px 0; background: #E6E6EA; }
   .action-icon {
     width: 46px; height: 46px; border-radius: 13px;
-    border: 1.5px solid var(--Primary); background: transparent;
+    border: 1.5px solid var(--Primary); background: var(--Primary-Light);
     display: flex; align-items: center; justify-content: center; transition: all 0.2s;
   }
   .action-btn:hover .action-icon { background: var(--Primary-Light); }
   .action-icon svg { width: 22px; height: 22px; stroke: var(--Primary); stroke-width: 2; fill: none; }
   .action-label {
-    color: var(--On-Surface); font-family: 'Switzer', sans-serif;
-    font-size: 11px; font-weight: 500; letter-spacing: 0.1px;
+    color: var(--On-Surface); font-family: Switzer, sans-serif;
+    font-size: 12.5px; font-weight: 500; letter-spacing: 0.1px;
   }
 
   /* Toast */
@@ -205,7 +205,7 @@
     transform: translateX(-50%) translateY(20px);
     background: var(--On-Surface); color: #FFF;
     padding: 11px 22px; border-radius: 12px;
-    font-family: 'Switzer', sans-serif; font-size: 13px; font-weight: 500;
+    font-family: Switzer, sans-serif; font-size: 13px; font-weight: 500;
     opacity: 0; pointer-events: none; transition: all 0.3s ease;
     z-index: 1000; box-shadow: 0 4px 16px rgba(0,0,0,0.2);
   }
@@ -222,12 +222,12 @@
   .sheet-grip { width: 44px; height: 4px; border-radius: 2px; background: #D8D8DE; margin: 0 auto 4px; }
   .sheet-close { position: absolute; top: 12px; right: 16px; width: 28px; height: 28px; border-radius: 50%; background: var(--Field, #F5F5F5); border: none; display: flex; align-items: center; justify-content: center; cursor: pointer; }
   .sheet-close svg { width: 15px; height: 15px; stroke: var(--On-Surface-Low); stroke-width: 2; fill: none; }
-  .sheet-title { font-family: 'Switzer', sans-serif; font-size: 17px; font-weight: 700; color: var(--On-Surface); text-align: center; }
+  .sheet-title { font-family: Switzer, sans-serif; font-size: 17px; font-weight: 700; color: var(--On-Surface); text-align: center; }
   .share-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px 8px; padding: 4px 0 6px; }
   .share-item { display: flex; flex-direction: column; align-items: center; gap: 7px; background: none; border: none; padding: 0; cursor: pointer; }
   .share-item .ico { width: 50px; height: 50px; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0; box-shadow: inset 0 0 0 1px rgba(0,0,0,0.06); }
   .share-item .ico svg { width: 22px; height: 22px; }
-  .share-item span { font-family: 'Switzer', sans-serif; font-size: 11px; color: var(--On-Surface-Low); text-align: center; }
+  .share-item span { font-family: Switzer, sans-serif; font-size: 11px; color: var(--On-Surface-Low); text-align: center; }
 </style>
 <script src="assets/qrcode.min.js"></script>
 <script src="assets/qr.js"></script>
@@ -332,13 +332,11 @@
         <div class="action-icon"><svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/></svg></div>
         <span class="action-label">Add to Favorite</span>
       </button>
-      <button class="action-btn" onclick="addAgain()">
-        <div class="action-icon"><svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><polyline points="17 2 21 6 17 10"/><path d="M3 11V9a4 4 0 0 1 4-4h14"/><polyline points="7 22 3 18 7 14"/><path d="M21 13v2a4 4 0 0 1-4 4H3"/></svg></div>
-        <span class="action-label" id="againLbl">View Loan</span>
-      </button>
-      <button class="action-btn" onclick="goHome()">
-        <div class="action-icon"><svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></div>
-        <span class="action-label">Home</span>
+      <span class="action-sep" data-shape="line" data-name="line"></span>
+      <!-- Loan received: Download Detail · repayment: Repay Again -->
+      <button class="action-btn" onclick="secondAction()">
+        <div class="action-icon" id="secondIc"></div>
+        <span class="action-label" id="secondLbl"></span>
       </button>
     </div>
 
@@ -402,6 +400,7 @@
   const isRepay = data.kind === 'repay' || isErrif;
   const amount = parseFloat(data.amount || 0);
   const dstr = v => new Date(v).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
+  const pct = v => v ? (v * 100).toFixed(2).replace(/\.?0+$/, '') : '0';
 
   // Disbursement or repayment rows
   const rows = isErrif ? [
@@ -412,31 +411,52 @@
     ['Still Owed', fmt(data.remaining) + ' ETB'],
     ['Fee', '0.00 ETB'],
     ['Transaction Type', 'Overdraft Repayment']
-  ] : isRepay ? [
-    ["Payer's Name", 'Aster Mequanent'],
-    ["Payer's Phone Number", '0712 *** *78'],
-    ['Lender', data.lender],
-    ['Loan', data.product],
-    ['Paid For', data.which === 'all' ? 'Full balance' : 'Instalment ' + data.which],
-    ['Amount Repaid', fmt(amount) + ' ETB'],
-    ['Remaining', fmt(data.remaining) + ' ETB'],
-    ['Fee', '0.00 ETB'],
-    ['Transaction Type', 'Loan Repayment']
-  ] : [
-    ["Receiver's Name", 'Aster Mequanent'],
-    ["Receiver's Phone Number", '0712 *** *78'],
-    ['Lender', data.lender],
-    ['Loan Product', data.product],
-    ['Loan Amount', fmt(amount) + ' ETB'],
-    ['Access Fee', fmt(data.access) + ' ETB'],
-    ['Daily Fee (' + data.days + ' days)', fmt(data.dailyFee) + ' ETB'],
-    ['Total Repayment', fmt(data.total) + ' ETB'],
-    ['Repay By', data.due ? dstr(data.due) + ((data.instalments || []).length > 1 ? ' (' + data.instalments.length + ' parts)' : '') : '—'],
-    ['Transaction Type', 'Term Loan Disbursement']
-  ];
+  ] : isRepay ? repayRows() : applyRows();
+
+  // Loan disbursed: what was received and what it costs
+  function applyRows() {
+    const o = TL.offer(data.offer) || {}, n = (data.instalments || []).length || 1;
+    const first = (data.instalments || [])[0];
+    return [
+      ["Receiver's Name", 'Aster Mequanent'],
+      ["Receiver's Phone Number", '0712131415'],
+      ['Partner Bank', data.lender],
+      ['Loan Product', data.product],
+      ['Disbursed Amount', fmt(amount) + ' ETB'],
+      [`Access Fee (${pct(o.access)}%)`, fmt(data.access) + ' ETB'],
+      [`Maintenance Fee (${pct(o.daily)}%)`, fmt(data.dailyFee) + ' ETB'],
+      [`Penalty Fee (${pct(o.penalty)}%)`, '0.00 ETB'],
+      ['Total Repayment', fmt(data.total) + ' ETB'],
+      ['Installment', '1 of ' + n],
+      ['Repay By', first ? dstr(first.due) : data.due ? dstr(data.due) : '—'],
+      ['Transaction Type', 'Term Loan Disbursement']
+    ];
+  }
+  // Loan repaid: what was paid, split into loan and fees, and what is left
+  function repayRows() {
+    const l = TL.load().find(x => x.id === data.loanId) || {}, o = TL.offer(l.offer) || {};
+    const inst = l.instalments || [], n = inst.length || 1;
+    const fees = l.total ? amount * (l.total - l.amount) / l.total : 0;   // the fee share of this payment
+    const access = l.total ? amount * (l.amount * (o.access || 0)) / l.total : 0;
+    return [
+      ["Payer's Name", 'Aster Mequanent'],
+      ["Payer's Phone Number", '0712131415'],
+      ['Partner Bank', data.lender],
+      ['Loan Product', data.product],
+      ['Repayment Amount', fmt(amount - fees) + ' ETB'],
+      [`Access Fee (${pct(o.access)}%)`, fmt(access) + ' ETB'],
+      [`Maintenance Fee (${pct(o.daily)}%)`, fmt(fees - access) + ' ETB'],
+      [`Penalty Fee (${pct(o.penalty)}%)`, '0.00 ETB'],
+      ['Paid For', data.which === 'all' ? 'Full balance' : `Instalment ${data.which} of ${n}` + (data.part ? ' (part)' : '')],
+      ['Last Repayment Date', inst.length ? dstr(inst[n - 1].due) : '—'],
+      ['Total Repayment', fmt(amount) + ' ETB'],
+      ['Remaining Amount', fmt(Math.max(0, data.remaining)) + ' ETB'],
+      ['Transaction Type', 'Loan Repayment']
+    ];
+  }
   $('tlRows').innerHTML = rows.map(([k, v]) => `<div class="detail-row"><span class="label">${k}</span><span class="value">${v}</span></div>`).join('');
-  $('title').textContent = isRepay ? 'Repayment Successful' : 'Loan Received';
-  $('detailName').textContent = isRepay ? (data.lender || 'Lender') : 'Aster Mequanent';
+  $('title').textContent = data.part ? 'Part Payment Successful' : isRepay ? 'Repayment Successful' : 'Loan Received';
+  $('detailName').textContent = isErrif ? 'Errif Overdraft' : 'Aster Mequanent';
   $('detailAmount').textContent = (isRepay ? '-' : '+') + Math.round(amount).toLocaleString('en-US');
   if (isRepay) { $('detailAmount').style.color = '#FE353D'; document.querySelector('.amount-currency').style.color = '#FE353D'; }
   $('transactionId').textContent = data.ref || ('U' + 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'[Math.floor(Math.random()*26)] + Array.from({length:8},()=>'ABCDEFGHJKLMNPQRSTUVWXYZ23456789'[Math.floor(Math.random()*31)]).join(''));
@@ -512,8 +532,20 @@
   // PayPal withdrawals return to the PayPal hub; other top-ups to Home
   function goHome() { window.location.href = (isErrif ? 'Overdraft.html' : 'Term Loan.html') + '?done=' + (isErrif && data.turnOff ? 'off' : isRepay ? 'repay' : 'apply'); }
   function addToFavorite() { showToast('Added to favorites!'); }
-  function addAgain() { window.location.href = isErrif ? 'Overdraft.html' : 'Term Loan - Details.html?id=' + (data.loanId || ''); }
-  if (isErrif) $('againLbl').textContent = 'View Errif';
+  // Second action: Download Detail after a loan is received; Repay Again after a repayment
+  const ICONS = {
+    download: '<svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16v9"/><path d="M12 8v9M8 13l4 4 4-4"/><path d="M4 21h16"/></svg>',
+    again: '<svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><polyline points="17 2 21 6 17 10"/><path d="M3 11V9a4 4 0 0 1 4-4h14"/><polyline points="7 22 3 18 7 14"/><path d="M21 13v2a4 4 0 0 1-4 4H3"/></svg>'
+  };
+  $('secondIc').innerHTML = isRepay ? ICONS.again : ICONS.download;
+  $('secondLbl').textContent = isRepay ? 'Repay Again' : 'Download Detail';
+  function secondAction() {
+    if (!isRepay) return downloadReceipt();
+    if (isErrif) return location.href = 'Overdraft.html';
+    // Back to this loan's Repay screen while something is left, otherwise the Repayment list
+    const l = TL.load().find(x => x.id === data.loanId);
+    location.href = l && TL.remainingOf(l) > 0.004 ? 'Term Loan - Repay.html?id=' + l.id : 'Active Accounts.html?tab=credit';
+  }
 
   // Book it once (by transaction ID): a new loan, or the repaid instalments
   (function record() {
@@ -530,7 +562,14 @@
     const loans = TL.load();
     if (isRepay) {
       const l = loans.find(x => x.id === data.loanId);
-      if (l) l.instalments.forEach(i => { if (!i.paid && (data.which === 'all' || i.n === data.which)) i.paid = true; });
+      if (l) l.instalments.forEach(i => {
+        if (i.paid) return;
+        if (data.which === 'all') { i.paid = true; i.paidAmt = i.amount; return; }
+        if (i.n !== data.which) return;
+        // Part payments add up on the instalment until it is covered
+        i.paidAmt = Math.round(((i.paidAmt || 0) + amount) * 100) / 100;
+        if (i.paidAmt >= i.amount - 0.004) { i.paid = true; i.paidAmt = i.amount; }
+      });
     } else {
       data.loanId = 'L' + Date.now().toString().slice(-6);
       loans.unshift({ id: data.loanId, offer: data.offer, lender: data.lender, logo: data.logo, product: data.product,

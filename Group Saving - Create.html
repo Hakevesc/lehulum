@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>New Group — M-PESA</title>
+<link rel="stylesheet" href="styles/design-tokens.css">
+<link rel="stylesheet" href="styles/base.css">
+<link rel="stylesheet" href="styles/component-status-bar.css">
+<link rel="stylesheet" href="styles/component-sc-card.css">
+<link rel="stylesheet" href="styles/savings.css">
+<style>
+  @import url('https://api.fontshare.com/v2/css?f[]=switzer@400,500,600,700,800&display=swap');
+
+  /* New savings group: name (15 characters), target ≥ 500 ETB, target date
+     (3M / 6M / 1Y or the picker) and at least one member — added by M-PESA
+     number or from contacts. I am the admin. → PIN → done. */
+  .form { display: flex; flex-direction: column; gap: 16px; }
+  .count { float: right; font-weight: 500; color: var(--On-Surface-Low); }
+  .mem-chips { display: flex; flex-wrap: wrap; gap: 8px; }
+  .mchip { display: inline-flex; align-items: center; gap: 6px; height: 34px; padding: 0 6px 0 3px; border-radius: 999px; background: #FFF; border: 1px solid #E6E6EA; font-size: 12.5px; font-weight: 500; color: var(--On-Surface); }
+  .mchip .av { width: 28px; height: 28px; font-size: 10px; }
+  .mchip.me { background: #FFF1F2; border-color: #F7C6CA; padding-right: 12px; }
+  .mchip button { width: 22px; height: 22px; border: none; border-radius: 50%; background: #F1F1F4; display: flex; align-items: center; justify-content: center; cursor: pointer; }
+  .mchip button svg { width: 11px; height: 11px; stroke: #55555E; stroke-width: 2.6; fill: none; stroke-linecap: round; }
+  .add-m { height: 44px; border: 1.5px dashed #F7C6CA; border-radius: 14px; background: #FFF8F8; color: var(--Primary); font-family: Switzer, sans-serif; font-size: 13.5px; font-weight: 600; cursor: pointer; }
+  .plan { display: none; align-items: center; gap: 10px; padding: 12px 14px; border-radius: 14px; background: #FFF; box-shadow: 0 2px 12px rgba(0,0,0,0.04); font-size: 12.5px; line-height: 1.45; color: #55555E; }
+  .plan.show { display: flex; }
+  .plan svg { width: 18px; height: 18px; stroke: var(--Primary); stroke-width: 1.9; fill: none; stroke-linecap: round; stroke-linejoin: round; flex-shrink: 0; }
+  .plan b { color: var(--On-Surface); }
+</style>
+<link rel="stylesheet" href="styles/device.css">
+</head>
+<body>
+<div class="phone-frame">
+  <div class="status-bar">
+    <span class="time">10:00</span>
+    <div class="status-icons">
+      <svg data-name="icon-wifi" viewBox="0 0 24 24" fill="none"><path d="M1 9l2 2c4.970-4.970 13.030-4.970 18 0l2-2C16.930 2.930 7.080 2.930 1 9z" fill="#1C1C21"/><path d="M5 13l2 2c2.760-2.760 7.240-2.760 10 0l2-2C15.140 9.140 8.870 9.140 5 13z" fill="#1C1C21"/><path d="M9 17l2 2c1.100-1.100 2.900-1.100 4 0l2-2c-2.210-2.210-5.790-2.210-8 0z" fill="#1C1C21"/></svg>
+      <svg data-name="icon-signal" viewBox="0 0 24 24" fill="none"><rect x="2" y="6" width="4" height="12" rx="1" fill="#1C1C21"/><rect x="8" y="4" width="4" height="14" rx="1" fill="#1C1C21"/><rect x="14" y="2" width="4" height="16" rx="1" fill="#1C1C21"/><rect x="20" y="0" width="4" height="18" rx="1" fill="#1C1C21" opacity="0.3"/></svg>
+      <svg data-name="icon-battery" viewBox="0 0 28 14" fill="none"><rect x="0" y="1" width="22" height="12" rx="2.5" stroke="#1C1C21" stroke-width="1.5"/><rect x="2" y="3" width="16" height="8" rx="1" fill="#1C1C21"/><rect x="24" y="4" width="2" height="6" rx="1" fill="#1C1C21"/></svg>
+    </div>
+  </div>
+
+  <div class="app-content">
+    <div class="header-nav">
+      <button class="icon-btn" onclick="location.href='Group Saving.html'" aria-label="Back"><svg data-name="icon-arrow-left" viewBox="0 0 24 24"><path d="M19 12H5M12 19l-7-7 7-7"/></svg></button>
+      <span class="header-title" id="hTitle">New Group</span>
+      <span class="spacer"></span>
+    </div>
+
+    <div class="form">
+      <label class="field"><span>Group name <em class="count" id="nameCount">0/15</em></span><input class="input" id="name" maxlength="15" placeholder="e.g. Family Trip" oninput="check()"></label>
+      <div><label class="field"><span>Group target</span><div class="amount-in"><input id="goal" inputmode="decimal" placeholder="0.00" oninput="check()"><small>ETB</small></div></label>
+        <p class="hint" id="goalHint" style="margin-top:6px">Minimum 500 ETB</p></div>
+      <div class="field"><span>Target date</span>
+        <div class="quick" id="quick"><button type="button" data-m="3">3 months</button><button type="button" data-m="6" class="on">6 months</button><button type="button" data-m="12">1 year</button></div>
+        <input class="input" id="by" type="date" onchange="byChanged()">
+      </div>
+      <div class="field"><span>Members</span>
+        <div class="mem-chips" id="chips"></div>
+        <button type="button" class="add-m" onclick="pick()">+ Add Members</button>
+      </div>
+      <div class="plan" id="plan"><svg viewBox="0 0 24 24"><path d="M3 17l6-6 4 4 8-8"/><path d="M14 7h7v7"/></svg><span id="planTxt"></span></div>
+    </div>
+    <div class="bottom-bar"><button class="btn-primary" id="go" disabled onclick="create()">Create Group</button></div>
+  </div>
+
+  <div class="scrim" id="scrim" onclick="closeSheets()"></div>
+  <div class="toast" id="toast"></div>
+</div>
+
+<script src="savings-store.js"></script>
+<script src="savings-ui.js"></script>
+<script>
+  const $ = id => document.getElementById(id);
+  const fmt = SV.fmt, IC = SVUI.IC;
+  let tt;
+  function toast(m) { const t = $('toast'); if (!t) return; t.textContent = m; t.classList.add('show'); clearTimeout(tt); tt = setTimeout(() => t.classList.remove('show'), 2200); }
+  function openSheet(id) { const s = $('scrim'); if (s) s.classList.add('show'); $(id).classList.add('show'); }
+  function closeSheets() { const s = $('scrim'); if (s) s.classList.remove('show'); document.querySelectorAll('.sheet').forEach(x => x.classList.remove('show')); }
+  document.addEventListener('keydown', e => { if (e.key === 'Escape') closeSheets(); });
+  // Hand an action to the shared PIN screen, which returns to Savings - Done.html
+  function toPin(data) { sessionStorage.setItem('termLoanData', JSON.stringify(Object.assign({ next: 'Savings - Done.html', back: location.pathname.split('/').pop() + location.search }, data))); location.href = 'Term Loan - Enter PIN.html'; }
+
+  let members = [];
+  const ymd = d => d.toISOString().slice(0, 10);
+  const plusMonths = m => { const d = new Date(); d.setMonth(d.getMonth() + m); return d; };
+  $('by').min = ymd(new Date(Date.now() + 864e5)); $('by').max = ymd(plusMonths(60));
+  function setQuick(m) { $('by').value = ymd(plusMonths(m)); document.querySelectorAll('#quick button').forEach(b => b.classList.toggle('on', +b.dataset.m === m)); check(); }
+  document.querySelectorAll('#quick button').forEach(b => b.onclick = () => setQuick(+b.dataset.m));
+  function byChanged() { document.querySelectorAll('#quick button').forEach(b => b.classList.remove('on')); check(); }
+  const X = '<svg viewBox="0 0 24 24"><path d="M18 6 6 18M6 6l12 12"/></svg>';
+  function paintChips() {
+    $('chips').innerHTML = `<span class="mchip me">${SVUI.av(SV.ME)}You · Admin</span>` + members.map(id => { const p = SV.person(id);
+      return `<span class="mchip">${SVUI.av(p)}${p.name.split(' ')[0]}<button type="button" onclick="removeDraft('${id}')" aria-label="Remove">${X}</button></span>`; }).join('');
+  }
+  function removeDraft(id) { members = members.filter(x => x !== id); paintChips(); check(); }
+  function pick() { SVUI.memberPicker({ picked: members, button: 'Done', onDone: ids => { members = ids; paintChips(); check(); } }); }
+  const goal = () => parseFloat(($('goal').value || '').replace(/,/g, '')) || 0;
+  function check() {
+    $('nameCount').textContent = $('name').value.length + '/15';
+    const g = goal(), low = g > 0 && g < SV.TARGET_MIN;
+    $('goalHint').textContent = low ? 'The target must be at least 500 ETB' : 'Minimum 500 ETB';
+    $('goalHint').classList.toggle('err', low);
+    const show = g >= SV.TARGET_MIN && $('by').value;
+    $('plan').classList.toggle('show', !!show);
+    if (show) { const m = SV.monthlyNeeded(g, 0, $('by').value), each = Math.ceil(m / (members.length + 1));
+      $('planTxt').innerHTML = `Together, save <b>${fmt(m)} ETB a month</b> — about <b>${fmt(each)} ETB each</b> with ${members.length + 1} members.`; }
+    $('go').disabled = !($('name').value.trim() && g >= SV.TARGET_MIN && $('by').value && members.length);
+  }
+  function create() {
+    const name = $('name').value.trim(), by = new Date($('by').value).toISOString();
+    toPin({ kind: 'sav-grp-create', title: 'Create ' + name, name, amount: 0, target: { amount: goal(), by }, members,
+      sub: `<b>Members:</b> ${members.length + 1} including you` });
+  }
+  paintChips(); setQuick(6);
+</script>
+<script src="components/keyboard.js"></script>
+<!-- Export to Figma button (shared exporter) -->
+<script src="figma-export.js"></script>
+<script src="test-scenarios-data.js"></script>
+<script src="test-scenarios.js"></script>
+</body>
+</html>

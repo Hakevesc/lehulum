@@ -72,7 +72,7 @@
   align-self: stretch;
   color: var(--On-Surface, #1C1C21);
   text-align: center;
-  font-family: var(--Font-Family, 'Switzer', -apple-system, BlinkMacSystemFont, 'Inter', sans-serif);
+  font-family: var(--Font-Family, Switzer, sans-serif);
   font-size: 13.5px;
   font-style: normal;
   font-weight: 500;

@@ -5,7 +5,6 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Active Accounts</title>
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@400;500;600&display=swap');
   @import url('https://api.fontshare.com/v2/css?f[]=switzer@400,500,600,700,800&display=swap');
 
   /* Active Accounts (See all from Saving & Credit): Savings | Credit tabs, a
@@ -21,7 +20,7 @@
     --Success: #16A34A;
   }
   * { margin: 0; padding: 0; box-sizing: border-box; }
-  body { font-family: 'Switzer', 'Inter', sans-serif; background: transparent; display: flex; justify-content: center; align-items: center; min-height: 100vh; padding: 20px; }
+  body { font-family: Switzer, sans-serif; background: transparent; display: flex; justify-content: center; align-items: center; min-height: 100vh; padding: 20px; }
   button { font-family: inherit; }
   .phone-frame { width: 360px; height: 780px; background: var(--Background); border-radius: 30px; overflow: hidden; position: relative; box-shadow: 0 20px 60px rgba(0,0,0,0.15); display: flex; flex-direction: column; }
   .app-content { height: 100%; display: flex; flex-direction: column; }
@@ -37,13 +36,6 @@
   .header-title { color: var(--On-Surface); font-size: 17px; font-weight: 500; letter-spacing: 0.3px; flex: 1; text-align: center; }
 
   /* Savings | Credit — the app's pill tabs */
-  .tabs { margin: 0 16px 12px; height: 50px; display: grid; grid-template-columns: 1fr 1fr; gap: 4px; padding: 4px; background: #FFF; border-radius: 25px; flex-shrink: 0; box-shadow: 0 2px 10px rgba(15,23,42,0.05); }
-  .tab { border: none; border-radius: 21px; background: transparent; color: var(--On-Surface-Low); font-size: 14px; font-weight: 600; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; }
-  .tab img { width: 20px; height: 20px; }
-  .tab.active { background: var(--Primary); color: #FFF; box-shadow: 0 4px 12px rgba(254,53,61,0.3); }
-  .tab.active img { filter: brightness(0) invert(1); }
-  .tab .n { min-width: 20px; height: 20px; padding: 0 6px; border-radius: 10px; background: #F1F1F4; color: var(--On-Surface-Low); font-size: 11px; font-weight: 700; display: inline-flex; align-items: center; justify-content: center; }
-  .tab.active .n { background: rgba(255,255,255,0.22); color: #FFF; }
 
   .scroll { flex: 1; min-height: 0; overflow-y: auto; padding: 0 16px 20px; scrollbar-width: none; }
   .scroll::-webkit-scrollbar { width: 0; }
@@ -82,6 +74,11 @@
   .ms-name small { display: block; margin-top: 2px; font-size: 11px; color: var(--On-Surface-Low); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
   .ms-r { text-align: right; flex-shrink: 0; }
   .ms-r small { display: block; font-size: 11px; color: var(--On-Surface-Low); white-space: nowrap; }
+  .ms-slide { background: #F7F7F9; }
+  .has-late .ms-slide, .ms-slide.late { background: var(--Primary-Light); }
+  .ms-slide.late .ms-r small { color: var(--Primary); font-weight: 600; }
+  .ms-slide.late .ms-r b { color: var(--Primary); }
+  .badge.late { background: #FDECEC; color: #C8161D; }
   .ms-r b { display: block; margin-top: 2px; font-size: 14px; font-weight: 700; color: var(--On-Surface); white-space: nowrap; }
   /* Highlight strip: red gradient, two figures side by side, each on two lines */
   .mix-strip { margin-top: 14px; display: flex; align-items: center; gap: 12px; padding: 12px 14px; border-radius: 14px; color: #FFF;
@@ -118,6 +115,13 @@
   .acct-amt b { font-size: 20px; font-weight: 700; color: var(--On-Surface); letter-spacing: -0.2px; }
   .acct-amt b span { font-size: 11.5px; font-weight: 500; color: var(--On-Surface-Low); margin-left: 3px; }
   .acct-amt small { font-size: 12px; color: var(--On-Surface-Low); }
+  /* Credit cards (Repay): outstanding / total with captions, Repay in the footer */
+  .acct-amt.two { align-items: flex-end; }
+  .acct-amt.two > div:last-child { text-align: right; }
+  .acct-amt.two em { display: block; margin-top: 2px; font-style: normal; font-size: 11px; color: var(--On-Surface-Low); }
+  .acct-amt.two small b { color: var(--On-Surface); }
+  .repay { flex-shrink: 0; height: 34px; padding: 0 18px; border: none; border-radius: 999px; background: var(--Primary); color: #FFF; font-size: 13px; font-weight: 600; cursor: pointer; box-shadow: 0 3px 10px rgba(254,53,61,0.25); }
+  .acct-foot.due svg { stroke: var(--Primary); }
   .acct-amt small b { font-size: 12px; font-weight: 600; color: var(--On-Surface); letter-spacing: 0; }
   .bar { margin-top: 8px; height: 8px; border-radius: 4px; background: #F1F1F4; overflow: hidden; }
   .bar i { display: block; height: 100%; border-radius: 4px; background: var(--Primary); }
@@ -130,6 +134,25 @@
   /* Open a new one */
   .add { display: flex; align-items: center; justify-content: center; gap: 8px; height: 52px; border: 1.5px dashed #F4B4BA; border-radius: 16px; background: #FFF; color: var(--Primary); font-size: 14px; font-weight: 600; cursor: pointer; }
   .add svg { width: 18px; height: 18px; stroke: currentColor; stroke-width: 2.2; fill: none; stroke-linecap: round; }
+
+  /* Transactions (credit): the latest few, See all → Loan Transactions */
+  .see-all { display: inline-flex; align-items: center; gap: 2px; border: none; background: none; padding: 0; cursor: pointer; color: var(--Primary); font-size: 12.5px; font-weight: 600; }
+  .see-all svg { width: 14px; height: 14px; stroke: currentColor; stroke-width: 2.4; fill: none; stroke-linecap: round; stroke-linejoin: round; }
+  .txs { background: #FFF; border-radius: 20px; padding: 4px 14px; box-shadow: 0 4px 16px rgba(15,23,42,0.06); }
+  .tx { display: flex; align-items: center; gap: 12px; padding: 11px 0; cursor: pointer; }
+  .tx + .tx { border-top: 1px solid #F4F4F6; }
+  .tx .ic { width: 40px; height: 40px; border-radius: 12px; background: #FFE4E5; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+  .tx .ic svg { width: 18px; height: 18px; stroke: var(--Primary); stroke-width: 2.2; fill: none; stroke-linecap: round; stroke-linejoin: round; }
+  .tx.in .ic { background: #E8F9EE; }
+  .tx.in .ic svg { stroke: var(--Success); }
+  .tx .info { flex: 1; min-width: 0; }
+  .tx .info b { display: block; font-size: 13.5px; font-weight: 500; color: var(--On-Surface); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .tx .info small { display: block; margin-top: 2px; font-size: 11.5px; color: var(--On-Surface-Low); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .tx .right { text-align: right; flex-shrink: 0; }
+  .tx .right b { display: block; font-size: 13.5px; font-weight: 700; color: var(--Primary); white-space: nowrap; }
+  .tx.in .right b { color: var(--Success); }
+  .tx .right small { display: block; margin-top: 2px; font-size: 11px; color: var(--On-Surface-Low); }
+  .no-tx { padding: 16px 0; text-align: center; font-size: 12.5px; color: var(--On-Surface-Low); }
 
   .toast { position: absolute; left: 50%; bottom: 40px; transform: translate(-50%, 10px); background: #1C1C21; color: #FFF; font-size: 13px; padding: 10px 14px; border-radius: 12px; opacity: 0; pointer-events: none; transition: opacity 0.2s, transform 0.2s; white-space: nowrap; z-index: 140; }
   .toast.show { opacity: 1; transform: translate(-50%, 0); }
@@ -151,19 +174,15 @@
 
     <div class="header-nav">
       <button class="icon-btn" onclick="location.href='Credit & Saving.html'" aria-label="Back"><svg viewBox="0 0 24 24"><path d="M19 12H5M12 19l-7-7 7-7"/></svg></button>
-      <span class="header-title">Active Accounts</span>
+      <span class="header-title" id="pageTitle">My Savings</span>
       <div style="width:36px;"></div>
     </div>
 
-    <div class="tabs" role="tablist">
-      <button class="tab active" id="tSav" onclick="showTab('savings')"><img src="assets/Saving.svg" alt="">Savings <span class="n">2</span></button>
-      <button class="tab" id="tCre" onclick="showTab('credit')"><img src="assets/Credit Card Plus.svg" alt="">Credit <span class="n" id="creN"></span></button>
-    </div>
 
     <div class="scroll">
       <!-- Savings -->
       <section class="panel show" id="pSav">
-        <div class="mix">
+        <div class="mix" id="savCard">
           <div class="ms-nav"><span class="ms-count" id="savPos"></span><button type="button" id="savPrev" aria-label="Previous account"><svg viewBox="0 0 24 24"><path d="M15 6l-6 6 6 6"/></svg></button><button type="button" id="savNext" aria-label="Next account"><svg viewBox="0 0 24 24"><path d="M9 6l6 6-6 6"/></svg></button></div>
           <div class="mix-label">Total Savings</div>
           <div class="mix-amt"><span id="savTotal"></span><small>ETB</small></div>
@@ -178,16 +197,10 @@
 
       <!-- Credit -->
       <section class="panel" id="pCre">
-        <div class="mix">
-          <div class="ms-nav"><span class="ms-count" id="crePos"></span><button type="button" id="crePrev" aria-label="Previous account"><svg viewBox="0 0 24 24"><path d="M15 6l-6 6 6 6"/></svg></button><button type="button" id="creNext" aria-label="Next account"><svg viewBox="0 0 24 24"><path d="M9 6l6 6-6 6"/></svg></button></div>
-          <div class="mix-label">Total Credit Outstanding</div>
-          <div class="mix-amt"><span id="creTotal"></span><small>ETB</small></div>
-          <div class="mix-bar" id="creBar"></div>
-          <div class="ms-track" id="creTrack"></div>
-        </div>
         <div class="list-head"><h3>Credit Accounts</h3><small id="creCount"></small></div>
         <div id="creList"></div>
-        <button class="add" type="button" onclick="location.href='Term Loan.html'"><svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>Get a Term Loan</button>
+        <div class="list-head"><h3>Transactions</h3><button class="see-all" type="button" onclick="location.href='Loan Transactions.html?type=loan'">See all<svg viewBox="0 0 24 24"><path d="M9 6l6 6-6 6"/></svg></button></div>
+        <div class="txs" id="creTx"></div>
       </section>
     </div>
   </div>
@@ -207,23 +220,21 @@
     { name: 'Emergency Fund', sub: 'Fixed · 6 months · 7% p.a.', icon: 'Saving.svg', bal: 10000, goal: 10000, badge: ['lock', 'Locked'], foot: 'Matures: Mar 15, 2027' }
   ];
   // Credit accounts: every active term loan from the Term Loan store (repaid of
-  // the loan), then the Errif overdraft (used of its limit)
-  const EST = TL.errifLoad();
-  const ERRIF = { name: 'Errif Overdraft', sub: 'Over Draft · Limit ' + money(EST.limit) + ' ETB', icon: 'assets/Overdraft.svg', bal: EST.used, limit: EST.limit, badge: ['ok', 'Active'], foot: 'Auto-repays when you receive money', when: 'Auto-repays on income', link: 'Overdraft.html' };
+  // the loan). Errif has its own page (Overdraft), so it is not listed here.
   const loans = TL.active(TL.load());
   const CREDIT = loans.map(l => {
     const nx = TL.nextDue(l), paid = TL.paidOf(l);
-    const soon = nx && (new Date(nx.due) - Date.now()) < 5 * 864e5;
-    return { name: l.product, link: `Term Loan - Details.html?id=${l.id}`, sub: l.lender, icon: l.logo, bank: true, bal: TL.remainingOf(l), total: l.total,
-      paidPct: Math.round(paid / l.total * 100), badge: soon ? ['warn', 'Due soon'] : ['ok', 'Active'],
-      foot: nx ? `Due: ${TL.dateStr(nx.due)} · ${money(nx.amount)} ETB` : 'Fully repaid', due: nx,
-      when: nx ? 'Next due ' + TL.dateStr(nx.due) : 'Fully repaid' };
-  }).concat(EST.active ? [ERRIF] : []);
+    const late = nx && new Date(nx.due) < Date.now();
+    const soon = nx && !late && (new Date(nx.due) - Date.now()) < 5 * 864e5;
+    return { id: l.id, name: l.product, link: `Term Loan - Details.html?id=${l.id}`, sub: l.lender, icon: l.logo, bank: true, bal: TL.remainingOf(l), total: l.total,
+      paidPct: Math.round(paid / l.total * 100), badge: late ? ['late', 'Overdue'] : soon ? ['warn', 'Due soon'] : ['ok', 'Active'], late,
+      lateAmt: late ? TL.instLeft(nx) : 0,
+      foot: nx ? `Due: ${TL.dateStr(nx.due)} · ${money(TL.instLeft(nx))} ETB` : 'Fully repaid', due: nx,
+      when: !nx ? 'Fully repaid' : late ? 'Overdue since ' + TL.dateStr(nx.due).replace(/ \d{4}$/, '') : 'Next due ' + TL.dateStr(nx.due) };
+  });
 
   // Summary + counts
   const nextAll = loans.map(TL.nextDue).filter(Boolean).sort((a, b) => new Date(a.due) - new Date(b.due))[0];
-  $('creTotal').textContent = money(TL.outstanding(loans) + (EST.active ? ERRIF.bal : 0));
-  $('creN').textContent = CREDIT.length;
   $('creCount').textContent = CREDIT.length + ' active';
 
   $('savList').innerHTML = SAVINGS.map(a => {
@@ -237,33 +248,43 @@
     </div>`;
   }).join('');
 
-  $('creList').innerHTML = CREDIT.map(a => {
-    const pct = a.limit ? Math.round(a.bal / a.limit * 100) : a.paidPct;
-    const right = a.limit ? `${pct}% of <b>${money(a.limit)}</b> limit` : `${a.paidPct}% repaid`;
-    return `<div class="acct" onclick="${a.link ? `location.href='${a.link}'` : `toast('${a.name} details coming soon')`}">
+  // Card → loan details; Repay → the Repay screen for that loan
+  $('creList').innerHTML = CREDIT.map(a => `<div class="acct" onclick="location.href='${a.link}'">
       <div class="acct-top"><span class="acct-ic${a.bank ? ' bank' : ''}"><img src="${a.icon}" alt=""></span>
         <span class="acct-info"><b>${a.name}</b><small>${a.sub}</small></span><span class="badge ${a.badge[0]}">${a.badge[1]}</span></div>
-      <div class="acct-amt"><b>${money(a.bal)}<span>ETB</span></b><small>${right}</small></div>
-      <div class="bar credit"><i style="width:${Math.max(pct, 2)}%"></i></div>
-      <div class="acct-foot">${CAL}<span>${a.foot}</span>${CHEV}</div>
-    </div>`;
-  }).join('');
+      <div class="acct-amt two"><div><b>${money(a.bal)}<span>ETB</span></b><em>Credit Outstanding</em></div>
+        <div><small>${a.paidPct}% of <b>${money(a.total)}</b></small><em>Total Outstanding</em></div></div>
+      <div class="bar credit"><i style="width:${Math.max(a.paidPct, 2)}%"></i></div>
+      <div class="acct-foot due">${CAL}<span>${a.due ? 'Due: ' + TL.dateStr(a.due.due) : 'Fully repaid'}</span>
+        ${a.due ? `<button class="repay" type="button" onclick="event.stopPropagation(); location.href='Term Loan - Repay.html?id=${a.id}'">Repay</button>` : ''}</div>
+    </div>`).join('');
 
   // Summary split bar + one slide per account: one shade of red per account
   const SHADES = ['#FE353D', '#FF9599', '#B3131A', '#FFC7C9', '#7A0B10'];
-  function mix(p, items) {
+  // Credit: red marks overdue only (everything else grey) and the slider shows the
+  // overdue accounts; with nothing overdue the bar is all grey and lists what's next
+  function mix(p, items, overdueMode) {
     const sum = items.reduce((a, x) => a + x.bal, 0) || 1;
     const bar = $(p + 'Bar'), track = $(p + 'Track'), prev = $(p + 'Prev'), next = $(p + 'Next'), count = $(p + 'Pos');
-    bar.innerHTML = items.map((x, k) => `<i style="flex:${x.bal / sum};background:${SHADES[k % SHADES.length]}"></i>`).join('');
-    track.innerHTML = items.map((x, k) => `<div class="ms-slide">
-      <span class="ms-l"><span class="dot" style="background:${SHADES[k % SHADES.length]}"></span><span class="ms-name"><b>${x.name}</b><small>${x.sub.split(' · ')[0]}</small></span></span>
-      <span class="ms-r"><small>${x.when}</small><b>${money(x.bal)} ETB</b></span></div>`).join('');
+    const colour = (x, k) => overdueMode ? (x.late ? '#FE353D' : '#C9C9D1') : SHADES[k % SHADES.length];
+    bar.innerHTML = items.map((x, k) => `<i style="flex:${x.bal / sum};background:${colour(x, k)}"></i>`).join('');
+    const late = overdueMode ? items.filter(x => x.late) : [];
+    const shown = late.length ? late : items;
+    if (overdueMode) bar.classList.add('static');
+    $(p + 'Card').classList.toggle('has-late', late.length > 0);
+    track.innerHTML = shown.map(x => `<div class="ms-slide${x.late ? ' late' : ''}">
+      <span class="ms-l"><span class="dot" style="background:${colour(x, items.indexOf(x))}"></span><span class="ms-name"><b>${x.name}</b><small>${x.sub.split(' · ')[0]}</small></span></span>
+      <span class="ms-r"><small>${x.when}</small><b>${money(x.late ? x.lateAmt : x.bal)} ETB</b></span></div>`).join('');
+    items = shown;
+    prev.parentElement.style.display = shown.length > 1 ? '' : 'none';   // one item: no ‹ 1 of 1 ›
     let cur = -1;
     function mark(k) {
       if (k === cur) return;
       cur = k;
-      bar.classList.add('focus');
-      [...bar.children].forEach((seg, n) => seg.classList.toggle('cur', n === k));
+      if (!bar.classList.contains('static')) {
+        bar.classList.add('focus');
+        [...bar.children].forEach((seg, n) => seg.classList.toggle('cur', n === k));
+      }
       prev.disabled = k === 0; next.disabled = k === items.length - 1;
       count.innerHTML = `<b>${k + 1}</b> of ${items.length}`;
     }
@@ -273,15 +294,28 @@
     track.addEventListener('scroll', () => mark(Math.round(track.scrollLeft / track.clientWidth)), { passive: true });
     mark(0);
   }
+  // Latest term loan movements: money out ↗ red, money in ↙ green
+  (function () {
+    const OUT = '<svg viewBox="0 0 24 24"><path d="M7 17 17 7M9 7h8v8"/></svg>', IN = '<svg viewBox="0 0 24 24"><path d="M17 7 7 17M15 17H7V9"/></svg>';
+    const when = d => { const t = new Date(); t.setHours(0, 0, 0, 0); const x = new Date(d); x.setHours(0, 0, 0, 0); const n = Math.round((t - x) / 864e5);
+      return n === 0 ? 'Today' : n === 1 ? 'Yesterday' : x.toLocaleDateString('en-GB', { day: 'numeric', month: 'short' }); };
+    const tx = TL.transactions().filter(t => !t.errif).slice(0, 4);
+    $('creTx').innerHTML = tx.length ? tx.map(t => `<div class="tx${t.amt > 0 ? ' in' : ''}" onclick="location.href='${t.link}'">
+        <span class="ic">${t.amt > 0 ? IN : OUT}</span><span class="info"><b>${t.name}</b><small>${t.sub}</small></span>
+        <span class="right"><b>${t.amt > 0 ? '+' : '-'}${money(Math.abs(t.amt))}</b><small>${when(t.when)}</small></span></div>`).join('')
+      : '<p class="no-tx">No transactions yet</p>';
+  })();
   $('savTotal').textContent = money(SAVINGS.reduce((a, x) => a + x.bal, 0));
   SAVINGS.forEach(x => { x.when = x.foot.replace(':', ''); });
   mix('sav', SAVINGS);
-  mix('cre', CREDIT);
 
+  // One list per visit (no tabs — Saving & Credit's quick actions choose):
+  // ?tab=credit → Repayment (term loans), otherwise My Savings
   function showTab(t) {
     const sav = t === 'savings';
-    $('tSav').classList.toggle('active', sav); $('tCre').classList.toggle('active', !sav);
     $('pSav').classList.toggle('show', sav); $('pCre').classList.toggle('show', !sav);
+    $('pageTitle').textContent = sav ? 'My Savings' : 'Repayment';
+    document.title = sav ? 'My Savings' : 'Repayment';
   }
   if (new URLSearchParams(location.search).get('tab') === 'credit') showTab('credit');
 

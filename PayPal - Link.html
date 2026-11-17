@@ -5,7 +5,6 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>PayPal · Link Account</title>
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@400;500;600&display=swap');
   @import url('https://api.fontshare.com/v2/css?f[]=switzer@400,500,600,700,800&display=swap');
 
   /* Link PayPal (Super App flow): PayPal's own pages open in an in-app browser —
@@ -22,7 +21,7 @@
     --PP-Line: #CBD2D6;
   }
   * { margin: 0; padding: 0; box-sizing: border-box; }
-  body { font-family: 'Inter', sans-serif; background: transparent; display: flex; justify-content: center; align-items: center; min-height: 100vh; padding: 20px; }
+  body { font-family: Switzer, sans-serif; background: transparent; display: flex; justify-content: center; align-items: center; min-height: 100vh; padding: 20px; }
   button, input, select { font-family: inherit; }
   .phone-frame { width: 360px; height: 780px; background: #FFF; border-radius: 30px; overflow: hidden; position: relative; box-shadow: 0 20px 60px rgba(0,0,0,0.15); display: flex; flex-direction: column; }
   .app-content { height: 100%; display: flex; flex-direction: column; }
@@ -38,11 +37,11 @@
   .web-bar button:hover { background: rgba(0,0,0,0.05); }
   .web-bar button svg { width: 20px; height: 20px; stroke: var(--On-Surface); stroke-width: 1.9; fill: none; }
   .url { flex: 1; min-width: 0; display: flex; flex-direction: column; align-items: center; }
-  .url b { display: flex; align-items: center; gap: 5px; font-family: 'Switzer', sans-serif; font-size: 13px; font-weight: 600; color: var(--On-Surface); }
+  .url b { display: flex; align-items: center; gap: 5px; font-family: Switzer, sans-serif; font-size: 13px; font-weight: 600; color: var(--On-Surface); }
   .url b svg { width: 12px; height: 12px; stroke: #16A34A; stroke-width: 2.4; fill: none; }
-  .url small { font-family: 'Switzer', sans-serif; font-size: 11px; color: var(--On-Surface-Low); }
+  .url small { font-family: Switzer, sans-serif; font-size: 11px; color: var(--On-Surface-Low); }
 
-  .page { flex: 1; min-height: 0; overflow-y: auto; scrollbar-width: none; display: none; flex-direction: column; padding: 26px 24px 20px; font-family: 'Inter', sans-serif; }
+  .page { flex: 1; min-height: 0; overflow-y: auto; scrollbar-width: none; display: none; flex-direction: column; padding: 26px 24px 20px; font-family: Switzer, sans-serif; }
   .page::-webkit-scrollbar { width: 0; }
   .page.show { display: flex; }
   /* Keep every block at its own height: the page scrolls instead of squashing buttons */
@@ -115,16 +114,16 @@
     .lk-badge { transform: scale(1) !important; animation: none !important; }
     .lk-badge svg { stroke-dashoffset: 0 !important; animation: none !important; }
   }
-  .done h2 { margin-top: 18px; font-family: 'Switzer', sans-serif; font-size: 20px; font-weight: 700; color: var(--On-Surface); }
-  .done p { margin-top: 8px; font-family: 'Switzer', sans-serif; font-size: 13px; line-height: 1.55; color: var(--On-Surface-Low); }
+  .done h2 { margin-top: 18px; font-family: Switzer, sans-serif; font-size: 20px; font-weight: 700; color: var(--On-Surface); }
+  .done p { margin-top: 8px; font-family: Switzer, sans-serif; font-size: 13px; line-height: 1.55; color: var(--On-Surface-Low); }
   .match { margin-top: 22px; width: 100%; background: #FFF; border-radius: 16px; padding: 4px 16px; box-shadow: 0 4px 14px rgba(15,23,42,0.05); text-align: left; }
-  .match-row { display: flex; justify-content: space-between; align-items: center; padding: 12px 0; font-family: 'Switzer', sans-serif; font-size: 12.5px; color: #55555E; }
+  .match-row { display: flex; justify-content: space-between; align-items: center; padding: 12px 0; font-family: Switzer, sans-serif; font-size: 12.5px; color: #55555E; }
   .match-row + .match-row { border-top: 1px solid #ECECEF; }
   .match-row b { font-weight: 700; color: var(--On-Surface); }
   .match-row .tick { display: inline-flex; align-items: center; gap: 4px; color: #16A34A; font-weight: 700; }
   .match-row .tick svg { width: 13px; height: 13px; stroke: currentColor; stroke-width: 3; fill: none; }
   .done .bottom-bar { padding: 10px 16px 18px; }
-  .btn-primary { width: 100%; height: 52px; border: none; border-radius: 14px; background: var(--Primary); color: #FFF; font-family: 'Poppins', sans-serif; font-size: 15px; font-weight: 500; cursor: pointer; box-shadow: 0 4px 16px rgba(254,53,61,0.25); }
+  .btn-primary { width: 100%; height: 52px; border: none; border-radius: 14px; background: var(--Primary); color: #FFF; font-family: Switzer, sans-serif; font-size: 15px; font-weight: 500; cursor: pointer; box-shadow: 0 4px 16px rgba(254,53,61,0.25); }
 
   .busy { position: absolute; inset: 0; z-index: 130; background: rgba(255,255,255,0.96); display: none; flex-direction: column; align-items: center; justify-content: center; gap: 14px; font-size: 14px; color: #2C2E2F; text-align: center; padding: 0 40px; }
   .busy.show { display: flex; }

@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Saving &amp; Credit — Empty State</title>
+<!-- Home's white actions grid; its own savings / credit hero -->
+<link rel="stylesheet" href="styles/design-tokens.css">
+<link rel="stylesheet" href="styles/base.css">
+<link rel="stylesheet" href="styles/component-status-bar.css">
+<link rel="stylesheet" href="styles/component-actions.css">
+<link rel="stylesheet" href="styles/component-sc-card.css">
+<style>
+  @import url('https://api.fontshare.com/v2/css?f[]=switzer@400,500,600,700,800&display=swap');
+
+  /* EMPTY STATE of Saving & Credit (same layout as Credit & Saving.html): no
+     savings or credit yet — zero balances, no Repay / Deposit shortcuts, and
+     Upcoming Payments shows an empty message. Keep in step with the main screen.
+     Saving & Credit: a two-slide white hero (Savings with goal progress, then Credit
+     with repayment progress), each with its own pair of shortcut tiles, then
+     four quick actions — Term Loan, M-PESA Savings, Over Draft, My Activity —
+     then upcoming payments. No history here: all activity lives in My Activity. */
+  :root { --Font: Switzer, sans-serif; }
+  body { font-family: var(--Font); }
+  /* Content fills whatever the status bar leaves, so the last card reaches the bottom edge */
+  .phone-frame { display: flex; flex-direction: column; }
+  .phone-frame > .status-bar { flex-shrink: 0; }
+  .app-content { display: flex; flex-direction: column; flex: 1 1 auto; min-height: 0; height: auto; }
+  .app-content > * { flex-shrink: 0; }
+
+  .header-nav { display: flex; align-items: center; justify-content: space-between; padding: 0 0 12px; }
+  .icon-btn { width: 36px; height: 36px; border-radius: 50%; background: transparent; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; position: relative; }
+  .icon-btn:hover { background: rgba(0,0,0,0.05); }
+  .icon-btn svg { width: 22px; height: 22px; stroke: var(--On-Surface, #1C1C21); stroke-width: 1.8; fill: none; stroke-linecap: round; stroke-linejoin: round; }
+  .icon-btn .dot { position: absolute; top: 7px; right: 8px; width: 7px; height: 7px; border-radius: 50%; background: var(--Primary, #FE353D); border: 1.5px solid #F5F5F5; }
+  .header-title { color: var(--On-Surface, #1C1C21); font-size: 17px; font-weight: 500; letter-spacing: 0.3px; flex: 1; text-align: center; }
+
+  /* Four outlined quick actions in a 2 by 2 grid. */
+  .actions.actions-4 { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; padding: 16px; }
+  .actions.actions-4 .primary-action { min-height: 88px; border: 1px solid #E8E8EC; border-radius: 16px; background: #FFF; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px; }
+  .actions.actions-4 .primary-action .icon-container { width: 38px; height: 38px; margin: 0; }
+  .actions.actions-4 .label { font-size: 12px; white-space: nowrap; line-height: 1.2; }
+
+
+  /* Hero: swipeable white slides (Savings, Credit) with dots */
+  .hero { position: relative; margin-bottom: 10px; }
+  .slides { display: flex; overflow-x: auto; scroll-snap-type: x mandatory; scrollbar-width: none; border-radius: 22px; }
+  .slides::-webkit-scrollbar { display: none; }
+  /* Each slide is the shared white .sc-card; the track carries the shadow */
+  .slide { flex: 0 0 100%; scroll-snap-align: start; min-height: 196px; padding-bottom: 30px; box-shadow: none; }
+  .slides { box-shadow: 0 4px 16px rgba(15,23,42,0.06); }
+  .dots { position: absolute; left: 0; right: 0; bottom: 12px; display: flex; justify-content: center; gap: 5px; pointer-events: none; }
+  .dots i { width: 6px; height: 6px; border-radius: 3px; background: #E2E2E7; transition: width 0.25s, background 0.25s; }
+  .dots i.on { width: 16px; background: var(--Primary, #FE353D); }
+
+  /* Static Repay Loan and Deposit Now shortcuts (the same on both slides) */
+  .tiles .set { display: contents; }
+  .tiles .set[hidden] { display: none; }
+  .tiles .tile { cursor: default; }
+  .tiles .tile:active { transform: none; }
+
+  /* Quick actions: thin splitters between the four tiles */
+
+  /* Upcoming payments: next due on each loan and Errif, soonest first */
+  /* The card runs to the bottom edge of the screen (white all the way down) */
+  .up { flex: 1 0 auto; display: flex; flex-direction: column; background: #FFF; border-radius: 22px 22px 0 0; padding: 14px 16px 20px; box-shadow: 0 2px 12px rgba(0,0,0,0.04); margin: 0 -15px -15px; padding-left: 31px; padding-right: 31px; }
+  .up-head { display: flex; align-items: baseline; justify-content: space-between; margin-bottom: 4px; }
+  .up-head b { font-size: 15px; font-weight: 600; color: var(--On-Surface, #1C1C21); }
+  .up-head a { font-size: 12.5px; font-weight: 600; color: var(--Primary, #FE353D); cursor: pointer; }
+  .up-row { display: flex; align-items: center; gap: 12px; padding: 10px 0; cursor: pointer; }
+  .up-line { display: block; height: 1px; background: #F1F1F4; }
+  .up-date { width: 42px; height: 44px; border-radius: 12px; background: #FFF1F2; display: flex; flex-direction: column; align-items: center; justify-content: center; flex-shrink: 0; }
+  .up-date b { font-size: 15px; font-weight: 700; line-height: 1; color: var(--Primary, #FE353D); }
+  .up-date small { margin-top: 2px; font-size: 9.5px; font-weight: 600; letter-spacing: 0.3px; color: var(--On-Surface-Low, #7C7C87); }
+  .up-date.auto svg { width: 20px; height: 20px; stroke: var(--Primary, #FE353D); stroke-width: 1.9; fill: none; stroke-linecap: round; stroke-linejoin: round; }
+  .up-info { flex: 1; min-width: 0; }
+  .up-info b { display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; overflow: hidden; font-size: 13.5px; font-weight: 600; line-height: 1.3; color: var(--On-Surface, #1C1C21); }   /* title only, up to two lines */
+  .up-right { display: flex; flex-direction: column; align-items: flex-end; flex-shrink: 0; text-align: right; }
+  .up-right b { font-size: 13.5px; font-weight: 700; color: var(--On-Surface, #1C1C21); white-space: nowrap; }
+  .up-right small { margin-top: 2px; font-size: 11.5px; color: var(--On-Surface-Low, #7C7C87); white-space: nowrap; }
+  .up-right small.soon { color: var(--Primary, #FE353D); font-weight: 600; }
+  .up-empty-state { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; gap: 4px; padding: 10px 12px 14px; }
+  .up-empty-ic { width: 46px; height: 46px; margin-bottom: 4px; border-radius: 50%; background: #FFF1F2; display: flex; align-items: center; justify-content: center; }
+  .up-empty-ic svg { width: 22px; height: 22px; stroke: #FF777C; stroke-width: 1.8; fill: none; stroke-linecap: round; stroke-linejoin: round; }
+  .up-empty-state b { font-size: 14.5px; font-weight: 600; color: var(--On-Surface, #1C1C21); }
+  .up-empty-state span:last-child { max-width: 250px; font-size: 12px; line-height: 1.4; color: #8D9BB7; }
+
+  .toast { position: absolute; bottom: 40px; left: 50%; transform: translateX(-50%) translateY(20px); background: #1C1C21; color: #FFF; padding: 11px 18px; border-radius: 12px; font-size: 13px; font-weight: 500; opacity: 0; pointer-events: none; transition: all 0.3s ease; z-index: 1000; white-space: nowrap; }
+  .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+</style>
+<link rel="stylesheet" href="styles/device.css">
+<style>@media (max-width: 480px) { .app-content { padding-top: 2px; } }</style>
+</head>
+<body>
+<div class="phone-frame">
+  <div class="status-bar">
+    <span class="time">10:00</span>
+    <div class="status-icons">
+      <svg viewBox="0 0 24 24" fill="none"><path d="M1 9l2 2c4.97-4.97 13.03-4.97 18 0l2-2C16.93 2.93 7.08 2.93 1 9z" fill="#1C1C21"/><path d="M5 13l2 2c2.76-2.76 7.24-2.76 10 0l2-2C15.14 9.14 8.87 9.14 5 13z" fill="#1C1C21"/><path d="M9 17l2 2c1.1-1.1 2.9-1.1 4 0l2-2c-2.21-2.21-5.79-2.21-8 0z" fill="#1C1C21"/></svg>
+      <svg viewBox="0 0 24 24" fill="none"><rect x="2" y="6" width="4" height="12" rx="1" fill="#1C1C21"/><rect x="8" y="4" width="4" height="14" rx="1" fill="#1C1C21"/><rect x="14" y="2" width="4" height="16" rx="1" fill="#1C1C21"/><rect x="20" y="0" width="4" height="18" rx="1" fill="#1C1C21" opacity="0.3"/></svg>
+      <svg viewBox="0 0 28 14" fill="none"><rect x="0" y="1" width="22" height="12" rx="2.5" stroke="#1C1C21" stroke-width="1.5"/><rect x="2" y="3" width="16" height="8" rx="1" fill="#1C1C21"/><rect x="24" y="4" width="2" height="6" rx="1" fill="#1C1C21"/></svg>
+    </div>
+  </div>
+
+  <div class="app-content">
+    <div class="header-nav">
+      <button class="icon-btn" onclick="location.href='Lehulum Home.html'" aria-label="Back"><svg viewBox="0 0 24 24"><path d="M19 12H5M12 19l-7-7 7-7"/></svg></button>
+      <span class="header-title">Saving &amp; Credit</span>
+      <button class="icon-btn" onclick="location.href='Notification Center.html'" aria-label="Notifications"><svg viewBox="0 0 24 24"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg><span class="dot"></span></button>
+    </div>
+
+    <!-- Hero: Savings, then Credit (swipe) -->
+    <div class="hero">
+      <div class="slides" id="slides">
+        <div class="slide sc-card">
+          <svg class="art" viewBox="0 0 128 112" aria-hidden="true">
+            <defs>
+              <linearGradient id="pigG" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#FF6B70"/><stop offset="1" stop-color="#E0262D"/></linearGradient>
+              <linearGradient id="coinG" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FFE08A"/><stop offset="1" stop-color="#F2B233"/></linearGradient>
+            </defs>
+            <ellipse cx="66" cy="98" rx="46" ry="10" fill="#8E0D12" opacity="0.18"/>
+            <ellipse cx="66" cy="92" rx="44" ry="9" fill="#C2161D"/>
+            <path d="M28 68c0-16 16-28 38-28s38 12 38 28c0 10-7 18-17 22H45c-10-4-17-12-17-22z" fill="url(#pigG)"/>
+            <path d="M40 46l-4-12 14 7z" fill="#E0262D"/>
+            <ellipse cx="102" cy="66" rx="9" ry="8" fill="#FF8A8E"/>
+            <circle cx="99" cy="65" r="1.6" fill="#B3131A"/><circle cx="105" cy="65" r="1.6" fill="#B3131A"/>
+            <circle cx="86" cy="56" r="2.6" fill="#5A0A0E"/>
+            <rect x="52" y="44" width="18" height="3.5" rx="1.75" fill="#B3131A"/>
+            <rect x="44" y="84" width="9" height="10" rx="3" fill="#C2161D"/><rect x="78" y="84" width="9" height="10" rx="3" fill="#C2161D"/>
+            <circle cx="61" cy="24" r="14" fill="url(#coinG)"/><circle cx="61" cy="24" r="10" fill="none" stroke="#E09A1F" stroke-width="1.6"/>
+            <path d="M61 18v12M58 21h4.5a2 2 0 0 1 0 4H58" fill="none" stroke="#C47D10" stroke-width="1.8" stroke-linecap="round"/>
+          </svg>
+          <div class="s-label">Total Savings <button class="eye" data-eye title="Show balances"><svg viewBox="0 0 24 24"><path d="M1 12s4-7.5 11-7.5S23 12 23 12s-4 7.5-11 7.5S1 12 1 12z"/><circle cx="12" cy="12" r="3"/></svg></button></div>
+          <div class="s-amount"><span class="mask" data-value="0.00">0.00</span><small>ETB</small></div>
+          <div class="s-row"><div><span>Total Goal</span><b>0.00<small>ETB</small></b></div><span class="s-pct">0%</span></div>
+          <div class="s-bar"><i style="width:0%"></i></div>
+          <p class="s-note">Set your first goal to start saving</p>
+        </div>
+        <div class="slide sc-card">
+          <svg class="art" viewBox="0 0 128 112" aria-hidden="true">
+            <defs>
+              <linearGradient id="cardG" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#FF6B70"/><stop offset="1" stop-color="#E0262D"/></linearGradient>
+              <linearGradient id="coinG2" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FFE08A"/><stop offset="1" stop-color="#F2B233"/></linearGradient>
+            </defs>
+            <ellipse cx="66" cy="98" rx="46" ry="10" fill="#8E0D12" opacity="0.18"/>
+            <ellipse cx="66" cy="92" rx="44" ry="9" fill="#C2161D"/>
+            <rect x="34" y="30" width="72" height="46" rx="9" fill="#B3131A" transform="rotate(-10 70 53)"/>
+            <rect x="28" y="38" width="72" height="46" rx="9" fill="url(#cardG)"/>
+            <rect x="28" y="48" width="72" height="8" fill="#B3131A"/>
+            <rect x="36" y="66" width="22" height="5" rx="2.5" fill="#FFD0D2"/>
+            <circle cx="98" cy="30" r="14" fill="url(#coinG2)"/><circle cx="98" cy="30" r="10" fill="none" stroke="#E09A1F" stroke-width="1.6"/>
+            <path d="M98 24v12M95 27h4.5a2 2 0 0 1 0 4H95" fill="none" stroke="#C47D10" stroke-width="1.8" stroke-linecap="round"/>
+          </svg>
+          <div class="s-label">Total Credit <button class="eye" data-eye title="Show balances"><svg viewBox="0 0 24 24"><path d="M1 12s4-7.5 11-7.5S23 12 23 12s-4 7.5-11 7.5S1 12 1 12z"/><circle cx="12" cy="12" r="3"/></svg></button></div>
+          <div class="s-amount"><span class="mask" data-value="0.00">0.00</span><small>ETB</small></div>
+          <div class="s-row"><div><span>Total Repaid</span><b>0.00<small>of 0.00 ETB</small></b></div><span class="s-pct">0%</span></div>
+          <div class="s-bar"><i style="width:0%"></i></div>
+          <p class="s-note">No active credits</p>
+        </div>
+      </div>
+      <div class="dots" id="dots"><i class="on"></i><i></i></div>
+    </div>
+
+    <!-- Four outlined quick actions -->
+    <div class="actions actions-4">
+      <div class="primary-action" onclick="location.href='Term Loan.html'">
+        <div class="icon-container"><img src="assets/Credit.svg" alt="Term Loan"></div>
+        <span class="label">Term Loan</span>
+      </div>
+      <div class="primary-action" onclick="location.href='Savings.html'">
+        <div class="icon-container"><img src="assets/Saving.svg" alt="M-PESA Savings"></div>
+        <span class="label">M-PESA Savings</span>
+      </div>
+      <div class="primary-action" onclick="location.href='Overdraft.html'">
+        <div class="icon-container"><img src="assets/Overdraft.svg" alt="Over Draft"></div>
+        <span class="label">Over Draft</span>
+      </div>
+      <div class="primary-action" onclick="location.href='My Activity.html'">
+        <div class="icon-container"><img src="assets/My Activity.svg" alt="My Activity"></div>
+        <span class="label">My Activity</span>
+      </div>
+    </div>
+
+    <!-- Upcoming payments -->
+    <div class="up">
+      <div class="up-head"><b>Upcoming Payments</b></div>
+      <div class="up-empty-state" role="status">
+        <span class="up-empty-ic" aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="2.5"/><path d="M3 10h18M8 3v4M16 3v4"/><path d="m9.5 15 2 2 3.5-4"/></svg></span>
+        <b>No upcoming payments</b>
+        <span>Loan instalments and Errif repayments due will show here.</span>
+      </div>
+    </div>
+  </div>
+  <div class="toast" id="toast"></div>
+</div>
+
+<script>
+
+  function showToast(msg) { const t = document.getElementById('toast'); t.textContent = msg; t.classList.add('show'); setTimeout(() => t.classList.remove('show'), 2200); }
+  // Eye toggle: either slide's eye shows / hides both amounts
+  (function () {
+    const eyes = document.querySelectorAll('[data-eye]'), vals = document.querySelectorAll('.mask');
+    const on = eyes[0].innerHTML;
+    const off = '<svg viewBox="0 0 24 24"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 19.5C5 19.5 1 12 1 12a18.5 18.5 0 0 1 5.06-5.94"/><path d="M9.9 4.74A9.1 9.1 0 0 1 12 4.5c7 0 11 7.5 11 7.5a18.5 18.5 0 0 1-2.16 3.19"/><path d="M14.12 14.12a3 3 0 1 1-4.24-4.24"/><path d="M1 1l22 22"/></svg>';
+    let shown = false;
+    eyes.forEach(e => e.addEventListener('click', () => {
+      shown = !shown;
+      vals.forEach(v => { v.textContent = shown ? v.dataset.value : '******'; });
+      eyes.forEach(x => { x.innerHTML = shown ? off : on; x.title = shown ? 'Hide balances' : 'Show balances'; });
+    }));
+  })();
+
+  // Slides: dots follow the slide in view and are tappable (the shortcut tiles stay the same)
+  (function () {
+    const track = document.getElementById('slides'), dots = [...document.querySelectorAll('#dots i')];
+    let cur = 0;
+    function mark(k) {
+      if (k === cur) return;
+      cur = k;
+      dots.forEach((d, n) => d.classList.toggle('on', n === k));
+    }
+    track.addEventListener('scroll', () => mark(Math.round(track.scrollLeft / track.clientWidth)), { passive: true });
+    dots.forEach((d, n) => { d.style.cssText = 'cursor:pointer;pointer-events:auto'; d.addEventListener('click', () => track.scrollTo({ left: n * track.clientWidth, behavior: 'smooth' })); });
+
+    // Auto-advance after a random 4–7 s; touching or hovering the card holds it,
+    // and the countdown restarts once the customer lets go
+    let auto = null, held = false;
+    function queue() {
+      clearTimeout(auto);
+      if (held || matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+      auto = setTimeout(() => {
+        track.scrollTo({ left: ((cur + 1) % dots.length) * track.clientWidth, behavior: 'smooth' });
+        queue();
+      }, 4000 + Math.random() * 3000);
+    }
+    const hold = () => { held = true; clearTimeout(auto); };
+    const release = () => { held = false; queue(); };
+    track.addEventListener('pointerdown', hold);
+    track.addEventListener('pointerenter', hold);
+    track.addEventListener('pointerleave', release);
+    track.addEventListener('pointerup', e => { if (e.pointerType !== 'mouse') release(); });
+    dots.forEach(d => d.addEventListener('click', queue));
+    queue();
+  })();
+</script>
+<script src="figma-export.js"></script>
+<script src="test-scenarios-data.js"></script>
+<script src="test-scenarios.js"></script>
+</body>
+</html>

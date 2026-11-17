@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Set a Target — M-PESA</title>
+<link rel="stylesheet" href="styles/design-tokens.css">
+<link rel="stylesheet" href="styles/base.css">
+<link rel="stylesheet" href="styles/component-status-bar.css">
+<link rel="stylesheet" href="styles/component-sc-card.css">
+<link rel="stylesheet" href="styles/savings.css">
+<style>
+  @import url('https://api.fontshare.com/v2/css?f[]=switzer@400,500,600,700,800&display=swap');
+
+  /* Set or change the target on a saving (?id=). Target amount (≥ 500 ETB and
+     more than is already saved) and a target date (3M / 6M / 1Y or the
+     picker), with the monthly amount that reaches it. Save → back to the saving.
+     A saving that already has a target can Remove it (the money stays). */
+  .lead { font-size: 13.5px; line-height: 1.5; color: #55555E; padding: 0 2px; }
+  .lead b { color: var(--On-Surface); }
+  .now { display: flex; align-items: center; gap: 12px; }
+  .now span:not(.p-ic) { flex: 1; min-width: 0; }
+  .now b { display: block; font-size: 14px; font-weight: 600; color: var(--On-Surface); }
+  .now small { display: block; margin-top: 2px; font-size: 12px; color: var(--On-Surface-Low); }
+  .plan { display: none; align-items: center; gap: 10px; padding: 12px 14px; border-radius: 14px; background: #FFF; box-shadow: 0 2px 12px rgba(0,0,0,0.04); font-size: 12.5px; line-height: 1.45; color: #55555E; }
+  .plan.show { display: flex; }
+  .plan svg { width: 18px; height: 18px; stroke: var(--Primary); stroke-width: 1.9; fill: none; stroke-linecap: round; stroke-linejoin: round; flex-shrink: 0; }
+  .plan b { color: var(--On-Surface); }
+  .two { display: grid; grid-template-columns: 1fr 1.6fr; gap: 10px; }
+  .two .btn-ghost { margin-top: 0; height: 52px; border: 1.5px solid #E0E0E4; background: #FFF; color: #55555E; }
+</style>
+<link rel="stylesheet" href="styles/device.css">
+</head>
+<body>
+<div class="phone-frame">
+  <div class="status-bar">
+    <span class="time">10:00</span>
+    <div class="status-icons">
+      <svg data-name="icon-wifi" viewBox="0 0 24 24" fill="none"><path d="M1 9l2 2c4.970-4.970 13.030-4.970 18 0l2-2C16.930 2.930 7.080 2.930 1 9z" fill="#1C1C21"/><path d="M5 13l2 2c2.760-2.760 7.240-2.760 10 0l2-2C15.140 9.140 8.870 9.140 5 13z" fill="#1C1C21"/><path d="M9 17l2 2c1.100-1.100 2.900-1.100 4 0l2-2c-2.210-2.210-5.790-2.210-8 0z" fill="#1C1C21"/></svg>
+      <svg data-name="icon-signal" viewBox="0 0 24 24" fill="none"><rect x="2" y="6" width="4" height="12" rx="1" fill="#1C1C21"/><rect x="8" y="4" width="4" height="14" rx="1" fill="#1C1C21"/><rect x="14" y="2" width="4" height="16" rx="1" fill="#1C1C21"/><rect x="20" y="0" width="4" height="18" rx="1" fill="#1C1C21" opacity="0.3"/></svg>
+      <svg data-name="icon-battery" viewBox="0 0 28 14" fill="none"><rect x="0" y="1" width="22" height="12" rx="2.5" stroke="#1C1C21" stroke-width="1.5"/><rect x="2" y="3" width="16" height="8" rx="1" fill="#1C1C21"/><rect x="24" y="4" width="2" height="6" rx="1" fill="#1C1C21"/></svg>
+    </div>
+  </div>
+
+  <div class="app-content">
+    <div class="header-nav">
+      <button class="icon-btn" onclick="goBack()" aria-label="Back"><svg data-name="icon-arrow-left" viewBox="0 0 24 24"><path d="M19 12H5M12 19l-7-7 7-7"/></svg></button>
+      <span class="header-title" id="hTitle">Set a Target</span>
+      <span class="spacer"></span>
+    </div>
+    <p class="lead" id="lead"></p>
+    <div class="card now"><span class="p-ic" id="pIc"></span><span><b id="pName"></b><small id="pSub"></small></span></div>
+    <div><label class="field"><span>Target amount</span><div class="amount-in"><input id="goal" inputmode="decimal" placeholder="0.00" oninput="paint()"><small>ETB</small></div></label>
+      <p class="hint" id="goalHint" style="margin-top:6px"></p></div>
+    <div class="field"><span>Target date</span>
+      <div class="quick" id="quick"><button type="button" data-m="3">3 months</button><button type="button" data-m="6">6 months</button><button type="button" data-m="12">1 year</button></div>
+      <input class="input" id="by" type="date" onchange="byChanged()">
+    </div>
+    <div class="plan" id="plan"><svg viewBox="0 0 24 24"><path d="M3 17l6-6 4 4 8-8"/><path d="M14 7h7v7"/></svg><span id="planTxt"></span></div>
+    <div class="bottom-bar"><div id="actions"></div></div>
+  </div>
+  <div class="scrim" id="scrim" onclick="closeSheets()"></div>
+  <div class="sheet" id="removeSheet" role="dialog" aria-label="Remove target">
+    <div class="sheet-grip"></div>
+    <div class="cf-ic"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><path d="M5 5l14 14"/></svg></div>
+    <p class="cf-t">Remove the target?</p>
+    <p class="cf-p" id="removeTxt"></p>
+    <button class="btn-primary" onclick="removeTarget()">Remove Target</button>
+    <button class="btn-ghost" onclick="closeSheets()">Keep It</button>
+  </div>
+  <div class="toast" id="toast"></div>
+</div>
+
+<script src="savings-store.js"></script>
+<script src="savings-ui.js"></script>
+<script>
+  const $ = id => document.getElementById(id);
+  const fmt = SV.fmt, IC = SVUI.IC;
+  let tt;
+  function toast(m) { const t = $('toast'); if (!t) return; t.textContent = m; t.classList.add('show'); clearTimeout(tt); tt = setTimeout(() => t.classList.remove('show'), 2200); }
+  function openSheet(id) { const s = $('scrim'); if (s) s.classList.add('show'); $(id).classList.add('show'); }
+  function closeSheets() { const s = $('scrim'); if (s) s.classList.remove('show'); document.querySelectorAll('.sheet').forEach(x => x.classList.remove('show')); }
+  document.addEventListener('keydown', e => { if (e.key === 'Escape') closeSheets(); });
+  // Hand an action to the shared PIN screen, which returns to Savings - Done.html
+  function toPin(data) { sessionStorage.setItem('termLoanData', JSON.stringify(Object.assign({ next: 'Savings - Done.html', back: location.pathname.split('/').pop() + location.search }, data))); location.href = 'Term Loan - Enter PIN.html'; }
+  const S = SV.load(), p = S.pockets.find(x => x.id === new URLSearchParams(location.search).get('id')) || S.pockets[0];
+  const bal = SV.balanceOf(p), t = p.target;
+  const ymd = d => new Date(d).toISOString().slice(0, 10);
+  const plusMonths = m => { const d = new Date(); d.setMonth(d.getMonth() + m); return d; };
+  const back = `Savings - Pocket.html?id=${p.id}`;
+
+  $('hTitle').textContent = document.title = t ? 'Change Target' : 'Set a Target';
+  $('lead').innerHTML = `Give <b>${p.name}</b> a goal and see how close you are.`;
+  $('pIc').innerHTML = IC[p.kind];
+  $('pName').textContent = p.name;
+  $('pSub').textContent = `Saved so far: ${fmt(bal)} ETB`;
+  $('removeTxt').textContent = `Your money stays in ${p.name}. Only the goal is removed.`;
+  $('by').min = ymd(Date.now() + 864e5); $('by').max = ymd(plusMonths(60));
+  if (t) { $('goal').value = fmt(t.amount); $('by').value = ymd(t.by); }
+
+  // Target date: 3 / 6 / 12 months, or any day on the picker
+  function setQuick(m) { $('by').value = ymd(plusMonths(m)); document.querySelectorAll('#quick button').forEach(b => b.classList.toggle('on', +b.dataset.m === m)); paint(); }
+  document.querySelectorAll('#quick button').forEach(b => b.onclick = () => setQuick(+b.dataset.m));
+  function byChanged() { document.querySelectorAll('#quick button').forEach(b => b.classList.remove('on')); paint(); }
+
+  const goal = () => parseFloat(($('goal').value || '').replace(/,/g, '')) || 0;
+  function paint() {
+    const n = goal(), by = $('by').value;
+    const low = n > 0 && n < SV.TARGET_MIN, under = n > 0 && !low && n <= bal;
+    const ok = n >= SV.TARGET_MIN && n > bal && !!by;
+    $('goalHint').textContent = low ? 'Minimum 500 ETB'
+      : under ? `Already saved ${fmt(bal)} ETB. Pick a higher target.`
+      : n && !by ? 'Now pick a target date' : 'How much you want to reach';
+    $('goalHint').classList.toggle('err', low || under);
+    $('plan').classList.toggle('show', ok);
+    if (ok) $('planTxt').innerHTML = `Save <b>${fmt(SV.monthlyNeeded(n, bal, new Date(by).toISOString()))} ETB a month</b> to reach it by ${SV.dateStr(by)}`;
+    $('actions').className = t ? 'two' : '';
+    $('actions').innerHTML = (t ? `<button class="btn-ghost" type="button" onclick="openSheet('removeSheet')">Remove</button>` : '')
+      + `<button class="btn-primary" type="button" onclick="saveTarget()"${ok ? '' : ' disabled'}>Save</button>`;
+  }
+  // A target turns the saving into a Target Saving; removing it turns it back
+  function saveTarget() {
+    p.target = { amount: goal(), from: new Date().toISOString(), by: new Date($('by').value).toISOString() };
+    p.kind = 'target'; SV.save(S);
+    location.href = back + '&done=target';
+  }
+  function removeTarget() { p.target = null; p.kind = 'individual'; SV.save(S); location.href = back + '&done=untarget'; }
+  function goBack() { location.href = back; }
+  paint();
+</script>
+<script src="components/keyboard.js"></script>
+<!-- Export to Figma button (shared exporter) -->
+<script src="figma-export.js"></script>
+<script src="test-scenarios-data.js"></script>
+<script src="test-scenarios.js"></script>
+</body>
+</html>

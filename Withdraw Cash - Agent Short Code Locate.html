@@ -5,8 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Withdraw at Agent</title>
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@400;500;600&display=swap');
-  @import url('https://api.fontshare.com/v2/css?f[]=switzer@400,500,600,700&display=swap');
+  @import url('https://api.fontshare.com/v2/css?f[]=switzer@400,500,600,700,800&display=swap');
 
   /* Withdraw at Agent. Enter Code: type the merchant short code (looked up),
      then the amount. Near By (Find a Merchant): the map with the nearest agents.
@@ -22,7 +21,7 @@
     --Field: #F7F7F9;
   }
   * { margin: 0; padding: 0; box-sizing: border-box; }
-  body { font-family: 'Inter', sans-serif; background: transparent; display: flex; justify-content: center; align-items: center; min-height: 100vh; padding: 20px; }
+  body { font-family: Switzer, sans-serif; background: transparent; display: flex; justify-content: center; align-items: center; min-height: 100vh; padding: 20px; }
   button, input { font-family: inherit; }
   .phone-frame { width: 360px; height: 780px; background: var(--Background); border-radius: 30px; overflow: hidden; position: relative; box-shadow: 0 20px 60px rgba(0,0,0,0.15); display: flex; flex-direction: column; }
   .app-content { height: 100%; display: flex; flex-direction: column; }
@@ -36,13 +35,13 @@
   .back-btn { width: 36px; height: 36px; border-radius: 50%; background: transparent; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: background 0.2s; }
   .back-btn:hover { background: rgba(0,0,0,0.05); }
   .back-btn svg { width: 22px; height: 22px; stroke: var(--On-Surface); stroke-width: 1.8px; fill: none; }
-  .header-title { color: var(--On-Surface); font-family: 'Switzer', sans-serif; font-size: 17px; font-weight: 500; letter-spacing: 0.3px; flex: 1; text-align: center; }
+  .header-title { color: var(--On-Surface); font-family: Switzer, sans-serif; font-size: 17px; font-weight: 500; letter-spacing: 0.3px; flex: 1; text-align: center; }
 
   .body { flex: 1; min-height: 0; display: flex; flex-direction: column; padding: 0 16px 16px; gap: 12px; }
 
   /* Enter Code | Near By: white pill, the active tab solid red */
   .tabs { height: 50px; display: grid; grid-template-columns: 1fr 1fr; gap: 4px; padding: 4px; background: #FFF; border-radius: 25px; flex-shrink: 0; box-shadow: 0 2px 10px rgba(15,23,42,0.05); }
-  .tab { border: none; border-radius: 21px; background: transparent; color: var(--On-Surface-Low); font-family: 'Switzer', sans-serif; font-size: 14px; font-weight: 600; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; transition: background 0.15s, color 0.15s; }
+  .tab { border: none; border-radius: 21px; background: transparent; color: var(--On-Surface-Low); font-family: Switzer, sans-serif; font-size: 14px; font-weight: 600; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; transition: background 0.15s, color 0.15s; }
   .tab svg { width: 19px; height: 19px; stroke: currentColor; stroke-width: 1.9; fill: none; }
   .tab#shortTab svg { stroke: var(--On-Surface-Low); }
   .tab#nearbyTab svg { stroke: var(--Primary); }
@@ -55,19 +54,19 @@
   .panel.active { display: flex; }
 
   .card { background: #FFF; border-radius: 16px; padding: 16px; box-shadow: 0 4px 14px rgba(15,23,42,0.05); flex-shrink: 0; }
-  .field-label { display: block; font-family: 'Switzer', sans-serif; font-size: 15px; font-weight: 500; color: var(--On-Surface); margin-bottom: 10px; }
+  .field-label { display: block; font-family: Switzer, sans-serif; font-size: 15px; font-weight: 500; color: var(--On-Surface); margin-bottom: 10px; }
   .field { height: 54px; background: var(--Field); border: 1.5px solid var(--Border); border-radius: 12px; padding: 0 14px; display: flex; align-items: center; gap: 8px; transition: border-color 0.2s, box-shadow 0.2s, background 0.2s; }
   .field:focus-within { border-color: var(--Primary); background: #FFF; box-shadow: 0 4px 12px rgba(254,53,61,0.12); }
   .field.err { border-color: var(--Primary); background: #FFF; }
-  .field input { flex: 1; min-width: 0; border: none; outline: none; background: transparent; font-family: 'Switzer', sans-serif; font-size: 16px; font-weight: 700; letter-spacing: 0.4px; color: var(--On-Surface); }
+  .field input { flex: 1; min-width: 0; border: none; outline: none; background: transparent; font-family: Switzer, sans-serif; font-size: 16px; font-weight: 700; letter-spacing: 0.4px; color: var(--On-Surface); }
   .field input::placeholder { color: var(--On-Surface-Low); font-size: 15px; font-weight: 400; letter-spacing: 0; }
   .amount-block { margin-top: 16px; }
   .amount-block:first-child { margin-top: 0; }
-  .balance { margin-top: 8px; font-family: 'Switzer', sans-serif; font-size: 12px; color: var(--On-Surface-Low); }
+  .balance { margin-top: 8px; font-family: Switzer, sans-serif; font-size: 12px; color: var(--On-Surface-Low); }
   .balance b { font-weight: 600; color: var(--On-Surface); }
 
   /* Short code lookup */
-  .status-chip { display: none; align-items: center; gap: 10px; border-radius: 12px; padding: 12px 14px; margin-top: 10px; font-family: 'Switzer', sans-serif; font-size: 12.5px; font-weight: 500; }
+  .status-chip { display: none; align-items: center; gap: 10px; border-radius: 12px; padding: 12px 14px; margin-top: 10px; font-family: Switzer, sans-serif; font-size: 12.5px; font-weight: 500; }
   .status-chip.show { display: flex; }
   .status-chip .ic { width: 24px; height: 24px; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
   .status-chip .ic svg { width: 13px; height: 13px; stroke-width: 3; fill: none; }
@@ -81,10 +80,10 @@
   /* The merchant once found (or scanned): edit, or scan again */
   .merchant { display: flex; align-items: center; gap: 12px; background: #FFF; border-radius: 16px; padding: 14px; box-shadow: 0 4px 14px rgba(15,23,42,0.05); flex-shrink: 0; }
   .merchant[hidden] { display: none; }
-  .m-av { width: 42px; height: 42px; border-radius: 12px; background: var(--Primary-Light); color: var(--Primary); display: flex; align-items: center; justify-content: center; font-family: 'Switzer', sans-serif; font-size: 14px; font-weight: 700; flex-shrink: 0; }
+  .m-av { width: 42px; height: 42px; border-radius: 12px; background: var(--Primary-Light); color: var(--Primary); display: flex; align-items: center; justify-content: center; font-family: Switzer, sans-serif; font-size: 14px; font-weight: 700; flex-shrink: 0; }
   .m-info { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 3px; }
-  .m-info b { font-family: 'Switzer', sans-serif; font-size: 15px; font-weight: 700; color: var(--On-Surface); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-  .m-info small { font-family: 'Switzer', sans-serif; font-size: 12.5px; color: var(--On-Surface-Low); }
+  .m-info b { font-family: Switzer, sans-serif; font-size: 15px; font-weight: 700; color: var(--On-Surface); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .m-info small { font-family: Switzer, sans-serif; font-size: 12.5px; color: var(--On-Surface-Low); }
   /* Picked on the map: bold Code label and a pencil to pick another agent */
   .merchant.nearby .m-code-lbl { font-weight: 700; color: var(--On-Surface); }
   .m-btn[hidden] { display: none; }
@@ -92,28 +91,28 @@
   .m-btn:hover { background: var(--Primary-Light); }
   .m-btn svg { width: 22px; height: 22px; stroke: var(--Primary); stroke-width: 1.9; fill: none; }
 
-  .btn-primary { width: 100%; height: 52px; border: none; border-radius: 14px; background: var(--Primary); color: #FFF; font-family: 'Poppins', sans-serif; font-size: 15px; font-weight: 500; cursor: pointer; box-shadow: 0 4px 16px rgba(254,53,61,0.25); transition: background 0.2s, transform 0.12s; margin-top: auto; flex-shrink: 0; }
+  .btn-primary { width: 100%; height: 52px; border: none; border-radius: 14px; background: var(--Primary); color: #FFF; font-family: Switzer, sans-serif; font-size: 15px; font-weight: 500; cursor: pointer; box-shadow: 0 4px 16px rgba(254,53,61,0.25); transition: background 0.2s, transform 0.12s; margin-top: auto; flex-shrink: 0; }
   .btn-primary:active { transform: scale(0.98); }
   .btn-primary:disabled { background: #E0E0E0; color: var(--On-Surface-Low); box-shadow: none; cursor: not-allowed; }
 
   /* ── Near By (Find a Merchant): the map, the white card at its foot ── */
   .map-svg-bg { position: absolute; inset: 0; width: 100%; height: 100%; }
-  .map-text-label { position: absolute; font-family: 'Switzer', sans-serif; pointer-events: none; }
+  .map-text-label { position: absolute; font-family: Switzer, sans-serif; pointer-events: none; }
   .map-text-label.bole { left: 28px; top: 22px; font-size: 12px; font-weight: 600; color: #475569; }
   .map-text-label.swords { left: 54px; bottom: 30px; font-size: 10px; font-weight: 500; color: #64748B; }
   .map-airport-tag { position: absolute; right: 18px; top: 48px; display: flex; flex-direction: column; align-items: center; gap: 3px; pointer-events: none; text-align: center; }
   .map-airport-tag svg { width: 15px; height: 15px; fill: #475569; }
-  .map-airport-tag span { font-family: 'Switzer', sans-serif; font-size: 9.5px; font-weight: 500; line-height: 1.25; color: #475569; }
+  .map-airport-tag span { font-family: Switzer, sans-serif; font-size: 9.5px; font-weight: 500; line-height: 1.25; color: #475569; }
   .map-marker { position: absolute; display: flex; flex-direction: column; align-items: center; transform: translate(-50%, -85%); cursor: pointer; z-index: 10; background: none; border: none; padding: 0; }
   .map-marker.active { z-index: 25; }
   .map-marker.active .pin-bubble { transform: scale(1.18); }
   .pin-bubble { position: relative; width: 30px; height: 37px; display: flex; align-items: center; justify-content: center; filter: drop-shadow(0 4px 6px rgba(225,29,37,0.35)); transition: transform 0.2s; }
   .pin-bubble svg { position: absolute; inset: 0; width: 100%; height: 100%; }
-  .pin-num { position: relative; font-family: 'Switzer', sans-serif; font-size: 13px; font-weight: 700; color: #FFF; margin-top: -7px; }
+  .pin-num { position: relative; font-family: Switzer, sans-serif; font-size: 13px; font-weight: 700; color: #FFF; margin-top: -7px; }
   .pin-label { margin-top: 3px; background: #FFF; border-radius: 7px; padding: 4px 9px 3px; display: flex; flex-direction: column; align-items: center; box-shadow: 0 2px 6px rgba(0,0,0,0.16); }
-  .pin-label b { font-family: 'Switzer', sans-serif; font-size: 9.5px; font-weight: 700; color: var(--On-Surface); white-space: nowrap; max-width: 96px; overflow: hidden; text-overflow: ellipsis; }
-  .pin-label small { font-family: 'Switzer', sans-serif; font-size: 7.5px; color: var(--On-Surface-Low); text-transform: uppercase; }
-  .you { position: absolute; left: 49%; top: 46%; width: 24px; height: 24px; transform: translate(-50%, -50%); border-radius: 50%; background: #1D6AE5; border: 2px solid #FFF; box-shadow: 0 0 0 10px rgba(37,99,235,0.18); color: #FFF; font-family: 'Switzer', sans-serif; font-size: 8.5px; font-weight: 700; display: flex; align-items: center; justify-content: center; pointer-events: none; }
+  .pin-label b { font-family: Switzer, sans-serif; font-size: 9.5px; font-weight: 700; color: var(--On-Surface); white-space: nowrap; max-width: 96px; overflow: hidden; text-overflow: ellipsis; }
+  .pin-label small { font-family: Switzer, sans-serif; font-size: 7.5px; color: var(--On-Surface-Low); text-transform: uppercase; }
+  .you { position: absolute; left: 49%; top: 46%; width: 24px; height: 24px; transform: translate(-50%, -50%); border-radius: 50%; background: #1D6AE5; border: 2px solid #FFF; box-shadow: 0 0 0 10px rgba(37,99,235,0.18); color: #FFF; font-family: Switzer, sans-serif; font-size: 8.5px; font-weight: 700; display: flex; align-items: center; justify-content: center; pointer-events: none; }
 
   .fm { position: relative; flex: 1; min-height: 0; border-radius: 16px; overflow: hidden; border: 1px solid #E2E8F0; background: #E8EEEC; }
   .fm-map { position: absolute; inset: 0; }
@@ -128,38 +127,38 @@
   .fm-loc { display: flex; align-items: center; gap: 12px; padding: 8px 8px 8px 14px; border: 1px solid #ECECF0; border-radius: 16px; }
   .fm-loc > svg { width: 21px; height: 21px; stroke: var(--On-Surface); stroke-width: 1.9; fill: none; flex-shrink: 0; }
   .fm-loc > span { flex: 1; min-width: 0; }
-  .fm-loc b { display: block; font-family: 'Switzer', sans-serif; font-size: 14.5px; font-weight: 700; color: var(--On-Surface); }
-  .fm-loc small { font-family: 'Switzer', sans-serif; font-size: 11.5px; color: #8C8C99; }
+  .fm-loc b { display: block; font-family: Switzer, sans-serif; font-size: 14.5px; font-weight: 700; color: var(--On-Surface); }
+  .fm-loc small { font-family: Switzer, sans-serif; font-size: 11.5px; color: #8C8C99; }
   .fm-loc.searching { border-color: var(--Primary); box-shadow: 0 4px 14px rgba(254,53,61,0.12); }
-  .fm-loc-input { flex: 1; min-width: 0; height: 40px; border: none; outline: none; background: transparent; font-family: 'Switzer', sans-serif; font-size: 14px; font-weight: 500; color: var(--On-Surface); }
+  .fm-loc-input { flex: 1; min-width: 0; height: 40px; border: none; outline: none; background: transparent; font-family: Switzer, sans-serif; font-size: 14px; font-weight: 500; color: var(--On-Surface); }
   .fm-search { width: 40px; height: 40px; border: none; border-radius: 50%; background: var(--Primary); display: flex; align-items: center; justify-content: center; cursor: pointer; flex-shrink: 0; box-shadow: 0 3px 10px rgba(254,53,61,0.32); }
   .fm-search svg { width: 18px; height: 18px; stroke: #FFF; stroke-width: 2.4; fill: none; }
   #fmRows { margin-top: 4px; }
   .fm-row { width: 100%; display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 11px 2px; border: none; background: none; text-align: left; cursor: pointer; font-family: inherit; }
   .fm-row-l { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
-  .fm-row-l b { font-family: 'Switzer', sans-serif; font-size: 14px; font-weight: 500; color: var(--On-Surface); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-  .fm-row-l small { font-family: 'Switzer', sans-serif; font-size: 12px; color: #7C869A; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-  .fm-row-d { font-family: 'Switzer', sans-serif; font-size: 13px; color: var(--On-Surface); flex-shrink: 0; }
+  .fm-row-l b { font-family: Switzer, sans-serif; font-size: 14px; font-weight: 500; color: var(--On-Surface); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .fm-row-l small { font-family: Switzer, sans-serif; font-size: 12px; color: #7C869A; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .fm-row-d { font-family: Switzer, sans-serif; font-size: 13px; color: var(--On-Surface); flex-shrink: 0; }
   .fm-area { width: 100%; display: flex; align-items: center; gap: 14px; padding: 11px 2px; border: none; border-bottom: 1px solid #F1F1F4; background: none; text-align: left; cursor: pointer; font-family: inherit; }
   .fm-area:last-child { border-bottom: none; }
   .fm-area i { width: 18px; height: 18px; border-radius: 50%; border: 2px solid #CBD5E1; flex-shrink: 0; }
-  .fm-area b { display: block; font-family: 'Switzer', sans-serif; font-size: 14px; font-weight: 600; color: var(--On-Surface); }
-  .fm-area small { font-family: 'Switzer', sans-serif; font-size: 12px; color: var(--On-Surface-Low); }
-  .fm-empty { font-family: 'Switzer', sans-serif; font-size: 12.5px; color: var(--On-Surface-Low); padding: 12px 2px; }
+  .fm-area b { display: block; font-family: Switzer, sans-serif; font-size: 14px; font-weight: 600; color: var(--On-Surface); }
+  .fm-area small { font-family: Switzer, sans-serif; font-size: 12px; color: var(--On-Surface-Low); }
+  .fm-empty { font-family: Switzer, sans-serif; font-size: 12.5px; color: var(--On-Surface-Low); padding: 12px 2px; }
   /* A picked agent: details and Call / Directions / Continue */
   .fm-agent { display: flex; align-items: center; gap: 12px; padding-bottom: 14px; }
   .fm-av { width: 50px; height: 50px; border-radius: 14px; background: var(--Primary-Light); color: var(--Primary); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
   .fm-av svg { width: 24px; height: 24px; stroke: currentColor; stroke-width: 1.9; fill: none; }
   .fm-info { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 4px; }
-  .fm-info > b { font-family: 'Switzer', sans-serif; font-size: 16px; font-weight: 700; color: var(--On-Surface); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-  .fm-info small { font-family: 'Switzer', sans-serif; font-size: 12px; color: var(--On-Surface-Low); }
+  .fm-info > b { font-family: Switzer, sans-serif; font-size: 16px; font-weight: 700; color: var(--On-Surface); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .fm-info small { font-family: Switzer, sans-serif; font-size: 12px; color: var(--On-Surface-Low); }
   .fm-info small b { font-weight: 600; color: var(--On-Surface); letter-spacing: 0.3px; }
-  .fm-meta { display: flex; align-items: center; gap: 8px; font-family: 'Switzer', sans-serif; font-size: 12px; color: var(--On-Surface-Low); }
+  .fm-meta { display: flex; align-items: center; gap: 8px; font-family: Switzer, sans-serif; font-size: 12px; color: var(--On-Surface-Low); }
   .fm-status { display: inline-flex; align-items: center; gap: 5px; padding: 3px 9px; border-radius: 999px; font-size: 11px; font-weight: 600; background: #E8F9EE; color: #167C2A; }
   .fm-status::before { content: ''; width: 6px; height: 6px; border-radius: 50%; background: currentColor; }
   .fm-status.closed { background: #F1F1F4; color: var(--On-Surface-Low); }
   .fm-actions { display: flex; gap: 10px; }
-  .fm-btn { flex: 1; height: 48px; border-radius: 12px; cursor: pointer; font-family: 'Switzer', sans-serif; font-size: 13.5px; font-weight: 600; display: flex; align-items: center; justify-content: center; }
+  .fm-btn { flex: 1; height: 48px; border-radius: 12px; cursor: pointer; font-family: Switzer, sans-serif; font-size: 13.5px; font-weight: 600; display: flex; align-items: center; justify-content: center; }
   .fm-btn:active { transform: scale(0.98); }
   .fm-btn.call { flex: 0 0 48px; border: none; background: #16A34A; box-shadow: 0 4px 14px rgba(22,163,74,0.3); }
   .fm-btn.call svg { width: 20px; height: 20px; fill: #FFF; }
@@ -173,18 +172,18 @@
   .sheet.show { transform: translateY(0); }
   .sheet-grip { width: 40px; height: 4px; border-radius: 2px; background: #D8D8DE; margin: 0 auto 18px; }
   .cf-merchant { position: relative; display: flex; align-items: center; gap: 12px; border: 1px solid #E6E6EA; border-radius: 16px; padding: 14px; }
-  .cf-ic { width: 42px; height: 42px; border-radius: 50%; background: var(--Primary-Light); color: var(--Primary); display: flex; align-items: center; justify-content: center; flex-shrink: 0; font-family: 'Switzer', sans-serif; font-size: 14px; font-weight: 700; }
-  .cf-merchant b { display: block; font-family: 'Switzer', sans-serif; font-size: 15px; font-weight: 700; color: var(--On-Surface); }
-  .cf-merchant small { font-family: 'Switzer', sans-serif; font-size: 12.5px; color: var(--On-Surface-Low); }
-  .cf-badge { position: absolute; top: -11px; right: 14px; padding: 4px 10px; border-radius: 999px; background: #EDEDF0; color: #3A3A42; font-family: 'Switzer', sans-serif; font-size: 10px; font-weight: 700; letter-spacing: 0.5px; }
+  .cf-ic { width: 42px; height: 42px; border-radius: 50%; background: var(--Primary-Light); color: var(--Primary); display: flex; align-items: center; justify-content: center; flex-shrink: 0; font-family: Switzer, sans-serif; font-size: 14px; font-weight: 700; }
+  .cf-merchant b { display: block; font-family: Switzer, sans-serif; font-size: 15px; font-weight: 700; color: var(--On-Surface); }
+  .cf-merchant small { font-family: Switzer, sans-serif; font-size: 12.5px; color: var(--On-Surface-Low); }
+  .cf-badge { position: absolute; top: -11px; right: 14px; padding: 4px 10px; border-radius: 999px; background: #EDEDF0; color: #3A3A42; font-family: Switzer, sans-serif; font-size: 10px; font-weight: 700; letter-spacing: 0.5px; }
   .cf-rows { margin: 10px 0 20px; }
-  .cf-row { display: flex; align-items: center; justify-content: space-between; padding: 15px 0; border-bottom: 1px solid #EFEFF2; font-family: 'Switzer', sans-serif; }
+  .cf-row { display: flex; align-items: center; justify-content: space-between; padding: 15px 0; border-bottom: 1px solid #EFEFF2; font-family: Switzer, sans-serif; }
   .cf-row:last-child { border-bottom: none; }
   .cf-row span { font-size: 12.5px; color: #55555E; }
   .cf-row b { font-size: 12.5px; font-weight: 700; color: var(--On-Surface); }
   .cf-row b.red { font-size: 14px; color: var(--Primary); }
   .cf-actions { display: flex; gap: 12px; }
-  .cf-btn { flex: 1; height: 52px; border-radius: 14px; background: #FFF; font-family: 'Poppins', sans-serif; font-size: 15px; font-weight: 500; cursor: pointer; }
+  .cf-btn { flex: 1; height: 52px; border-radius: 14px; background: #FFF; font-family: Switzer, sans-serif; font-size: 15px; font-weight: 500; cursor: pointer; }
   .cf-btn:active { transform: scale(0.98); }
   .cf-btn.cancel { border: 1.5px solid #E0E0E4; color: #55555E; }
   .cf-btn.confirm { border: 1.5px solid var(--Primary); color: var(--Primary); }

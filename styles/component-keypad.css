@@ -32,7 +32,7 @@
   font-size: 26px;
   font-weight: 500;
   color: var(--On-Surface, #1C1C21);
-  font-family: 'Inter', sans-serif;
+  font-family: Switzer, sans-serif;
   transition: all 0.12s ease;
   position: relative;
   overflow: hidden;

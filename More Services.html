@@ -6,8 +6,7 @@
 <title>More Services</title>
 <script src="https://unpkg.com/lucide@latest"></script>
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
-  @import url('https://api.fontshare.com/v2/css?f[]=switzer@400,500,600,700,800,900&display=swap');
+  @import url('https://api.fontshare.com/v2/css?f[]=switzer@400,500,600,700,800&display=swap');
   @import url('https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@24,500,1,0');
 
   :root {
@@ -19,7 +18,7 @@
     --Background: #F5F5F5;
   }
   * { margin: 0; padding: 0; box-sizing: border-box; }
-  body { font-family: 'Inter', sans-serif; background: transparent; display: flex; justify-content: center; align-items: center; min-height: 100vh; padding: 20px; }
+  body { font-family: Switzer, sans-serif; background: transparent; display: flex; justify-content: center; align-items: center; min-height: 100vh; padding: 20px; }
   .phone-frame { width: 360px; height: 780px; background: var(--Background); border-radius: 30px; overflow: hidden; position: relative; box-shadow: 0 20px 60px rgba(0,0,0,0.15); display: flex; flex-direction: column; }
   .app-content { height: 100%; display: flex; flex-direction: column; }
 
@@ -34,7 +33,7 @@
   .back-btn { width: 36px; height: 36px; border-radius: 50%; background: transparent; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: background 0.2s; }
   .back-btn:hover { background: rgba(0,0,0,0.05); }
   .back-btn svg { width: 22px; height: 22px; stroke: var(--On-Surface); stroke-width: 1.8px; fill: none; }
-  .header-title { color: var(--On-Surface); font-family: 'Switzer', sans-serif; font-size: 17px; font-weight: 500; letter-spacing: 0.3px; flex: 1; text-align: center; }
+  .header-title { color: var(--On-Surface); font-family: Switzer, sans-serif; font-size: 17px; font-weight: 500; letter-spacing: 0.3px; flex: 1; text-align: center; }
 
   .scroll { flex: 1; overflow-y: auto; padding: 8px 16px 24px; display: flex; flex-direction: column; gap: 16px; }
   .scroll::-webkit-scrollbar { width: 0; }
@@ -44,7 +43,7 @@
   /* ── Search ── */
   .search-row { display: flex; align-items: center; gap: 12px; background: #FFF; border: 1px solid #C9CAD0; border-radius: 13px; padding: 0 16px; height: 50px; box-shadow: none; flex-shrink: 0; }
   .search-row svg { width: 22px; height: 22px; stroke: #24252a; stroke-width: 1.8; fill: none; flex-shrink: 0; }
-  .search-input { flex: 1; min-width: 0; border: none; background: transparent; font-family: 'Switzer', sans-serif; font-size: 14px; color: var(--On-Surface); outline: none; }
+  .search-input { flex: 1; min-width: 0; border: none; background: transparent; font-family: Switzer, sans-serif; font-size: 14px; color: var(--On-Surface); outline: none; }
   .search-input::placeholder { color: var(--On-Surface-Low); }
 
   /* ── Services grid ── */
@@ -56,17 +55,17 @@
   .tile-icon.logo img { width: 100%; height: 100%; object-fit: cover; }
   .msi { font-family: 'Material Symbols Rounded'; font-weight: normal; font-style: normal; line-height: 1; letter-spacing: normal; text-transform: none; white-space: nowrap; direction: ltr; -webkit-font-smoothing: antialiased; font-variation-settings: 'FILL' 1, 'wght' 500, 'GRAD' 0, 'opsz' 24; }
   .tile-icon .msi { font-size: 23px; color: #FFF; }
-  .tile-label { font-family: 'Switzer', sans-serif; font-size: 14px; font-weight: 400; color: var(--On-Surface); text-align: center; line-height: 1.3; }
+  .tile-label { font-family: Switzer, sans-serif; font-size: 14px; font-weight: 400; color: var(--On-Surface); text-align: center; line-height: 1.3; }
 
-  .empty-state { display: none; text-align: center; font-family: 'Switzer', sans-serif; font-size: 13px; color: var(--On-Surface-Low); padding: 24px 0; }
+  .empty-state { display: none; text-align: center; font-family: Switzer, sans-serif; font-size: 13px; color: var(--On-Surface-Low); padding: 24px 0; }
 
   /* ── Promo banner ── */
   .promo-banner { position: relative; border-radius: 20px; overflow: hidden; background: url('assets/banner-ads-bg.png') center / cover no-repeat; padding: 16px 18px 50px 18px; min-height: 120px; display: flex; flex-direction: column; justify-content: flex-start; cursor: pointer; }
-  .promo-banner h3 { font-family: 'Switzer', sans-serif; font-size: 14px; font-weight: 800; color: #FFF; line-height: 1.25; position: relative; z-index: 2; margin-bottom: 3px; letter-spacing: 0; text-transform: uppercase; }
-  .promo-banner p { font-family: 'Switzer', sans-serif; font-size: 9px; font-weight: 500; color: rgba(255,255,255,0.9); line-height: 1.4; position: relative; z-index: 2; margin-bottom: 0; }
+  .promo-banner h3 { font-family: Switzer, sans-serif; font-size: 14px; font-weight: 800; color: #FFF; line-height: 1.25; position: relative; z-index: 2; margin-bottom: 3px; letter-spacing: 0; text-transform: uppercase; }
+  .promo-banner p { font-family: Switzer, sans-serif; font-size: 9px; font-weight: 500; color: rgba(255,255,255,0.9); line-height: 1.4; position: relative; z-index: 2; margin-bottom: 0; }
 
   /* Modern CTA button */
-  .promo-cta { position: absolute; bottom: 14px; left: 18px; z-index: 10; display: flex; align-items: center; gap: 5px; background: #FFF; color: #1C1C21; font-family: 'Switzer', sans-serif; font-size: 10.5px; font-weight: 700; border: none; border-radius: 999px; padding: 8px 13px 8px 16px; cursor: pointer; box-shadow: 0 6px 20px rgba(0,0,0,0.15); transition: all 0.2s; letter-spacing: 0.3px; }
+  .promo-cta { position: absolute; bottom: 14px; left: 18px; z-index: 10; display: flex; align-items: center; gap: 5px; background: #FFF; color: #1C1C21; font-family: Switzer, sans-serif; font-size: 10.5px; font-weight: 700; border: none; border-radius: 999px; padding: 8px 13px 8px 16px; cursor: pointer; box-shadow: 0 6px 20px rgba(0,0,0,0.15); transition: all 0.2s; letter-spacing: 0.3px; }
   .promo-cta svg { width: 13px; height: 13px; stroke: #FE353D; stroke-width: 2.4; fill: none; }
   .promo-cta:hover { transform: translateY(-2px); box-shadow: 0 8px 28px rgba(0,0,0,0.2); }
   .promo-cta:active { transform: translateY(0); }

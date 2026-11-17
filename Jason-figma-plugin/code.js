@@ -193,7 +193,7 @@ function collectFonts(node, set) {
   set = set || new Set();
   if (!node) return set;
   if (node.type === 'TEXT') {
-    var family = node.fontFamily || 'Inter';
+    var family = FONT_FAMILY;
     var style = mapWeightToStyle(node.fontWeight || 400);
     set.add(family + '::' + style);
   }
@@ -208,26 +208,21 @@ function preloadFonts(nodeData) {
   }));
 }
 
+// Switzer style names differ between installs (Fontshare: "Semibold",
+// Google-style: "SemiBold" / "Semi Bold") — try each spelling, then Regular.
+var FONT_FAMILY = 'Switzer';
+function switzerStyles(style) {
+  var map = {
+    'ExtraBold': ['ExtraBold', 'Extrabold', 'Extra Bold', 'Bold'],
+    'Bold':      ['Bold'],
+    'SemiBold':  ['SemiBold', 'Semibold', 'Semi Bold', 'Bold', 'Medium'],
+    'Medium':    ['Medium', 'Regular'],
+    'Regular':   ['Regular']
+  };
+  return (map[style] || [style]).concat(['Regular']);
+}
 function ensureFont(family, style) {
-  var key = family + '::' + style;
-  if (loadedFonts[key]) return Promise.resolve(true);
-  return figma.loadFontAsync({ family: family, style: style }).then(function () {
-    loadedFonts[key] = true;
-    return true;
-  }).catch(function () {
-    if (family !== 'Inter') {
-      return figma.loadFontAsync({ family: 'Inter', style: style }).then(function () {
-        loadedFonts['Inter::' + style] = true;
-        return true;
-      }).catch(function () {
-        return figma.loadFontAsync({ family: 'Inter', style: 'Regular' }).then(function () {
-          loadedFonts['Inter::Regular'] = true;
-          return true;
-        });
-      });
-    }
-    return false;
-  });
+  return resolveFont(FONT_FAMILY, style).then(function () { return true; });
 }
 
 // Load a single font, caching success. Resolves true/false (never rejects).
@@ -243,15 +238,16 @@ function tryLoadFont(family, style) {
 // Resolve to a fontName that is GUARANTEED loaded before it is returned.
 // Tries the requested font, then Inter at the same weight, then Inter Regular.
 function resolveFont(family, style) {
-  return tryLoadFont(family, style).then(function (ok) {
-    if (ok) return { family: family, style: style };
-    return tryLoadFont('Inter', style).then(function (ok2) {
-      if (ok2) return { family: 'Inter', style: style };
-      return tryLoadFont('Inter', 'Regular').then(function () {
-        return { family: 'Inter', style: 'Regular' };
-      });
+  var tries = switzerStyles(style).map(function (st) { return { family: FONT_FAMILY, style: st }; });
+  tries.push({ family: 'Inter', style: 'Regular' });   // only if Switzer is not installed
+  function next(k) {
+    var c = tries[k];
+    return tryLoadFont(c.family, c.style).then(function (ok) {
+      if (ok || k === tries.length - 1) return c;
+      return next(k + 1);
     });
-  });
+  }
+  return next(0);
 }
 
 function figmaColor(c) {
@@ -278,8 +274,7 @@ function mapWeightToStyle(weight) {
   if (weight >= 700) return 'Bold';
   if (weight >= 600) return 'SemiBold';
   if (weight >= 500) return 'Medium';
-  if (weight >= 300) return 'Light';
-  return 'Regular';
+  return 'Regular';   // no Light: 400 and anything lighter are Regular
 }
 
 function buildFills(nodeData) {
@@ -923,7 +918,7 @@ function renderTextNode(nodeData, parent) {
   if (!nodeData.text) return Promise.resolve();
   RUN.stats.textNodes++;
 
-  var family = nodeData.fontFamily || 'Inter';
+  var family = FONT_FAMILY;
   var weight = nodeData.fontWeight || 400;
   var styleName = mapWeightToStyle(weight);
 
@@ -1282,7 +1277,7 @@ var STYLE_TO_WEIGHT = {
 };
 
 function serializeTextNodeExport(node) {
-  var family = 'Inter';
+  var family = FONT_FAMILY;
   var weight = 400;
   if (node.fontName && node.fontName !== figma.mixed) {
     family = node.fontName.family;

@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Group Saving — M-PESA</title>
+<link rel="stylesheet" href="styles/design-tokens.css">
+<link rel="stylesheet" href="styles/base.css">
+<link rel="stylesheet" href="styles/component-status-bar.css">
+<link rel="stylesheet" href="styles/component-sc-card.css">
+<link rel="stylesheet" href="styles/savings.css">
+<style>
+  @import url('https://api.fontshare.com/v2/css?f[]=switzer@400,500,600,700,800&display=swap');
+
+  /* Group Saving (Savings → Group Saving): total of my groups, any leave
+     request waiting on me, My Groups, and New Group. */
+
+</style>
+<link rel="stylesheet" href="styles/device.css">
+</head>
+<body>
+<div class="phone-frame">
+  <div class="status-bar">
+    <span class="time">10:00</span>
+    <div class="status-icons">
+      <svg data-name="icon-wifi" viewBox="0 0 24 24" fill="none"><path d="M1 9l2 2c4.970-4.970 13.030-4.970 18 0l2-2C16.930 2.930 7.080 2.930 1 9z" fill="#1C1C21"/><path d="M5 13l2 2c2.760-2.760 7.240-2.760 10 0l2-2C15.140 9.140 8.870 9.140 5 13z" fill="#1C1C21"/><path d="M9 17l2 2c1.100-1.100 2.900-1.100 4 0l2-2c-2.210-2.210-5.790-2.210-8 0z" fill="#1C1C21"/></svg>
+      <svg data-name="icon-signal" viewBox="0 0 24 24" fill="none"><rect x="2" y="6" width="4" height="12" rx="1" fill="#1C1C21"/><rect x="8" y="4" width="4" height="14" rx="1" fill="#1C1C21"/><rect x="14" y="2" width="4" height="16" rx="1" fill="#1C1C21"/><rect x="20" y="0" width="4" height="18" rx="1" fill="#1C1C21" opacity="0.3"/></svg>
+      <svg data-name="icon-battery" viewBox="0 0 28 14" fill="none"><rect x="0" y="1" width="22" height="12" rx="2.5" stroke="#1C1C21" stroke-width="1.5"/><rect x="2" y="3" width="16" height="8" rx="1" fill="#1C1C21"/><rect x="24" y="4" width="2" height="6" rx="1" fill="#1C1C21"/></svg>
+    </div>
+  </div>
+
+  <div class="app-content">
+    <div class="header-nav">
+      <button class="icon-btn" onclick="location.href='Savings.html'" aria-label="Back"><svg data-name="icon-arrow-left" viewBox="0 0 24 24"><path d="M19 12H5M12 19l-7-7 7-7"/></svg></button>
+      <span class="header-title" id="hTitle">Group Saving</span>
+      <span class="spacer"></span>
+    </div>
+
+    <div class="sc-card">
+      <div class="s-label">Total Group Savings <button class="eye" id="eyeBtn" title="Show balances"><svg viewBox="0 0 24 24"><path d="M1 12s4-7.5 11-7.5S23 12 23 12s-4 7.5-11 7.5S1 12 1 12z"/><circle cx="12" cy="12" r="3"/></svg></button></div>
+      <div class="s-amount"><span data-mask="" id="tTotal">******</span><small>ETB</small></div>
+      <div class="s-stats">
+        <div class="s-stat"><small>You put in</small><b id="tMine"></b></div>
+        <div class="s-stat"><span class="split" data-shape="line" data-name="line"></span><small>Active groups</small><b id="tCount"></b></div>
+      </div>
+    </div>
+    <div class="list" id="leaves"></div>
+    <div class="sec-head"><b>My Groups</b><small id="cnt"></small></div>
+    <div class="list" id="list"></div>
+    <div class="bottom-bar"><button class="btn-primary" onclick="location.href='Group Saving - Create.html'">New Group</button></div>
+  </div>
+
+  <div class="toast" id="toast"></div>
+</div>
+
+<script src="savings-store.js"></script>
+<script src="savings-ui.js"></script>
+<script>
+  const $ = id => document.getElementById(id);
+  const fmt = SV.fmt, IC = SVUI.IC;
+  let tt;
+  function toast(m) { const t = $('toast'); if (!t) return; t.textContent = m; t.classList.add('show'); clearTimeout(tt); tt = setTimeout(() => t.classList.remove('show'), 2200); }
+  function openSheet(id) { const s = $('scrim'); if (s) s.classList.add('show'); $(id).classList.add('show'); }
+  function closeSheets() { const s = $('scrim'); if (s) s.classList.remove('show'); document.querySelectorAll('.sheet').forEach(x => x.classList.remove('show')); }
+  document.addEventListener('keydown', e => { if (e.key === 'Escape') closeSheets(); });
+  // Hand an action to the shared PIN screen, which returns to Savings - Done.html
+  function toPin(data) { sessionStorage.setItem('termLoanData', JSON.stringify(Object.assign({ next: 'Savings - Done.html', back: location.pathname.split('/').pop() + location.search }, data))); location.href = 'Term Loan - Enter PIN.html'; }
+
+  // Eye toggle: masks every [data-mask] value until tapped
+  function eyeFor(btnId) {
+    const btn = $(btnId); if (!btn) return; const on = btn.innerHTML;
+    const off = '<svg viewBox="0 0 24 24"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 19.5C5 19.5 1 12 1 12a18.5 18.5 0 0 1 5.06-5.94"/><path d="M9.9 4.74A9.1 9.1 0 0 1 12 4.5c7 0 11 7.5 11 7.5a18.5 18.5 0 0 1-2.16 3.19"/><path d="M14.12 14.12a3 3 0 1 1-4.24-4.24"/><path d="M1 1l22 22"/></svg>';
+    let shown = false;
+    const paint = () => document.querySelectorAll('[data-mask]').forEach(v => v.textContent = shown ? v.dataset.mask : '******');
+    btn.onclick = () => { shown = !shown; paint(); btn.innerHTML = shown ? off : on; };
+    paint();
+  }
+  // Leave request card: the requester sees progress; others approve (admin may decline)
+  function leaveCard(g, withGroup) {
+    const L = g.leave; if (!L) return '';
+    const who = SV.person(L.who), n = L.approvals.length, need = SV.LEAVE_NEEDED;
+    const dots = `<div class="dots">${Array.from({ length: need }, (_, i) => `<i class="${i < n ? 'on' : ''}"></i>`).join('')}<span>${Math.min(n, need)} of ${need} members have approved</span></div>`;
+    const where = withGroup ? ' · ' + g.name : '';
+    if (L.who === 'me') return `<div class="card leave"><div class="lv-top">${SVUI.av(SV.ME)}<span><b>Leave request sent${where}</b><small>${fmt(SV.leavePayout(g, 'me'))} ETB comes back to you, with interest, once ${need} members approve.</small></span><em class="tag">Waiting</em></div>${dots}</div>`;
+    const mine = L.approvals.includes('me');
+    return `<div class="card leave"><div class="lv-top">${SVUI.av(who)}<span><b>${who.name} asked to leave${where}</b><small>${fmt(SV.leavePayout(g, L.who))} ETB goes back to them, with interest.</small></span><em class="tag">${mine ? 'Approved' : 'Action required'}</em></div>${dots}
+      ${mine ? '' : withGroup ? `<div class="lv-btns one"><button class="yes" onclick="location.href='Group Saving - Group.html?id=${g.id}'">Review Request</button></div>`
+        : `<div class="lv-btns${g.admin === 'me' ? '' : ' one'}">${g.admin === 'me' ? '<button onclick="askDecline()">Decline</button>' : ''}<button class="yes" onclick="approve()">Approve</button></div>`}</div>`;
+  }
+  const S = SV.load(), G = SV.groupsOf(S);
+  $('tTotal').dataset.mask = fmt(G.reduce((s, g) => s + SV.balanceOf(g), 0));
+  $('tMine').textContent = fmt(G.reduce((s, g) => s + SV.memberTotal(g, 'me'), 0));
+  $('tCount').textContent = G.length;
+  eyeFor('eyeBtn');
+  $('leaves').innerHTML = SVUI.noticeBanner(S) + G.filter(g => g.leave).map(g => leaveCard(g, true)).join('');
+  if (!$('leaves').innerHTML) $('leaves').style.display = 'none';
+  $('cnt').textContent = G.length ? G.length + ' active' : '';
+  $('list').innerHTML = G.length ? G.map(SVUI.groupCard).join('') : SVUI.empty('group');
+</script>
+<!-- Export to Figma button (shared exporter) -->
+<script src="figma-export.js"></script>
+<script src="test-scenarios-data.js"></script>
+<script src="test-scenarios.js"></script>
+</body>
+</html>

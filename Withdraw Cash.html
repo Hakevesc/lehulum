@@ -5,8 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Withdraw Cash</title>
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@400;500;600&display=swap');
-  @import url('https://api.fontshare.com/v2/css?f[]=switzer@400,500,600,700&display=swap');
+  @import url('https://api.fontshare.com/v2/css?f[]=switzer@400,500,600,700,800&display=swap');
 
   :root {
     --Primary: #FE353D;
@@ -16,7 +15,7 @@
     --Background: #F5F5F5;
   }
   * { margin: 0; padding: 0; box-sizing: border-box; }
-  body { font-family: 'Inter', sans-serif; background: transparent; display: flex; justify-content: center; align-items: center; min-height: 100vh; padding: 20px; }
+  body { font-family: Switzer, sans-serif; background: transparent; display: flex; justify-content: center; align-items: center; min-height: 100vh; padding: 20px; }
   .phone-frame { width: 360px; height: 780px; background: var(--Background); border-radius: 30px; overflow: hidden; position: relative; box-shadow: 0 20px 60px rgba(0,0,0,0.15); display: flex; flex-direction: column; }
   .app-content { height: 100%; display: flex; flex-direction: column; }
 
@@ -29,7 +28,7 @@
   .back-btn { width: 36px; height: 36px; border-radius: 50%; background: transparent; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: background 0.2s; }
   .back-btn:hover { background: rgba(0,0,0,0.05); }
   .back-btn svg { width: 22px; height: 22px; stroke: var(--On-Surface); stroke-width: 1.8px; fill: none; }
-  .header-title { color: var(--On-Surface); font-family: 'Switzer', sans-serif; font-size: 17px; font-weight: 500; letter-spacing: 0.3px; flex: 1; text-align: center; }
+  .header-title { color: var(--On-Surface); font-family: Switzer, sans-serif; font-size: 17px; font-weight: 500; letter-spacing: 0.3px; flex: 1; text-align: center; }
 
   .scroll { flex: 1; overflow-y: auto; padding: 4px 16px 16px; display: flex; flex-direction: column; gap: 16px; }
   .scroll::-webkit-scrollbar { width: 0; }
@@ -43,18 +42,18 @@
   .svc:active { transform: scale(0.99); }
   .svc-ic { width: 42px; height: 42px; border-radius: 12px; background: var(--Primary); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
   .svc-ic svg { width: 22px; height: 22px; stroke: #FFF; stroke-width: 1.9; fill: none; }
-  .svc-name { font-family: 'Switzer', sans-serif; font-size: 16px; font-weight: 700; letter-spacing: 0.2px; color: var(--On-Surface); }
+  .svc-name { font-family: Switzer, sans-serif; font-size: 16px; font-weight: 700; letter-spacing: 0.2px; color: var(--On-Surface); }
   .svc > .chev { position: absolute; top: 14px; right: 12px; }
   .svc-wide { grid-column: 1 / -1; flex-direction: row; align-items: center; gap: 12px; }
   .svc-wide .svc-ic { background: var(--On-Surface); }
   .svc-wide-txt { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px; }
-  .svc-sub { font-family: 'Switzer', sans-serif; font-size: 12px; color: var(--On-Surface-Low); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .svc-sub { font-family: Switzer, sans-serif; font-size: 12px; color: var(--On-Surface-Low); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
   .svc-wide > .chev { position: static; }
   .chev { width: 18px; height: 18px; stroke: var(--Primary); stroke-width: 2.4; fill: none; flex-shrink: 0; }
 
   /* ── Section headers ── */
   .section-header { display: flex; justify-content: space-between; align-items: center; }
-  .section-title { color: var(--On-Surface); font-family: 'Switzer', sans-serif; font-size: 14px; font-weight: 600; letter-spacing: 0.2px; }
+  .section-title { color: var(--On-Surface); font-family: Switzer, sans-serif; font-size: 14px; font-weight: 600; letter-spacing: 0.2px; }
 
   /* ── Frequent withdrawals card ── */
   .section-card { background: #FFF; border-radius: 16px; padding: 16px; box-shadow: 0 2px 8px rgba(0,0,0,0.04); display: flex; flex-direction: column; gap: 14px; }
@@ -65,10 +64,10 @@
   .frequent-avatar { width: 44px; height: 44px; border-radius: 50%; overflow: hidden; flex-shrink: 0; background: #FFF; border: 1px solid #ECECEC; display: flex; align-items: center; justify-content: center; }
   .frequent-avatar img { width: 100%; height: 100%; object-fit: cover; }
   .frequent-avatar img[src*="banks logo"] { object-fit: contain; padding: 5px; }
-  .frequent-avatar.initials { background: #FFE9EA; color: var(--Primary); font-family: 'Switzer', sans-serif; font-size: 14px; font-weight: 700; border: none; }
+  .frequent-avatar.initials { background: #FFE9EA; color: var(--Primary); font-family: Switzer, sans-serif; font-size: 14px; font-weight: 700; border: none; }
   .frequent-info { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px; }
-  .frequent-name { color: var(--On-Surface); font-family: 'Switzer', sans-serif; font-size: 14px; font-weight: 600; letter-spacing: 0.2px; }
-  .frequent-sub { color: var(--On-Surface-Low); font-family: 'Switzer', sans-serif; font-size: 12px; font-weight: 400; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .frequent-name { color: var(--On-Surface); font-family: Switzer, sans-serif; font-size: 14px; font-weight: 600; letter-spacing: 0.2px; }
+  .frequent-sub { color: var(--On-Surface-Low); font-family: Switzer, sans-serif; font-size: 12px; font-weight: 400; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 
   /* ── Refreshed look: service cards with subtitles, a tinted
      full-width row, and each frequent agent as its own card ── */
@@ -100,7 +99,7 @@
   .section-title { font-size: 14px; font-weight: 600; letter-spacing: 0.2px; }
   .frequent-item .chev { width: 20px; height: 20px; stroke: var(--On-Surface-Low); stroke-width: 2; }
   /* "See all" link beside the Frequent Withdrawals title */
-  .see-all { display: inline-flex; align-items: center; gap: 2px; color: var(--Primary); font-family: 'Switzer', sans-serif; font-size: 12px; font-weight: 500; text-decoration: none; transition: opacity 0.2s; }
+  .see-all { display: inline-flex; align-items: center; gap: 2px; color: var(--Primary); font-family: Switzer, sans-serif; font-size: 12px; font-weight: 500; text-decoration: none; transition: opacity 0.2s; }
   .see-all:hover { opacity: 0.7; }
   .see-all svg { width: 14px; height: 14px; stroke: currentColor; stroke-width: 2.4; fill: none; }
   /* Slightly tighter rows and top cards so all 5 frequent agents fit without scrolling */
@@ -115,18 +114,18 @@
      then Scan QR as the second option (same white card as the agent map sheet) ── */
   .code-dock { flex-shrink: 0; background: var(--Background); padding: 12px 16px 16px; position: relative; z-index: 5; }
   .code-card { background: #FFF; border-radius: 20px; padding: 18px 16px 16px; margin: 0; box-shadow: 0 4px 14px rgba(15,23,42,0.06); display: flex; flex-direction: column; flex-shrink: 0; position: relative; z-index: 5; }
-  .code-title { font-family: 'Switzer', sans-serif; font-size: 18px; font-weight: 700; color: var(--On-Surface); }
-  .code-sub { font-family: 'Switzer', sans-serif; font-size: 12.5px; color: var(--On-Surface-Low); margin-top: 3px; }
-  .code-label { font-family: 'Switzer', sans-serif; font-size: 13px; font-weight: 600; color: var(--On-Surface); margin: 0 0 8px; }
+  .code-title { font-family: Switzer, sans-serif; font-size: 18px; font-weight: 700; color: var(--On-Surface); }
+  .code-sub { font-family: Switzer, sans-serif; font-size: 12.5px; color: var(--On-Surface-Low); margin-top: 3px; }
+  .code-label { font-family: Switzer, sans-serif; font-size: 13px; font-weight: 600; color: var(--On-Surface); margin: 0 0 8px; }
   .code-field { height: 52px; background: #F7F7F9; border: 1.5px solid var(--Border); border-radius: 14px; padding: 0 14px; display: flex; align-items: center; gap: 10px; transition: border-color 0.2s, box-shadow 0.2s, background 0.2s; }
   .code-field:focus-within { border-color: var(--Primary); background: #FFF; box-shadow: 0 4px 12px rgba(254,53,61,0.12); }
-  .code-field input { flex: 1; min-width: 0; border: none; background: transparent; outline: none; font-family: 'Switzer', sans-serif; font-size: 16px; font-weight: 700; letter-spacing: 0.6px; color: var(--On-Surface); }
+  .code-field input { flex: 1; min-width: 0; border: none; background: transparent; outline: none; font-family: Switzer, sans-serif; font-size: 16px; font-weight: 700; letter-spacing: 0.6px; color: var(--On-Surface); }
   .code-field input::placeholder { color: var(--On-Surface-Low); font-size: 15px; font-weight: 400; letter-spacing: 0; }
   .code-field.err { border-color: var(--Primary); background: #FFF; box-shadow: none; }
   .code-field.err input { color: var(--Primary); }
 
   /* Short code lookup — same chips as Send to Bank's account number lookup */
-  .status-chip { display: none; align-items: center; gap: 10px; border-radius: 12px; padding: 13px 14px; margin-top: 8px; font-family: 'Switzer', sans-serif; font-size: 14px; font-weight: 500; }
+  .status-chip { display: none; align-items: center; gap: 10px; border-radius: 12px; padding: 13px 14px; margin-top: 8px; font-family: Switzer, sans-serif; font-size: 14px; font-weight: 500; }
   .status-chip.show { display: flex; }
   .status-chip .ic { width: 24px; height: 24px; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
   .status-chip .ic svg { width: 13px; height: 13px; stroke-width: 3; fill: none; }
@@ -139,7 +138,7 @@
   .status-chip.bad .ic { width: 26px; height: 26px; border-radius: 8px; border: 1.8px solid var(--Primary); }
   .status-chip.bad .ic svg { stroke: var(--Primary); }
   @keyframes spin { to { transform: rotate(360deg); } }
-  .code-btn { width: 100%; height: 52px; border-radius: 14px; border: none; font-family: 'Poppins', sans-serif; font-size: 15px; font-weight: 500; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px; flex-shrink: 0; transition: background 0.2s, box-shadow 0.2s, transform 0.12s; }
+  .code-btn { width: 100%; height: 52px; border-radius: 14px; border: none; font-family: Switzer, sans-serif; font-size: 15px; font-weight: 500; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px; flex-shrink: 0; transition: background 0.2s, box-shadow 0.2s, transform 0.12s; }
   .code-btn:active { transform: scale(0.98); }
   .code-actions { display: flex; gap: 10px; margin-top: 14px; }
   .code-actions .code-btn { flex: 1; min-width: 0; }

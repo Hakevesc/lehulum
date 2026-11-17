@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Choose a Plan — M-PESA</title>
+<link rel="stylesheet" href="styles/design-tokens.css">
+<link rel="stylesheet" href="styles/base.css">
+<link rel="stylesheet" href="styles/component-status-bar.css">
+<link rel="stylesheet" href="styles/component-sc-card.css">
+<link rel="stylesheet" href="styles/savings.css">
+<style>
+  @import url('https://api.fontshare.com/v2/css?f[]=switzer@400,500,600,700,800&display=swap');
+
+  /* Choose a lock plan (3 / 6 / 9 / 12 months). ?roll=<id> rolls a matured
+     deposit over: the lead line shows the amount reinvested, and plans above it
+     say how much more comes from the wallet. */
+  .lead { display: flex; align-items: center; gap: 12px; }
+  .lead img { width: 40px; height: 40px; border-radius: 50%; border: 1px solid #EFEFF2; object-fit: contain; background: #FFF; flex-shrink: 0; }
+  .lead b { display: block; font-size: 14px; font-weight: 600; color: var(--On-Surface); }
+  .lead small { display: block; margin-top: 2px; font-size: 12px; color: var(--On-Surface-Low); }
+  .plan { padding: 16px; }
+  .plan .pt { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+  .plan .pt b { font-size: 16px; font-weight: 700; color: var(--On-Surface); }
+  .plan .rate { padding: 4px 10px; border-radius: 999px; background: #FFF1F2; color: var(--Primary); font-size: 12px; font-weight: 700; white-space: nowrap; }
+  .plan .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 12px; padding: 10px 12px; border-radius: 14px; background: #F7F7F9; }
+  .plan .grid small { display: block; font-size: 11px; color: var(--On-Surface-Low); }
+  .plan .grid b { display: block; margin-top: 2px; font-size: 13.5px; font-weight: 600; color: var(--On-Surface); }
+  .plan .more { margin-top: 10px; font-size: 12px; font-weight: 600; color: #B45309; }
+  .plan button { width: 100%; height: 42px; margin-top: 12px; border-radius: 12px; border: 1.5px solid var(--Primary); background: #FFF; color: var(--Primary); font-family: Switzer, sans-serif; font-size: 14px; font-weight: 600; cursor: pointer; }
+  .plan button:hover { background: var(--Primary); color: #FFF; }
+</style>
+<link rel="stylesheet" href="styles/device.css">
+</head>
+<body>
+<div class="phone-frame">
+  <div class="status-bar">
+    <span class="time">10:00</span>
+    <div class="status-icons">
+      <svg data-name="icon-wifi" viewBox="0 0 24 24" fill="none"><path d="M1 9l2 2c4.970-4.970 13.030-4.970 18 0l2-2C16.930 2.930 7.080 2.930 1 9z" fill="#1C1C21"/><path d="M5 13l2 2c2.760-2.760 7.240-2.760 10 0l2-2C15.140 9.140 8.870 9.140 5 13z" fill="#1C1C21"/><path d="M9 17l2 2c1.100-1.100 2.900-1.100 4 0l2-2c-2.210-2.210-5.790-2.210-8 0z" fill="#1C1C21"/></svg>
+      <svg data-name="icon-signal" viewBox="0 0 24 24" fill="none"><rect x="2" y="6" width="4" height="12" rx="1" fill="#1C1C21"/><rect x="8" y="4" width="4" height="14" rx="1" fill="#1C1C21"/><rect x="14" y="2" width="4" height="16" rx="1" fill="#1C1C21"/><rect x="20" y="0" width="4" height="18" rx="1" fill="#1C1C21" opacity="0.3"/></svg>
+      <svg data-name="icon-battery" viewBox="0 0 28 14" fill="none"><rect x="0" y="1" width="22" height="12" rx="2.5" stroke="#1C1C21" stroke-width="1.5"/><rect x="2" y="3" width="16" height="8" rx="1" fill="#1C1C21"/><rect x="24" y="4" width="2" height="6" rx="1" fill="#1C1C21"/></svg>
+    </div>
+  </div>
+
+  <div class="app-content">
+    <div class="header-nav">
+      <button class="icon-btn" onclick="history.length > 1 ? history.back() : location.href='Fixed Deposit.html'" aria-label="Back"><svg data-name="icon-arrow-left" viewBox="0 0 24 24"><path d="M19 12H5M12 19l-7-7 7-7"/></svg></button>
+      <span class="header-title" id="hTitle">Choose a Plan</span>
+      <span class="spacer"></span>
+    </div>
+
+    <div class="card lead"><img src="assets/banks logo/awass-bank.png" alt=""><span><b id="leadT">Held with Awash Bank</b><small id="leadS">Fixed rate for the whole term</small></span></div>
+    <div class="notice warn"><svg viewBox="0 0 24 24"><path d="M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"/><path d="M12 9v4M12 17h.01"/></svg><span>If you withdraw before the maturity date, you <b>lose all the interest</b> — only your deposit is returned.</span></div>
+    <div class="list" id="plans"></div>
+  </div>
+
+  <div class="toast" id="toast"></div>
+</div>
+
+<script src="savings-store.js"></script>
+<script src="savings-ui.js"></script>
+<script>
+  const $ = id => document.getElementById(id);
+  const fmt = SV.fmt, IC = SVUI.IC;
+  let tt;
+  function toast(m) { const t = $('toast'); if (!t) return; t.textContent = m; t.classList.add('show'); clearTimeout(tt); tt = setTimeout(() => t.classList.remove('show'), 2200); }
+  function openSheet(id) { const s = $('scrim'); if (s) s.classList.add('show'); $(id).classList.add('show'); }
+  function closeSheets() { const s = $('scrim'); if (s) s.classList.remove('show'); document.querySelectorAll('.sheet').forEach(x => x.classList.remove('show')); }
+  document.addEventListener('keydown', e => { if (e.key === 'Escape') closeSheets(); });
+  // Hand an action to the shared PIN screen, which returns to Savings - Done.html
+  function toPin(data) { sessionStorage.setItem('termLoanData', JSON.stringify(Object.assign({ next: 'Savings - Done.html', back: location.pathname.split('/').pop() + location.search }, data))); location.href = 'Term Loan - Enter PIN.html'; }
+
+  const q = new URLSearchParams(location.search), S = SV.load();
+  const roll = q.get('roll') ? (S.deposits || []).find(a => a.id === q.get('roll')) : null;
+  const base = roll ? Math.floor(SV.maturedTotal(roll) * 100) / 100 : 0;
+  if (roll) {
+    $('hTitle').textContent = 'Roll Over'; document.title = 'Roll Over — M-PESA';
+    $('leadT').textContent = 'Reinvesting ' + fmt(base) + ' ETB';
+    $('leadS').textContent = 'From ' + roll.name + ' · deposit plus interest';
+  }
+  $('plans').innerHTML = SV.PLANS.map((p, i) => { const pr = SV.projected(p, Math.max(p.min, base)), gap = roll ? Math.max(0, p.min - base) : 0;
+    return `<div class="card plan"><div class="pt"><b>${p.months} Months Lock</b><span class="rate">${p.rate}% a year</span></div>
+      <div class="grid"><div><small>Minimum deposit</small><b>${fmt(p.min).replace('.00', '')} ETB</b></div><div><small>Maturity date</small><b>${SV.dateStr(pr.by)}</b></div></div>
+      ${gap ? `<p class="more">Needs ${fmt(gap)} ETB more from your wallet</p>` : ''}
+      <button type="button" onclick="choose(${i})">Select</button></div>`; }).join('');
+  function choose(i) { location.href = `Fixed Deposit - Amount.html?plan=${i}` + (roll ? '&roll=' + roll.id : ''); }
+</script>
+<!-- Export to Figma button (shared exporter) -->
+<script src="figma-export.js"></script>
+<script src="test-scenarios-data.js"></script>
+<script src="test-scenarios.js"></script>
+</body>
+</html>

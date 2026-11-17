@@ -10,14 +10,13 @@
 <link rel="stylesheet" href="styles/component-sc-card.css">
 <link rel="stylesheet" href="styles/component-transactions.css">
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@400;500;600&display=swap');
   @import url('https://api.fontshare.com/v2/css?f[]=switzer@400,500,600,700,800&display=swap');
 
   /* Errif Overdraft (Saving & Credit → Over Draft). Active: the shared white
      card (available / used, limit level), Repay Now + Terms tiles, fees and
-     recent usage; How Errif works lives in the ⋯ menu; Repay → sheet → PIN → receipt. Not active:
+     recent usage; How Errif works opens from the ⋯ menu; Repay → sheet → PIN → receipt. Not active:
      the offer (limit, benefits, fees) → Activate. State: TL.errifLoad(). */
-  :root { --Font: 'Switzer', 'Inter', sans-serif; }
+  :root { --Font: Switzer, sans-serif; }
   body { font-family: var(--Font); }
   .app-content { display: flex; flex-direction: column; gap: 12px; }
   .app-content > * { flex-shrink: 0; }
@@ -54,7 +53,7 @@
   .lv-row:not(.done) .v { color: #A0A0AA; }
   .lv-tip { margin-top: 10px; padding: 12px 14px; border-radius: 14px; background: #F7F7F9; font-size: 12px; line-height: 1.5; color: #55555E; }
 
-  /* Turn off sheet */
+  /* Opt-out sheet */
   .off-ic { width: 64px; height: 64px; margin: 4px auto 12px; border-radius: 20px; background: #FFF1F2; display: flex; align-items: center; justify-content: center; }
   .off-ic svg { width: 30px; height: 30px; stroke: var(--Primary, #FE353D); stroke-width: 1.9; fill: none; stroke-linecap: round; stroke-linejoin: round; }
   .off-title { text-align: center; font-size: 17px; font-weight: 700; color: var(--On-Surface, #1C1C21); }
@@ -97,7 +96,7 @@
   .benefit i svg { width: 21px; height: 21px; stroke: var(--Primary, #FE353D); stroke-width: 1.8; fill: none; stroke-linecap: round; stroke-linejoin: round; }
   .benefit b { display: block; font-size: 13.5px; font-weight: 600; color: var(--On-Surface, #1C1C21); }
   .benefit small { display: block; margin-top: 2px; font-size: 12px; color: var(--On-Surface-Low, #7C7C87); }
-  .btn-primary { width: 100%; height: 52px; border: none; border-radius: 14px; background: var(--Primary, #FE353D); color: #FFF; font-family: 'Poppins', sans-serif; font-size: 15px; font-weight: 500; cursor: pointer; box-shadow: 0 4px 16px rgba(254,53,61,0.25); }
+  .btn-primary { width: 100%; height: 52px; border: none; border-radius: 14px; background: var(--Primary, #FE353D); color: #FFF; font-family: Switzer, sans-serif; font-size: 15px; font-weight: 500; cursor: pointer; box-shadow: 0 4px 16px rgba(254,53,61,0.25); }
   .btn-primary:disabled { background: #E0E0E0; color: #7C7C87; box-shadow: none; cursor: default; }
 
   /* Sheets */
@@ -209,7 +208,7 @@
         <div class="card-head"><span class="card-title">Fees</span><a onclick="location.href='Tariffs & Fees.html'">All tariffs</a></div>
         <div class="fees" id="fees2"></div>
       </div>
-      <button class="btn-primary" onclick="location.href='Overdraft - Activate.html'">Activate Errif</button>
+      <button class="btn-primary" onclick="location.href='Overdraft - Activate.html'">Opt-In to Errif</button>
     </section>
   </div>
 
@@ -217,32 +216,22 @@
   <div class="scrim" id="scrim" onclick="closeSheets()"></div>
   <div class="sheet" id="menu" role="dialog" aria-label="Errif menu">
     <div class="sheet-grip"></div>
-    <button class="menu-item" onclick="closeSheets(); openSheet('how')"><i><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M9.6 9.3a2.5 2.5 0 0 1 4.8.9c0 1.7-2.4 2.2-2.4 3.6"/><path d="M12 17h.01"/></svg></i><b>How Errif works</b></button>
+    <button class="menu-item" onclick="location.href='Overdraft - Help.html'"><i><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M9.6 9.3a2.5 2.5 0 0 1 4.8.9c0 1.7-2.4 2.2-2.4 3.6"/><path d="M12 17h.01"/></svg></i><b>How Errif works</b></button>
     <button class="menu-item" onclick="location.href='Overdraft - Activate.html?view=terms'"><i><svg viewBox="0 0 24 24"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5"/></svg></i><b>Terms &amp; Conditions</b></button>
-    <button class="menu-item" onclick="location.href='Tariffs & Fees.html'"><i><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 8v5M12 16h.01"/></svg></i><b>Fees &amp; Charges</b></button>
-    <button class="menu-item" onclick="deactivate()"><i><svg viewBox="0 0 24 24"><path d="M18.36 6.64a9 9 0 1 1-12.73 0"/><path d="M12 2v10"/></svg></i><b>Turn off Errif</b></button>
+    <button class="menu-item" onclick="deactivate()"><i><svg viewBox="0 0 24 24"><path d="M18.36 6.64a9 9 0 1 1-12.73 0"/><path d="M12 2v10"/></svg></i><b>Opt-Out</b></button>
   </div>
 
-  <!-- How Errif works -->
-  <div class="sheet" id="how" role="dialog" aria-label="How Errif works">
-    <div class="sheet-grip"></div>
-    <p class="sheet-title">How Errif works</p>
-    <div class="steps">
-          <div class="step"><span class="n">1</span><span><b>Pay even when you're short</b><small>Bills, airtime and merchants go through when your balance is low.</small></span></div>
-          <div class="step"><span class="n">2</span><span><b>Errif covers the gap</b><small>Only the missing amount is taken from your Errif limit.</small></span></div>
-          <div class="step"><span class="n">3</span><span><b>Repays itself</b><small>The next money you receive clears it automatically, or repay any time.</small></span></div>
-        </div>
   </div>
 
-  <!-- Turn off: repay first if anything is owed -->
-  <div class="sheet" id="off" role="dialog" aria-label="Turn off Errif">
+  <!-- Opt-out: repay first if anything is owed -->
+  <div class="sheet" id="off" role="dialog" aria-label="Opt out of Errif">
     <div class="sheet-grip"></div>
     <div class="off-ic"><svg viewBox="0 0 24 24"><path d="M18.36 6.64a9 9 0 1 1-12.73 0"/><path d="M12 2v10"/></svg></div>
     <p class="off-title" id="offTitle"></p>
     <p class="off-text" id="offText"></p>
     <div class="owed" id="owedRow"><span>Remaining to repay</span><b><span id="owedAmt"></span><small>ETB</small></b></div>
     <button class="btn-primary" id="offGo" style="margin-top:16px"></button>
-    <button class="btn-ghost" onclick="closeSheets()">Keep Errif</button>
+    <button class="btn-ghost" onclick="closeSheets()">Not Now</button>
   </div>
 
   <!-- Limit levels -->
@@ -355,24 +344,24 @@
     location.href = 'Term Loan - Enter PIN.html';
   }
 
-  // Turn off: if something is owed, show what remains and pay it now (Errif turns
+  // Opt-out: if something is owed, show what remains and pay it now (Errif opts out
   // off once the receipt books the full repayment); otherwise just confirm
   function deactivate() {
     closeSheets();
     const owes = E.used > 0;
-    $('offTitle').textContent = owes ? 'Repay to turn off Errif' : 'Turn off Errif?';
+    $('offTitle').textContent = owes ? 'Repay to Opt-Out from Errif' : 'Opt-Out from Errif?';
     $('offText').textContent = owes
-      ? 'You still owe on Errif. Pay the remaining balance now and Errif will be turned off.'
-      : 'Payments will no longer go through when your balance is short. You can turn it on again any time.';
+      ? 'You still owe on Errif. Pay the remaining balance now and you will be opted out.'
+      : 'Payments will no longer go through when your balance is short. You can opt in again any time.';
     $('owedRow').style.display = owes ? '' : 'none';
     $('owedAmt').textContent = fmt(E.used);
-    $('offGo').textContent = owes ? 'Pay Now · ' + fmt(E.used) + ' ETB' : 'Turn Off';
+    $('offGo').textContent = owes ? 'Pay Now' : 'Opt-Out';
     $('offGo').onclick = owes ? () => confirmRepay(E.used, true) : () => { E.active = false; TL.errifSave(E); location.href = 'Overdraft.html?done=off'; };
     setTimeout(() => openSheet('off'), 120);
   }
 
   const done = new URLSearchParams(location.search).get('done');
-  if (done) setTimeout(() => showToast(done === 'off' ? 'Errif is turned off' : 'Repayment received'), 300);
+  if (done) setTimeout(() => showToast(done === 'off' ? 'You have opted out of Errif' : 'Repayment received'), 300);
   let tt;
   function showToast(m) { const t = $('toast'); t.textContent = m; t.classList.add('show'); clearTimeout(tt); tt = setTimeout(() => t.classList.remove('show'), 2200); }
 </script>

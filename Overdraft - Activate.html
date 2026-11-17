@@ -3,18 +3,17 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Activate Errif — M-PESA</title>
+<title>Opt-In to Errif — M-PESA</title>
 <link rel="stylesheet" href="styles/design-tokens.css">
 <link rel="stylesheet" href="styles/base.css">
 <link rel="stylesheet" href="styles/component-status-bar.css">
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@400;500;600&display=swap');
   @import url('https://api.fontshare.com/v2/css?f[]=switzer@400,500,600,700,800&display=swap');
 
-  /* Activate Errif (from the Errif offer): the limit, the terms as numbered
+  /* Opt-in to Errif (from the Errif offer): the limit, the terms as numbered
      cards, agree, then Agree & Activate → M-PESA PIN → Errif activated.
      ?view=terms shows the terms only (from an active Errif). */
-  :root { --Font: 'Switzer', 'Inter', sans-serif; }
+  :root { --Font: Switzer, sans-serif; }
   body { font-family: var(--Font); }
   .app-content { display: flex; flex-direction: column; gap: 12px; padding-bottom: 0 !important; }
   .app-content > * { flex-shrink: 0; }
@@ -48,7 +47,7 @@
   .agree p a { color: var(--Primary, #FE353D); font-weight: 600; cursor: pointer; }
 
   .bottom-bar { position: sticky; bottom: 0; margin: 0 -16px; padding: 10px 16px 18px; background: var(--Background, #F5F5F5); }
-  .btn-primary { width: 100%; height: 52px; border: none; border-radius: 14px; background: var(--Primary, #FE353D); color: #FFF; font-family: 'Poppins', sans-serif; font-size: 15px; font-weight: 500; cursor: pointer; box-shadow: 0 4px 16px rgba(254,53,61,0.25); }
+  .btn-primary { width: 100%; height: 52px; border: none; border-radius: 14px; background: var(--Primary, #FE353D); color: #FFF; font-family: Switzer, sans-serif; font-size: 15px; font-weight: 500; cursor: pointer; box-shadow: 0 4px 16px rgba(254,53,61,0.25); }
   .btn-primary:disabled { background: #E0E0E0; color: #7C7C87; box-shadow: none; cursor: default; }
   .terms-only .agree, .terms-only .limit { display: none; }
 </style>
@@ -69,7 +68,7 @@
   <div class="app-content" id="page">
     <div class="header-nav">
       <button class="icon-btn" onclick="location.href='Overdraft.html'" aria-label="Back"><svg data-name="icon-arrow-left" viewBox="0 0 24 24"><path d="M19 12H5M12 19l-7-7 7-7"/></svg></button>
-      <span class="header-title" id="title">Activate Errif</span>
+      <span class="header-title" id="title">Opt-In to Errif</span>
       <div style="width:36px"></div>
     </div>
 
@@ -87,7 +86,7 @@
       <p>I have read and agree to the Errif Overdraft Terms &amp; Conditions and the <a onclick="event.stopPropagation(); location.href='Tariffs & Fees.html'">Tariffs &amp; Fees</a>.</p>
     </div>
 
-    <div class="bottom-bar"><button class="btn-primary" id="go" disabled onclick="activate()">Agree &amp; Activate</button></div>
+    <div class="bottom-bar"><button class="btn-primary" id="go" disabled onclick="activate()">Agree &amp; Opt-In</button></div>
   </div>
 </div>
 
@@ -103,7 +102,7 @@
     ['When Errif is used', 'Only when a payment is more than your balance — Errif covers the missing amount, nothing more.'],
     ['Repayment', `What Errif covers is repaid automatically from the next money you receive, and must be cleared within ${F.days} days.`],
     ['Fees', `A ${F.access * 100}% access fee on each amount covered, a daily maintenance fee of up to ${fmt(F.dailyMax)} ETB, and ${F.penalty * 100}% a day if repaid late.`],
-    ['Turning it off', 'You can turn Errif off any time once nothing is owed. Errif may be suspended if these terms are not met.']
+    ['Opting out', 'You can opt out of Errif any time once nothing is owed, and opt in again later. Errif may be suspended if these terms are not met.']
   ];
   $('terms').outerHTML = TERMS.map(([t, p], i) => `<div class="term"><span class="n">${i + 1}</span><span><b>${t}</b><p>${p}</p></span></div>`).join('');
 
@@ -116,7 +115,7 @@
 
   function activate() {
     sessionStorage.setItem('termLoanData', JSON.stringify({
-      kind: 'errif-activate', title: 'Activate Errif', logo: 'assets/Overdraft.svg', amount: E.limit,
+      kind: 'errif-activate', title: 'Opt-In to Errif', logo: 'assets/Overdraft.svg', amount: E.limit,
       back: 'Overdraft - Activate.html', next: 'Overdraft - Activated.html'
     }));
     location.href = 'Term Loan - Enter PIN.html';

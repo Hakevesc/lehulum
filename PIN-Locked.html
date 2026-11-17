@@ -5,8 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>PIN Locked</title>
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@400;500;600&display=swap');
-  @import url('https://api.fontshare.com/v2/css?f[]=switzer@400,500,600,700&display=swap');
+  @import url('https://api.fontshare.com/v2/css?f[]=switzer@400,500,600,700,800&display=swap');
 
   :root {
     --Primary: #FE353D;
@@ -17,7 +16,7 @@
   * { margin: 0; padding: 0; box-sizing: border-box; }
 
   body {
-    font-family: 'Inter', sans-serif;
+    font-family: Switzer, sans-serif;
     background: transparent;
     display: flex; justify-content: center; align-items: center;
     min-height: 100vh; padding: 20px;
@@ -65,9 +64,9 @@
   .user-avatar { width: 60px; height: 60px; border-radius: 50%; overflow: hidden; flex-shrink: 0; border: 2.5px solid rgba(255,255,255,0.9); box-shadow: 0 4px 12px rgba(0,0,0,0.2); }
   .user-avatar img { width: 100%; height: 100%; object-fit: cover; }
   .user-details { display: flex; flex-direction: column; gap: 1px; }
-  .user-details .welcome { color: #FFF; font-family: 'Switzer', sans-serif; font-size: 14px; font-weight: 400; }
-  .user-details .name { color: #FFF; font-family: 'Switzer', sans-serif; font-size: 20px; font-weight: 700; white-space: nowrap; }
-  .user-details .phone { color: #FFF; font-family: 'Switzer', sans-serif; font-size: 14px; font-weight: 400; }
+  .user-details .welcome { color: #FFF; font-family: Switzer, sans-serif; font-size: 14px; font-weight: 400; }
+  .user-details .name { color: #FFF; font-family: Switzer, sans-serif; font-size: 20px; font-weight: 700; white-space: nowrap; }
+  .user-details .phone { color: #FFF; font-family: Switzer, sans-serif; font-size: 14px; font-weight: 400; }
 
   /* ===== MAIN CONTENT ===== */
   .main-content {
@@ -83,11 +82,11 @@
   .lock-icon-wrap svg { width: 40px; height: 40px; stroke: var(--Primary); stroke-width: 1.8; fill: none; stroke-linecap: round; stroke-linejoin: round; }
 
   .locked-title {
-    color: var(--On-Surface); font-family: 'Switzer', sans-serif;
+    color: var(--On-Surface); font-family: Switzer, sans-serif;
     font-size: 24px; font-weight: 700; margin-bottom: 12px;
   }
   .locked-desc {
-    color: var(--On-Surface-Low); font-family: 'Switzer', sans-serif;
+    color: var(--On-Surface-Low); font-family: Switzer, sans-serif;
     font-size: 14px; font-weight: 400; line-height: 1.65;
     max-width: 272px;
   }
@@ -99,7 +98,7 @@
     display: flex; align-items: center; gap: 8px;
   }
   .attempt-badge svg { width: 16px; height: 16px; stroke: var(--Primary); stroke-width: 2; fill: none; flex-shrink: 0; }
-  .attempt-badge span { color: var(--Primary); font-family: 'Switzer', sans-serif; font-size: 13px; font-weight: 500; }
+  .attempt-badge span { color: var(--Primary); font-family: Switzer, sans-serif; font-size: 13px; font-weight: 500; }
 
   /* ===== BOTTOM BUTTONS ===== */
   .bottom-area {
@@ -109,7 +108,7 @@
   .btn-primary {
     width: 100%; height: 48px; border-radius: 12px;
     background: var(--Primary); color: #FFF1F2;
-    font-family: 'Poppins', sans-serif; font-size: 14px; font-weight: 500;
+    font-family: Switzer, sans-serif; font-size: 14px; font-weight: 500;
     border: none; cursor: pointer; transition: all 0.2s;
     box-shadow: 0 4px 16px rgba(254,53,61,0.25);
   }
@@ -117,7 +116,7 @@
   .btn-primary:active { transform: scale(0.98); }
 
   .btn-link {
-    color: var(--On-Surface-Low); font-family: 'Switzer', sans-serif;
+    color: var(--On-Surface-Low); font-family: Switzer, sans-serif;
     font-size: 13px; font-weight: 500; text-decoration: none;
     cursor: pointer; background: none; border: none; padding: 4px 0;
     transition: color 0.2s;

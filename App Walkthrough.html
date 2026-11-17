@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+<link rel="stylesheet" href="https://api.fontshare.com/v2/css?f[]=switzer@400,500,600,700,800&display=swap">
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>M-PESA App</title>
@@ -76,7 +77,7 @@
   .walkthrough-tooltip.position-bottom::before { top: -6px; left: var(--arrow-left, 50%); margin-left: -6px; }
 
   .walkthrough-tooltip-text {
-    font-family: 'Switzer', sans-serif;
+    font-family: Switzer, sans-serif;
     font-size: 14px;
     font-weight: 500;
     color: var(--On-Surface);
@@ -93,7 +94,7 @@
     color: #FFF;
     border: none;
     border-radius: 20px;
-    font-family: 'Poppins', sans-serif;
+    font-family: Switzer, sans-serif;
     font-size: 13px;
     font-weight: 500;
     cursor: pointer;
@@ -228,6 +229,12 @@
     `,
     actions: `
       <div class="actions">
+        <div class="primary-action" id="action-transfer" onclick="window.location.href='Send Money Menu.html'" style="cursor:pointer">
+          <div class="icon-container">
+            <img src="assets/Transfer Money.svg" alt="Transfer Money" style="width:40px;height:40px;object-fit:contain;">
+          </div>
+          <span class="label">Transfer<br>Money</span>
+        </div>
         <div class="primary-action" id="action-merchant" onclick="window.location.href='Pay Merchant.html'" style="cursor:pointer">
           <div class="icon-container">
             <img src="assets/Merchant Payemnt.svg" alt="Merchant Payment" style="width:40px;height:40px;object-fit:contain;">
@@ -245,12 +252,6 @@
             <img src="assets/Credit Saving.svg" alt="Credit & Saving" style="width:40px;height:40px;object-fit:contain;">
           </div>
           <span class="label">Credit &<br>Saving</span>
-        </div>
-        <div class="primary-action" id="action-transfer" onclick="window.location.href='Send Money Menu.html'" style="cursor:pointer">
-          <div class="icon-container">
-            <img src="assets/Transfer Money.svg" alt="Transfer Money" style="width:40px;height:40px;object-fit:contain;">
-          </div>
-          <span class="label">Transfer<br>Money</span>
         </div>
         <div class="primary-action" id="action-airtime" onclick="window.location.href='Airtime_Buy.html'" style="cursor:pointer">
           <div class="icon-container">

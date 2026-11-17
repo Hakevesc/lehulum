@@ -5,8 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Transaction Failed</title>
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@400;500;600&display=swap');
-  @import url('https://api.fontshare.com/v2/css?f[]=switzer@400,500,600,700&display=swap');
+  @import url('https://api.fontshare.com/v2/css?f[]=switzer@400,500,600,700,800&display=swap');
 
   :root {
     --Primary: #FE353D;
@@ -16,7 +15,7 @@
     --Background: #F5F5F5;
   }
   * { margin: 0; padding: 0; box-sizing: border-box; }
-  body { font-family: 'Inter', sans-serif; background: transparent; display: flex; justify-content: center; align-items: center; min-height: 100vh; padding: 20px; }
+  body { font-family: Switzer, sans-serif; background: transparent; display: flex; justify-content: center; align-items: center; min-height: 100vh; padding: 20px; }
   .phone-frame { width: 360px; height: 780px; background: var(--Background); border-radius: 30px; overflow: hidden; position: relative; box-shadow: 0 20px 60px rgba(0,0,0,0.15); display: flex; flex-direction: column; }
   .app-content { height: 100%; display: flex; flex-direction: column; }
 
@@ -29,7 +28,7 @@
   .back-btn { width: 36px; height: 36px; border-radius: 50%; background: transparent; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: background 0.2s; }
   .back-btn:hover { background: rgba(0,0,0,0.05); }
   .back-btn svg { width: 22px; height: 22px; stroke: var(--On-Surface); stroke-width: 1.8px; fill: none; }
-  .header-title { color: var(--On-Surface); font-family: 'Switzer', sans-serif; font-size: 17px; font-weight: 500; letter-spacing: 0.3px; flex: 1; text-align: center; }
+  .header-title { color: var(--On-Surface); font-family: Switzer, sans-serif; font-size: 17px; font-weight: 500; letter-spacing: 0.3px; flex: 1; text-align: center; }
 
   .body-wrap { flex: 1; display: flex; flex-direction: column; padding: 8px 16px 0; overflow-y: auto; }
   .body-wrap::-webkit-scrollbar { width: 0; }
@@ -37,29 +36,29 @@
   /* ── Result header ── */
   .result-icon { width: 56px; height: 56px; border-radius: 16px; border: 1.8px solid var(--Primary); background: #FFF5F5; display: flex; align-items: center; justify-content: center; margin: 6px auto 16px; }
   .result-icon svg { width: 26px; height: 26px; stroke: var(--Primary); stroke-width: 2.2; fill: none; }
-  .result-title { text-align: center; font-family: 'Switzer', sans-serif; font-size: 20px; font-weight: 700; color: var(--On-Surface); }
-  .result-lead { text-align: center; font-family: 'Switzer', sans-serif; font-size: 13.5px; font-weight: 600; color: var(--On-Surface-Low); margin-top: 8px; }
-  .result-desc { text-align: center; font-family: 'Switzer', sans-serif; font-size: 13px; color: var(--On-Surface-Low); margin-top: 2px; }
+  .result-title { text-align: center; font-family: Switzer, sans-serif; font-size: 20px; font-weight: 700; color: var(--On-Surface); }
+  .result-lead { text-align: center; font-family: Switzer, sans-serif; font-size: 13.5px; font-weight: 600; color: var(--On-Surface-Low); margin-top: 8px; }
+  .result-desc { text-align: center; font-family: Switzer, sans-serif; font-size: 13px; color: var(--On-Surface-Low); margin-top: 2px; }
 
   /* ── Receipt summary ── */
   .summary-card { background: #FFF; border-radius: 16px; padding: 16px; margin-top: 22px; box-shadow: 0 2px 8px rgba(0,0,0,0.04); }
 
   .party-card { position: relative; border: 1px solid var(--Border); border-radius: 14px; padding: 14px; display: flex; align-items: center; gap: 12px; margin-bottom: 8px; }
-  .party-badge { position: absolute; top: -11px; right: 14px; background: #EDEDF0; color: var(--On-Surface-Low); font-family: 'Switzer', sans-serif; font-size: 9.5px; font-weight: 700; letter-spacing: 0.6px; padding: 4px 9px; border-radius: 6px; }
-  .party-avatar { width: 44px; height: 44px; border-radius: 50%; background: #FFE9EA; color: var(--Primary); display: flex; align-items: center; justify-content: center; font-family: 'Switzer', sans-serif; font-size: 14px; font-weight: 700; flex-shrink: 0; }
+  .party-badge { position: absolute; top: -11px; right: 14px; background: #EDEDF0; color: var(--On-Surface-Low); font-family: Switzer, sans-serif; font-size: 9.5px; font-weight: 700; letter-spacing: 0.6px; padding: 4px 9px; border-radius: 6px; }
+  .party-avatar { width: 44px; height: 44px; border-radius: 50%; background: #FFE9EA; color: var(--Primary); display: flex; align-items: center; justify-content: center; font-family: Switzer, sans-serif; font-size: 14px; font-weight: 700; flex-shrink: 0; }
   .party-info { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 3px; }
-  .party-name { font-family: 'Switzer', sans-serif; font-size: 15px; font-weight: 700; color: var(--On-Surface); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-  .party-sub { font-family: 'Switzer', sans-serif; font-size: 12.5px; color: var(--On-Surface-Low); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .party-name { font-family: Switzer, sans-serif; font-size: 15px; font-weight: 700; color: var(--On-Surface); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .party-sub { font-family: Switzer, sans-serif; font-size: 12.5px; color: var(--On-Surface-Low); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 
   .sum-row { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 14px 2px; border-bottom: 1px solid #F0F0F3; }
   .sum-row.total { border-bottom: none; }
-  .sum-key { font-family: 'Switzer', sans-serif; font-size: 13px; font-weight: 400; color: var(--On-Surface-Low); flex-shrink: 0; }
-  .sum-val { font-family: 'Switzer', sans-serif; font-size: 13.5px; font-weight: 700; color: var(--On-Surface); text-align: right; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .sum-key { font-family: Switzer, sans-serif; font-size: 13px; font-weight: 400; color: var(--On-Surface-Low); flex-shrink: 0; }
+  .sum-val { font-family: Switzer, sans-serif; font-size: 13.5px; font-weight: 700; color: var(--On-Surface); text-align: right; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
   .sum-row.total .sum-val { color: var(--Primary); font-size: 15px; }
 
   /* ── Actions ── */
   .bottom-area { flex-shrink: 0; padding: 16px 16px 22px; display: flex; flex-direction: column; gap: 12px; background: var(--Background); }
-  .btn { height: 52px; border-radius: 14px; font-family: 'Poppins', sans-serif; font-size: 15px; font-weight: 500; cursor: pointer; transition: all 0.2s; }
+  .btn { height: 52px; border-radius: 14px; font-family: Switzer, sans-serif; font-size: 15px; font-weight: 500; cursor: pointer; transition: all 0.2s; }
   .btn:active { transform: scale(0.98); }
   .btn.primary { border: none; background: var(--Primary); color: #FFF; box-shadow: 0 4px 16px rgba(254,53,61,0.25); }
   .btn.primary:hover { background: #E5303A; box-shadow: 0 6px 20px rgba(254,53,61,0.35); transform: translateY(-1px); }

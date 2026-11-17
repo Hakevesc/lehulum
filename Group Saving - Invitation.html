@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Group Invitation — M-PESA</title>
+<link rel="stylesheet" href="styles/design-tokens.css">
+<link rel="stylesheet" href="styles/base.css">
+<link rel="stylesheet" href="styles/component-status-bar.css">
+<link rel="stylesheet" href="styles/component-sc-card.css">
+<link rel="stylesheet" href="styles/savings.css">
+<style>
+  @import url('https://api.fontshare.com/v2/css?f[]=switzer@400,500,600,700,800&display=swap');
+
+  /* A group invitation seen by the person invited (?group=&as=<member id>;
+     the demo opens it as Daniel Bekele). Who invited them, the group's target,
+     date, members and progress, the rules, and Accept / Decline. The admin gets
+     an in-app notice either way. No pending invitation → an empty state. */
+  .as { align-self: center; display: inline-flex; align-items: center; gap: 6px; padding: 4px 12px 4px 4px; border-radius: 999px; background: #FFF; border: 1px solid #EFEFF2; font-size: 11.5px; font-weight: 600; color: #55555E; }
+  .as .av { width: 22px; height: 22px; font-size: 9px; }
+  .view { display: none; flex-direction: column; gap: 12px; flex: 1 1 auto; }
+  .view.show { display: flex; }
+  .view > * { flex-shrink: 0; }
+  .inv { text-align: center; padding: 22px 18px 18px; }
+  .inv .faces { display: flex; justify-content: center; }
+  .inv .faces .av { width: 52px; height: 52px; border: 3px solid #FFF; font-size: 16px; box-shadow: 0 2px 8px rgba(0,0,0,0.08); }
+  .inv .faces .av + .av { margin-left: -14px; }
+  .inv .faces .more { width: 52px; height: 52px; margin-left: -14px; border-radius: 50%; border: 3px solid #FFF; background: #F1F1F4; display: inline-flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 700; color: #55555E; }
+  .inv small { display: block; margin-top: 14px; font-size: 13px; color: var(--On-Surface-Low); }
+  .inv h2 { margin-top: 4px; font-size: 22px; font-weight: 700; color: var(--On-Surface); }
+  .inv p { margin: 8px auto 0; max-width: 280px; font-size: 13px; line-height: 1.5; color: #55555E; }
+  .inv p b { color: var(--On-Surface); }
+  .inv .bar { margin-top: 16px; }
+  .inv .prog { display: flex; justify-content: space-between; margin-top: 6px; font-size: 11.5px; color: var(--On-Surface-Low); }
+  .facts3 { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); text-align: center; }
+  .facts3 div + div { border-left: 1px solid #F1F1F4; }
+  .facts3 small { display: block; font-size: 11px; color: var(--On-Surface-Low); }
+  .facts3 b { display: block; margin-top: 3px; font-size: 13.5px; font-weight: 700; color: var(--On-Surface); }
+  .rule { display: flex; gap: 12px; padding: 9px 0; }
+  .rule + .rule { border-top: 1px solid #F4F4F6; }
+  .rule i { width: 34px; height: 34px; border-radius: 11px; background: #FFF1F2; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+  .rule i svg { width: 18px; height: 18px; stroke: var(--Primary); stroke-width: 1.9; fill: none; stroke-linecap: round; stroke-linejoin: round; }
+  .rule span { font-size: 12.5px; line-height: 1.45; color: #55555E; }
+  .rule b { display: block; font-size: 13.5px; font-weight: 600; color: var(--On-Surface); }
+  .res { align-items: center; text-align: center; }
+  .res .ok { margin-top: 30px; width: 96px; height: 96px; border-radius: 50%; background: #E8F9EE; display: flex; align-items: center; justify-content: center; }
+  .res .ok span { width: 64px; height: 64px; border-radius: 50%; background: #16A34A; display: flex; align-items: center; justify-content: center; }
+  .res .ok svg { width: 30px; height: 30px; stroke: #FFF; stroke-width: 3; fill: none; stroke-linecap: round; stroke-linejoin: round; }
+  .res .ok.no { background: #F1F1F4; }
+  .res .ok.no span { background: #8A8A94; }
+  .res h1 { margin-top: 18px; font-size: 21px; font-weight: 700; color: var(--On-Surface); }
+  .res p { margin-top: 6px; max-width: 290px; font-size: 13.5px; line-height: 1.5; color: var(--On-Surface-Low); }
+  .res .bottom-bar { align-self: stretch; }
+</style>
+<link rel="stylesheet" href="styles/device.css">
+</head>
+<body>
+<div class="phone-frame">
+  <div class="status-bar">
+    <span class="time">10:00</span>
+    <div class="status-icons">
+      <svg data-name="icon-wifi" viewBox="0 0 24 24" fill="none"><path d="M1 9l2 2c4.970-4.970 13.030-4.970 18 0l2-2C16.930 2.930 7.080 2.930 1 9z" fill="#1C1C21"/><path d="M5 13l2 2c2.760-2.760 7.240-2.760 10 0l2-2C15.140 9.140 8.870 9.140 5 13z" fill="#1C1C21"/><path d="M9 17l2 2c1.100-1.100 2.900-1.100 4 0l2-2c-2.210-2.210-5.790-2.210-8 0z" fill="#1C1C21"/></svg>
+      <svg data-name="icon-signal" viewBox="0 0 24 24" fill="none"><rect x="2" y="6" width="4" height="12" rx="1" fill="#1C1C21"/><rect x="8" y="4" width="4" height="14" rx="1" fill="#1C1C21"/><rect x="14" y="2" width="4" height="16" rx="1" fill="#1C1C21"/><rect x="20" y="0" width="4" height="18" rx="1" fill="#1C1C21" opacity="0.3"/></svg>
+      <svg data-name="icon-battery" viewBox="0 0 28 14" fill="none"><rect x="0" y="1" width="22" height="12" rx="2.5" stroke="#1C1C21" stroke-width="1.5"/><rect x="2" y="3" width="16" height="8" rx="1" fill="#1C1C21"/><rect x="24" y="4" width="2" height="6" rx="1" fill="#1C1C21"/></svg>
+    </div>
+  </div>
+
+  <div class="app-content">
+    <div class="header-nav">
+      <button class="icon-btn" onclick="location.href='Group Saving.html'" aria-label="Back"><svg data-name="icon-arrow-left" viewBox="0 0 24 24"><path d="M19 12H5M12 19l-7-7 7-7"/></svg></button>
+      <span class="header-title" id="hTitle">Group Invitation</span>
+      <span class="spacer"></span>
+    </div>
+
+    <span class="as" id="as"></span>
+    <section class="view" id="vInvite">
+      <div class="card inv">
+        <div class="faces" id="faces"></div>
+        <small id="from"></small>
+        <h2 id="gName"></h2>
+        <p id="pitch"></p>
+        <div class="bar"><i id="bar"></i></div>
+        <div class="prog"><span id="saved"></span><span id="pct"></span></div>
+      </div>
+      <div class="card facts3"><div><small>Target</small><b id="fTarget"></b></div><div><small>By</small><b id="fBy"></b></div><div><small>Members</small><b id="fMembers"></b></div></div>
+      <div class="card">
+        <div class="rule"><i><svg viewBox="0 0 24 24"><path d="M3 17l6-6 4 4 8-8"/><path d="M14 7h7v7"/></svg></i><span><b>Earn 7% a year</b>Interest starts the day you put money in.</span></div>
+        <div class="rule"><i><svg viewBox="0 0 24 24"><rect x="4" y="10" width="16" height="11" rx="2.5"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg></i><span><b>Money stays until the goal</b><span id="ruleAdmin"></span></span></div>
+        <div class="rule"><i><svg viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><path d="M16 17l5-5-5-5M21 12H9"/></svg></i><span><b>Leaving needs approval</b>3 members must approve, then you get back what you put in, with interest.</span></div>
+      </div>
+      <div class="bottom-bar"><button class="btn-primary" onclick="answer(true)">Accept &amp; Join</button><button class="btn-ghost" onclick="openSheet('declineSheet')">Decline</button></div>
+    </section>
+    <section class="view res" id="vDone">
+      <div class="ok" id="rIc"><span><svg viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg></span></div>
+      <h1 id="rT"></h1>
+      <p id="rP"></p>
+      <div class="bottom-bar"><button class="btn-primary" onclick="location.href='Group Saving.html'">Done</button></div>
+    </section>
+    <section class="view" id="vNone"><div class="empty" style="margin-top:20px"><i id="noneIc"></i><b id="noneT"></b><small>When someone adds you to a savings group, the invitation shows up here.</small></div></section>
+  </div>
+
+  <div class="scrim" id="scrim" onclick="closeSheets()"></div>
+  <div class="sheet" id="declineSheet" role="dialog" aria-label="Decline invitation">
+    <div class="sheet-grip"></div>
+    <div class="cf-ic"><svg viewBox="0 0 24 24"><path d="M18 6 6 18M6 6l12 12"/></svg></div>
+    <p class="cf-t">Decline the invitation?</p>
+    <p class="cf-p" id="decTxt"></p>
+    <button class="btn-primary" onclick="answer(false)">Decline</button>
+    <button class="btn-ghost" onclick="closeSheets()">Not Now</button>
+  </div>
+  <div class="toast" id="toast"></div>
+</div>
+
+<script src="savings-store.js"></script>
+<script src="savings-ui.js"></script>
+<script>
+  const $ = id => document.getElementById(id);
+  const fmt = SV.fmt, IC = SVUI.IC;
+  let tt;
+  function toast(m) { const t = $('toast'); if (!t) return; t.textContent = m; t.classList.add('show'); clearTimeout(tt); tt = setTimeout(() => t.classList.remove('show'), 2200); }
+  function openSheet(id) { const s = $('scrim'); if (s) s.classList.add('show'); $(id).classList.add('show'); }
+  function closeSheets() { const s = $('scrim'); if (s) s.classList.remove('show'); document.querySelectorAll('.sheet').forEach(x => x.classList.remove('show')); }
+  document.addEventListener('keydown', e => { if (e.key === 'Escape') closeSheets(); });
+  // Hand an action to the shared PIN screen, which returns to Savings - Done.html
+  function toPin(data) { sessionStorage.setItem('termLoanData', JSON.stringify(Object.assign({ next: 'Savings - Done.html', back: location.pathname.split('/').pop() + location.search }, data))); location.href = 'Term Loan - Enter PIN.html'; }
+
+  const q = new URLSearchParams(location.search), S = SV.load();
+  const asId = q.get('as') || 'c4', me = SV.person(asId);
+  // The invitation: the named group, or the first one that has this person pending
+  const g = SV.groupsOf(S).find(x => (!q.get('group') || x.id === q.get('group')) && x.members.some(m => m.id === asId && m.pending));
+  $('as').innerHTML = SVUI.av(me) + 'Viewing as ' + me.name;
+  const show = v => ['vInvite', 'vDone', 'vNone'].forEach(id => $(id).classList.toggle('show', id === v));
+  if (!g) { $('noneIc').innerHTML = IC.group; $('noneT').textContent = 'No invitation for ' + me.name + ' yet'; show('vNone'); }
+  else {
+    const admin = SV.person(g.admin), joined = SV.joined(g), bal = SV.balanceOf(g), pct = SV.pctOf(g);
+    $('faces').innerHTML = joined.slice(0, 3).map(m => SVUI.av(SV.person(m.id))).join('') + (joined.length > 3 ? `<span class="more">+${joined.length - 3}</span>` : '');
+    $('from').textContent = (g.admin === 'me' ? SV.ME.name : admin.name.split(' ')[0]) + ' invited you to join';
+    $('gName').textContent = g.name;
+    $('pitch').innerHTML = `Save together toward <b>${fmt(g.target.amount)} ETB</b> by <b>${SV.dateStr(g.target.by)}</b>. Your money earns ${SV.RATE}% interest from the day you put it in.`;
+    $('bar').style.width = Math.max(2, pct) + '%';
+    $('saved').textContent = fmt(bal) + ' ETB saved'; $('pct').textContent = pct + '%';
+    $('fTarget').textContent = fmt(g.target.amount).replace('.00', '');
+    $('fBy').textContent = SV.dateStr(g.target.by);
+    $('fMembers').textContent = joined.length + ' joined';
+    $('ruleAdmin').textContent = `${g.admin === 'me' ? SV.ME.name : admin.name.split(' ')[0]} (admin) can withdraw once the target is reached or on ${SV.dateStr(g.target.by)}.`;
+    $('decTxt').textContent = `You won't join ${g.name}. ${g.admin === 'me' ? SV.ME.name : admin.name.split(' ')[0]} will be told.`;
+    show('vInvite');
+  }
+  // Accept clears "pending"; decline removes the invite. Either way the admin gets a notice.
+  function answer(yes) {
+    closeSheets();
+    const m = g.members.find(x => x.id === asId);
+    if (yes) m.pending = false; else g.members = g.members.filter(x => x.id !== asId);
+    SV.notice(S, `${me.name} ${yes ? 'accepted' : 'declined'} your invitation to ${g.name}.`);
+    SV.save(S);
+    $('rIc').className = 'ok' + (yes ? '' : ' no');
+    $('rT').textContent = yes ? 'You joined ' + g.name : 'Invitation declined';
+    $('rP').textContent = yes ? `You're one of ${SV.joined(g).length} members now. Contribute any time to help reach ${fmt(g.target.amount)} ETB.` : `You are not part of ${g.name}. You can be invited again later.`;
+    show('vDone');
+  }
+</script>
+<!-- Export to Figma button (shared exporter) -->
+<script src="figma-export.js"></script>
+<script src="test-scenarios-data.js"></script>
+<script src="test-scenarios.js"></script>
+</body>
+</html>

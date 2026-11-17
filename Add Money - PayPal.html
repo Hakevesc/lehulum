@@ -5,7 +5,6 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Add Money · PayPal</title>
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@400;500;600&display=swap');
   @import url('https://api.fontshare.com/v2/css?f[]=switzer@400,500,600,700,800&display=swap');
 
   /* Add Money from PayPal (me-to-me only). Not linked yet: the linking rules and
@@ -23,7 +22,7 @@
     --PP-Light: #EAF2FF;
   }
   * { margin: 0; padding: 0; box-sizing: border-box; }
-  body { font-family: 'Inter', sans-serif; background: transparent; display: flex; justify-content: center; align-items: center; min-height: 100vh; padding: 20px; }
+  body { font-family: Switzer, sans-serif; background: transparent; display: flex; justify-content: center; align-items: center; min-height: 100vh; padding: 20px; }
   button, input { font-family: inherit; }
   .phone-frame { width: 360px; height: 780px; background: var(--Background); border-radius: 30px; overflow: hidden; position: relative; box-shadow: 0 20px 60px rgba(0,0,0,0.15); display: flex; flex-direction: column; }
   .app-content { height: 100%; display: flex; flex-direction: column; }
@@ -36,7 +35,7 @@
   .back-btn { width: 36px; height: 36px; border-radius: 50%; background: transparent; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; }
   .back-btn:hover { background: rgba(0,0,0,0.05); }
   .back-btn svg { width: 22px; height: 22px; stroke: var(--On-Surface); stroke-width: 1.8px; fill: none; }
-  .header-title { color: var(--On-Surface); font-family: 'Switzer', sans-serif; font-size: 17px; font-weight: 500; letter-spacing: 0.3px; flex: 1; text-align: center; }
+  .header-title { color: var(--On-Surface); font-family: Switzer, sans-serif; font-size: 17px; font-weight: 500; letter-spacing: 0.3px; flex: 1; text-align: center; }
 
   .scroll { flex: 1; min-height: 0; overflow-y: auto; padding: 4px 16px 16px; display: flex; flex-direction: column; gap: 12px; scrollbar-width: none; }
   .scroll::-webkit-scrollbar { width: 0; }
@@ -44,59 +43,59 @@
   .view { display: none; flex-direction: column; gap: 12px; }
   .view.show { display: flex; }
 
-  .pp-mark { width: 48px; height: 48px; border-radius: 14px; background: var(--PP-Light); display: flex; align-items: center; justify-content: center; font-family: 'Switzer', sans-serif; font-size: 22px; font-weight: 800; font-style: italic; color: var(--PP); flex-shrink: 0; }
+  .pp-mark { width: 48px; height: 48px; border-radius: 14px; background: var(--PP-Light); display: flex; align-items: center; justify-content: center; font-family: Switzer, sans-serif; font-size: 22px; font-weight: 800; font-style: italic; color: var(--PP); flex-shrink: 0; }
   .pp-mark img { width: 46%; height: auto; display: block; }
 
   /* Not linked */
   .intro { background: #FFF; border-radius: 18px; padding: 20px 18px; box-shadow: 0 4px 14px rgba(15,23,42,0.05); display: flex; flex-direction: column; align-items: center; text-align: center; }
   .link-art { display: flex; align-items: center; gap: 10px; }
-  .link-art .mp { width: 48px; height: 48px; border-radius: 14px; background: var(--Primary); display: flex; align-items: center; justify-content: center; font-family: 'Switzer', sans-serif; font-size: 22px; font-weight: 800; color: #FFF; }
+  .link-art .mp { width: 48px; height: 48px; border-radius: 14px; background: var(--Primary); display: flex; align-items: center; justify-content: center; font-family: Switzer, sans-serif; font-size: 22px; font-weight: 800; color: #FFF; }
   .link-art svg { width: 22px; height: 22px; stroke: #A0A0AA; stroke-width: 2; fill: none; }
-  .intro h2 { margin-top: 14px; font-family: 'Switzer', sans-serif; font-size: 18px; font-weight: 700; color: var(--On-Surface); }
-  .intro p { margin-top: 6px; font-family: 'Switzer', sans-serif; font-size: 13px; line-height: 1.5; color: var(--On-Surface-Low); }
+  .intro h2 { margin-top: 14px; font-family: Switzer, sans-serif; font-size: 18px; font-weight: 700; color: var(--On-Surface); }
+  .intro p { margin-top: 6px; font-family: Switzer, sans-serif; font-size: 13px; line-height: 1.5; color: var(--On-Surface-Low); }
   .rules { background: #FFF; border-radius: 18px; padding: 6px 16px; box-shadow: 0 4px 14px rgba(15,23,42,0.05); }
-  .rule { display: flex; gap: 12px; padding: 12px 0; font-family: 'Switzer', sans-serif; }
+  .rule { display: flex; gap: 12px; padding: 12px 0; font-family: Switzer, sans-serif; }
   .rule + .rule { border-top: 1px solid #ECECEF; }
   .rule i { width: 30px; height: 30px; border-radius: 9px; background: var(--Primary-Light); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
   .rule i svg { width: 16px; height: 16px; stroke: var(--Primary); stroke-width: 2; fill: none; }
   .rule b { display: block; font-size: 13.5px; font-weight: 600; color: var(--On-Surface); }
   .rule small { display: block; margin-top: 2px; font-size: 12px; line-height: 1.4; color: var(--On-Surface-Low); }
-  .terms { display: flex; align-items: flex-start; gap: 10px; padding: 0 4px; font-family: 'Switzer', sans-serif; font-size: 12.5px; line-height: 1.45; color: #55555E; cursor: pointer; }
+  .terms { display: flex; align-items: flex-start; gap: 10px; padding: 0 4px; font-family: Switzer, sans-serif; font-size: 12.5px; line-height: 1.45; color: #55555E; cursor: pointer; }
   .terms input { width: 18px; height: 18px; margin-top: 1px; accent-color: var(--Primary); flex-shrink: 0; cursor: pointer; }
   .terms a { color: var(--Primary); font-weight: 600; text-decoration: none; }
 
   /* Linked */
   .acct { display: flex; align-items: center; gap: 12px; background: #FFF; border-radius: 16px; padding: 14px; box-shadow: 0 4px 14px rgba(15,23,42,0.05); }
   .acct-info { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 3px; }
-  .acct-info b { font-family: 'Switzer', sans-serif; font-size: 15px; font-weight: 700; color: var(--On-Surface); }
-  .acct-info small { font-family: 'Switzer', sans-serif; font-size: 12.5px; color: var(--On-Surface-Low); }
-  .matched { display: inline-flex; align-items: center; gap: 4px; align-self: flex-start; padding: 2px 8px; border-radius: 999px; background: #E8F9EE; color: #16A34A; font-family: 'Switzer', sans-serif; font-size: 11px; font-weight: 600; }
+  .acct-info b { font-family: Switzer, sans-serif; font-size: 15px; font-weight: 700; color: var(--On-Surface); }
+  .acct-info small { font-family: Switzer, sans-serif; font-size: 12.5px; color: var(--On-Surface-Low); }
+  .matched { display: inline-flex; align-items: center; gap: 4px; align-self: flex-start; padding: 2px 8px; border-radius: 999px; background: #E8F9EE; color: #16A34A; font-family: Switzer, sans-serif; font-size: 11px; font-weight: 600; }
   .matched svg { width: 11px; height: 11px; stroke: currentColor; stroke-width: 3; fill: none; }
   .pp-word { height: 18px; width: auto; align-self: flex-start; display: block; }
-  .unlink { border: none; background: none; font-family: 'Switzer', sans-serif; font-size: 12.5px; font-weight: 600; color: var(--Primary); cursor: pointer; padding: 6px; }
+  .unlink { border: none; background: none; font-family: Switzer, sans-serif; font-size: 12.5px; font-weight: 600; color: var(--Primary); cursor: pointer; padding: 6px; }
 
   .card { background: #FFF; border-radius: 16px; padding: 16px; box-shadow: 0 4px 14px rgba(15,23,42,0.05); }
-  .field-label { display: block; font-family: 'Switzer', sans-serif; font-size: 14px; font-weight: 500; color: var(--On-Surface); margin: 14px 0 8px; }
+  .field-label { display: block; font-family: Switzer, sans-serif; font-size: 14px; font-weight: 500; color: var(--On-Surface); margin: 14px 0 8px; }
   .card > .field-label:first-child { margin-top: 0; }
   .field { height: 52px; background: var(--Field); border: 1.5px solid var(--Border); border-radius: 12px; padding: 0 14px; display: flex; align-items: center; gap: 8px; transition: border-color 0.2s, box-shadow 0.2s, background 0.2s; }
   .field:focus-within { border-color: var(--Primary); background: #FFF; box-shadow: 0 4px 12px rgba(254,53,61,0.12); }
   .field.locked { background: #F1F1F4; border-color: #EBEBEF; }
-  .field input { flex: 1; min-width: 0; border: none; outline: none; background: transparent; font-family: 'Switzer', sans-serif; font-size: 15px; font-weight: 600; color: var(--On-Surface); }
+  .field input { flex: 1; min-width: 0; border: none; outline: none; background: transparent; font-family: Switzer, sans-serif; font-size: 15px; font-weight: 600; color: var(--On-Surface); }
   .field input::placeholder { color: var(--On-Surface-Low); font-weight: 400; }
-  .field .suffix { font-family: 'Switzer', sans-serif; font-size: 13px; font-weight: 600; color: var(--On-Surface-Low); }
+  .field .suffix { font-family: Switzer, sans-serif; font-size: 13px; font-weight: 600; color: var(--On-Surface-Low); }
   .field .lock { width: 16px; height: 16px; stroke: var(--On-Surface-Low); stroke-width: 2; fill: none; flex-shrink: 0; }
   .chips { display: flex; gap: 8px; margin-top: 10px; }
-  .chip { flex: 1; height: 36px; border-radius: 10px; border: 1.5px solid var(--Border); background: #FFF; font-family: 'Switzer', sans-serif; font-size: 13px; font-weight: 700; color: var(--On-Surface); cursor: pointer; }
+  .chip { flex: 1; height: 36px; border-radius: 10px; border: 1.5px solid var(--Border); background: #FFF; font-family: Switzer, sans-serif; font-size: 13px; font-weight: 700; color: var(--On-Surface); cursor: pointer; }
   .chip.on { background: var(--Primary); border-color: var(--Primary); color: #FFF; }
   .calc { margin-top: 12px; padding: 4px 12px; background: #F7F7F9; border-radius: 12px; }
-  .calc-row { display: flex; justify-content: space-between; align-items: center; padding: 8px 0; font-family: 'Switzer', sans-serif; font-size: 12.5px; color: #55555E; }
+  .calc-row { display: flex; justify-content: space-between; align-items: center; padding: 8px 0; font-family: Switzer, sans-serif; font-size: 12.5px; color: #55555E; }
   .calc-row + .calc-row { border-top: 1px solid #ECECEF; }
   .calc-row b { font-weight: 700; color: var(--On-Surface); font-variant-numeric: tabular-nums; }
   .calc-row.total b { color: #16A34A; font-size: 14px; }
-  .note { font-family: 'Switzer', sans-serif; font-size: 11.5px; line-height: 1.45; color: #8A8A94; padding: 0 4px; }
+  .note { font-family: Switzer, sans-serif; font-size: 11.5px; line-height: 1.45; color: #8A8A94; padding: 0 4px; }
 
   .bottom-bar { flex-shrink: 0; padding: 10px 16px 18px; background: var(--Background); }
-  .btn-primary { width: 100%; height: 52px; border: none; border-radius: 14px; background: var(--Primary); color: #FFF; font-family: 'Poppins', sans-serif; font-size: 15px; font-weight: 500; cursor: pointer; box-shadow: 0 4px 16px rgba(254,53,61,0.25); }
+  .btn-primary { width: 100%; height: 52px; border: none; border-radius: 14px; background: var(--Primary); color: #FFF; font-family: Switzer, sans-serif; font-size: 15px; font-weight: 500; cursor: pointer; box-shadow: 0 4px 16px rgba(254,53,61,0.25); }
   .btn-primary:disabled { background: #E0E0E0; color: var(--On-Surface-Low); box-shadow: none; cursor: not-allowed; }
   /* The bottom button stays visible above the on-screen keyboard */
 
@@ -108,25 +107,25 @@
   .sheet-grip { width: 40px; height: 4px; border-radius: 2px; background: #D8D8DE; margin: 0 auto 18px; }
   .cf-head { position: relative; display: flex; align-items: center; gap: 12px; border: 1px solid #E6E6EA; border-radius: 16px; padding: 14px; }
   .cf-head .pp-mark { width: 42px; height: 42px; border-radius: 50%; font-size: 18px; }
-  .cf-head b { display: block; font-family: 'Switzer', sans-serif; font-size: 15px; font-weight: 700; color: var(--On-Surface); }
-  .cf-head small { font-family: 'Switzer', sans-serif; font-size: 12.5px; color: var(--On-Surface-Low); }
-  .cf-badge { position: absolute; top: -11px; right: 14px; padding: 4px 10px; border-radius: 999px; background: #EDEDF0; color: #3A3A42; font-family: 'Switzer', sans-serif; font-size: 10px; font-weight: 700; letter-spacing: 0.5px; }
+  .cf-head b { display: block; font-family: Switzer, sans-serif; font-size: 15px; font-weight: 700; color: var(--On-Surface); }
+  .cf-head small { font-family: Switzer, sans-serif; font-size: 12.5px; color: var(--On-Surface-Low); }
+  .cf-badge { position: absolute; top: -11px; right: 14px; padding: 4px 10px; border-radius: 999px; background: #EDEDF0; color: #3A3A42; font-family: Switzer, sans-serif; font-size: 10px; font-weight: 700; letter-spacing: 0.5px; }
   .cf-rows { margin: 10px 0 20px; }
-  .cf-row { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 13px 0; border-bottom: 1px solid #EFEFF2; font-family: 'Switzer', sans-serif; }
+  .cf-row { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 13px 0; border-bottom: 1px solid #EFEFF2; font-family: Switzer, sans-serif; }
   .cf-row:last-child { border-bottom: none; }
   .cf-row span { font-size: 12.5px; color: #55555E; }
   .cf-row b { font-size: 12.5px; font-weight: 700; color: var(--On-Surface); font-variant-numeric: tabular-nums; }
   .cf-row b.green { font-size: 14px; color: #16A34A; }
   .cf-actions { display: flex; gap: 12px; }
-  .cf-btn { flex: 1; height: 52px; border-radius: 14px; background: #FFF; font-family: 'Poppins', sans-serif; font-size: 15px; font-weight: 500; cursor: pointer; }
+  .cf-btn { flex: 1; height: 52px; border-radius: 14px; background: #FFF; font-family: Switzer, sans-serif; font-size: 15px; font-weight: 500; cursor: pointer; }
   .cf-btn.cancel { border: 1.5px solid #E0E0E4; color: #55555E; }
   .cf-btn.confirm { border: 1.5px solid var(--Primary); color: var(--Primary); }
 
-  .busy { position: absolute; inset: 0; z-index: 130; background: rgba(245,245,245,0.96); display: none; flex-direction: column; align-items: center; justify-content: center; gap: 14px; font-family: 'Switzer', sans-serif; font-size: 14px; color: var(--On-Surface); text-align: center; padding: 0 40px; }
+  .busy { position: absolute; inset: 0; z-index: 130; background: rgba(245,245,245,0.96); display: none; flex-direction: column; align-items: center; justify-content: center; gap: 14px; font-family: Switzer, sans-serif; font-size: 14px; color: var(--On-Surface); text-align: center; padding: 0 40px; }
   .busy.show { display: flex; }
   .spinner { width: 38px; height: 38px; border-radius: 50%; border: 3.5px solid #D6E2F7; border-top-color: var(--PP); animation: spin 0.8s linear infinite; }
   @keyframes spin { to { transform: rotate(360deg); } }
-  .toast { position: absolute; left: 50%; bottom: 96px; transform: translate(-50%, 10px); background: #1C1C21; color: #FFF; font-family: 'Switzer', sans-serif; font-size: 13px; padding: 10px 14px; border-radius: 12px; opacity: 0; pointer-events: none; transition: opacity 0.2s, transform 0.2s; white-space: nowrap; z-index: 140; }
+  .toast { position: absolute; left: 50%; bottom: 96px; transform: translate(-50%, 10px); background: #1C1C21; color: #FFF; font-family: Switzer, sans-serif; font-size: 13px; padding: 10px 14px; border-radius: 12px; opacity: 0; pointer-events: none; transition: opacity 0.2s, transform 0.2s; white-space: nowrap; z-index: 140; }
   .toast.show { opacity: 1; transform: translate(-50%, 0); }
 </style>
 <link rel="stylesheet" href="styles/device.css">

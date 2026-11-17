@@ -8,10 +8,9 @@
 <link rel="stylesheet" href="styles/base.css">
 <link rel="stylesheet" href="styles/component-status-bar.css">
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@400;500;600&display=swap');
-  @import url('https://api.fontshare.com/v2/css?f[]=switzer@400,500,600,700&display=swap');
+  @import url('https://api.fontshare.com/v2/css?f[]=switzer@400,500,600,700,800&display=swap');
 
-  body { font-family: 'Inter', sans-serif; }
+  body { font-family: Switzer, sans-serif; }
 
   /* Cash In, first screen: your QR with the amount (the agent scans it), Save /
      Share, and Cash In at Agent (short code or nearby) below. */
@@ -64,7 +63,7 @@
   }
   .back-btn:hover, .header-icon-btn:hover { background: rgba(255,255,255,0.28); }
   .back-btn svg, .header-icon-btn svg { width: 20px; height: 20px; stroke: #fff; stroke-width: 2px; fill: none; }
-  .header-title { color: #fff; font-family: 'Switzer', sans-serif; font-size: 17px; font-weight: 600; }
+  .header-title { color: #fff; font-family: Switzer, sans-serif; font-size: 17px; font-weight: 600; }
 
   /* Profile inside hero */
   .qr-profile {
@@ -79,7 +78,7 @@
     box-shadow: 0 6px 18px rgba(0,0,0,0.18);
   }
   .qr-avatar img { width: 100%; height: 100%; object-fit: cover; }
-  .qr-name { color: #fff; font-family: 'Switzer', sans-serif; font-size: 18px; font-weight: 600; }
+  .qr-name { color: #fff; font-family: Switzer, sans-serif; font-size: 18px; font-weight: 600; }
   .qr-number { color: rgba(255,255,255,0.85); font-size: 13px; font-weight: 500; letter-spacing: 0.4px; }
 
   /* QR Card overlapping hero */
@@ -104,7 +103,7 @@
     flex: 0 0 auto; height: 44px; border: none; background: transparent;
     border-radius: 999px; padding: 0 20px;
     display: flex; align-items: center; justify-content: center; gap: 8px;
-    font-family: 'Switzer', sans-serif; font-size: 14px; font-weight: 600;
+    font-family: Switzer, sans-serif; font-size: 14px; font-weight: 600;
     color: var(--On-Surface-Low); cursor: pointer; transition: background 0.2s, color 0.2s, box-shadow 0.2s;
     white-space: nowrap;
   }
@@ -131,13 +130,13 @@
     width: 34px; height: 34px; border-radius: 9px;
     background: var(--Primary); color: #fff;
     display: flex; align-items: center; justify-content: center;
-    font-family: 'Switzer', sans-serif; font-weight: 700; font-size: 19px;
+    font-family: Switzer, sans-serif; font-weight: 700; font-size: 19px;
   }
 
   .qr-hint {
     margin-top: 16px; color: var(--On-Surface-Low);
     font-size: 12px; font-weight: 400; text-align: center; line-height: 1.5;
-    font-family: 'Switzer', sans-serif;
+    font-family: Switzer, sans-serif;
   }
 
   /* Amount field (shown on Receive tab) — same style as the other amount fields */
@@ -146,7 +145,7 @@
     flex-direction: column; gap: 6px;
   }
   .qr-amount.show { display: flex; }
-  .qr-amount .field-label { color: var(--On-Surface-Low); font-family: 'Switzer', sans-serif; font-size: 12.5px; font-weight: 600; }
+  .qr-amount .field-label { color: var(--On-Surface-Low); font-family: Switzer, sans-serif; font-size: 12.5px; font-weight: 600; }
   .qr-amount .field {
     background: #F8F8F9; border: 1px solid #EFEFF1; border-radius: 12px;
     height: 46px; padding: 0 14px; display: flex; align-items: center; gap: 8px;
@@ -154,16 +153,16 @@
   .qr-amount .field:focus-within { border-color: var(--Primary); background: #fff; box-shadow: 0 0 0 3px rgba(254,53,61,0.08); }
   .qr-amount input {
     flex: 1; min-width: 0; border: none; background: transparent; outline: none;
-    font-family: 'Switzer', sans-serif; font-weight: 700; font-size: 16px; color: var(--On-Surface);
+    font-family: Switzer, sans-serif; font-weight: 700; font-size: 16px; color: var(--On-Surface);
   }
-  .qr-amount .suffix { color: var(--On-Surface-Low); font-family: 'Switzer', sans-serif; font-size: 14px; font-weight: 600; flex-shrink: 0; }
+  .qr-amount .suffix { color: var(--On-Surface-Low); font-family: Switzer, sans-serif; font-size: 14px; font-weight: 600; flex-shrink: 0; }
 
   /* Save / Share inside the card */
   .qr-actions { display: flex; gap: 12px; width: 100%; margin-top: 16px; }
   .qr-btn {
     flex: 1; height: 50px; border-radius: 14px;
     display: flex; align-items: center; justify-content: center; gap: 8px;
-    font-family: 'Poppins', sans-serif; font-size: 14px; font-weight: 500;
+    font-family: Switzer, sans-serif; font-size: 14px; font-weight: 500;
     cursor: pointer; transition: all 0.2s; border: none;
   }
   .qr-btn svg { width: 18px; height: 18px; stroke-width: 2; fill: none; }
@@ -183,14 +182,14 @@
   .agent-link:active { transform: scale(0.99); }
   .agent-ic { width: 42px; height: 42px; border-radius: 12px; border: 1.5px solid var(--Primary); background: #FFF1F2; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
   .agent-ic svg { width: 22px; height: 22px; stroke: var(--Primary); stroke-width: 1.8; fill: none; }
-  .agent-link b { flex: 1; font-family: 'Switzer', sans-serif; font-size: 14.5px; font-weight: 600; color: var(--On-Surface); }
+  .agent-link b { flex: 1; font-family: Switzer, sans-serif; font-size: 14.5px; font-weight: 600; color: var(--On-Surface); }
   .agent-link .chev { width: 18px; height: 18px; stroke: var(--Primary); stroke-width: 2.2; fill: none; }
 
   /* Toast */
   .toast {
     position: absolute; bottom: 28px; left: 50%; transform: translateX(-50%) translateY(20px);
     background: #1C1C21; color: #fff; padding: 12px 20px; border-radius: 12px;
-    font-family: 'Switzer', sans-serif; font-size: 13px; font-weight: 500;
+    font-family: Switzer, sans-serif; font-size: 13px; font-weight: 500;
     box-shadow: 0 8px 24px rgba(0,0,0,0.3); opacity: 0; pointer-events: none;
     transition: all 0.3s ease; z-index: 50; display: flex; align-items: center; gap: 8px;
   }

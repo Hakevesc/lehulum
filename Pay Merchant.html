@@ -5,8 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Merchant Payment</title>
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@400;500;600&display=swap');
-  @import url('https://api.fontshare.com/v2/css?f[]=switzer@400,500,600,700&display=swap');
+  @import url('https://api.fontshare.com/v2/css?f[]=switzer@400,500,600,700,800&display=swap');
 
   :root {
     --Primary: #FE353D;
@@ -23,7 +22,7 @@
     --Error-Light: #FDECEC;
   }
   * { margin: 0; padding: 0; box-sizing: border-box; }
-  body { font-family: 'Inter', sans-serif; background: transparent; display: flex; justify-content: center; align-items: center; min-height: 100vh; padding: 20px; }
+  body { font-family: Switzer, sans-serif; background: transparent; display: flex; justify-content: center; align-items: center; min-height: 100vh; padding: 20px; }
   .phone-frame { width: 360px; height: 780px; background: var(--Background); border-radius: 30px; overflow: hidden; position: relative; box-shadow: 0 20px 60px rgba(0,0,0,0.15); display: flex; flex-direction: column; }
   .app-content { height: 100%; display: flex; flex-direction: column; }
 
@@ -36,14 +35,14 @@
   .back-btn { width: 36px; height: 36px; border-radius: 50%; background: transparent; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: background 0.2s; }
   .back-btn:hover { background: rgba(0,0,0,0.05); }
   .back-btn svg { width: 22px; height: 22px; stroke: var(--On-Surface); stroke-width: 1.8px; fill: none; }
-  .header-title { color: var(--On-Surface); font-family: 'Switzer', sans-serif; font-size: 17px; font-weight: 500; letter-spacing: 0.3px; flex: 1; text-align: center; }
+  .header-title { color: var(--On-Surface); font-family: Switzer, sans-serif; font-size: 17px; font-weight: 500; letter-spacing: 0.3px; flex: 1; text-align: center; }
 
   /* Toggle and QR stage stay put; only the list under them scrolls */
   .stage-area { flex: 1; min-height: 0; padding: 4px 16px 16px; display: flex; flex-direction: column; gap: 16px; }
 
   /* ── Method toggle ── */
   .toggle { display: flex; gap: 4px; background: #FFF; border-radius: 999px; padding: 5px; box-shadow: 0 2px 8px rgba(0,0,0,0.04); flex-shrink: 0; }
-  .toggle button { flex: 1; height: 44px; border: none; background: transparent; border-radius: 999px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; font-family: 'Switzer', sans-serif; font-size: 14px; font-weight: 600; color: var(--On-Surface-Low); transition: background 0.2s, color 0.2s, box-shadow 0.2s; }
+  .toggle button { flex: 1; height: 44px; border: none; background: transparent; border-radius: 999px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; font-family: Switzer, sans-serif; font-size: 14px; font-weight: 600; color: var(--On-Surface-Low); transition: background 0.2s, color 0.2s, box-shadow 0.2s; }
   .toggle button.active { background: var(--Primary); color: #FFF; box-shadow: 0 4px 12px rgba(254,53,61,0.25); }
   .toggle svg { width: 18px; height: 18px; stroke: currentColor; stroke-width: 2; fill: none; flex-shrink: 0; }
 
@@ -61,8 +60,8 @@
 
   /* ── Favorites ── */
   .section-header { display: flex; justify-content: space-between; align-items: center; }
-  .section-title { font-family: 'Switzer', sans-serif; font-size: 14px; font-weight: 600; color: var(--On-Surface); letter-spacing: 0.2px; }
-  .see-all { font-family: 'Switzer', sans-serif; font-size: 12px; font-weight: 500; color: var(--Primary); cursor: pointer; transition: opacity 0.2s; }
+  .section-title { font-family: Switzer, sans-serif; font-size: 14px; font-weight: 600; color: var(--On-Surface); letter-spacing: 0.2px; }
+  .see-all { font-family: Switzer, sans-serif; font-size: 12px; font-weight: 500; color: var(--Primary); cursor: pointer; transition: opacity 0.2s; }
   .see-all:hover { opacity: 0.7; }
 
   .favorites { display: flex; flex-direction: column; gap: 12px; }
@@ -71,16 +70,16 @@
   .favorite-item { flex-shrink: 0; display: flex; flex-direction: column; align-items: center; gap: 6px; cursor: pointer; transition: transform 0.2s; }
   .favorite-item:hover { transform: scale(1.05); }
   .favorite-item:active { transform: scale(0.95); }
-  .favorite-avatar { width: 56px; height: 56px; border-radius: 50%; background: #FFE9EA; border: none; display: flex; align-items: center; justify-content: center; font-family: 'Switzer', sans-serif; font-size: 16px; font-weight: 700; color: var(--Primary); box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
-  .favorite-name { font-family: 'Switzer', sans-serif; font-size: 11px; font-weight: 500; color: var(--On-Surface); text-align: center; max-width: 70px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .favorite-avatar { width: 56px; height: 56px; border-radius: 50%; background: #FFE9EA; border: none; display: flex; align-items: center; justify-content: center; font-family: Switzer, sans-serif; font-size: 16px; font-weight: 700; color: var(--Primary); box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
+  .favorite-name { font-family: Switzer, sans-serif; font-size: 11px; font-weight: 500; color: var(--On-Surface); text-align: center; max-width: 70px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 
   /* ── Form card ── */
   .form-card { background: #FFF; border-radius: 16px; padding: 16px; box-shadow: 0 2px 8px rgba(0,0,0,0.04); display: flex; flex-direction: column; gap: 8px; }
-  .field-label { font-family: 'Switzer', sans-serif; font-size: 14px; font-weight: 500; color: var(--On-Surface); margin-top: 10px; }
+  .field-label { font-family: Switzer, sans-serif; font-size: 14px; font-weight: 500; color: var(--On-Surface); margin-top: 10px; }
   .field-label:first-child { margin-top: 0; }
   .field { height: 56px; background: var(--Field); border: 1px solid var(--Field-Border); border-radius: 12px; padding: 0 16px; display: flex; align-items: center; gap: 8px; transition: border-color 0.2s, box-shadow 0.2s, background 0.2s; }
   .field:focus-within { border-color: var(--Primary); background: #FFF; box-shadow: 0 0 0 3px rgba(254,53,61,0.08); }
-  .field input { flex: 1; min-width: 0; border: none; background: transparent; outline: none; font-family: 'Switzer', sans-serif; font-size: 16px; font-weight: 700; color: var(--On-Surface); letter-spacing: 0.2px; }
+  .field input { flex: 1; min-width: 0; border: none; background: transparent; outline: none; font-family: Switzer, sans-serif; font-size: 16px; font-weight: 700; color: var(--On-Surface); letter-spacing: 0.2px; }
   .field input::placeholder { color: #A5A5AE; font-weight: 400; letter-spacing: 0; }
   /* Out-of-range amounts tint the value itself */
   .field.warn { border-color: var(--Warning); background: #FFF; }
@@ -90,7 +89,7 @@
 
   /* Amber strip for a balance shortfall, plain red for the hard limits */
   /* Balance hint below the amount (bank transfer pattern) */
-  .balance-hint { font-family: 'Switzer', sans-serif; font-size: 11.5px; color: var(--On-Surface-Low); margin-top: 2px; }
+  .balance-hint { font-family: Switzer, sans-serif; font-size: 11.5px; color: var(--On-Surface-Low); margin-top: 2px; }
   .balance-hint b { color: var(--On-Surface); font-weight: 600; }
 
   /* Amount messages use styles/field-error.css; only the amber 'warn' state keeps its own look. */
@@ -99,7 +98,7 @@
   .field-error.msg.warn .fe-ic { display: none; }
 
   /* ── Lookup status chip ── */
-  .status-chip { display: none; align-items: center; gap: 10px; border-radius: 12px; padding: 13px 14px; margin-top: 4px; font-family: 'Switzer', sans-serif; font-size: 14px; font-weight: 500; }
+  .status-chip { display: none; align-items: center; gap: 10px; border-radius: 12px; padding: 13px 14px; margin-top: 4px; font-family: Switzer, sans-serif; font-size: 14px; font-weight: 500; }
   .status-chip.show { display: flex; }
   .status-chip .ic { width: 24px; height: 24px; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
   .status-chip .ic svg { width: 13px; height: 13px; stroke-width: 3; fill: none; }
@@ -129,7 +128,7 @@
   .qr-laser { position: absolute; left: 10px; right: 10px; height: 2px; background: var(--Primary); box-shadow: 0 0 14px rgba(254,53,61,0.9); border-radius: 2px; animation: sweep 2.6s ease-in-out infinite; }
   @keyframes sweep { 0%, 100% { top: 12px; } 50% { top: 122px; } }
   .qr-copy { display: flex; flex-direction: column; align-items: center; gap: 6px; }
-  .qr-sub { font-family: 'Switzer', sans-serif; font-size: 13px; line-height: 1.5; color: rgba(255,255,255,0.6); text-align: center; max-width: 260px; }
+  .qr-sub { font-family: Switzer, sans-serif; font-size: 13px; line-height: 1.5; color: rgba(255,255,255,0.6); text-align: center; max-width: 260px; }
 
   /* Once a merchant is confirmed, the square keeps showing (its own section,
      separate from the merchant card below) but swaps to a "tap to rescan" cue. */
@@ -142,10 +141,10 @@
   /* ── Merchant row (resolved): sits at the top of the amount card, same
      tinted-row treatment as the Withdraw/Cash In name-check rows ── */
   .merchant-card { background: var(--Field); border-radius: 14px; padding: 12px 14px; display: flex; align-items: center; gap: 12px; margin-bottom: 4px; }
-  .merchant-avatar { width: 40px; height: 40px; border-radius: 50%; background: #FFE9EA; color: var(--Primary); display: flex; align-items: center; justify-content: center; font-family: 'Switzer', sans-serif; font-size: 13px; font-weight: 700; flex-shrink: 0; }
+  .merchant-avatar { width: 40px; height: 40px; border-radius: 50%; background: #FFE9EA; color: var(--Primary); display: flex; align-items: center; justify-content: center; font-family: Switzer, sans-serif; font-size: 13px; font-weight: 700; flex-shrink: 0; }
   .merchant-info { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 3px; }
-  .merchant-name { font-family: 'Switzer', sans-serif; font-size: 15px; font-weight: 700; color: var(--On-Surface); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-  .merchant-sub { font-family: 'Switzer', sans-serif; font-size: 12.5px; color: var(--On-Surface-Low); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .merchant-name { font-family: Switzer, sans-serif; font-size: 15px; font-weight: 700; color: var(--On-Surface); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .merchant-sub { font-family: Switzer, sans-serif; font-size: 12.5px; color: var(--On-Surface-Low); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
   /* Icon-only verification badge — no "Verified" text label */
   .merchant-check { width: 24px; height: 24px; border-radius: 50%; background: var(--Success); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
   .merchant-check svg { width: 13px; height: 13px; stroke: #FFF; stroke-width: 3; fill: none; }
@@ -158,7 +157,7 @@
 
   /* ── Bottom button ── */
   .bottom-bar { flex-shrink: 0; padding: 10px 16px 18px; background: var(--Background); }
-  .continue-btn { width: 100%; height: 52px; border-radius: 14px; border: none; background: #E0E0E0; color: var(--On-Surface-Low); font-family: 'Poppins', sans-serif; font-size: 15px; font-weight: 500; cursor: not-allowed; transition: all 0.2s; }
+  .continue-btn { width: 100%; height: 52px; border-radius: 14px; border: none; background: #E0E0E0; color: var(--On-Surface-Low); font-family: Switzer, sans-serif; font-size: 15px; font-weight: 500; cursor: not-allowed; transition: all 0.2s; }
   .continue-btn.active { background: var(--Primary); color: #FFF; cursor: pointer; box-shadow: 0 4px 16px rgba(254,53,61,0.25); }
   .continue-btn.active:hover { background: #E5303A; box-shadow: 0 6px 20px rgba(254,53,61,0.35); transform: translateY(-1px); }
   .continue-btn.active:active { transform: scale(0.98) translateY(0); }
@@ -170,12 +169,12 @@
   .sheet-overlay.show .sheet { transform: translateY(0); }
   .sheet-grip { width: 44px; height: 4px; border-radius: 2px; background: #D8D8DE; margin: 0 auto 18px; }
   .sheet-merchant { display: flex; align-items: center; gap: 14px; padding: 0 4px 20px; }
-  .sheet-merchant .avatar { width: 52px; height: 52px; border-radius: 14px; background: #FFE9EA; color: var(--Primary); display: flex; align-items: center; justify-content: center; font-family: 'Switzer', sans-serif; font-size: 16px; font-weight: 700; flex-shrink: 0; }
+  .sheet-merchant .avatar { width: 52px; height: 52px; border-radius: 14px; background: #FFE9EA; color: var(--Primary); display: flex; align-items: center; justify-content: center; font-family: Switzer, sans-serif; font-size: 16px; font-weight: 700; flex-shrink: 0; }
   .sheet-merchant .info { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 4px; }
-  .sheet-merchant .nm { font-family: 'Switzer', sans-serif; font-size: 16px; font-weight: 700; color: var(--On-Surface); }
-  .sheet-merchant .sub { font-family: 'Switzer', sans-serif; font-size: 13px; color: var(--On-Surface-Low); }
+  .sheet-merchant .nm { font-family: Switzer, sans-serif; font-size: 16px; font-weight: 700; color: var(--On-Surface); }
+  .sheet-merchant .sub { font-family: Switzer, sans-serif; font-size: 13px; color: var(--On-Surface-Low); }
   .sheet-actions { display: flex; gap: 12px; }
-  .sheet-btn { height: 52px; border-radius: 14px; border: none; cursor: pointer; font-family: 'Poppins', sans-serif; font-size: 15px; font-weight: 500; transition: background 0.15s, transform 0.12s; }
+  .sheet-btn { height: 52px; border-radius: 14px; border: none; cursor: pointer; font-family: Switzer, sans-serif; font-size: 15px; font-weight: 500; transition: background 0.15s, transform 0.12s; }
   .sheet-btn:active { transform: scale(0.98); }
   .sheet-btn.back { flex: 1; background: #F1F1F4; color: var(--On-Surface); }
   .sheet-btn.back:hover { background: #E9E9ED; }
@@ -184,23 +183,23 @@
 
   /* ── Confirmation sheet ── */
   .sheet.confirm-sheet { padding: 12px 20px 22px; }
-  .sheet-title { text-align: center; font-family: 'Switzer', sans-serif; font-size: 18px; font-weight: 700; color: var(--On-Surface); margin-bottom: 16px; }
+  .sheet-title { text-align: center; font-family: Switzer, sans-serif; font-size: 18px; font-weight: 700; color: var(--On-Surface); margin-bottom: 16px; }
   .party-card { position: relative; border: 1px solid var(--Field-Border); border-radius: 14px; padding: 14px; display: flex; align-items: center; gap: 12px; margin: 4px 0 12px; }
-  .party-badge { position: absolute; top: -11px; right: 14px; background: #EDEDF0; color: var(--On-Surface-Low); font-family: 'Switzer', sans-serif; font-size: 9.5px; font-weight: 700; letter-spacing: 0.6px; padding: 4px 9px; border-radius: 6px; }
-  .party-avatar { width: 44px; height: 44px; border-radius: 50%; background: #FFE9EA; color: var(--Primary); display: flex; align-items: center; justify-content: center; font-family: 'Switzer', sans-serif; font-size: 14px; font-weight: 700; flex-shrink: 0; }
+  .party-badge { position: absolute; top: -11px; right: 14px; background: #EDEDF0; color: var(--On-Surface-Low); font-family: Switzer, sans-serif; font-size: 9.5px; font-weight: 700; letter-spacing: 0.6px; padding: 4px 9px; border-radius: 6px; }
+  .party-avatar { width: 44px; height: 44px; border-radius: 50%; background: #FFE9EA; color: var(--Primary); display: flex; align-items: center; justify-content: center; font-family: Switzer, sans-serif; font-size: 14px; font-weight: 700; flex-shrink: 0; }
   .party-info { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 3px; }
-  .party-name { font-family: 'Switzer', sans-serif; font-size: 15px; font-weight: 700; color: var(--On-Surface); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-  .party-sub { font-family: 'Switzer', sans-serif; font-size: 12.5px; color: var(--On-Surface-Low); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .party-name { font-family: Switzer, sans-serif; font-size: 15px; font-weight: 700; color: var(--On-Surface); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .party-sub { font-family: Switzer, sans-serif; font-size: 12.5px; color: var(--On-Surface-Low); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 
   .sum-row { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 14px 2px; border-bottom: 1px solid #F0F0F3; }
   .sum-row.total { border-bottom: none; }
-  .sum-key { font-family: 'Switzer', sans-serif; font-size: 13px; font-weight: 400; color: var(--On-Surface-Low); flex-shrink: 0; }
-  .sum-val { font-family: 'Switzer', sans-serif; font-size: 13.5px; font-weight: 700; color: var(--On-Surface); text-align: right; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .sum-key { font-family: Switzer, sans-serif; font-size: 13px; font-weight: 400; color: var(--On-Surface-Low); flex-shrink: 0; }
+  .sum-val { font-family: Switzer, sans-serif; font-size: 13.5px; font-weight: 700; color: var(--On-Surface); text-align: right; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
   .sum-row.total .sum-val { color: var(--Primary); font-size: 15px; }
 
-  .sheet-btn.cancel { flex: 1; border: 1.5px solid var(--Field-Border); background: #FFF; color: var(--On-Surface-Low); font-family: 'Switzer', sans-serif; font-weight: 500; }
+  .sheet-btn.cancel { flex: 1; border: 1.5px solid var(--Field-Border); background: #FFF; color: var(--On-Surface-Low); font-family: Switzer, sans-serif; font-weight: 500; }
   .sheet-btn.cancel:hover { background: #FAFAFA; }
-  .sheet-btn.confirm { flex: 1; border: 1.5px solid var(--Primary); background: #FFF; color: var(--Primary); font-family: 'Switzer', sans-serif; font-weight: 600; }
+  .sheet-btn.confirm { flex: 1; border: 1.5px solid var(--Primary); background: #FFF; color: var(--Primary); font-family: Switzer, sans-serif; font-weight: 600; }
   .sheet-btn.confirm:hover { background: #FFF5F5; }
 
   /* Errif OD active is shown with an orange badge, exactly like the Airtime screen. */
@@ -208,7 +207,7 @@
     display: inline-flex; align-items: center; gap: 4px;
     background: rgba(255,152,0,0.15); border: 1px solid rgba(255,152,0,0.35);
     border-radius: 6px; padding: 1px 6px; margin-left: 8px;
-    font-family: 'Switzer', sans-serif; font-size: 9.5px; font-weight: 600;
+    font-family: Switzer, sans-serif; font-size: 9.5px; font-weight: 600;
     color: #FF9800; letter-spacing: 0.2px; width: fit-content;
   }
 
@@ -216,17 +215,17 @@
   .errif-screen { position: absolute; inset: 0; z-index: 1200; background: #F9FAFB; display: none; flex-direction: column; overflow: hidden; }
   .errif-screen.show { display: flex; }
   .errif-header { display: flex; align-items: center; justify-content: space-between; padding: 6px 16px 8px; }
-  .errif-header-title { color: #111827; font-family: 'Switzer', sans-serif; font-size: 16px; font-weight: 600; flex: 1; text-align: center; margin-right: 36px; }
+  .errif-header-title { color: #111827; font-family: Switzer, sans-serif; font-size: 16px; font-weight: 600; flex: 1; text-align: center; margin-right: 36px; }
   .errif-scroll { flex: 1; overflow-y: auto; display: flex; flex-direction: column; }
   .errif-scroll::-webkit-scrollbar { width: 0; }
   .errif-hero-wrap { position: relative; min-height: 300px; background: linear-gradient(135deg, #FEE2E2 0%, #FFF1F2 55%, #FFF 100%); display: flex; flex-direction: column; padding: 0 0 24px; }
   .errif-hero-wrap .status-bar { background: transparent; padding: 12px 20px 4px; position: relative; z-index: 10; }
   .errif-hero-wrap .errif-header { padding: 4px 16px 10px; background: transparent; }
   .errif-hero-content { position: relative; z-index: 2; max-width: 72%; display: flex; flex-direction: column; gap: 4px; padding: 4px 18px 0; }
-  .errif-hero-title { font-family: 'Switzer', sans-serif; font-size: 19px; font-weight: 700; color: #111827; line-height: 1.15; }
-  .errif-hero-by { font-family: 'Switzer', sans-serif; font-size: 17px; font-weight: 700; color: #111827; }
+  .errif-hero-title { font-family: Switzer, sans-serif; font-size: 19px; font-weight: 700; color: #111827; line-height: 1.15; }
+  .errif-hero-by { font-family: Switzer, sans-serif; font-size: 17px; font-weight: 700; color: #111827; }
   .errif-hero-by span { color: #FE353D; }
-  .errif-hero-sub { font-family: 'Switzer', sans-serif; font-size: 11.5px; line-height: 1.38; color: #4B5563; margin-top: 4px; }
+  .errif-hero-sub { font-family: Switzer, sans-serif; font-size: 11.5px; line-height: 1.38; color: #4B5563; margin-top: 4px; }
   .errif-hero-icon { width: 44px; height: 44px; border-radius: 12px; background: #E52E38; display: flex; align-items: center; justify-content: center; margin-top: 6px; box-shadow: 0 4px 12px rgba(229,46,56,0.25); }
   .errif-hero-icon svg { width: 24px; height: 24px; stroke: #FFF; fill: none; stroke-width: 1.8; }
   .errif-card { background: #FFF; border-radius: 20px; margin: -12px 16px 16px; padding: 6px 18px; box-shadow: 0 4px 20px rgba(0,0,0,0.08); position: relative; z-index: 3; display: flex; flex-direction: column; border: 1px solid #F3F4F6; }
@@ -235,13 +234,13 @@
   .errif-feat-icon { width: 42px; height: 42px; border-radius: 14px; background: #FEE2E2; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
   .errif-feat-icon svg { width: 21px; height: 21px; stroke: #EF4444; fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
   .errif-feat-info { display: flex; flex-direction: column; gap: 4px; }
-  .errif-feat-title { font-family: 'Switzer', sans-serif; font-size: 14px; font-weight: 700; color: #111827; }
-  .errif-feat-desc { font-family: 'Switzer', sans-serif; font-size: 12px; color: #6B7280; line-height: 1.4; }
+  .errif-feat-title { font-family: Switzer, sans-serif; font-size: 14px; font-weight: 700; color: #111827; }
+  .errif-feat-desc { font-family: Switzer, sans-serif; font-size: 12px; color: #6B7280; line-height: 1.4; }
   .errif-bottom-bar { padding: 8px 20px 20px; display: flex; flex-direction: column; gap: 10px; background: #FFF; flex-shrink: 0; }
-  .errif-btn-activate { width: 100%; height: 48px; border-radius: 12px; background: #2563EB; color: #FFF; font-family: 'Switzer', sans-serif; font-size: 15px; font-weight: 600; border: none; cursor: pointer; transition: all 0.2s; box-shadow: 0 4px 14px rgba(37,99,235,0.28); }
+  .errif-btn-activate { width: 100%; height: 48px; border-radius: 12px; background: #2563EB; color: #FFF; font-family: Switzer, sans-serif; font-size: 15px; font-weight: 600; border: none; cursor: pointer; transition: all 0.2s; box-shadow: 0 4px 14px rgba(37,99,235,0.28); }
   .errif-btn-activate:hover { background: #1D4ED8; transform: translateY(-1px); }
   .errif-btn-activate:active { transform: scale(0.98); }
-  .errif-btn-notnow { width: 100%; height: 48px; border-radius: 12px; background: #FFF; border: 1.5px solid #E5E7EB; color: #6B7280; font-family: 'Switzer', sans-serif; font-size: 15px; font-weight: 600; cursor: pointer; transition: all 0.15s; }
+  .errif-btn-notnow { width: 100%; height: 48px; border-radius: 12px; background: #FFF; border: 1.5px solid #E5E7EB; color: #6B7280; font-family: Switzer, sans-serif; font-size: 15px; font-weight: 600; cursor: pointer; transition: all 0.15s; }
   .errif-btn-notnow:hover { background: #F9FAFB; color: #374151; }
 
   .terms-screen { position: absolute; inset: 0; z-index: 1250; background: #F9FAFB; display: none; flex-direction: column; overflow: hidden; }
@@ -253,12 +252,12 @@
   .summary-card { flex: 1; background: #FFF; border-radius: 16px; padding: 14px 12px; border: 1px solid #F0F1F3; box-shadow: 0 2px 8px rgba(0,0,0,0.02); display: flex; flex-direction: column; gap: 8px; }
   .summary-head { display: flex; align-items: center; gap: 8px; }
   .summary-head svg { width: 18px; height: 18px; stroke: var(--Primary); fill: none; stroke-width: 2; flex-shrink: 0; }
-  .summary-title { font-family: 'Switzer', sans-serif; font-size: 13.5px; font-weight: 700; color: #111827; }
-  .summary-text { font-family: 'Switzer', sans-serif; font-size: 11px; line-height: 1.45; color: #6B7280; }
+  .summary-title { font-family: Switzer, sans-serif; font-size: 13.5px; font-weight: 700; color: #111827; }
+  .summary-text { font-family: Switzer, sans-serif; font-size: 11px; line-height: 1.45; color: #6B7280; }
   .summary-text strong { color: #111827; font-weight: 600; }
-  .section-title { font-family: 'Switzer', sans-serif; font-size: 15px; font-weight: 700; color: #111827; margin-bottom: 12px; }
+  .section-title { font-family: Switzer, sans-serif; font-size: 15px; font-weight: 700; color: #111827; margin-bottom: 12px; }
   .terms-content-card { background: #FFF; border-radius: 16px; padding: 18px 16px; border: 1px solid #F0F1F3; box-shadow: 0 2px 10px rgba(0,0,0,0.02); display: flex; flex-direction: column; gap: 16px; }
-  .terms-p { font-family: 'Switzer', sans-serif; font-size: 12.5px; line-height: 1.55; color: #4B5563; }
+  .terms-p { font-family: Switzer, sans-serif; font-size: 12.5px; line-height: 1.55; color: #4B5563; }
   .terms-p strong { color: #111827; font-weight: 700; }
   .bottom-sheet-fixed { background: #FFF; border-radius: 22px 22px 0 0; padding: 18px 20px 22px; box-shadow: 0 -4px 20px rgba(0,0,0,0.04); display: flex; flex-direction: column; gap: 14px; flex-shrink: 0; }
   .agree-row { display: flex; align-items: center; gap: 10px; cursor: pointer; user-select: none; }
@@ -266,9 +265,9 @@
   .custom-checkbox.unchecked { background: #FFF; border: 2px solid #E5E7EB; }
   .custom-checkbox svg { width: 13px; height: 13px; stroke: #FFF; stroke-width: 3; fill: none; }
   .custom-checkbox.unchecked svg { display: none; }
-  .agree-label { font-family: 'Switzer', sans-serif; font-size: 12px; line-height: 1.4; color: #111827; }
+  .agree-label { font-family: Switzer, sans-serif; font-size: 12px; line-height: 1.4; color: #111827; }
   .agree-label strong { font-weight: 700; }
-  .btn-agree { width: 100%; height: 48px; border-radius: 12px; background: #2563EB; color: #FFF; font-family: 'Switzer', sans-serif; font-size: 15px; font-weight: 600; border: none; cursor: pointer; transition: all 0.2s; box-shadow: 0 4px 14px rgba(37,99,235,0.28); }
+  .btn-agree { width: 100%; height: 48px; border-radius: 12px; background: #2563EB; color: #FFF; font-family: Switzer, sans-serif; font-size: 15px; font-weight: 600; border: none; cursor: pointer; transition: all 0.2s; box-shadow: 0 4px 14px rgba(37,99,235,0.28); }
   .btn-agree:hover { background: #1D4ED8; transform: translateY(-1px); }
   .btn-agree:disabled { background: #E5E7EB; color: #9CA3AF; box-shadow: none; cursor: not-allowed; transform: none; }
 
@@ -281,17 +280,17 @@
   .success-squircle { width: 68px; height: 68px; border-radius: 20px; background: #DCFCE7; border: 3px solid #22C55E; display: flex; align-items: center; justify-content: center; margin-bottom: 12px; animation: popIn 0.4s cubic-bezier(0.34,1.56,0.64,1); }
   @keyframes popIn { from { transform: scale(0.7); opacity: 0; } to { transform: scale(1); opacity: 1; } }
   .success-squircle svg { width: 34px; height: 34px; stroke: #16A34A; stroke-width: 3.5; fill: none; stroke-linecap: round; stroke-linejoin: round; }
-  .activated-title { font-family: 'Switzer', sans-serif; font-size: 21px; font-weight: 800; color: #111827; margin-bottom: 6px; }
-  .activated-subtitle { font-family: 'Switzer', sans-serif; font-size: 12px; line-height: 1.45; color: #6B7280; max-width: 270px; }
+  .activated-title { font-family: Switzer, sans-serif; font-size: 21px; font-weight: 800; color: #111827; margin-bottom: 6px; }
+  .activated-subtitle { font-family: Switzer, sans-serif; font-size: 12px; line-height: 1.45; color: #6B7280; max-width: 270px; }
   .activation-info-card { background: #FFF; border-radius: 16px; padding: 14px 16px; display: flex; align-items: center; gap: 13px; margin-top: 8px; border: 1px solid #F0F1F3; box-shadow: 0 2px 8px rgba(0,0,0,0.04); }
-  .activation-info-card .ic-abbr { width: 44px; height: 44px; border-radius: 14px; background: #FEE2E2; display: flex; align-items: center; justify-content: center; flex-shrink: 0; font-family: 'Switzer', sans-serif; font-size: 17px; font-weight: 700; color: #EF4444; }
+  .activation-info-card .ic-abbr { width: 44px; height: 44px; border-radius: 14px; background: #FEE2E2; display: flex; align-items: center; justify-content: center; flex-shrink: 0; font-family: Switzer, sans-serif; font-size: 17px; font-weight: 700; color: #EF4444; }
   .activation-info-text { display: flex; flex-direction: column; gap: 2px; }
-  .activation-info-title { font-family: 'Switzer', sans-serif; font-size: 14.5px; font-weight: 700; color: #111827; }
-  .activation-info-sub { font-family: 'Switzer', sans-serif; font-size: 12.5px; color: #6B7280; }
+  .activation-info-title { font-family: Switzer, sans-serif; font-size: 14.5px; font-weight: 700; color: #111827; }
+  .activation-info-sub { font-family: Switzer, sans-serif; font-size: 12.5px; color: #6B7280; }
   .activation-info-sub b { color: #111827; font-weight: 600; }
   .pin-prompt { display: flex; align-items: center; justify-content: center; gap: 7px; margin-top: 32px; }
   .pin-prompt svg { width: 15px; height: 15px; stroke: var(--On-Surface); stroke-width: 2; fill: none; }
-  .pin-prompt span { font-family: 'Switzer', sans-serif; font-size: 14px; font-weight: 600; color: var(--On-Surface); }
+  .pin-prompt span { font-family: Switzer, sans-serif; font-size: 14px; font-weight: 600; color: var(--On-Surface); }
   .pin-container { display: flex; justify-content: space-between; gap: 12px; margin-top: 16px; }
   .pin-box { flex: 1; height: 60px; border-radius: 14px; background: #F1F1F4; display: flex; align-items: center; justify-content: center; transition: background 0.18s, border-color 0.18s; }
   .pin-box .dot { width: 13px; height: 13px; border-radius: 50%; background: var(--On-Surface); display: none; }
@@ -301,12 +300,12 @@
   .pin-box.filled .dot { display: block; }
   @keyframes blink { 0%, 100% { opacity: 0; } 50% { opacity: 1; } }
   .keypad { background: #FFF; border-radius: 20px; padding: 14px 10px; margin-top: auto; display: grid; grid-template-columns: repeat(3, 1fr); box-shadow: 0 2px 8px rgba(0,0,0,0.04); }
-  .key { height: 54px; border: none; background: transparent; cursor: pointer; border-radius: 12px; font-family: 'Switzer', sans-serif; font-size: 24px; font-weight: 500; color: #55555E; display: flex; align-items: center; justify-content: center; transition: background 0.12s, transform 0.1s; }
+  .key { height: 54px; border: none; background: transparent; cursor: pointer; border-radius: 12px; font-family: Switzer, sans-serif; font-size: 24px; font-weight: 500; color: #55555E; display: flex; align-items: center; justify-content: center; transition: background 0.12s, transform 0.1s; }
   .key:hover { background: #F7F7F8; }
   .key:active { background: #EFEFF2; transform: scale(0.95); }
   .key.empty { pointer-events: none; }
   .key svg { width: 26px; height: 26px; stroke: #55555E; stroke-width: 1.7; fill: none; }
-  .pin-action-btn { margin-top: 14px; height: 52px; border-radius: 14px; border: none; background: #2563EB; color: #FFF; font-family: 'Poppins', sans-serif; font-size: 15px; font-weight: 500; cursor: pointer; box-shadow: 0 4px 16px rgba(37,99,235,0.28); transition: all 0.2s; flex-shrink: 0; width: 100%; }
+  .pin-action-btn { margin-top: 14px; height: 52px; border-radius: 14px; border: none; background: #2563EB; color: #FFF; font-family: Switzer, sans-serif; font-size: 15px; font-weight: 500; cursor: pointer; box-shadow: 0 4px 16px rgba(37,99,235,0.28); transition: all 0.2s; flex-shrink: 0; width: 100%; }
   .pin-action-btn:hover { background: #1D4ED8; box-shadow: 0 6px 20px rgba(37,99,235,0.35); }
 </style>
 <link rel="stylesheet" href="styles/field-error.css">

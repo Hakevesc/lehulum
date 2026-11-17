@@ -5,8 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Bill Payment</title>
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@400;500;600&display=swap');
-  @import url('https://api.fontshare.com/v2/css?f[]=switzer@400,500,600,700&display=swap');
+  @import url('https://api.fontshare.com/v2/css?f[]=switzer@400,500,600,700,800&display=swap');
 
   :root {
     --Primary: #FE353D;
@@ -18,7 +17,7 @@
     --Field-Border: #EFEFF1;
   }
   * { margin: 0; padding: 0; box-sizing: border-box; }
-  body { font-family: 'Inter', sans-serif; background: transparent; display: flex; justify-content: center; align-items: center; min-height: 100vh; padding: 20px; }
+  body { font-family: Switzer, sans-serif; background: transparent; display: flex; justify-content: center; align-items: center; min-height: 100vh; padding: 20px; }
   .phone-frame { width: 360px; height: 780px; background: var(--Background); border-radius: 30px; overflow: hidden; position: relative; box-shadow: 0 20px 60px rgba(0,0,0,0.15); display: flex; flex-direction: column; }
   .app-content { height: 100%; display: flex; flex-direction: column; }
 
@@ -31,7 +30,7 @@
   .back-btn { width: 36px; height: 36px; border-radius: 50%; background: transparent; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: background 0.2s; }
   .back-btn:hover { background: rgba(0,0,0,0.05); }
   .back-btn svg { width: 22px; height: 22px; stroke: var(--On-Surface); stroke-width: 1.8px; fill: none; }
-  .header-title { color: var(--On-Surface); font-family: 'Switzer', sans-serif; font-size: 17px; font-weight: 500; letter-spacing: 0.3px; flex: 1; text-align: center; }
+  .header-title { color: var(--On-Surface); font-family: Switzer, sans-serif; font-size: 17px; font-weight: 500; letter-spacing: 0.3px; flex: 1; text-align: center; }
 
   .scroll { flex: 1; overflow-y: auto; padding: 4px 16px 18px; display: flex; flex-direction: column; gap: 16px; }
   .scroll::-webkit-scrollbar { width: 0; }
@@ -40,13 +39,13 @@
   .search-field { height: 54px; background: var(--Field); border: 1px solid var(--Field-Border); border-radius: 12px; padding: 0 16px; display: flex; align-items: center; gap: 12px; flex-shrink: 0; transition: border-color 0.2s, background 0.2s; }
   .search-field:focus-within { border-color: var(--Primary); background: #FFF; }
   .search-field svg { width: 20px; height: 20px; stroke: var(--On-Surface); stroke-width: 2; fill: none; flex-shrink: 0; }
-  .search-field input { flex: 1; min-width: 0; border: none; background: transparent; outline: none; font-family: 'Switzer', sans-serif; font-size: 15px; font-weight: 500; color: var(--On-Surface); }
+  .search-field input { flex: 1; min-width: 0; border: none; background: transparent; outline: none; font-family: Switzer, sans-serif; font-size: 15px; font-weight: 500; color: var(--On-Surface); }
   .search-field input::placeholder { color: var(--On-Surface-Low); font-weight: 400; }
 
   /* ── Section headers ── */
   .section-header { display: flex; justify-content: space-between; align-items: center; }
-  .section-title { font-family: 'Switzer', sans-serif; font-size: 14px; font-weight: 600; color: var(--On-Surface); letter-spacing: 0.2px; }
-  .see-all { font-family: 'Switzer', sans-serif; font-size: 12px; font-weight: 500; color: var(--Primary); cursor: pointer; transition: opacity 0.2s; }
+  .section-title { font-family: Switzer, sans-serif; font-size: 14px; font-weight: 600; color: var(--On-Surface); letter-spacing: 0.2px; }
+  .see-all { font-family: Switzer, sans-serif; font-size: 12px; font-weight: 500; color: var(--Primary); cursor: pointer; transition: opacity 0.2s; }
   .see-all:hover { opacity: 0.7; }
 
   .section { display: flex; flex-direction: column; gap: 12px; }
@@ -58,14 +57,14 @@
   .biller-tile:hover { box-shadow: 0 8px 20px rgba(0,0,0,0.11); transform: translateY(-1px); }
   .biller-tile:active { transform: scale(0.98); }
   .biller-tile .logo { width: 40px; height: 40px; }
-  .biller-tile .nm { font-family: 'Switzer', sans-serif; font-size: 12px; font-weight: 600; color: var(--On-Surface); text-align: center; line-height: 1.3; }
-  .grid-empty { grid-column: 1 / -1; padding: 22px; text-align: center; font-family: 'Switzer', sans-serif; font-size: 13px; color: var(--On-Surface-Low); }
+  .biller-tile .nm { font-family: Switzer, sans-serif; font-size: 12px; font-weight: 600; color: var(--On-Surface); text-align: center; line-height: 1.3; }
+  .grid-empty { grid-column: 1 / -1; padding: 22px; text-align: center; font-family: Switzer, sans-serif; font-size: 13px; color: var(--On-Surface-Low); }
 
   /* Logo badge — an image for real billers, a tinted glyph for a whole category */
   .logo { width: 34px; height: 34px; border-radius: 50%; display: flex; align-items: center; justify-content: center; overflow: hidden; flex-shrink: 0; background: #FFF; box-shadow: 0 2px 6px rgba(0,0,0,0.14); }
   .logo img { width: 100%; height: 100%; object-fit: contain; }
   .logo.glyph svg { width: 20px; height: 20px; stroke: #FFF; stroke-width: 1.9; fill: none; }
-  .logo.initials { font-family: 'Switzer', sans-serif; font-size: 11px; font-weight: 700; color: #FFF; }
+  .logo.initials { font-family: Switzer, sans-serif; font-size: 11px; font-weight: 700; color: #FFF; }
 
   /* ── Favorites ── */
   .favorites-scroll { display: flex; gap: 16px; overflow-x: auto; padding-bottom: 4px; scrollbar-width: none; }
@@ -76,7 +75,7 @@
   .favorite-item .logo { width: 44px; height: 44px; box-shadow: 0 2px 8px rgba(0,0,0,0.12); }
   .favorite-item .logo.initials { font-size: 13px; }
   .favorite-item .logo.glyph svg { width: 20px; height: 20px; }
-  .favorite-name { font-family: 'Switzer', sans-serif; font-size: 11px; font-weight: 500; color: var(--On-Surface); text-align: center; max-width: 70px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .favorite-name { font-family: Switzer, sans-serif; font-size: 11px; font-weight: 500; color: var(--On-Surface); text-align: center; max-width: 70px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 
   /* ── Frequent transactions ── */
   .frequent-card { background: #FFF; border-radius: 16px; padding: 16px; box-shadow: 0 2px 8px rgba(0,0,0,0.04); display: flex; flex-direction: column; gap: 10px; }
@@ -88,8 +87,8 @@
   .frequent-item .logo.initials { font-size: 13px; }
   .frequent-item .logo.glyph svg { width: 22px; height: 22px; }
   .frequent-info { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px; }
-  .frequent-name { font-family: 'Switzer', sans-serif; font-size: 14px; font-weight: 600; color: var(--On-Surface); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-  .frequent-sub { font-family: 'Switzer', sans-serif; font-size: 12px; color: var(--On-Surface-Low); }
+  .frequent-name { font-family: Switzer, sans-serif; font-size: 14px; font-weight: 600; color: var(--On-Surface); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .frequent-sub { font-family: Switzer, sans-serif; font-size: 12px; color: var(--On-Surface-Low); }
   .chev { width: 18px; height: 18px; stroke: var(--Primary); stroke-width: 2.4; fill: none; flex-shrink: 0; }
 
   /* ── Provider sheet ── */
@@ -102,7 +101,7 @@
   .provider-item:hover { background: #FAFAFA; }
   .provider-item:active { background: #F5F5F5; }
   .provider-item .logo { width: 36px; height: 36px; box-shadow: none; }
-  .provider-item .nm { font-family: 'Switzer', sans-serif; font-size: 15px; font-weight: 600; color: var(--On-Surface); }
+  .provider-item .nm { font-family: Switzer, sans-serif; font-size: 15px; font-weight: 600; color: var(--On-Surface); }
 </style>
 <link rel="stylesheet" href="styles/device.css">
 </head>

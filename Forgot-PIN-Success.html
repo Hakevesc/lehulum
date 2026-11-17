@@ -5,8 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Forgot PIN — Success</title>
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@400;500;600&display=swap');
-  @import url('https://api.fontshare.com/v2/css?f[]=switzer@400,500,600,700&display=swap');
+  @import url('https://api.fontshare.com/v2/css?f[]=switzer@400,500,600,700,800&display=swap');
 
   :root {
     --Primary: #FE353D;
@@ -23,7 +22,7 @@
   * { margin: 0; padding: 0; box-sizing: border-box; }
 
   body {
-    font-family: 'Inter', sans-serif; background: transparent;
+    font-family: Switzer, sans-serif; background: transparent;
     display: flex; justify-content: center; align-items: center;
     min-height: 100vh; padding: 20px;
   }
@@ -71,10 +70,10 @@
   }
   .back-btn:hover { transform: scale(1.1); }
   .back-btn svg { width: 24px; height: 24px; stroke: #FFF; stroke-width: 2; fill: none; stroke-linecap: round; stroke-linejoin: round; }
-  .header-title { color: #FFF; font-family: 'Switzer', sans-serif; font-size: 18px; font-weight: 300; letter-spacing: 0.3px; }
+  .header-title { color: #FFF; font-family: Switzer, sans-serif; font-size: 18px; font-weight: 400; letter-spacing: 0.3px; }
   .header-subtitle {
     position: relative; z-index: 5;
-    color: #FFF; font-family: 'Switzer', sans-serif;
+    color: #FFF; font-family: Switzer, sans-serif;
     font-size: 22px; font-weight: 600; margin-top: 28px;
     padding: 0 24px; text-align: left; width: 100%;
   }
@@ -114,7 +113,7 @@
 
   /* Result text */
   .result-title {
-    font-family: 'Switzer', sans-serif;
+    font-family: Switzer, sans-serif;
     font-size: 22px; font-weight: 700;
     color: var(--Success-Dark);
     text-align: center;
@@ -123,7 +122,7 @@
     animation: slide-up 0.4s 0.15s ease both;
   }
   .result-subtitle {
-    font-family: 'Switzer', sans-serif;
+    font-family: Switzer, sans-serif;
     font-size: 14px; font-weight: 400;
     text-align: center;
     color: var(--On-Surface-Low);
@@ -151,7 +150,7 @@
   .step-circle {
     width: 32px; height: 32px; border-radius: 50%;
     display: flex; align-items: center; justify-content: center;
-    font-family: 'Switzer', sans-serif;
+    font-family: Switzer, sans-serif;
     font-size: 12px; font-weight: 700;
   }
   .step-circle.done { background: var(--Success-Bg); color: var(--Success); border: 2px solid var(--Success); }
@@ -159,7 +158,7 @@
   .step-circle.active { background: var(--Primary); color: #FFF; border: 2px solid var(--Primary); }
   .step-circle.pending { background: #F0F0F0; color: var(--On-Surface-Low); border: 2px solid #E0E0E0; }
   .step-label-txt {
-    font-family: 'Switzer', sans-serif;
+    font-family: Switzer, sans-serif;
     font-size: 10px; font-weight: 500;
     text-align: center; color: var(--On-Surface-Low);
     line-height: 1.3;
@@ -171,7 +170,7 @@
   .method-chip {
     display: inline-flex; align-items: center; gap: 5px;
     padding: 4px 10px; border-radius: 20px;
-    font-family: 'Switzer', sans-serif;
+    font-family: Switzer, sans-serif;
     font-size: 11px; font-weight: 600;
     background: #F0F0F5; color: var(--On-Surface-Low);
     margin-bottom: 12px;
@@ -198,13 +197,13 @@
   }
   .detail-row svg { width: 16px; height: 16px; flex-shrink: 0; }
   .detail-row .detail-label {
-    font-family: 'Switzer', sans-serif;
+    font-family: Switzer, sans-serif;
     font-size: 12px; font-weight: 500;
     color: var(--On-Surface-Low);
     flex: 1;
   }
   .detail-row .detail-value {
-    font-family: 'Switzer', sans-serif;
+    font-family: Switzer, sans-serif;
     font-size: 13px; font-weight: 600;
     color: var(--On-Surface);
   }
@@ -237,7 +236,7 @@
   .btn-primary {
     width: 100%; height: 48px; border-radius: 12px;
     background: var(--Success); color: #FFF;
-    font-family: 'Poppins', sans-serif; font-size: 14px; font-weight: 500;
+    font-family: Switzer, sans-serif; font-size: 14px; font-weight: 500;
     border: none; cursor: pointer; transition: all 0.2s;
     box-shadow: 0 4px 16px rgba(26,174,69,0.25);
     display: flex; align-items: center; justify-content: center; gap: 8px;

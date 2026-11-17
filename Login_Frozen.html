@@ -5,8 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Account Frozen</title>
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@400;500;600&display=swap');
-  @import url('https://api.fontshare.com/v2/css?f[]=switzer@400,500,600,700&display=swap');
+  @import url('https://api.fontshare.com/v2/css?f[]=switzer@400,500,600,700,800&display=swap');
 
   :root {
     --Primary: #FE353D;
@@ -19,7 +18,7 @@
   * { margin: 0; padding: 0; box-sizing: border-box; }
 
   body {
-    font-family: 'Inter', sans-serif; background: transparent;
+    font-family: Switzer, sans-serif; background: transparent;
     display: flex; justify-content: center; align-items: center;
     min-height: 100vh; padding: 20px;
   }
@@ -64,9 +63,9 @@
   .user-avatar { width: 60px; height: 60px; border-radius: 50%; overflow: hidden; flex-shrink: 0; border: 2.5px solid rgba(255,255,255,0.9); box-shadow: 0 4px 12px rgba(0,0,0,0.2); }
   .user-avatar img { width: 100%; height: 100%; object-fit: cover; }
   .user-details { display: flex; flex-direction: column; gap: 1px; }
-  .user-details .welcome { color: #FFF; font-family: 'Switzer', sans-serif; font-size: 14px; font-weight: 400; }
-  .user-details .name { color: #FFF; font-family: 'Switzer', sans-serif; font-size: 20px; font-weight: 700; white-space: nowrap; }
-  .user-details .phone { color: #FFF; font-family: 'Switzer', sans-serif; font-size: 14px; font-weight: 400; }
+  .user-details .welcome { color: #FFF; font-family: Switzer, sans-serif; font-size: 14px; font-weight: 400; }
+  .user-details .name { color: #FFF; font-family: Switzer, sans-serif; font-size: 20px; font-weight: 700; white-space: nowrap; }
+  .user-details .phone { color: #FFF; font-family: Switzer, sans-serif; font-size: 14px; font-weight: 400; }
 
   /* ===== MAIN CONTENT ===== */
   .main-content {
@@ -80,21 +79,21 @@
   }
   .status-icon-wrap svg { width: 40px; height: 40px; stroke: var(--Accent); stroke-width: 1.8; fill: none; stroke-linecap: round; stroke-linejoin: round; }
 
-  .status-title { color: var(--On-Surface); font-family: 'Switzer', sans-serif; font-size: 24px; font-weight: 700; margin-bottom: 12px; }
-  .status-desc { color: var(--On-Surface-Low); font-family: 'Switzer', sans-serif; font-size: 14px; font-weight: 400; line-height: 1.65; max-width: 280px; }
+  .status-title { color: var(--On-Surface); font-family: Switzer, sans-serif; font-size: 24px; font-weight: 700; margin-bottom: 12px; }
+  .status-desc { color: var(--On-Surface-Low); font-family: Switzer, sans-serif; font-size: 14px; font-weight: 400; line-height: 1.65; max-width: 280px; }
 
   .status-badge {
     margin-top: 24px; background: var(--Accent-Tint); border: 1px solid rgba(100,116,139,0.20);
     border-radius: 12px; padding: 12px 20px; display: flex; align-items: center; gap: 8px;
   }
   .status-badge svg { width: 16px; height: 16px; stroke: var(--Accent); stroke-width: 2; fill: none; flex-shrink: 0; }
-  .status-badge span { color: var(--Accent); font-family: 'Switzer', sans-serif; font-size: 13px; font-weight: 500; }
+  .status-badge span { color: var(--Accent); font-family: Switzer, sans-serif; font-size: 13px; font-weight: 500; }
 
   /* ===== BOTTOM BUTTONS ===== */
   .bottom-area { width: 100%; display: flex; flex-direction: column; align-items: center; padding: 0 20px 28px; margin-top: auto; gap: 10px; }
   .btn-primary {
     width: 100%; height: 48px; border-radius: 12px; background: var(--Primary); color: #FFF1F2;
-    font-family: 'Poppins', sans-serif; font-size: 14px; font-weight: 500; border: none; cursor: pointer; transition: all 0.2s;
+    font-family: Switzer, sans-serif; font-size: 14px; font-weight: 500; border: none; cursor: pointer; transition: all 0.2s;
     box-shadow: 0 4px 16px rgba(254,53,61,0.25); display: flex; align-items: center; justify-content: center; gap: 8px; text-decoration: none;
   }
   .btn-primary:hover { background: #E5303A; transform: translateY(-1px); box-shadow: 0 6px 20px rgba(254,53,61,0.35); }
@@ -102,7 +101,7 @@
   .btn-primary svg { width: 17px; height: 17px; stroke: #FFF; stroke-width: 2; fill: none; }
   .btn-secondary {
     width: 100%; height: 48px; border-radius: 12px; background: #F0F0F0; color: var(--On-Surface);
-    font-family: 'Poppins', sans-serif; font-size: 14px; font-weight: 500; border: none; cursor: pointer; transition: all 0.2s;
+    font-family: Switzer, sans-serif; font-size: 14px; font-weight: 500; border: none; cursor: pointer; transition: all 0.2s;
   }
   .btn-secondary:hover { background: #E8E8E8; transform: translateY(-1px); }
   .btn-secondary:active { transform: scale(0.98); }

@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Deposit Amount — M-PESA</title>
+<link rel="stylesheet" href="styles/design-tokens.css">
+<link rel="stylesheet" href="styles/base.css">
+<link rel="stylesheet" href="styles/component-status-bar.css">
+<link rel="stylesheet" href="styles/component-sc-card.css">
+<link rel="stylesheet" href="styles/savings.css">
+<style>
+  @import url('https://api.fontshare.com/v2/css?f[]=switzer@400,500,600,700,800&display=swap');
+
+  /* Amount for the chosen plan (?plan=i): wallet and minimum checks, the
+     projected interest and maturity, then a review of the deposit → PIN.
+     ?roll=<id> skips the amount: the matured total is reinvested and any gap
+     to the plan's minimum comes from the wallet. */
+  .view { display: none; flex-direction: column; gap: 12px; flex: 1 1 auto; }
+  .view.show { display: flex; }
+  .view > * { flex-shrink: 0; }
+  .plan-top { display: flex; align-items: center; gap: 12px; }
+  .plan-top img { width: 40px; height: 40px; border-radius: 50%; border: 1px solid #EFEFF2; object-fit: contain; background: #FFF; flex-shrink: 0; }
+  .plan-top span { flex: 1; min-width: 0; }
+  .plan-top b { display: block; font-size: 14px; font-weight: 600; color: var(--On-Surface); }
+  .plan-top small { display: block; margin-top: 2px; font-size: 12px; color: var(--On-Surface-Low); }
+  .earn { display: grid; grid-template-columns: 1fr 1fr; gap: 12px 10px; }
+  .earn small { display: block; font-size: 11.5px; color: var(--On-Surface-Low); }
+  .earn b { display: block; margin-top: 2px; font-size: 14px; font-weight: 700; color: var(--On-Surface); }
+  .earn b.up { color: #16A34A; }
+  .rv-chip { display: block; width: fit-content; margin: 0 auto 6px; padding: 6px 14px; border-radius: 999px; background: #EFEFF3; font-size: 11.5px; font-weight: 600; letter-spacing: 0.6px; color: #55555E; text-transform: uppercase; }
+</style>
+<link rel="stylesheet" href="styles/device.css">
+</head>
+<body>
+<div class="phone-frame">
+  <div class="status-bar">
+    <span class="time">10:00</span>
+    <div class="status-icons">
+      <svg data-name="icon-wifi" viewBox="0 0 24 24" fill="none"><path d="M1 9l2 2c4.970-4.970 13.030-4.970 18 0l2-2C16.930 2.930 7.080 2.930 1 9z" fill="#1C1C21"/><path d="M5 13l2 2c2.760-2.760 7.240-2.760 10 0l2-2C15.140 9.140 8.870 9.140 5 13z" fill="#1C1C21"/><path d="M9 17l2 2c1.100-1.100 2.900-1.100 4 0l2-2c-2.210-2.210-5.790-2.210-8 0z" fill="#1C1C21"/></svg>
+      <svg data-name="icon-signal" viewBox="0 0 24 24" fill="none"><rect x="2" y="6" width="4" height="12" rx="1" fill="#1C1C21"/><rect x="8" y="4" width="4" height="14" rx="1" fill="#1C1C21"/><rect x="14" y="2" width="4" height="16" rx="1" fill="#1C1C21"/><rect x="20" y="0" width="4" height="18" rx="1" fill="#1C1C21" opacity="0.3"/></svg>
+      <svg data-name="icon-battery" viewBox="0 0 28 14" fill="none"><rect x="0" y="1" width="22" height="12" rx="2.5" stroke="#1C1C21" stroke-width="1.5"/><rect x="2" y="3" width="16" height="8" rx="1" fill="#1C1C21"/><rect x="24" y="4" width="2" height="6" rx="1" fill="#1C1C21"/></svg>
+    </div>
+  </div>
+
+  <div class="app-content">
+    <div class="header-nav">
+      <button class="icon-btn" onclick="goBack()" aria-label="Back"><svg data-name="icon-arrow-left" viewBox="0 0 24 24"><path d="M19 12H5M12 19l-7-7 7-7"/></svg></button>
+      <span class="header-title" id="hTitle">Deposit Amount</span>
+      <span class="spacer"></span>
+    </div>
+
+    <section class="view" id="vAmount">
+      <div class="card plan-top"><img src="assets/banks logo/awass-bank.png" alt=""><span><b id="pName"></b><small id="pSub"></small></span></div>
+      <label class="field"><span>How much do you want to lock?</span><div class="amount-in"><input id="amt" inputmode="numeric" maxlength="9" placeholder="0.00" oninput="check()"><small>ETB</small></div></label>
+      <p class="hint" id="hint"></p>
+      <div class="quick" id="quick"></div>
+      <div class="card earn">
+        <div><small>Interest rate</small><b id="eRate"></b></div>
+        <div><small>Maturity date</small><b id="eBy"></b></div>
+        <div><small>Interest at maturity</small><b class="up" id="eInt">0.00 ETB</b></div>
+        <div><small>You get</small><b id="eTotal">0.00 ETB</b></div>
+      </div>
+      <div class="bottom-bar"><button class="btn-primary" id="go" disabled onclick="review()">Continue</button></div>
+    </section>
+    <section class="view" id="vReview">
+      <div class="card"><span class="rv-chip" id="rvChip">Review your deposit</span><div class="rows" id="rvRows"></div></div>
+      <div class="notice warn"><svg viewBox="0 0 24 24"><path d="M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"/><path d="M12 9v4M12 17h.01"/></svg><span>Withdrawing before <b id="rvBy"></b> returns your deposit only — the interest is lost.</span></div>
+      <p class="hint err" id="rvErr" style="display:none"></p>
+      <div class="bottom-bar"><button class="btn-primary" id="confirm" onclick="confirmDeposit()">Confirm</button></div>
+    </section>
+  </div>
+
+  <div class="toast" id="toast"></div>
+</div>
+
+<script src="savings-store.js"></script>
+<script src="savings-ui.js"></script>
+<script>
+  const $ = id => document.getElementById(id);
+  const fmt = SV.fmt, IC = SVUI.IC;
+  let tt;
+  function toast(m) { const t = $('toast'); if (!t) return; t.textContent = m; t.classList.add('show'); clearTimeout(tt); tt = setTimeout(() => t.classList.remove('show'), 2200); }
+  function openSheet(id) { const s = $('scrim'); if (s) s.classList.add('show'); $(id).classList.add('show'); }
+  function closeSheets() { const s = $('scrim'); if (s) s.classList.remove('show'); document.querySelectorAll('.sheet').forEach(x => x.classList.remove('show')); }
+  document.addEventListener('keydown', e => { if (e.key === 'Escape') closeSheets(); });
+  // Hand an action to the shared PIN screen, which returns to Savings - Done.html
+  function toPin(data) { sessionStorage.setItem('termLoanData', JSON.stringify(Object.assign({ next: 'Savings - Done.html', back: location.pathname.split('/').pop() + location.search }, data))); location.href = 'Term Loan - Enter PIN.html'; }
+
+  const q = new URLSearchParams(location.search), S = SV.load();
+  const plan = SV.PLANS[+q.get('plan') || 0];
+  const roll = q.get('roll') ? (S.deposits || []).find(a => a.id === q.get('roll')) : null;
+  const base = roll ? Math.floor(SV.maturedTotal(roll) * 100) / 100 : 0;
+  const name = plan.months + ' Months Lock';
+  let amount = 0;
+  const num = () => parseFloat(($('amt').value || '').replace(/,/g, '')) || 0;
+  function show(v) { ['vAmount', 'vReview'].forEach(id => $(id).classList.toggle('show', id === v)); }
+
+  $('pName').textContent = name;
+  $('pSub').textContent = `${plan.rate}% a year · minimum ${fmt(plan.min).replace('.00', '')} ETB · Awash Bank`;
+  $('eRate').textContent = plan.rate + '% a year';
+  $('eBy').textContent = SV.dateStr(SV.projected(plan, 0).by);
+  $('quick').innerHTML = [plan.min, plan.min * 2, S.wallet].filter((v, i, a) => v <= S.wallet && a.indexOf(v) === i).slice(0, 3)
+    .map((v, i, a) => `<button type="button" onclick="$('amt').value='${v}';check()">${v === S.wallet ? 'All' : fmt(v).replace('.00', '')}</button>`).join('');
+  function check() {
+    const a = num(), pr = SV.projected(plan, a);
+    const msg = a > S.wallet ? `Not enough balance. Max ${fmt(S.wallet)} ETB` : a && a < plan.min ? `Minimum deposit is ${fmt(plan.min)} ETB` : '';
+    $('hint').textContent = msg || `M-PESA balance: ${fmt(S.wallet)} ETB. If you withdraw early, you lose the interest.`;
+    $('hint').classList.toggle('err', !!msg);
+    $('eInt').textContent = '+' + fmt(pr.interest) + ' ETB';
+    $('eTotal').textContent = fmt(a + pr.interest) + ' ETB';
+    $('go').disabled = !a || !!msg;
+  }
+  // Review: what is locked, where it comes from, and what comes back
+  function review() {
+    amount = roll ? Math.max(base, plan.min) : num();
+    const pr = SV.projected(plan, amount), topUp = roll ? Math.max(0, plan.min - base) : 0;
+    const rows = [['Deposit', name], ['Bank', 'Awash Bank']];
+    if (roll) { rows.push(['From matured deposit', fmt(base) + ' ETB']); if (topUp) rows.push(['Added from wallet', fmt(topUp) + ' ETB']); }
+    rows.push(['Amount locked', fmt(amount) + ' ETB'], ['Interest rate', plan.rate + '% a year'], ['Lock period', plan.months + ' months'], ['Matures on', SV.dateStr(pr.by)], ['Interest', '<b class="up">+' + fmt(pr.interest) + ' ETB</b>']);
+    $('rvRows').innerHTML = rows.map(([k, v]) => `<div class="row"><span>${k}</span><b>${v}</b></div>`).join('') + `<div class="row total"><span>At maturity</span><b>${fmt(amount + pr.interest)} ETB</b></div>`;
+    $('rvRows').querySelectorAll('b b').forEach(b => b.parentElement.replaceWith(b));
+    $('rvBy').textContent = SV.dateStr(pr.by);
+    const short = topUp > S.wallet;
+    $('rvErr').style.display = short ? '' : 'none';
+    $('rvErr').textContent = short ? `You need ${fmt(topUp)} ETB in your wallet to top up this plan. Choose another plan.` : '';
+    $('confirm').disabled = short;
+    $('hTitle').textContent = roll ? 'Confirm Rollover' : 'Review Deposit';
+    $('rvChip').textContent = roll ? 'Confirm rollover' : 'Review your deposit';
+    show('vReview');
+  }
+  function confirmDeposit() {
+    const topUp = roll ? Math.max(0, plan.min - base) : 0;
+    toPin(roll
+      ? { kind: 'sav-fd-roll', title: 'Roll over to ' + name, amount, plan: +q.get('plan') || 0, from: roll.id, base, topUp, name }
+      : { kind: 'sav-fd-open', title: 'Open ' + name, amount, plan: +q.get('plan') || 0, name });
+  }
+  function goBack() { if (!roll && $('vReview').classList.contains('show')) { $('hTitle').textContent = 'Deposit Amount'; return show('vAmount'); } history.length > 1 ? history.back() : location.href = 'Fixed Deposit - Plans.html'; }
+  if (roll) review(); else { show('vAmount'); check(); }
+</script>
+<script src="components/keyboard.js"></script>
+<!-- Export to Figma button (shared exporter) -->
+<script src="figma-export.js"></script>
+<script src="test-scenarios-data.js"></script>
+<script src="test-scenarios.js"></script>
+</body>
+</html>

@@ -5,13 +5,12 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Loan Details</title>
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@400;500;600&display=swap');
   @import url('https://api.fontshare.com/v2/css?f[]=switzer@400,500,600,700,800&display=swap');
 
   /* Loan details: one hero card — lender and status, a repaid ring with what is
-     left, disbursed / final due — then the instalment slider (Repay Now), and
-     Repay All pinned to the bottom edge. Repay → confirmation sheet → M-PESA PIN → receipt.
-     ?id=<loan> picks the loan; the repay sheet only opens when the customer taps a repay button. */
+     left, disbursed / final due — Pay Next / Settle All, then the instalments as a timeline with status chips, and
+     Repay All pinned to the bottom edge. Repay → the Repay screen (part or all) → M-PESA PIN → receipt.
+     ?id=<loan> picks the loan. */
   :root {
     --Primary: #FE353D;
     --Primary-Light: #FFF1F2;
@@ -20,7 +19,7 @@
     --Background: #F5F5F5;
   }
   * { margin: 0; padding: 0; box-sizing: border-box; }
-  body { font-family: 'Switzer', 'Inter', sans-serif; background: transparent; display: flex; justify-content: center; align-items: center; min-height: 100vh; padding: 20px; }
+  body { font-family: Switzer, sans-serif; background: transparent; display: flex; justify-content: center; align-items: center; min-height: 100vh; padding: 20px; }
   button { font-family: inherit; }
   .phone-frame { width: 360px; height: 780px; background: var(--Background); border-radius: 30px; overflow: hidden; position: relative; box-shadow: 0 20px 60px rgba(0,0,0,0.15); display: flex; flex-direction: column; }
   .app-content { height: 100%; display: flex; flex-direction: column; }
@@ -38,10 +37,11 @@
   .scroll { flex: 1; min-height: 0; overflow-y: auto; padding: 4px 16px 12px; display: flex; flex-direction: column; gap: 12px; scrollbar-width: none; }
   .scroll::-webkit-scrollbar { width: 0; }
   .scroll > * { flex-shrink: 0; }
-  /* Repay All sits on the bottom edge */
-  .bottom-bar { flex-shrink: 0; padding: 10px 16px 18px; background: var(--Background); }
-  .btn-primary { width: 100%; height: 52px; border: none; border-radius: 14px; background: var(--Primary); color: #FFF; font-family: 'Poppins', sans-serif; font-size: 15px; font-weight: 500; cursor: pointer; box-shadow: 0 4px 16px rgba(254,53,61,0.25); }
-  .btn-primary:disabled { background: #E0E0E0; color: var(--On-Surface-Low); box-shadow: none; cursor: default; }
+  /* Hero actions: pay the next instalment, or settle the whole loan */
+  .pay-acts { display: flex; gap: 10px; margin-top: 16px; }
+  .pay-acts button { flex: 1; min-width: 0; height: 44px; border-radius: 999px; font-family: Switzer, sans-serif; font-size: 13px; font-weight: 600; cursor: pointer; white-space: nowrap; }
+  .pay-acts .next { border: none; background: var(--Primary); color: #FFF; box-shadow: 0 4px 12px rgba(254,53,61,0.25); }
+  .pay-acts .all { border: 1px solid #F7C6CA; background: #FFF1F2; color: var(--Primary); }
 
   .card { background: #FFF; border-radius: 20px; padding: 16px; box-shadow: 0 4px 16px rgba(15,23,42,0.06); }
   .loan-head { display: flex; align-items: center; gap: 12px; padding-bottom: 14px; border-bottom: 1px solid #F1F1F4; }
@@ -55,6 +55,7 @@
   .badge.ok { background: #E8F9EE; color: #167C2A; }
   .badge.warn { background: #FEF3C7; color: #B45309; }
   .badge.done { background: #EDEDF0; color: #55555E; }
+  .badge.part { background: #FFF1E6; color: #C2410C; }
 
   .lbl { font-size: 12px; color: var(--On-Surface-Low); }
 
@@ -69,25 +70,21 @@
   .left-amt b span { font-size: 12.5px; font-weight: 500; color: var(--On-Surface-Low); margin-left: 3px; }
   .left-amt p { margin-top: 4px; font-size: 12px; color: #55555E; }
   .left-amt p b { display: inline; font-size: 12px; font-weight: 600; color: #16A34A; letter-spacing: 0; }
+  .badge.step { background: #16A34A; color: #FFF; }
+  .badge.step::before { display: none; }
+  .badge.step.warn { background: #F59E0B; }
+  .badge.step.late { background: var(--Primary); }
 
 
   /* Loan facts */
-  /* Loan summary: key terms as label / value rows */
-  .sum-row { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; padding: 11px 0; }
-  .sum-row span { font-size: 13px; color: #55555E; }
-  .sum-row span small { display: block; margin-top: 1px; font-size: 11px; color: var(--On-Surface-Low); }
-  .sum-row b { font-size: 13.5px; font-weight: 600; color: var(--On-Surface); text-align: right; white-space: nowrap; }
-  .sum-row.total b { font-size: 15px; font-weight: 700; }
-  .sum-line { display: block; height: 1px; background: #F1F1F4; }
-  .sum-line.strong { background: #E6E6EA; }
   .facts { margin-top: 16px; padding-top: 14px; border-top: 1px solid #F1F1F4; display: flex; }
   .fact { position: relative; flex: 1; min-width: 0; }
   .fact .split { position: absolute; left: -8px; top: 2px; bottom: 2px; width: 1px; background: #ECECF0; }
   .fact + .fact { padding-left: 16px; }
   .fact + .fact .split { left: 0; }
   .fact b { display: block; margin-top: 3px; font-size: 13px; font-weight: 700; color: var(--On-Surface); white-space: nowrap; }
-  .btn-red { flex-shrink: 0; height: 38px; padding: 0 18px; border: none; border-radius: 999px; background: var(--Primary); color: #FFF; font-family: 'Poppins', sans-serif; font-size: 13px; font-weight: 500; cursor: pointer; box-shadow: 0 3px 10px rgba(254,53,61,0.25); }
-  .btn-red:disabled { background: #E0E0E0; color: var(--On-Surface-Low); box-shadow: none; cursor: default; }
+  .btn-red { flex-shrink: 0; height: 38px; padding: 0 18px; border: none; border-radius: 999px; background: var(--Primary); color: #FFF; font-family: Switzer, sans-serif; font-size: 13px; font-weight: 500; cursor: pointer; box-shadow: 0 3px 10px rgba(254,53,61,0.25); }
+  .btn-red:disabled { background: #C9C9CE; color: #FFF; box-shadow: none; cursor: default; }
 
   .title { font-size: 15px; font-weight: 600; color: var(--On-Surface); }
   .bar { margin-top: 12px; height: 8px; border-radius: 4px; background: #F1F1F4; overflow: hidden; }
@@ -95,51 +92,38 @@
 
   .sec-head { display: flex; justify-content: space-between; align-items: center; margin: 4px 2px -2px; }
   .sec-head a { font-size: 12.5px; font-weight: 600; color: var(--Primary); cursor: pointer; }
-  /* Instalment slider: numbered stepper (tap to jump) + one slide per instalment */
-  /* ‹ 1 of 2 › — same control as Active Accounts */
-  .inst-nav { display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
-  .inst-nav button { width: 30px; height: 30px; border-radius: 50%; border: 1px solid #ECECF0; background: #FFF; display: flex; align-items: center; justify-content: center; cursor: pointer; }
-  .inst-nav button:disabled { opacity: 0.4; cursor: default; }
-  .inst-nav svg { width: 15px; height: 15px; stroke: var(--On-Surface); stroke-width: 2.2; fill: none; stroke-linecap: round; stroke-linejoin: round; }
-  .inst-nav span { font-size: 11.5px; font-weight: 600; color: var(--On-Surface-Low); white-space: nowrap; font-variant-numeric: tabular-nums; }
-  .inst-nav span b { color: var(--On-Surface); }
-  .inst-row { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
-  .inst-track { display: flex; overflow-x: auto; scroll-snap-type: x mandatory; scrollbar-width: none; }
-  .inst-track::-webkit-scrollbar { display: none; }
-  .inst { flex: 0 0 100%; scroll-snap-align: start; }
+  /* Instalment detail: every instalment stacked, the next one payable */
+  /* Instalment timeline: a dot per instalment on a line — red for the next one,
+     green when paid, grey to come — with a status chip and the amount */
+  .tl { position: relative; padding: 4px 0 2px 22px; }
+  .tl::before { content: ''; position: absolute; left: 5px; top: 12px; bottom: 30px; width: 2px; background: #ECECF0; }
+  .inst { position: relative; }
+  .inst + .inst { margin-top: 18px; }
+  .inst .dot { position: absolute; left: -22px; top: 4px; width: 12px; height: 12px; border-radius: 50%; background: #D0D0D6; box-shadow: 0 0 0 3px #FFF; }
+  .inst.next .dot { background: var(--Primary); }
+  .inst.paid .dot { background: #16A34A; }
+  .inst-top { display: flex; align-items: flex-start; justify-content: space-between; gap: 10px; }
   .inst-top b { display: block; font-size: 14px; font-weight: 700; color: var(--On-Surface); }
-  .inst-top small { display: block; margin-top: 2px; font-size: 12px; color: var(--On-Surface-Low); }
-  .inst-top small.late { color: var(--Primary); font-weight: 600; }
+  .inst-top small { display: block; margin-top: 3px; font-size: 12px; color: var(--On-Surface-Low); }
+  .st { flex-shrink: 0; padding: 4px 10px; border-radius: 999px; font-size: 11px; font-weight: 600; white-space: nowrap; }
+  .st.next { background: #FFF1F2; color: var(--Primary); }
+  .st.late { background: var(--Primary); color: #FFF; }
+  .st.up { background: #EDEDF0; color: #55555E; }
+  .st.paid { background: #E8F9EE; color: #167C2A; }
+  .st.part { background: #FFF1E6; color: #C2410C; }
+  .inst .bar { margin-top: 10px; height: 8px; }
   .inst .bar i { background: var(--Primary); }
   .inst.paid .bar i { background: #16A34A; }
-  .inst-foot { margin-top: 12px; display: flex; justify-content: space-between; align-items: flex-end; }
-  .inst-foot b { display: block; margin-top: 3px; font-size: 14px; font-weight: 700; color: var(--On-Surface); }
+  .inst.partly .bar i { background: #F97316; }
+  .inst-amt { display: flex; justify-content: space-between; align-items: baseline; margin-top: 10px; font-size: 12.5px; color: var(--On-Surface-Low); }
+  .inst-amt b { font-size: 14px; font-weight: 700; color: var(--On-Surface); }
+  .part-line { margin-top: 8px; display: flex; justify-content: space-between; font-size: 12px; color: #55555E; }
+  .part-line b { color: var(--On-Surface); font-weight: 700; }
+  .part-line .pct { font-weight: 700; color: #C2410C; }
+  .part-chip { margin-left: 6px; padding: 2px 8px; border-radius: 999px; background: #FFF1E6; color: #C2410C; font-style: normal; font-size: 10.5px; font-weight: 700; vertical-align: 1px; }
   .paid-tag { display: inline-flex; align-items: center; gap: 4px; font-size: 12.5px; font-weight: 700; color: #16A34A; }
   .paid-tag svg { width: 15px; height: 15px; stroke: currentColor; stroke-width: 3; fill: none; }
 
-  /* Repay sheet */
-  .scrim { position: absolute; inset: 0; z-index: 100; background: rgba(0,0,0,0.42); opacity: 0; visibility: hidden; transition: opacity 0.22s, visibility 0.22s; }
-  .scrim.show { opacity: 1; visibility: visible; }
-  .sheet { position: absolute; left: 0; right: 0; bottom: 0; z-index: 101; background: #FFF; border-radius: 28px 28px 0 0; padding: 10px 16px 22px; transform: translateY(100%); transition: transform 0.28s cubic-bezier(.2,.8,.2,1); }
-  .sheet.show { transform: translateY(0); }
-  .sheet-grip { width: 40px; height: 4px; border-radius: 2px; background: #D8D8DE; margin: 0 auto 16px; }
-  .cf-head { position: relative; display: flex; align-items: center; gap: 12px; border: 1px solid #E6E6EA; border-radius: 16px; padding: 14px; }
-  .cf-head .logo { width: 42px; height: 42px; border-radius: 50%; }
-  .cf-head b { display: block; font-size: 15px; font-weight: 700; color: var(--On-Surface); }
-  .cf-head small { font-size: 12.5px; color: var(--On-Surface-Low); }
-  .cf-badge { position: absolute; top: -11px; right: 14px; padding: 4px 10px; border-radius: 999px; background: #EDEDF0; color: #3A3A42; font-size: 10px; font-weight: 700; letter-spacing: 0.5px; }
-  .cf-rows { margin: 6px 0 18px; }
-  .cf-row { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 11px 0; border-bottom: 1px solid #EFEFF2; }
-  .cf-row:last-child { border-bottom: none; }
-  .cf-row span { font-size: 12.5px; color: #55555E; }
-  .cf-row b { font-size: 12.5px; font-weight: 700; color: var(--On-Surface); font-variant-numeric: tabular-nums; }
-  .cf-row b.red { font-size: 14px; color: var(--Primary); }
-  .cf-actions { display: flex; gap: 12px; }
-  .cf-btn { flex: 1; height: 52px; border-radius: 14px; background: #FFF; font-family: 'Poppins', sans-serif; font-size: 15px; font-weight: 500; cursor: pointer; }
-  .cf-btn.cancel { border: 1.5px solid #E0E0E4; color: #55555E; }
-  .cf-btn.confirm { border: 1.5px solid var(--Primary); color: var(--Primary); }
-  .cf-warn { display: none; margin: -8px 0 14px; padding: 10px 12px; border-radius: 12px; background: #FDECEC; font-size: 12px; color: var(--Primary); }
-  .cf-warn.show { display: block; }
 </style>
 <link rel="stylesheet" href="styles/device.css">
 </head>
@@ -163,38 +147,14 @@
     </div>
 
     <div class="scroll" id="scroll"></div>
-    <div class="bottom-bar"><button class="btn-primary" id="repayAll" onclick="openRepay('all')"></button></div>
   </div>
 
-  <!-- Repay -->
-  <div class="scrim" id="scrim" onclick="closeRepay()"></div>
-  <div class="sheet" id="sheet" role="dialog" aria-label="Confirm repayment">
-    <div class="sheet-grip"></div>
-    <div class="cf-head">
-      <span class="cf-badge">REPAYMENT</span>
-      <span class="logo"><img id="cfLogo" src="" alt=""></span>
-      <span><b id="cfName"></b><small id="cfWhat"></small></span>
-    </div>
-    <div class="cf-rows">
-      <div class="cf-row"><span>From:</span><b>Main account · 0712 *** *78</b></div>
-      <div class="cf-row"><span>Fee:</span><b>0.00 ETB</b></div>
-      <div class="cf-row"><span>Remaining after:</span><b id="cfLeft"></b></div>
-      <div class="cf-row"><span>Balance after:</span><b id="cfBal"></b></div>
-      <div class="cf-row"><span>Amount to repay:</span><b class="red" id="cfAmt"></b></div>
-    </div>
-    <div class="cf-warn" id="cfWarn">Your M-PESA balance is too low for this repayment. Add money first.</div>
-    <div class="cf-actions">
-      <button class="cf-btn cancel" onclick="closeRepay()">Cancel</button>
-      <button class="cf-btn confirm" id="cfGo" onclick="confirmRepay()">Repay</button>
-    </div>
-  </div>
 </div>
 
 <script src="term-loan-store.js"></script>
 <script>
   const $ = id => document.getElementById(id);
   const { fmt } = TL;
-  const BALANCE = 12580;   // M-PESA main balance (same as Home)
   const params = new URLSearchParams(location.search);
   const loans = TL.load();
   const loan = loans.find(l => l.id === params.get('id')) || TL.active(loans)[0] || loans[0];
@@ -206,117 +166,62 @@
     const paid = TL.paidOf(loan), left = TL.remainingOf(loan), nx = TL.nextDue(loan);
     const n = loan.instalments.length;
     const soon = nx && (new Date(nx.due) - Date.now()) < 5 * 864e5;
-    const status = !nx ? ['done', 'Paid off'] : soon ? ['warn', 'Due soon'] : ['ok', 'Active'];
+    const part = nx && TL.instPaid(nx) > 0;   // next instalment is part-paid
+    const late = nx && new Date(nx.due) < Date.now();
+    // Chip: which instalment is next ("1 of 2") — amber when due soon, red when overdue
+    const chip = !nx ? ['done', 'Paid off'] : ['step' + (late ? ' late' : soon ? ' warn' : ''), `${nx.n} of ${n}`];
     const pct = Math.round(paid / loan.total * 100), C = 2 * Math.PI * 40;
-    $('repayAll').disabled = !(left > 0);
-    $('repayAll').textContent = left > 0 ? 'Repay All · ' + fmt(left) + ' ETB' : 'Loan fully repaid';
+    const unpaid = loan.instalments.filter(i => !i.paid).length;
+    const n0 = v => fmt(v).replace(/\.00$/, '');
     $('scroll').innerHTML = `
       <div class="card">
         <div class="loan-head"><span class="logo"><img src="${loan.logo}" alt=""></span>
-          <span class="info"><b>${loan.lender}</b><small>${loan.product}</small></span><span class="badge ${status[0]}">${status[1]}</span></div>
+          <span class="info"><b>${loan.product}</b><small>${loan.lender}</small></span><span class="badge ${chip[0]}">${chip[1]}</span></div>
 
         <div class="hero-mid">
           <div class="ring">
             <svg viewBox="0 0 92 92"><circle cx="46" cy="46" r="40" fill="none" stroke="#F1F1F4" stroke-width="9"/>
               ${pct ? `<circle cx="46" cy="46" r="40" fill="none" stroke="#16A34A" stroke-width="9" stroke-linecap="round" stroke-dasharray="${(C * pct / 100).toFixed(1)} ${C.toFixed(1)}"/>` : ''}</svg>
-            <div><b>${pct}%</b><small>repaid</small></div>
+            <div><b>${pct}%</b><small>Repaid</small></div>
           </div>
           <div class="left-amt"><span class="lbl">Left to repay</span><b>${fmt(left)}<span>ETB</span></b>
             <p><b>${fmt(paid)}</b> paid of ${fmt(loan.total)} ETB</p></div>
         </div>
 
+        ${nx ? `<div class="pay-acts">${unpaid > 1
+            ? `<button class="next" type="button" onclick="openRepay(${nx.n})">Pay Next (${n0(TL.instLeft(nx))} ETB)</button><button class="all" type="button" onclick="openRepay('all')">Settle All (${n0(left)} ETB)</button>`
+            : `<button class="next" type="button" onclick="openRepay(${nx.n})">Repay (${n0(left)} ETB)</button>`}</div>` : ''}
+
         <div class="facts">
-          <div class="fact"><span class="lbl">Disbursed</span><b>${TL.dateStr(loan.disbursed)}</b></div>
+          <div class="fact"><span class="lbl">Disbursed Date</span><b>${TL.dateStr(loan.disbursed)}</b></div>
           <div class="fact"><span class="split" data-shape="line" data-name="line"></span><span class="lbl">Final due</span><b>${TL.dateStr(loan.instalments[n - 1].due)}</b></div>
         </div>
       </div>
 
-      <div class="sec-head"><span class="title">Instalment History</span><a onclick="location.href='Transaction History.html'">Transactions</a></div>
-      <div class="card">
-        <div class="inst-row"><div class="inst-top" id="instTop"></div>
-          <div class="inst-nav"><button type="button" id="instPrev" aria-label="Previous instalment"><svg viewBox="0 0 24 24"><path d="M15 6l-6 6 6 6"/></svg></button><span id="instPos"></span><button type="button" id="instNext" aria-label="Next instalment"><svg viewBox="0 0 24 24"><path d="M9 6l6 6-6 6"/></svg></button></div></div>
-        <div class="inst-track" id="instTrack">${loan.instalments.map(i => {
-          const late = !i.paid && new Date(i.due) < Date.now();
-          return `<div class="inst${i.paid ? ' paid' : ''}">
-            <div class="bar"><i style="width:${i.paid ? 100 : 4}%"></i></div>
-            <div class="inst-foot"><div><span class="lbl">Repayment amount</span><b>${fmt(i.amount)} ETB</b></div>
-              ${i.paid ? `<span class="paid-tag">${TICK}Paid</span>` : `<button class="btn-red" onclick="openRepay(${i.n})" ${i === nx ? '' : 'disabled'}>Repay Now</button>`}</div>
-          </div>`; }).join('')}</div>
-      </div>
-
-      <div class="card">
-        <div class="title" style="margin-bottom:4px">Loan Summary</div>
-        ${summary().map((r, k) => r === '-' ? '<span class="sum-line strong" data-shape="line" data-name="line"></span>'
-          : `${k && summary()[k - 1] !== '-' ? '<span class="sum-line" data-shape="line" data-name="line"></span>' : ''}<div class="sum-row${r[2] ? ' total' : ''}"><span>${r[0]}${r[3] ? `<small>${r[3]}</small>` : ''}</span><b>${r[1]}</b></div>`).join('')}
-      </div>`;
-    initInst(nx ? loan.instalments.indexOf(nx) : 0);
+      <div class="sec-head"><span class="title">Instalment Detail</span></div>
+      <div class="card"><div class="tl">${loan.instalments.map(i => {
+          const late = !i.paid && new Date(i.due) < Date.now(), date = new Date(i.due).toLocaleDateString('en-GB', { day: 'numeric', month: 'short' });
+          const got = TL.instPaid(i), partly = !i.paid && got > 0, isNext = i === nx;
+          const d = TL.dueIn(i.due);
+          const st = i.paid ? ['paid', 'Paid'] : late ? ['late', 'Overdue'] : partly ? ['part', 'Partly paid'] : isNext ? ['next', d === 'Today' ? 'Due today' : 'Due in ' + d] : ['up', 'Upcoming'];
+          return `<div class="inst${isNext ? ' next' : ''}${i.paid ? ' paid' : ''}${partly ? ' partly' : ''}"><span class="dot"></span>
+            <div class="inst-top"><div><b>Instalment ${i.n} of ${n}</b><small>${i.paid ? 'Paid · ' + date : (late ? 'Overdue · ' : 'Due in ' + d + ' · ') + date}</small></div><span class="st ${st[0]}">${st[1]}</span></div>
+            <div class="bar"><i style="width:${i.paid ? 100 : got ? Math.round(got / i.amount * 100) : isNext ? 4 : 0}%"></i></div>
+            ${partly ? `<div class="part-line"><span>Paid <b>${fmt(got)}</b> of ${fmt(i.amount)} ETB</span><span class="pct">${Math.round(got / i.amount * 100)}%</span></div>` : ''}
+            <div class="inst-amt"><span>${partly ? 'Left to pay' : 'Repayment amount'}</span><b>${fmt(partly ? TL.instLeft(i) : i.amount)} ETB</b></div>
+          </div>`; }).join('')}
+      </div></div>`;
   }
 
-  // Loan summary rows: [label, value, bold?, note?]; '-' = section divider.
-  // Fees follow the loan's offer (access % + daily fee over the tenure).
-  function summary() {
-    const o = TL.offer(loan.offer) || {}, n = loan.instalments.length;
-    const days = loan.days || (o.days && o.days[0]) || Math.max(1, Math.round((new Date(loan.instalments[n - 1].due) - new Date(loan.disbursed)) / 864e5));
-    const access = o.access ? loan.amount * o.access : 0, daily = Math.max(0, loan.total - loan.amount - access);
-    return [
-      ['Loan amount', fmt(loan.amount) + ' ETB'],
-      ['Access fee', fmt(access) + ' ETB', false, o.access ? (o.access * 100).toFixed(0) + '% one-time' : ''],
-      ['Daily maintenance fee', fmt(daily) + ' ETB', false, o.daily ? (o.daily * 100).toFixed(2) + '% per day · ' + days + ' days' : ''],
-      '-',
-      ['Total repayment', fmt(loan.total) + ' ETB', true],
-      ['Repayment plan', n + (n === 1 ? ' instalment' : ' instalments') + ' · ' + fmt(loan.total / n) + ' ETB'],
-      ['Late penalty', o.penalty ? (o.penalty * 100).toFixed(1) + '% per day' : '—'],
-      ['Loan ID', loan.id]
-    ];
-  }
-
-  // Instalment slider: swipe or use ‹ › ; the title and counter follow the slide in view
-  function initInst(start) {
-    const track = $('instTrack'), all = loan.instalments, n = all.length;
-    let cur = start;
-    const mark = k => {
-      cur = k;
-      const i = all[k], late = !i.paid && new Date(i.due) < Date.now();
-      const date = new Date(i.due).toLocaleDateString('en-GB', { day: 'numeric', month: 'short' });
-      $('instTop').innerHTML = `<b>Instalment ${i.n} of ${n}</b><small class="${late ? 'late' : ''}">${i.paid ? 'Paid · ' + date : (late ? 'Overdue · ' : 'Due in ' + TL.dueIn(i.due) + ' · ') + date}</small>`;
-      $('instPos').innerHTML = `<b>${k + 1}</b> of ${n}`;
-      $('instPrev').disabled = k === 0; $('instNext').disabled = k === n - 1;
-    };
-    $('instPrev').onclick = () => goInst(Math.max(0, cur - 1));
-    $('instNext').onclick = () => goInst(Math.min(n - 1, cur + 1));
-    track.addEventListener('scroll', () => mark(Math.round(track.scrollLeft / (track.clientWidth || 1))), { passive: true });
-    track.scrollLeft = start * track.clientWidth;
-    mark(start);
-  }
-  function goInst(k) { const t = $('instTrack'); t.scrollTo({ left: k * t.clientWidth, behavior: 'smooth' }); }
-
-  // Repay one instalment (the next one) or everything left
-  let pending = null;
+  // Repay Now / Pay Rest / Repay All open the Repay screen (part or all)
   function openRepay(which) {
-    const nx = TL.nextDue(loan); if (!nx) return;
-    const amount = which === 'all' ? TL.remainingOf(loan) : loan.instalments.find(i => i.n === which).amount;
-    pending = { which, amount };
-    $('cfLogo').src = loan.logo; $('cfName').textContent = loan.lender;
-    $('cfWhat').textContent = which === 'all' ? `${loan.product} · Repay all` : `${loan.product} · Instalment ${which}`;
-    $('cfAmt').textContent = fmt(amount) + ' ETB';
-    $('cfLeft').textContent = fmt(TL.remainingOf(loan) - amount) + ' ETB';
-    $('cfBal').textContent = fmt(BALANCE - amount) + ' ETB';
-    const low = amount > BALANCE;
-    $('cfWarn').classList.toggle('show', low); $('cfGo').disabled = low; $('cfGo').style.opacity = low ? 0.5 : 1;
-    $('scrim').classList.add('show'); $('sheet').classList.add('show');
-  }
-  function closeRepay() { $('scrim').classList.remove('show'); $('sheet').classList.remove('show'); }
-  document.addEventListener('keydown', e => { if (e.key === 'Escape') closeRepay(); });
-  function confirmRepay() {
-    sessionStorage.setItem('termLoanData', JSON.stringify({
-      kind: 'repay', loanId: loan.id, which: pending.which, lender: loan.lender, logo: loan.logo, product: loan.product,
-      amount: pending.amount, remaining: TL.remainingOf(loan) - pending.amount, back: 'Term Loan - Details.html?id=' + loan.id
-    }));
-    location.href = 'Term Loan - Enter PIN.html';
+    if (!TL.nextDue(loan)) return;
+    location.href = `Term Loan - Repay.html?id=${loan.id}&mode=${which === 'all' ? 'all' : 'part'}`;
   }
 
   render();
 </script>
+<script src="components/keyboard.js"></script>
 <script src="figma-export.js"></script>
 <script src="test-scenarios-data.js"></script>
 <script src="test-scenarios.js"></script>

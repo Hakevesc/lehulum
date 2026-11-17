@@ -5,8 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Bill Payment</title>
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@400;500;600&display=swap');
-  @import url('https://api.fontshare.com/v2/css?f[]=switzer@400,500,600,700&display=swap');
+  @import url('https://api.fontshare.com/v2/css?f[]=switzer@400,500,600,700,800&display=swap');
 
   :root {
     --Primary: #FE353D;
@@ -21,7 +20,7 @@
     --Error-Light: #FDECEC;
   }
   * { margin: 0; padding: 0; box-sizing: border-box; }
-  body { font-family: 'Inter', sans-serif; background: transparent; display: flex; justify-content: center; align-items: center; min-height: 100vh; padding: 20px; }
+  body { font-family: Switzer, sans-serif; background: transparent; display: flex; justify-content: center; align-items: center; min-height: 100vh; padding: 20px; }
   .phone-frame { width: 360px; height: 780px; background: var(--Background); border-radius: 30px; overflow: hidden; position: relative; box-shadow: 0 20px 60px rgba(0,0,0,0.15); display: flex; flex-direction: column; }
   .app-content { height: 100%; display: flex; flex-direction: column; }
 
@@ -34,7 +33,7 @@
   .back-btn { width: 36px; height: 36px; border-radius: 50%; background: transparent; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: background 0.2s; }
   .back-btn:hover { background: rgba(0,0,0,0.05); }
   .back-btn svg { width: 22px; height: 22px; stroke: var(--On-Surface); stroke-width: 1.8px; fill: none; }
-  .header-title { color: var(--On-Surface); font-family: 'Switzer', sans-serif; font-size: 17px; font-weight: 500; letter-spacing: 0.3px; flex: 1; text-align: center; }
+  .header-title { color: var(--On-Surface); font-family: Switzer, sans-serif; font-size: 17px; font-weight: 500; letter-spacing: 0.3px; flex: 1; text-align: center; }
 
   .scroll { flex: 1; overflow-y: auto; padding: 4px 16px 16px; display: flex; flex-direction: column; gap: 14px; }
   .scroll::-webkit-scrollbar { width: 0; }
@@ -43,13 +42,13 @@
   .provider-strip { display: flex; align-items: center; justify-content: center; gap: 6px; padding: 0 16px 8px; flex-shrink: 0; }
   .provider-strip .logo { width: 16px; height: 16px; border-radius: 50%; overflow: hidden; flex-shrink: 0; }
   .provider-strip .logo img { width: 100%; height: 100%; object-fit: contain; }
-  .provider-strip .nm { font-family: 'Switzer', sans-serif; font-size: 12px; font-weight: 600; color: var(--On-Surface-Low); }
+  .provider-strip .nm { font-family: Switzer, sans-serif; font-size: 12px; font-weight: 600; color: var(--On-Surface-Low); }
 
   .accordion { background: #FFF; border-radius: 16px; box-shadow: 0 2px 8px rgba(0,0,0,0.04); overflow: hidden; flex-shrink: 0; }
   .acc-head { padding: 16px; display: flex; align-items: center; gap: 14px; cursor: pointer; }
   .acc-head .badge { width: 44px; height: 44px; border-radius: 50%; background: var(--Primary); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
   .acc-head .badge svg { width: 22px; height: 22px; stroke: #FFF; stroke-width: 1.9; fill: none; }
-  .acc-head .nm { flex: 1; min-width: 0; font-family: 'Switzer', sans-serif; font-size: 16px; font-weight: 700; color: var(--On-Surface); }
+  .acc-head .nm { flex: 1; min-width: 0; font-family: Switzer, sans-serif; font-size: 16px; font-weight: 700; color: var(--On-Surface); }
   .acc-head .caret { width: 18px; height: 18px; stroke: var(--Primary); stroke-width: 2.4; fill: none; flex-shrink: 0; transition: transform 0.25s; }
   .accordion.open .acc-head .caret { transform: rotate(180deg); }
 
@@ -57,21 +56,21 @@
   .acc-body { display: none; padding: 0 0 16px; flex-direction: column; gap: 8px; border-top: 1px solid #F0F0F3; margin: 0 16px; }
   .accordion.open .acc-body { display: flex; }
 
-  .field-label { font-family: 'Switzer', sans-serif; font-size: 14px; font-weight: 500; color: var(--On-Surface); margin-top: 10px; }
+  .field-label { font-family: Switzer, sans-serif; font-size: 14px; font-weight: 500; color: var(--On-Surface); margin-top: 10px; }
   .field { height: 56px; background: var(--Field); border: 1px solid var(--Field-Border); border-radius: 12px; padding: 0 16px; display: flex; align-items: center; gap: 8px; transition: border-color 0.2s, box-shadow 0.2s, background 0.2s; }
   .field:focus-within { border-color: var(--Primary); background: #FFF; box-shadow: 0 0 0 3px rgba(254,53,61,0.08); }
-  .field input { flex: 1; min-width: 0; border: none; background: transparent; outline: none; font-family: 'Switzer', sans-serif; font-size: 16px; font-weight: 700; color: var(--On-Surface); letter-spacing: 0.2px; }
+  .field input { flex: 1; min-width: 0; border: none; background: transparent; outline: none; font-family: Switzer, sans-serif; font-size: 16px; font-weight: 700; color: var(--On-Surface); letter-spacing: 0.2px; }
   .field input::placeholder { color: #A5A5AE; font-weight: 400; letter-spacing: 0; }
   .field.err { border-color: var(--Primary); background: #FFF; }
   .field.err input { color: var(--Primary); }
   .field.phone { padding-right: 0; overflow: hidden; }
-  .field .dial { font-family: 'Switzer', sans-serif; font-size: 16px; font-weight: 400; color: var(--On-Surface-Low); flex-shrink: 0; }
+  .field .dial { font-family: Switzer, sans-serif; font-size: 16px; font-weight: 400; color: var(--On-Surface-Low); flex-shrink: 0; }
   .contact-btn { width: 56px; align-self: stretch; border: none; background: var(--Primary); cursor: pointer; display: flex; align-items: center; justify-content: center; flex-shrink: 0; transition: background 0.15s; }
   .contact-btn:hover { background: #E5303A; }
   .contact-btn svg { width: 22px; height: 22px; stroke: #FFF; stroke-width: 1.9; fill: none; }
 
   /* ── Lookup status chip ── */
-  .status-chip { display: none; align-items: center; gap: 10px; border-radius: 12px; padding: 13px 14px; margin-top: 4px; font-family: 'Switzer', sans-serif; font-size: 14px; font-weight: 500; }
+  .status-chip { display: none; align-items: center; gap: 10px; border-radius: 12px; padding: 13px 14px; margin-top: 4px; font-family: Switzer, sans-serif; font-size: 14px; font-weight: 500; }
   .status-chip.show { display: flex; }
   .status-chip .ic { width: 24px; height: 24px; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
   .status-chip .ic svg { width: 13px; height: 13px; stroke-width: 3; fill: none; }
@@ -87,7 +86,7 @@
   .fees-card { background: #FFF; border-radius: 16px; padding: 16px; box-shadow: 0 2px 8px rgba(0,0,0,0.04); display: none; flex-direction: column; flex-shrink: 0; }
   .fees-card.show { display: flex; }
   .fees-head { display: flex; align-items: center; gap: 8px; cursor: pointer; }
-  .fees-head .who { flex: 1; min-width: 0; font-family: 'Switzer', sans-serif; font-size: 14px; font-weight: 700; color: var(--On-Surface); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .fees-head .who { flex: 1; min-width: 0; font-family: Switzer, sans-serif; font-size: 14px; font-weight: 700; color: var(--On-Surface); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
   .fees-head .who span { font-weight: 400; color: var(--On-Surface-Low); }
   .fees-head .caret { width: 18px; height: 18px; stroke: var(--Primary); stroke-width: 2.4; fill: none; flex-shrink: 0; transition: transform 0.25s; }
   .fees-card:not(.collapsed) .fees-head .caret { transform: rotate(180deg); }
@@ -99,11 +98,11 @@
   .fee-item.selected .fee-radio { border-color: var(--Primary); border-width: 2px; }
   .fee-item.selected .fee-radio::after { content: ''; width: 9px; height: 9px; border-radius: 50%; background: var(--Primary); }
   .fee-info { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px; }
-  .fee-name { font-family: 'Switzer', sans-serif; font-size: 13px; font-weight: 700; color: var(--On-Surface); }
-  .fee-sub { font-family: 'Switzer', sans-serif; font-size: 11px; color: var(--On-Surface-Low); }
+  .fee-name { font-family: Switzer, sans-serif; font-size: 13px; font-weight: 700; color: var(--On-Surface); }
+  .fee-sub { font-family: Switzer, sans-serif; font-size: 11px; color: var(--On-Surface-Low); }
   .fee-money { display: flex; flex-direction: column; align-items: flex-end; gap: 2px; flex-shrink: 0; }
-  .fee-amount { font-family: 'Switzer', sans-serif; font-size: 13px; font-weight: 700; color: var(--On-Surface); }
-  .fee-due { font-family: 'Switzer', sans-serif; font-size: 10px; color: var(--On-Surface-Low); }
+  .fee-amount { font-family: Switzer, sans-serif; font-size: 13px; font-weight: 700; color: var(--On-Surface); }
+  .fee-due { font-family: Switzer, sans-serif; font-size: 10px; color: var(--On-Surface-Low); }
 
   /* ── Contacts sheet ── */
   .sheet-overlay { position: absolute; inset: 0; background: rgba(0,0,0,0.45); display: flex; align-items: flex-end; opacity: 0; pointer-events: none; transition: opacity 0.25s; z-index: 50; }
@@ -111,19 +110,19 @@
   .sheet { width: 100%; max-height: 76%; background: #FFF; border-radius: 24px 24px 0 0; padding: 12px 16px 22px; display: flex; flex-direction: column; transform: translateY(100%); transition: transform 0.3s cubic-bezier(0.2, 0.8, 0.3, 1); }
   .sheet-overlay.show .sheet { transform: translateY(0); }
   .sheet-grip { width: 44px; height: 4px; border-radius: 2px; background: #D8D8DE; margin: 0 auto 14px; flex-shrink: 0; }
-  .sheet-title { text-align: center; font-family: 'Switzer', sans-serif; font-size: 18px; font-weight: 700; color: var(--On-Surface); margin-bottom: 10px; flex-shrink: 0; }
+  .sheet-title { text-align: center; font-family: Switzer, sans-serif; font-size: 18px; font-weight: 700; color: var(--On-Surface); margin-bottom: 10px; flex-shrink: 0; }
   .contact-list { display: flex; flex-direction: column; overflow-y: auto; }
   .contact-list::-webkit-scrollbar { width: 0; }
   .contact-item { display: flex; align-items: center; gap: 12px; padding: 12px 4px; cursor: pointer; border-radius: 12px; transition: background 0.15s; }
   .contact-item:hover { background: #FAFAFA; }
-  .contact-avatar { width: 38px; height: 38px; border-radius: 50%; background: #FFE9EA; color: var(--Primary); display: flex; align-items: center; justify-content: center; font-family: 'Switzer', sans-serif; font-size: 12px; font-weight: 700; flex-shrink: 0; }
+  .contact-avatar { width: 38px; height: 38px; border-radius: 50%; background: #FFE9EA; color: var(--Primary); display: flex; align-items: center; justify-content: center; font-family: Switzer, sans-serif; font-size: 12px; font-weight: 700; flex-shrink: 0; }
   .contact-info { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px; }
-  .contact-name { font-family: 'Switzer', sans-serif; font-size: 14px; font-weight: 700; color: var(--On-Surface); }
-  .contact-sub { font-family: 'Switzer', sans-serif; font-size: 12px; color: var(--On-Surface-Low); }
+  .contact-name { font-family: Switzer, sans-serif; font-size: 14px; font-weight: 700; color: var(--On-Surface); }
+  .contact-sub { font-family: Switzer, sans-serif; font-size: 12px; color: var(--On-Surface-Low); }
 
   /* ── Bottom button ── */
   .bottom-bar { flex-shrink: 0; padding: 10px 16px 18px; background: var(--Background); }
-  .continue-btn { width: 100%; height: 52px; border-radius: 14px; border: none; background: #E0E0E0; color: var(--On-Surface-Low); font-family: 'Poppins', sans-serif; font-size: 15px; font-weight: 500; cursor: not-allowed; transition: all 0.2s; }
+  .continue-btn { width: 100%; height: 52px; border-radius: 14px; border: none; background: #E0E0E0; color: var(--On-Surface-Low); font-family: Switzer, sans-serif; font-size: 15px; font-weight: 500; cursor: not-allowed; transition: all 0.2s; }
   .continue-btn.active { background: var(--Primary); color: #FFF; cursor: pointer; box-shadow: 0 4px 16px rgba(254,53,61,0.25); }
   .continue-btn.active:hover { background: #E5303A; box-shadow: 0 6px 20px rgba(254,53,61,0.35); transform: translateY(-1px); }
   .continue-btn.active:active { transform: scale(0.98) translateY(0); }

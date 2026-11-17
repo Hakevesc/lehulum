@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Activation Submitted — M-PESA</title>
+<link rel="stylesheet" href="styles/design-tokens.css">
+<link rel="stylesheet" href="styles/base.css">
+<link rel="stylesheet" href="styles/component-status-bar.css">
+<style>
+  @import url('https://api.fontshare.com/v2/css?f[]=switzer@400,500,600,700,800&display=swap');
+
+  /* Activation submitted (after Activate Term Loan): confirmation and a short
+     three-step tracker (Submitted → Reviewing → Limit ready), then Done →
+     Saving & Credit. */
+  :root { --Font: Switzer, sans-serif; --Ok: #16A34A; }
+  body { font-family: var(--Font); }
+  .app-content { display: flex; flex-direction: column; gap: 10px; padding-bottom: 0 !important; }
+  .app-content > * { flex-shrink: 0; }
+
+  .header-nav { display: flex; align-items: center; padding: 0 0 2px; }
+  .icon-btn { width: 36px; height: 36px; border-radius: 50%; background: transparent; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+  .icon-btn svg { width: 22px; height: 22px; stroke: var(--On-Surface, #1C1C21); stroke-width: 1.8; fill: none; stroke-linecap: round; stroke-linejoin: round; }
+  .header-title { flex: 1; text-align: center; margin-right: 36px; font-size: 17px; font-weight: 500; color: var(--On-Surface, #1C1C21); }
+
+  /* Confirmation */
+  .done-ic { margin: 2px auto 0; width: 62px; height: 62px; border-radius: 18px; background: #E8F9EE; border: 2px solid #4ADE80; display: flex; align-items: center; justify-content: center; animation: pop 0.45s cubic-bezier(.2,1.4,.4,1) both; }
+  .done-ic svg { width: 32px; height: 32px; stroke: var(--Ok); stroke-width: 3; fill: none; stroke-linecap: round; stroke-linejoin: round; }
+  @keyframes pop { from { transform: scale(0.6); } to { transform: none; } }
+  h1 { margin-top: 6px; text-align: center; font-size: 22px; font-weight: 700; color: var(--On-Surface, #1C1C21); }
+  .sub { margin: 2px auto 4px; max-width: 290px; text-align: center; font-size: 13px; line-height: 1.5; color: var(--On-Surface-Low, #7C7C87); }
+
+  .card { background: #FFF; border-radius: 20px; padding: 14px 16px; box-shadow: 0 4px 16px rgba(15,23,42,0.06); }
+  .card-title { font-size: 14px; font-weight: 600; color: var(--On-Surface, #1C1C21); }
+  .card-head { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+  .eta { display: inline-flex; align-items: center; gap: 6px; padding: 5px 10px; border-radius: 999px; background: #F1F1F6; font-size: 11.5px; font-weight: 500; color: #55555E; white-space: nowrap; }
+  .eta svg { width: 14px; height: 14px; stroke: #55555E; stroke-width: 2; fill: none; stroke-linecap: round; stroke-linejoin: round; }
+
+  /* Tracker */
+  .track { margin-top: 12px; display: flex; flex-direction: column; }
+  .stp { position: relative; display: flex; align-items: flex-start; gap: 12px; padding-bottom: 18px; }
+  .stp:last-child { padding-bottom: 0; }
+  .stp .line { position: absolute; left: 13px; top: 28px; bottom: 0; width: 2px; background: #E2E2E7; }
+  .stp.done .line { background: var(--Ok); }
+  .stp:last-child .line { display: none; }
+  .dot { position: relative; width: 28px; height: 28px; border-radius: 50%; flex-shrink: 0; display: flex; align-items: center; justify-content: center; background: #F1F1F4; border: 2px solid #E2E2E7; }
+  .dot svg { width: 14px; height: 14px; stroke: #FFF; stroke-width: 3.4; fill: none; stroke-linecap: round; stroke-linejoin: round; }
+  .stp.done .dot { background: var(--Ok); border-color: var(--Ok); }
+  .stp.now .dot { background: #FFF; border: 2.5px solid var(--Primary, #FE353D); }
+  .stp.now .dot i { width: 10px; height: 10px; border-radius: 50%; background: var(--Primary, #FE353D); animation: beat 1.2s ease-in-out infinite; }
+  @keyframes beat { 50% { transform: scale(0.6); opacity: 0.5; } }
+  .stp > span:last-child { padding-top: 4px; }
+  .stp b { display: block; font-size: 14px; font-weight: 500; color: var(--On-Surface, #1C1C21); }
+  .stp.now b { font-size: 15px; font-weight: 700; }
+  .stp.now small { display: block; margin-top: 3px; font-size: 12px; line-height: 1.4; color: var(--On-Surface-Low, #7C7C87); }
+  .stp:not(.done):not(.now) b { font-weight: 400; color: #8A8A94; }
+
+
+
+  .leave { display: flex; align-items: center; justify-content: center; gap: 10px; margin-top: 2px; font-size: 12.5px; color: var(--On-Surface-Low, #7C7C87); }
+  .leave svg { width: 20px; height: 20px; stroke: #55555E; stroke-width: 1.8; fill: none; stroke-linecap: round; stroke-linejoin: round; flex-shrink: 0; }
+  .leave .vline { width: 1px; height: 18px; background: #D8D8DE; flex-shrink: 0; }
+  .bottom-bar { margin-top: auto; margin-left: -16px; margin-right: -16px; padding: 10px 16px 18px; background: var(--Background, #F5F5F5); }
+  .btn-primary { width: 100%; height: 52px; border: none; border-radius: 14px; background: var(--Primary, #FE353D); color: #FFF; font-family: var(--Font); font-size: 15px; font-weight: 500; cursor: pointer; box-shadow: 0 4px 16px rgba(254,53,61,0.25); }
+</style>
+<link rel="stylesheet" href="styles/device.css">
+</head>
+<body>
+<div class="phone-frame">
+  <div class="status-bar">
+    <span class="time">10:00</span>
+    <div class="status-icons">
+      <svg data-name="icon-wifi" viewBox="0 0 24 24" fill="none"><path d="M1 9l2 2c4.97-4.97 13.03-4.97 18 0l2-2C16.93 2.93 7.08 2.93 1 9z" fill="#1C1C21"/><path d="M5 13l2 2c2.76-2.76 7.24-2.76 10 0l2-2C15.14 9.14 8.87 9.14 5 13z" fill="#1C1C21"/><path d="M9 17l2 2c1.1-1.1 2.9-1.1 4 0l2-2c-2.21-2.21-5.79-2.21-8 0z" fill="#1C1C21"/></svg>
+      <svg data-name="icon-signal" viewBox="0 0 24 24" fill="none"><rect x="2" y="6" width="4" height="12" rx="1" fill="#1C1C21"/><rect x="8" y="4" width="4" height="14" rx="1" fill="#1C1C21"/><rect x="14" y="2" width="4" height="16" rx="1" fill="#1C1C21"/><rect x="20" y="0" width="4" height="18" rx="1" fill="#1C1C21" opacity="0.3"/></svg>
+      <svg data-name="icon-battery" viewBox="0 0 28 14" fill="none"><rect x="0" y="1" width="22" height="12" rx="2.5" stroke="#1C1C21" stroke-width="1.5"/><rect x="2" y="3" width="16" height="8" rx="1" fill="#1C1C21"/><rect x="24" y="4" width="2" height="6" rx="1" fill="#1C1C21"/></svg>
+    </div>
+  </div>
+
+  <div class="app-content">
+    <div class="header-nav">
+      <button class="icon-btn" onclick="done()" aria-label="Back"><svg data-name="icon-arrow-left" viewBox="0 0 24 24"><path d="M19 12H5M12 19l-7-7 7-7"/></svg></button>
+      <span class="header-title">Activate Term Loan</span>
+    </div>
+
+    <div class="done-ic"><svg data-name="icon-check" viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg></div>
+    <h1>Activation Submitted</h1>
+    <p class="sub">Your request is being processed. You will receive a notification with your Term Loan limit.</p>
+
+    <!-- Where the request is -->
+    <div class="card">
+      <div class="card-head"><span class="card-title">Request status</span><span class="eta"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>Usually a few minutes</span></div>
+      <div class="track">
+        <div class="stp done"><span class="line" data-shape="line" data-name="line"></span><span class="dot"><svg viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg></span><span><b>Request submitted</b></span></div>
+        <div class="stp now"><span class="line" data-shape="line" data-name="line"></span><span class="dot"><i></i></span><span><b>Reviewing your activity</b><small>We're checking your eligibility and account activity.</small></span></div>
+        <div class="stp"><span class="line" data-shape="line" data-name="line"></span><span class="dot"></span><span><b>Loan limit ready</b></span></div>
+      </div>
+    </div>
+
+    <!-- Reassurance -->
+    <div class="leave"><svg data-name="icon-shield-check" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></svg><span class="vline" data-shape="line" data-name="line"></span><span>You can safely leave this screen</span></div>
+
+    <div class="bottom-bar"><button class="btn-primary" onclick="done()">Done</button></div>
+  </div>
+</div>
+
+<script>
+  function done() { location.href = 'Credit & Saving.html'; }
+</script>
+<!-- Export to Figma button (shared exporter) -->
+<script src="figma-export.js"></script>
+<script src="test-scenarios-data.js"></script>
+<script src="test-scenarios.js"></script>
+</body>
+</html>

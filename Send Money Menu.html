@@ -9,8 +9,7 @@
 <link rel="stylesheet" href="styles/component-status-bar.css">
 <link rel="stylesheet" href="styles/component-transactions.css">
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@400;500;600&display=swap');
-  @import url('https://api.fontshare.com/v2/css?f[]=switzer@400,500,600,700&display=swap');
+  @import url('https://api.fontshare.com/v2/css?f[]=switzer@400,500,600,700,800&display=swap');
 
   :root {
     --Primary: #FE353D;
@@ -28,7 +27,7 @@
   * { margin: 0; padding: 0; box-sizing: border-box; }
 
   body {
-    font-family: 'Inter', sans-serif;
+    font-family: Switzer, sans-serif;
     background: transparent;
     display: flex;
     justify-content: center;
@@ -98,7 +97,7 @@
 
   .header-title {
     color: var(--On-Surface);
-    font-family: 'Switzer', sans-serif;
+    font-family: Switzer, sans-serif;
     font-size: 17px;
     font-weight: 500;
     letter-spacing: 0.3px;
@@ -114,44 +113,54 @@
     gap: 16px;
   }
 
-  /* Destination rows — Bank / Wallet */
+  /* Destinations — M-PESA / Bank / Wallet: three tiles in a row, icon on top */
   .transfer-type {
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 10px;
   }
 
   .type-row {
     display: flex;
+    flex-direction: column;
     align-items: center;
-    justify-content: space-between;
-    gap: 12px;
+    gap: 10px;
     background: #FFF;
     border-radius: 16px;
-    padding: 18px;
+    padding: 16px 6px 14px;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
     cursor: pointer;
     transition: box-shadow 0.2s, transform 0.15s;
   }
 
   .type-row:hover { box-shadow: 0 4px 14px rgba(0, 0, 0, 0.08); transform: translateY(-1px); }
-  .type-row:active { transform: scale(0.99); }
+  .type-row:active { transform: scale(0.97); }
+
+  .type-row .t-ic {
+    width: 46px;
+    height: 46px;
+    border-radius: 14px;
+    background: var(--Primary-Light, #FFF1F2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .type-row .t-ic svg {
+    width: 24px;
+    height: 24px;
+    stroke: var(--Primary);
+    stroke-width: 1.9;
+    fill: none;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
 
   .type-row .label {
     color: var(--On-Surface);
-    font-family: 'Switzer', sans-serif;
-    font-size: 16px;
-    font-weight: 700;
+    font-family: Switzer, sans-serif;
+    font-size: 14px;
+    font-weight: 600;
     letter-spacing: 0.2px;
-  }
-
-  .type-row .caret {
-    width: 18px;
-    height: 18px;
-    stroke: var(--Primary);
-    stroke-width: 2.4;
-    fill: none;
-    flex-shrink: 0;
   }
 
   /* Section Card */
@@ -171,7 +180,7 @@
 
   .section-title {
     color: var(--On-Surface);
-    font-family: 'Switzer', sans-serif;
+    font-family: Switzer, sans-serif;
     font-size: 14px;
     font-weight: 600;
     letter-spacing: 0.2px;
@@ -179,7 +188,7 @@
 
   .see-all {
     color: var(--Primary);
-    font-family: 'Switzer', sans-serif;
+    font-family: Switzer, sans-serif;
     font-size: 12px;
     font-weight: 500;
     cursor: pointer;
@@ -256,7 +265,7 @@
 
   .favorite-name {
     color: var(--On-Surface);
-    font-family: 'Switzer', sans-serif;
+    font-family: Switzer, sans-serif;
     font-size: 11px;
     font-weight: 500;
     text-align: center;
@@ -321,7 +330,7 @@
 
   .frequent-name {
     color: var(--On-Surface);
-    font-family: 'Switzer', sans-serif;
+    font-family: Switzer, sans-serif;
     font-size: 14px;
     font-weight: 600;
     letter-spacing: 0.2px;
@@ -329,7 +338,7 @@
 
   .frequent-bank {
     color: var(--On-Surface-Low);
-    font-family: 'Switzer', sans-serif;
+    font-family: Switzer, sans-serif;
     font-size: 12px;
     font-weight: 400;
   }
@@ -357,7 +366,7 @@
   }
 
   .recent-transactions.section-card .header .transactions-title {
-    font-family: 'Switzer', sans-serif;
+    font-family: Switzer, sans-serif;
     font-size: 14px;
     font-weight: 600;
     letter-spacing: 0.2px;
@@ -365,7 +374,7 @@
 
   .recent-transactions.section-card .header .see-all {
     color: var(--Primary);
-    font-family: 'Switzer', sans-serif;
+    font-family: Switzer, sans-serif;
     font-size: 12px;
     font-weight: 500;
     text-decoration: none;
@@ -419,7 +428,7 @@
   }
 
   .sheet-title {
-    font-family: 'Switzer', sans-serif;
+    font-family: Switzer, sans-serif;
     font-size: 17px;
     font-weight: 700;
     color: var(--On-Surface);
@@ -462,7 +471,7 @@
   .sheet-tile .logo img { width: 32px; height: 32px; object-fit: contain; }
 
   .sheet-tile .nm {
-    font-family: 'Switzer', sans-serif;
+    font-family: Switzer, sans-serif;
     font-size: 11px;
     font-weight: 600;
     color: var(--On-Surface);
@@ -503,16 +512,16 @@
       <!-- Destination -->
       <div class="transfer-type">
         <div class="type-row" onclick="sendToMpesa()">
+          <span class="t-ic"><svg data-name="icon-phone" viewBox="0 0 24 24"><rect x="6" y="2.5" width="12" height="19" rx="2.5"/><path d="M10.5 18.5h3"/><path d="M9.5 9.5l2 2 3.5-3.5"/></svg></span>
           <span class="label">M-PESA</span>
-          <svg class="caret" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
         </div>
         <div class="type-row" onclick="selectType('bank')">
+          <span class="t-ic"><svg data-name="icon-bank" viewBox="0 0 24 24"><path d="M3 9.5 12 4l9 5.5"/><path d="M5 10v8M9.7 10v8M14.3 10v8M19 10v8M3 20.5h18"/></svg></span>
           <span class="label">Bank</span>
-          <svg class="caret" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
         </div>
         <div class="type-row" onclick="selectType('wallet')">
+          <span class="t-ic"><svg data-name="icon-wallet" viewBox="0 0 24 24"><path d="M3 7a2 2 0 0 1 2-2h12v4"/><rect x="3" y="7" width="18" height="13" rx="2.5"/><path d="M16 13.5h2"/></svg></span>
           <span class="label">Wallet</span>
-          <svg class="caret" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
         </div>
       </div>
 

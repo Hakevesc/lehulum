@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+<link rel="stylesheet" href="https://api.fontshare.com/v2/css?f[]=switzer@400,500,600,700,800&display=swap">
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>M-PESA App · QR Home Option 3</title>
@@ -45,13 +46,13 @@
   .story-slide .pic { position: relative; width: 100%; flex: 1; min-height: 0; max-height: 360px; border-radius: 28px; overflow: hidden; background: #FFF; box-shadow: 0 18px 44px rgba(15,23,42,0.12), 0 2px 8px rgba(15,23,42,0.05); animation: storyIn 0.4s ease; }
   .story-slide .pic img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: center 35%; display: block; }
   .story-slide .txt { text-align: center; color: #1C1C21; margin-top: 34px; animation: storyIn 0.45s ease; }
-  .story-slide h2 { font-family: 'Switzer', 'Inter', sans-serif; font-size: 40px; font-weight: 800; line-height: 1.0; letter-spacing: -1.2px; }
-  .story-slide p { margin: 14px auto 0; max-width: 270px; font-family: 'Switzer', 'Inter', sans-serif; font-size: 16px; line-height: 1.4; color: #8A8A94; }
+  .story-slide h2 { font-family: Switzer, sans-serif; font-size: 40px; font-weight: 800; line-height: 1.0; letter-spacing: -1.2px; }
+  .story-slide p { margin: 14px auto 0; max-width: 270px; font-family: Switzer, sans-serif; font-size: 16px; line-height: 1.4; color: #8A8A94; }
   @keyframes storyIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
   .story-tap { position: absolute; top: 76px; bottom: 110px; border: 0; background: none; z-index: 2; cursor: pointer; }
   .story-tap.prev { left: 0; width: 33%; }
   .story-tap.next { right: 0; width: 67%; }
-  .story-cta { position: absolute; left: 50%; bottom: 36px; transform: translateX(-50%); height: 56px; padding: 0 26px 0 30px; border: 0; border-radius: 28px; background: #FE353D; color: #FFFFFF; font-family: 'Poppins', 'Inter', sans-serif; font-size: 16px; font-weight: 600; z-index: 4; cursor: pointer; display: flex; align-items: center; gap: 8px; white-space: nowrap; box-shadow: 0 10px 24px rgba(254,53,61,0.32); }
+  .story-cta { position: absolute; left: 50%; bottom: 36px; transform: translateX(-50%); height: 56px; padding: 0 26px 0 30px; border: 0; border-radius: 28px; background: #FE353D; color: #FFFFFF; font-family: Switzer, sans-serif; font-size: 16px; font-weight: 600; z-index: 4; cursor: pointer; display: flex; align-items: center; gap: 8px; white-space: nowrap; box-shadow: 0 10px 24px rgba(254,53,61,0.32); }
   .story-cta svg { width: 18px; height: 18px; stroke: currentColor; stroke-width: 2.4; fill: none; stroke-linecap: round; stroke-linejoin: round; }
   .story-cta:active { transform: translateX(-50%) scale(0.97); }
 </style>
@@ -81,12 +82,12 @@
     padding: 16px 16px 16px 18px; border-radius: 18px; background: linear-gradient(135deg, #A41016 0%, #C41520 45%, #D7151F 100%); }
   .qh-balance::before { content: ''; position: absolute; top: -60px; right: -40px; width: 200px; height: 200px; border-radius: 50%; background: rgba(255,255,255,0.05); pointer-events: none; }
   .qh-balance > * { position: relative; }
-  .qh-balance .lbl { font-family: 'Switzer', 'Inter', sans-serif; font-size: 14px; color: #FFF; display: flex; align-items: center; gap: 8px; }
-  .qh-balance .amt { font-family: 'Switzer', 'Inter', sans-serif; font-size: 24px; font-weight: 700; color: #FFF; letter-spacing: 1px; margin-top: 6px; }
+  .qh-balance .lbl { font-family: Switzer, sans-serif; font-size: 14px; color: #FFF; display: flex; align-items: center; gap: 8px; }
+  .qh-balance .amt { font-family: Switzer, sans-serif; font-size: 24px; font-weight: 700; color: #FFF; letter-spacing: 1px; margin-top: 6px; }
   .qh-eye { width: 26px; height: 26px; border: 0; border-radius: 50%; background: rgba(255,255,255,0.15); cursor: pointer; display: flex; align-items: center; justify-content: center; }
   .qh-eye svg { width: 15px; height: 15px; }
   .qh-add { flex-shrink: 0; display: flex; align-items: center; gap: 10px; height: 46px; padding: 0 16px 0 10px; border: 0; border-radius: 14px;
-    background: #1C1C21; color: #FFF; font-family: 'Inter', sans-serif; font-size: 15px; font-weight: 400; cursor: pointer; }
+    background: #1C1C21; color: #FFF; font-family: Switzer, sans-serif; font-size: 15px; font-weight: 400; cursor: pointer; }
   .qh-add:active { transform: scale(0.97); }
   .qh-add .pl { width: 26px; height: 26px; border-radius: 7px; background: rgba(255,255,255,0.18); display: flex; align-items: center; justify-content: center; }
   .qh-add svg { width: 12px; height: 12px; }
@@ -107,12 +108,12 @@
   @keyframes qhScan { 0%, 100% { top: 18px; } 50% { top: calc(100% - 20px); } }
 
   .qh-caption { text-align: center; }
-  .qh-caption .t { font-family: 'Switzer', 'Inter', sans-serif; font-size: 15px; font-weight: 600; color: #1C1C21; display: inline-flex; align-items: center; gap: 6px; }
+  .qh-caption .t { font-family: Switzer, sans-serif; font-size: 15px; font-weight: 600; color: #1C1C21; display: inline-flex; align-items: center; gap: 6px; }
   .qh-caption .t svg { width: 16px; height: 16px; stroke: #FE353D; }
   .qh-caption .s { font-size: 12px; color: #7C7C87; margin-top: 3px; }
   .qh-links { display: flex; justify-content: center; gap: 8px; }
   .qh-links button { border: 1px solid #ECECEF; background: #FAFAFB; border-radius: 16px; height: 30px; padding: 0 12px; cursor: pointer;
-    font-family: 'Inter', sans-serif; font-size: 11.5px; font-weight: 500; color: #1C1C21; display: flex; align-items: center; gap: 5px; }
+    font-family: Switzer, sans-serif; font-size: 11.5px; font-weight: 500; color: #1C1C21; display: flex; align-items: center; gap: 5px; }
   .qh-links svg { width: 13px; height: 13px; stroke: #FE353D; fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
 </style>
 
@@ -124,10 +125,10 @@
   .o3-card::before { content: ''; position: absolute; top: -60px; right: -60px; width: 180px; height: 180px; border-radius: 50%; background: rgba(255,255,255,0.06); pointer-events: none; }
   .o3-card > * { position: relative; }
   .o3-top { display: flex; align-items: center; gap: 6px; }   /* eye sits right after the label */
-  .o3-top .lbl { font-family: 'Switzer', 'Inter', sans-serif; font-size: 11px; font-weight: 500; letter-spacing: 0.8px; text-transform: uppercase; opacity: 0.9; }
+  .o3-top .lbl { font-family: Switzer, sans-serif; font-size: 11px; font-weight: 500; letter-spacing: 0.8px; text-transform: uppercase; opacity: 0.9; }
   .o3-eye { width: 26px; height: 26px; border: 0; background: none; cursor: pointer; display: flex; align-items: center; justify-content: center; margin: -4px 0; }
   .o3-eye svg { width: 18px; height: 18px; }
-  .o3-amt { font-family: 'Switzer', 'Inter', sans-serif; font-size: 23px; font-weight: 700; margin-top: 2px; white-space: nowrap; letter-spacing: 0.2px; }
+  .o3-amt { font-family: Switzer, sans-serif; font-size: 23px; font-weight: 700; margin-top: 2px; white-space: nowrap; letter-spacing: 0.2px; }
   .o3-amt small { font-size: 13px; font-weight: 600; }
   .o3-amt .cur { margin-right: 4px; opacity: 0.9; }
   .o3-rule { height: 1px; background: rgba(255,255,255,0.25); margin: 9px 0 8px; }
@@ -136,10 +137,10 @@
   .o3-sub + .o3-sub { justify-content: flex-end; }
   .o3-sub svg { width: 18px; height: 18px; flex-shrink: 0; }
   .o3-sub .k { font-size: 12px; opacity: 0.9; white-space: nowrap; }
-  .o3-sub .v { font-family: 'Switzer', 'Inter', sans-serif; font-size: 12px; font-weight: 700; white-space: nowrap; }
+  .o3-sub .v { font-family: Switzer, sans-serif; font-size: 12px; font-weight: 700; white-space: nowrap; }
   .o3-vsep { width: 1px; height: 26px; background: rgba(255,255,255,0.25); margin: 0 6px; }
   .o3-add { height: 38px; margin-top: auto; border: 0; border-radius: 12px; background: #1C1C21; box-shadow: 0 3px 8px rgba(0,0,0,0.2); color: #FFF; cursor: pointer;
-    display: flex; align-items: center; justify-content: center; gap: 8px; font-family: 'Inter', sans-serif; font-size: 15px; font-weight: 500; }
+    display: flex; align-items: center; justify-content: center; gap: 8px; font-family: Switzer, sans-serif; font-size: 15px; font-weight: 500; }
   .o3-add svg { width: 16px; height: 16px; }
   .o3-add:active { transform: scale(0.98); }
   /* Always a square: width is a share of the row and the height follows it;
@@ -291,6 +292,12 @@
 
     actions: `
       <div class="actions">
+        <div class="primary-action" onclick="window.location.href='Send Money Menu.html'" style="cursor:pointer">
+          <div class="icon-container">
+            <img src="assets/Transfer Money.svg" alt="Transfer Money" style="width:40px;height:40px;object-fit:contain;">
+          </div>
+          <span class="label">Transfer<br>Money</span>
+        </div>
         <div class="primary-action" onclick="window.location.href='Pay Merchant.html'" style="cursor:pointer">
           <div class="icon-container">
             <img src="assets/Merchant Payemnt.svg" alt="Merchant Payment" style="width:40px;height:40px;object-fit:contain;">
@@ -308,12 +315,6 @@
             <img src="assets/Credit Saving.svg" alt="Credit & Saving" style="width:40px;height:40px;object-fit:contain;">
           </div>
           <span class="label">Credit &<br>Saving</span>
-        </div>
-        <div class="primary-action" onclick="window.location.href='Send Money Menu.html'" style="cursor:pointer">
-          <div class="icon-container">
-            <img src="assets/Transfer Money.svg" alt="Transfer Money" style="width:40px;height:40px;object-fit:contain;">
-          </div>
-          <span class="label">Transfer<br>Money</span>
         </div>
         <div class="primary-action" onclick="window.location.href='Airtime_Buy.html'" style="cursor:pointer">
           <div class="icon-container">
@@ -1033,8 +1034,8 @@
     svg.innerHTML =
       `<g fill="#141B2D" shape-rendering="crispEdges">${dots}</g>` + finder(0, 0) + finder(n - 7, 0) + finder(0, n - 7) +
       `<rect x="${50 - bw / 2}" y="${50 - bh / 2}" width="${bw}" height="${bh}" rx="4" fill="#FFF"/>` +
-      `<text x="50" y="${50 - 1.2}" text-anchor="middle" font-family="Switzer, Inter, sans-serif" font-size="6.6" font-weight="700" fill="#FE353D">TAP</text>` +
-      `<text x="50" y="${50 + 6}" text-anchor="middle" font-family="Switzer, Inter, sans-serif" font-size="5.4" font-weight="700" fill="#141B2D">TO SCAN</text>`;
+      `<text x="50" y="${50 - 1.2}" text-anchor="middle" font-family="Switzer, sans-serif" font-size="6.6" font-weight="700" fill="#FE353D">TAP</text>` +
+      `<text x="50" y="${50 + 6}" text-anchor="middle" font-family="Switzer, sans-serif" font-size="5.4" font-weight="700" fill="#141B2D">TO SCAN</text>`;
   }
 
   // Balance cards: swipe on touch (native scroll-snap), drag with the mouse; dots follow.

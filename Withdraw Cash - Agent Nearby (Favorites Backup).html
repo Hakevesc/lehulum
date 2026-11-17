@@ -5,8 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Withdraw Cash - Find an Agent (Favorites Backup)</title>
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@400;500;600&display=swap');
-  @import url('https://api.fontshare.com/v2/css?f[]=switzer@400,500,600,700&display=swap');
+  @import url('https://api.fontshare.com/v2/css?f[]=switzer@400,500,600,700,800&display=swap');
 
   :root {
     --Primary: #FE353D;
@@ -22,7 +21,7 @@
   }
   * { margin: 0; padding: 0; box-sizing: border-box; }
   body {
-    font-family: 'Inter', sans-serif;
+    font-family: Switzer, sans-serif;
     background: transparent;
     display: flex;
     justify-content: center;
@@ -102,7 +101,7 @@
   }
   .header-title {
     color: var(--On-Surface);
-    font-family: 'Switzer', sans-serif;
+    font-family: Switzer, sans-serif;
     font-size: 21px;
     font-weight: 700;
     letter-spacing: -0.3px;
@@ -160,7 +159,7 @@
     cursor: pointer;
   }
   .loc-title {
-    font-family: 'Switzer', sans-serif;
+    font-family: Switzer, sans-serif;
     font-size: 14.5px;
     font-weight: 700;
     color: #0F172A;
@@ -169,7 +168,7 @@
     text-overflow: ellipsis;
   }
   .loc-subtitle {
-    font-family: 'Switzer', sans-serif;
+    font-family: Switzer, sans-serif;
     font-size: 11.5px;
     color: #8C8C99;
     margin-top: 1px;
@@ -181,7 +180,7 @@
     border: none;
     outline: none;
     background: transparent;
-    font-family: 'Switzer', sans-serif;
+    font-family: Switzer, sans-serif;
     font-size: 13.5px;
     font-weight: 500;
     color: #0F172A;
@@ -248,9 +247,9 @@
     justify-content: center;
   }
   .loc-opt-text { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
-  .loc-opt-name { font-family: 'Switzer', sans-serif; font-size: 14px; font-weight: 700; color: #0F172A; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-  .loc-opt-sub  { font-family: 'Switzer', sans-serif; font-size: 12px; color: #64748B; font-weight: 400; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-  .loc-empty { font-family: 'Switzer', sans-serif; font-size: 12.5px; color: #64748B; padding: 14px 16px; }
+  .loc-opt-name { font-family: Switzer, sans-serif; font-size: 14px; font-weight: 700; color: #0F172A; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .loc-opt-sub  { font-family: Switzer, sans-serif; font-size: 12px; color: #64748B; font-weight: 400; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .loc-empty { font-family: Switzer, sans-serif; font-size: 12.5px; color: #64748B; padding: 14px 16px; }
 
   /* ── Full-screen search: tapping search lifts the agent card into a sheet
      that covers the map and the Favorites & Frequents bar; the search field
@@ -291,7 +290,7 @@
   /* Map Labels */
   .map-text-label {
     position: absolute;
-    font-family: 'Switzer', sans-serif;
+    font-family: Switzer, sans-serif;
     pointer-events: none;
   }
   .map-text-label.bole {
@@ -325,7 +324,7 @@
     fill: #475569;
   }
   .map-airport-tag span {
-    font-family: 'Switzer', sans-serif;
+    font-family: Switzer, sans-serif;
     font-size: 9.5px;
     font-weight: 500;
     line-height: 1.25;
@@ -364,7 +363,7 @@
   }
   .pin-num {
     position: relative;
-    font-family: 'Switzer', sans-serif;
+    font-family: Switzer, sans-serif;
     font-size: 15px;
     font-weight: 700;
     color: #FFFFFF;
@@ -377,7 +376,7 @@
     background: #FFFFFF;
     border-radius: 9px;
     padding: 4px 9px;
-    font-family: 'Switzer', sans-serif;
+    font-family: Switzer, sans-serif;
     text-align: center;
     white-space: nowrap;
     max-width: 108px;
@@ -438,7 +437,7 @@
     align-items: center;
     justify-content: center;
     color: #FFFFFF;
-    font-family: 'Switzer', sans-serif;
+    font-family: Switzer, sans-serif;
     font-size: 8.5px;
     font-weight: 700;
   }
@@ -486,10 +485,10 @@
   .ap-avatar { width: 52px; height: 52px; border-radius: 50%; background: var(--Primary-Light); color: var(--Primary); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
   .ap-avatar svg { width: 24px; height: 24px; stroke: currentColor; stroke-width: 1.9; fill: none; }
   .ap-info { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 4px; }
-  .ap-name { font-family: 'Switzer', sans-serif; font-size: 16px; font-weight: 700; color: var(--On-Surface); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-  .ap-sc { font-family: 'Switzer', sans-serif; font-size: 12px; color: var(--On-Surface-Low); margin-top: -2px; }
+  .ap-name { font-family: Switzer, sans-serif; font-size: 16px; font-weight: 700; color: var(--On-Surface); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .ap-sc { font-family: Switzer, sans-serif; font-size: 12px; color: var(--On-Surface-Low); margin-top: -2px; }
   .ap-sc b { font-weight: 600; color: var(--On-Surface); letter-spacing: 0.3px; }
-  .ap-meta { display: flex; align-items: center; gap: 8px; font-family: 'Switzer', sans-serif; font-size: 12px; color: var(--On-Surface-Low); }
+  .ap-meta { display: flex; align-items: center; gap: 8px; font-family: Switzer, sans-serif; font-size: 12px; color: var(--On-Surface-Low); }
   .ap-meta svg { width: 13px; height: 13px; stroke: currentColor; stroke-width: 2; fill: none; margin-right: -4px; }
   .ap-status { display: inline-flex; align-items: center; gap: 5px; padding: 3px 9px; border-radius: 999px; font-size: 11px; font-weight: 600; background: var(--Success-Light); color: #167C2A; }
   .ap-status::before { content: ''; width: 6px; height: 6px; border-radius: 50%; background: currentColor; }
@@ -502,7 +501,7 @@
   .ap-back { position: absolute; top: -50px; left: 0; width: 40px; height: 40px; border: none; border-radius: 50%; background: #FFF; color: var(--On-Surface); display: flex; align-items: center; justify-content: center; cursor: pointer; box-shadow: 0 4px 14px rgba(15,23,42,0.18); }
   .ap-back:active { transform: scale(0.94); }
   .ap-back svg { width: 18px; height: 18px; stroke: currentColor; stroke-width: 2; fill: none; }
-  .ap-label { font-family: 'Switzer', sans-serif; font-size: 12.5px; font-weight: 600; color: var(--On-Surface); margin: 14px 0 8px; }
+  .ap-label { font-family: Switzer, sans-serif; font-size: 12.5px; font-weight: 600; color: var(--On-Surface); margin: 14px 0 8px; }
   /* The typed code sits on the same 14px inset as every other field in the app;
      the QR chip keeps the tighter inset, so it reads as pinned to the right edge. */
   .ap-code { display: flex; align-items: center; gap: 8px; height: 52px; border: 1.5px solid var(--Border); border-radius: 14px; padding: 0 6px 0 14px; background: #FFF; transition: border-color 0.2s; }
@@ -510,10 +509,10 @@
   .ap-qr { width: 38px; height: 38px; border: none; border-radius: 10px; background: #1C1C21; color: #FFF; display: flex; align-items: center; justify-content: center; cursor: pointer; flex-shrink: 0; }
   .ap-qr:active { transform: scale(0.94); }
   .ap-qr svg { width: 20px; height: 20px; stroke: currentColor; stroke-width: 2; fill: none; }
-  .ap-code input { flex: 1; min-width: 0; border: none; outline: none; background: transparent; font-family: 'Switzer', sans-serif; font-size: 14px; color: var(--On-Surface); letter-spacing: 0.3px; }
+  .ap-code input { flex: 1; min-width: 0; border: none; outline: none; background: transparent; font-family: Switzer, sans-serif; font-size: 14px; color: var(--On-Surface); letter-spacing: 0.3px; }
   .ap-code input::placeholder { color: #A0A0AA; letter-spacing: 0; }
   /* Continue sits under the short-code field, full width like the app's other main buttons */
-  .ap-continue { width: 100%; height: 52px; margin-top: 12px; border: none; border-radius: 14px; background: var(--Primary); color: #FFF; font-family: 'Poppins', sans-serif; font-size: 15px; font-weight: 500; cursor: pointer; box-shadow: 0 4px 16px rgba(254,53,61,0.25); transition: background 0.2s, color 0.2s, box-shadow 0.2s; }
+  .ap-continue { width: 100%; height: 52px; margin-top: 12px; border: none; border-radius: 14px; background: var(--Primary); color: #FFF; font-family: Switzer, sans-serif; font-size: 15px; font-weight: 500; cursor: pointer; box-shadow: 0 4px 16px rgba(254,53,61,0.25); transition: background 0.2s, color 0.2s, box-shadow 0.2s; }
   .ap-continue:active { transform: scale(0.98); }
   .ap-continue:disabled { background: #E0E0E0; color: var(--On-Surface-Low); box-shadow: none; cursor: not-allowed; }   /* silver like the other inactive buttons */
 
@@ -524,12 +523,12 @@
   .ap-row:last-child { border-bottom: none; }
   .ap-row:hover { background: #FAFAFB; }
   .ap-row-left { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
-  .ap-row-name { font-family: 'Switzer', sans-serif; font-size: 14px; font-weight: 600; color: var(--On-Surface); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-  .ap-row-sub { font-family: 'Switzer', sans-serif; font-size: 12px; color: var(--On-Surface-Low); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-  .ap-row-dist { font-family: 'Switzer', sans-serif; font-size: 12.5px; font-weight: 600; color: var(--On-Surface); flex-shrink: 0; }
+  .ap-row-name { font-family: Switzer, sans-serif; font-size: 14px; font-weight: 600; color: var(--On-Surface); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .ap-row-sub { font-family: Switzer, sans-serif; font-size: 12px; color: var(--On-Surface-Low); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .ap-row-dist { font-family: Switzer, sans-serif; font-size: 12.5px; font-weight: 600; color: var(--On-Surface); flex-shrink: 0; }
 
   .ap-actions { display: flex; gap: 10px; }
-  .as-action-btn { flex: 1; height: 48px; border-radius: 12px; cursor: pointer; font-family: 'Switzer', sans-serif; font-size: 13.5px; font-weight: 600; display: flex; align-items: center; justify-content: center; gap: 8px; transition: all 0.2s; }
+  .as-action-btn { flex: 1; height: 48px; border-radius: 12px; cursor: pointer; font-family: Switzer, sans-serif; font-size: 13.5px; font-weight: 600; display: flex; align-items: center; justify-content: center; gap: 8px; transition: all 0.2s; }
   .as-action-btn svg { width: 16px; height: 16px; stroke-width: 1.9; fill: none; }
   .as-action-btn.outline { border: 1.5px solid var(--Border); background: #FFF; color: var(--Primary); }
   .as-action-btn.outline svg { stroke: var(--Primary); }
@@ -541,7 +540,7 @@
   /* ── Favorites & Frequents island: black bar under the title. Dragging the
      agent card up drops a blob out of it, then opens the Withdraw At picker. ── */
   .island-row { display: flex; justify-content: center; padding: 0 16px 10px; background: transparent; flex-shrink: 0; position: relative; z-index: 60; }
-  .island { width: 100%; height: 56px; border: none; border-radius: 16px; background: #1C1C21; color: #FFF; display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 0 10px 0 18px; cursor: grab; touch-action: none; user-select: none; -webkit-user-select: none; box-shadow: 0 4px 14px rgba(15,15,20,0.25); font-family: 'Switzer', sans-serif; font-size: 15px; }
+  .island { width: 100%; height: 56px; border: none; border-radius: 16px; background: #1C1C21; color: #FFF; display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 0 10px 0 18px; cursor: grab; touch-action: none; user-select: none; -webkit-user-select: none; box-shadow: 0 4px 14px rgba(15,15,20,0.25); font-family: Switzer, sans-serif; font-size: 15px; }
   .island.grabbing { cursor: grabbing; }
   /* While stretching, the SVG outline below draws the bar, so the bar itself goes clear */
   .island.stretching { background: transparent; box-shadow: none; }
@@ -552,16 +551,16 @@
   .island-avs .av { width: 36px; height: 36px; margin-left: -10px; border: 2px solid #1C1C21; font-size: 10px; overflow: hidden; }
   .island-avs .av img { width: 100%; height: 100%; object-fit: cover; display: block; }
 
-  .av { border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0; font-family: 'Switzer', sans-serif; font-weight: 700; background: var(--Primary-Light); color: var(--Primary); }
+  .av { border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0; font-family: Switzer, sans-serif; font-weight: 700; background: var(--Primary-Light); color: var(--Primary); }
 
   /* "Drag to open" shows just under the bar while it is pulled (and during the hint) */
-  .drop-hint { position: absolute; z-index: 45; left: 0; right: 0; text-align: center; transform: translateY(-4px); color: var(--On-Surface); font-family: 'Switzer', sans-serif; font-size: 15px; font-weight: 500; white-space: nowrap; text-shadow: 0 0 6px #FFF, 0 0 3px #FFF, 0 0 1px #FFF; opacity: 0; pointer-events: none; transition: transform 0.2s; }
+  .drop-hint { position: absolute; z-index: 45; left: 0; right: 0; text-align: center; transform: translateY(-4px); color: var(--On-Surface); font-family: Switzer, sans-serif; font-size: 15px; font-weight: 500; white-space: nowrap; text-shadow: 0 0 6px #FFF, 0 0 3px #FFF, 0 0 1px #FFF; opacity: 0; pointer-events: none; transition: transform 0.2s; }
   .drop-hint.show { opacity: 1; transform: none; }
 
   /* The stretched bar: one outline, the bar with its bottom edge bulging down */
   .drop { position: absolute; left: 0; top: 0; width: 100%; height: 100%; z-index: 50; pointer-events: none; opacity: 0; overflow: visible; }
   .drop.show { opacity: 1; }
-  .drop-peek { position: absolute; z-index: 51; border-radius: 45%; overflow: hidden; pointer-events: none; opacity: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px; color: #FFF; font-family: 'Switzer', sans-serif; }
+  .drop-peek { position: absolute; z-index: 51; border-radius: 45%; overflow: hidden; pointer-events: none; opacity: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px; color: #FFF; font-family: Switzer, sans-serif; }
   .drop-peek > svg { width: 22px; height: 22px; stroke: #FFF; stroke-width: 2.2; fill: none; }
   .drop-peek .peek-title { font-size: 11px; font-weight: 600; color: rgba(255,255,255,0.6); letter-spacing: 0.4px; }
   .drop-peek .peek-avs { display: flex; gap: 8px; }
@@ -578,7 +577,7 @@
   .wd-blob::before { content: ''; position: absolute; inset: 0; background: linear-gradient(170deg, #1C1C21 0%, #3A070B 28%, #A3121B 65%, #E3242E 100%); opacity: 0; transition: opacity 0.4s; }
   .wd-blob.open::before { opacity: 1; }
 
-  .blob-full { position: absolute; left: 0; top: 0; display: flex; flex-direction: column; padding: 26px 20px 20px; opacity: 0; transition: opacity 0.2s; font-family: 'Switzer', sans-serif; }
+  .blob-full { position: absolute; left: 0; top: 0; display: flex; flex-direction: column; padding: 26px 20px 20px; opacity: 0; transition: opacity 0.2s; font-family: Switzer, sans-serif; }
   .wd-blob.open .blob-full { opacity: 1; transition: opacity 0.25s 0.2s; }
   .wd-close { position: absolute; top: 24px; right: 18px; width: 36px; height: 36px; border: none; border-radius: 50%; background: rgba(255,255,255,0.2); color: #FFF; display: flex; align-items: center; justify-content: center; cursor: pointer; }
   .wd-close svg { width: 18px; height: 18px; stroke: currentColor; stroke-width: 2.2; fill: none; }
@@ -626,18 +625,18 @@
     margin-top: 4px;
   }
   .section-header .count-title {
-    font-family: 'Switzer', sans-serif;
+    font-family: Switzer, sans-serif;
     font-size: 15.5px;
     font-weight: 700;
     color: #0F172A;
   }
   .section-header .divider {
     color: #CBD5E1;
-    font-weight: 300;
+    font-weight: 400;
     font-size: 13px;
   }
   .section-header .sub-hint {
-    font-family: 'Switzer', sans-serif;
+    font-family: Switzer, sans-serif;
     font-size: 12.5px;
     color: #64748B;
     font-weight: 400;
@@ -674,7 +673,7 @@
     border-radius: 12px;
     background: #FFF1F2;
     color: var(--Primary);
-    font-family: 'Switzer', sans-serif;
+    font-family: Switzer, sans-serif;
     font-size: 14px;
     font-weight: 700;
     display: flex;
@@ -687,7 +686,7 @@
     min-width: 0;
   }
   .agent-name {
-    font-family: 'Switzer', sans-serif;
+    font-family: Switzer, sans-serif;
     font-size: 12.8px;
     font-weight: 700;
     color: #0F172A;
@@ -696,7 +695,7 @@
     text-overflow: ellipsis;
   }
   .agent-code {
-    font-family: 'Switzer', sans-serif;
+    font-family: Switzer, sans-serif;
     font-size: 11px;
     color: #64748B;
     margin-top: 2px;
@@ -718,7 +717,7 @@
     display: inline-flex;
     align-items: center;
     gap: 2.5px;
-    font-family: 'Switzer', sans-serif;
+    font-family: Switzer, sans-serif;
   }
   .metric-item.distance {
     font-size: 11px;
@@ -750,7 +749,7 @@
     gap: 4px;
     padding: 2.5px 8px;
     border-radius: 12px;
-    font-family: 'Switzer', sans-serif;
+    font-family: Switzer, sans-serif;
     font-size: 10.5px;
     font-weight: 600;
   }
@@ -817,14 +816,14 @@
   }
   .perm-icon svg { width: 28px; height: 28px; stroke: var(--Primary); stroke-width: 1.8; fill: none; }
   .perm-title {
-    font-family: 'Switzer', sans-serif;
+    font-family: Switzer, sans-serif;
     font-size: 16.5px;
     font-weight: 700;
     color: var(--On-Surface);
     text-align: center;
   }
   .perm-body {
-    font-family: 'Switzer', sans-serif;
+    font-family: Switzer, sans-serif;
     font-size: 12.5px;
     line-height: 1.5;
     color: var(--On-Surface-Low);
@@ -837,7 +836,7 @@
     width: 100%;
     height: 48px;
     border-radius: 13px;
-    font-family: 'Switzer', sans-serif;
+    font-family: Switzer, sans-serif;
     font-size: 14.5px;
     font-weight: 600;
     cursor: pointer;

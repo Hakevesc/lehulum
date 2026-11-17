@@ -5,8 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Errif Terms</title>
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@400;500;600&display=swap');
-  @import url('https://api.fontshare.com/v2/css?f[]=switzer@400,500,600,700&display=swap');
+  @import url('https://api.fontshare.com/v2/css?f[]=switzer@400,500,600,700,800&display=swap');
 
   :root {
     --Primary: #FE353D;
@@ -16,7 +15,7 @@
     --Background: #F5F5F5;
   }
   * { margin: 0; padding: 0; box-sizing: border-box; }
-  body { font-family: 'Inter', sans-serif; background: transparent; display: flex; justify-content: center; align-items: center; min-height: 100vh; padding: 20px; }
+  body { font-family: Switzer, sans-serif; background: transparent; display: flex; justify-content: center; align-items: center; min-height: 100vh; padding: 20px; }
   .phone-frame { width: 360px; height: 780px; background: var(--Background); border-radius: 30px; overflow: hidden; position: relative; box-shadow: 0 20px 60px rgba(0,0,0,0.15); }
   .app-content { height: 100%; display: flex; flex-direction: column; }
 
@@ -29,15 +28,15 @@
   .back-btn { display: flex; align-items: center; justify-content: center; width: 36px; height: 36px; border-radius: 50%; background: transparent; border: none; cursor: pointer; transition: all 0.2s; }
   .back-btn:hover { background: rgba(0,0,0,0.05); }
   .back-btn svg { width: 22px; height: 22px; stroke: var(--On-Surface); stroke-width: 1.8px; fill: none; }
-  .header-title { color: var(--On-Surface); font-family: 'Switzer', sans-serif; font-size: 17px; font-weight: 500; letter-spacing: 0.3px; flex: 1; text-align: center; }
+  .header-title { color: var(--On-Surface); font-family: Switzer, sans-serif; font-size: 17px; font-weight: 500; letter-spacing: 0.3px; flex: 1; text-align: center; }
 
   .body { flex: 1; overflow-y: auto; padding: 4px 24px 12px; }
   .body::-webkit-scrollbar { width: 0; }
-  .terms-title { font-family: 'Switzer', sans-serif; font-size: 18px; font-weight: 700; color: var(--On-Surface); margin: 6px 0 14px; }
+  .terms-title { font-family: Switzer, sans-serif; font-size: 18px; font-weight: 700; color: var(--On-Surface); margin: 6px 0 14px; }
   .terms-card { background: #FFF; border: 1px solid var(--Border); border-radius: 16px; padding: 16px; display: flex; flex-direction: column; gap: 14px; box-shadow: 0 2px 8px rgba(0,0,0,0.04); }
   .term { display: flex; gap: 10px; }
-  .term .n { width: 22px; height: 22px; border-radius: 50%; background: #FFF1F2; color: var(--Primary); font-family: 'Switzer', sans-serif; font-size: 11px; font-weight: 700; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
-  .term .tx { font-family: 'Switzer', sans-serif; font-size: 12.5px; line-height: 1.55; color: var(--On-Surface-Low); }
+  .term .n { width: 22px; height: 22px; border-radius: 50%; background: #FFF1F2; color: var(--Primary); font-family: Switzer, sans-serif; font-size: 11px; font-weight: 700; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+  .term .tx { font-family: Switzer, sans-serif; font-size: 12.5px; line-height: 1.55; color: var(--On-Surface-Low); }
   .term .tx b { color: var(--On-Surface); font-weight: 600; }
 
   .agree { display: flex; align-items: flex-start; gap: 10px; margin-top: 16px; cursor: pointer; }
@@ -45,10 +44,10 @@
   .agree.checked .box { background: var(--Primary); border-color: var(--Primary); }
   .agree .box svg { width: 13px; height: 13px; stroke: #FFF; stroke-width: 3; fill: none; opacity: 0; }
   .agree.checked .box svg { opacity: 1; }
-  .agree .lbl { font-family: 'Switzer', sans-serif; font-size: 12.5px; line-height: 1.5; color: var(--On-Surface); }
+  .agree .lbl { font-family: Switzer, sans-serif; font-size: 12.5px; line-height: 1.5; color: var(--On-Surface); }
 
   .bottom-area { flex-shrink: 0; width: 100%; display: flex; flex-direction: column; gap: 10px; padding: 12px 24px 24px; background: var(--Background); }
-  .btn-primary { width: 100%; height: 52px; border-radius: 14px; background: #E0E0E0; color: var(--On-Surface-Low); font-family: 'Poppins', sans-serif; font-size: 15px; font-weight: 500; border: none; cursor: not-allowed; transition: all 0.2s; }
+  .btn-primary { width: 100%; height: 52px; border-radius: 14px; background: #E0E0E0; color: var(--On-Surface-Low); font-family: Switzer, sans-serif; font-size: 15px; font-weight: 500; border: none; cursor: not-allowed; transition: all 0.2s; }
   .btn-primary.active { background: var(--Primary); color: #FFF; cursor: pointer; box-shadow: 0 4px 16px rgba(254,53,61,0.25); }
   .btn-primary.active:hover { background: #E5303A; transform: translateY(-1px); }
   .btn-primary.active:active { transform: scale(0.98); }
