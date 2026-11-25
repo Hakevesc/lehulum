@@ -8,7 +8,7 @@
 <link rel="stylesheet" href="styles/base.css">
 <link rel="stylesheet" href="styles/component-status-bar.css">
 <link rel="stylesheet" href="styles/component-sc-card.css">
-<link rel="stylesheet" href="styles/savings.css">
+<link rel="stylesheet" href="styles/savings.css?v=20261125c">
 <style>
   @import url('https://api.fontshare.com/v2/css?f[]=switzer@400,500,600,700,800&display=swap');
 
@@ -16,13 +16,62 @@
      the limit (wallet or saving balance), quick amounts, blocks over-limit
      amounts → PIN → done. */
   .from { display: flex; align-items: center; gap: 12px; }
-  .from i { width: 42px; height: 42px; border-radius: 13px; background: #FFF1F2; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+  .from i img { width: 32px; height: 32px; object-fit: contain; }
+  .from i { width: 42px; height: 42px; border-radius: 12px; background: #FFF; border: 1px solid #EFEFF2; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
   .from i svg { width: 22px; height: 22px; stroke: var(--Primary); stroke-width: 1.8; fill: none; stroke-linecap: round; stroke-linejoin: round; }
   .from span { flex: 1; min-width: 0; }
   .from b { display: block; font-size: 14px; font-weight: 600; color: var(--On-Surface); }
   .from small { display: block; margin-top: 2px; font-size: 12px; color: var(--On-Surface-Low); }
   .flow { display: flex; align-items: center; justify-content: space-between; padding: 12px 14px; border-radius: 14px; background: #F7F7F9; font-size: 12.5px; color: #55555E; }
   .flow b { color: var(--On-Surface); }
+  /* Deposit into: tap to choose another saving */
+  .amt-card { padding: 18px 16px 16px; }
+  .amt-q { margin-bottom: 12px; font-size: 16px; font-weight: 400; color: var(--On-Surface); }
+  .amt-card .amount-in { background: #F7F7F9; }
+  .amt-bal { margin: 10px 2px 0; font-size: 12px; color: var(--On-Surface-Low); }
+  .amt-bal b { font-weight: 700; color: #55555E; }
+  .amt-bal.err { color: var(--Primary); font-weight: 600; }
+  .behind { display: none; align-items: flex-start; gap: 10px; margin-top: 14px; padding: 12px 14px; border-radius: 14px; background: #FEF3C7; color: #92400E; font-size: 13px; line-height: 1.45; }
+  .behind.show { display: flex; }
+  .behind svg { width: 20px; height: 20px; flex-shrink: 0; margin-top: 1px; stroke: #B45309; stroke-width: 2; fill: none; stroke-linecap: round; stroke-linejoin: round; }
+  .behind b { font-weight: 700; }
+  .from.pickable { cursor: pointer; }
+  .from .chg { display: none; align-items: center; gap: 2px; color: var(--Primary); font-size: 12.5px; font-weight: 600; flex: 0 0 auto; }
+  .from.pickable .chg { display: inline-flex; }
+  .from .chg svg { width: 14px; height: 14px; stroke: currentColor; stroke-width: 2.2; fill: none; stroke-linecap: round; stroke-linejoin: round; }
+  .acc-row { width: 100%; display: flex; align-items: center; gap: 12px; padding: 12px 4px; border: none; border-bottom: 1px solid #F1F1F4; background: none; text-align: left; font-family: Switzer, sans-serif; cursor: pointer; }
+  .acc-row:last-child { border-bottom: none; }
+  .acc-row i { width: 40px; height: 40px; border-radius: 12px; background: #FFF1F2; display: grid; place-items: center; flex-shrink: 0; }
+  .acc-row i svg { width: 20px; height: 20px; stroke: var(--Primary); stroke-width: 1.8; fill: none; stroke-linecap: round; stroke-linejoin: round; }
+  .acc-row span { flex: 1; min-width: 0; }
+  .acc-row b { display: block; font-size: 14px; font-weight: 600; color: var(--On-Surface); }
+  .acc-row small { display: block; margin-top: 2px; font-size: 12px; color: var(--On-Surface-Low); }
+  .acc-row .tick { width: 22px; height: 22px; border-radius: 50%; border: 2px solid #D0D0D6; flex-shrink: 0; display: grid; place-items: center; }
+  .acc-row.on .tick { border-color: var(--Primary); }
+  .acc-row.on .tick::after { content: ''; width: 11px; height: 11px; border-radius: 50%; background: var(--Primary); }
+  /* WITHDRAW confirmation sheet (target savings), same layout as the loan / fixed deposit sheets */
+  .cf-scrim { position: absolute; inset: 0; z-index: 100; background: rgba(0,0,0,0.42); opacity: 0; visibility: hidden; transition: opacity 0.22s, visibility 0.22s; }
+  .cf-scrim.show { opacity: 1; visibility: visible; }
+  .cf-sheet { position: absolute; left: 0; right: 0; bottom: 0; z-index: 101; background: #FFF; border-radius: 28px 28px 0 0; padding: 10px 16px 22px; transform: translateY(100%); transition: transform 0.28s cubic-bezier(.2,.8,.2,1); }
+  .cf-sheet.show { transform: translateY(0); }
+  .cf-sheet .sheet-grip { width: 40px; height: 4px; border-radius: 2px; background: #D8D8DE; margin: 0 auto 18px; }
+  .cf-head { position: relative; display: flex; align-items: center; gap: 12px; border: 1px solid #E6E6EA; border-radius: 16px; padding: 14px; }
+  .cf-head .logo { width: 42px; height: 42px; border-radius: 12px; border: 1px solid #EFEFF2; display: flex; align-items: center; justify-content: center; overflow: hidden; flex-shrink: 0; }
+  .cf-head .logo img { width: 30px; height: 30px; object-fit: contain; }
+  .cf-head b { display: block; font-size: 15px; font-weight: 700; color: var(--On-Surface); }
+  .cf-head small { display: block; margin-top: 2px; font-size: 12.5px; color: var(--On-Surface-Low); }
+  .cf-badge { position: absolute; top: -11px; right: 14px; padding: 4px 10px; border-radius: 999px; background: #EDEDF0; color: #3A3A42; font-size: 10px; font-weight: 700; letter-spacing: 0.5px; }
+  .cf-list { margin: 8px 0 18px; }
+  .cf-row { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 11px 0; border-bottom: 1px solid #EFEFF2; }
+  .cf-row:last-child { border-bottom: none; }
+  .cf-row span { font-size: 12.5px; color: #55555E; }
+  .cf-row b { font-size: 12.5px; font-weight: 700; color: var(--On-Surface); white-space: nowrap; }
+  .cf-row b.up { color: #16A34A; }
+  .cf-row.total b { font-size: 15px; color: var(--Primary); }
+  .cf-actions { display: flex; gap: 12px; }
+  .cf-btn { flex: 1; height: 52px; border-radius: 14px; background: #FFF; font-family: Switzer, sans-serif; font-size: 15px; font-weight: 500; cursor: pointer; }
+  .cf-btn.cancel { border: 1.5px solid #E0E0E4; color: #55555E; }
+  .cf-btn.confirm { border: 1.5px solid var(--Primary); color: var(--Primary); }
 </style>
 <link rel="stylesheet" href="styles/device.css">
 </head>
@@ -44,17 +93,33 @@
       <span class="spacer"></span>
     </div>
 
-    <div class="card from"><i id="pIc"></i><span><b id="pName"></b><small id="pSub"></small></span></div>
-    <label class="field"><span id="amtLbl">Amount</span><div class="amount-in"><input id="amt" inputmode="decimal" placeholder="0.00" oninput="check()" autofocus><small>ETB</small></div></label>
-    <p class="hint" id="hint"></p>
-    <div class="quick" id="quick"></div>
-    <div class="flow" id="flow"></div>
+    <div class="card from" id="fromCard"><i id="pIc"></i><span><b id="pName"></b><small id="pSub"></small></span><em class="chg">Change<svg viewBox="0 0 24 24"><path d="M9 6l6 6-6 6"/></svg></em></div>
+    <div class="card amt-card">
+      <p class="amt-q" id="amtLbl">How much do you want to Deposit?</p>
+      <div class="amount-in"><input id="amt" inputmode="decimal" placeholder="0.00" oninput="check()" autofocus><small>ETB</small></div>
+      <p class="amt-bal" id="hint"></p>
+      <!-- Target withdraw: you keep the interest, but the goal moves further away -->
+      <div class="behind" id="behind"><svg viewBox="0 0 24 24"><path d="M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"/><path d="M12 9v4M12 17h.01"/></svg><span id="behindTxt"></span></div>
+    </div>
     <div class="bottom-bar"><button class="btn-primary" id="go" disabled onclick="next()">Continue</button></div>
   </div>
 
+  <div class="cf-scrim" id="cfScrim" onclick="closeConfirm()"></div>
+  <div class="cf-sheet" id="cfSheet" role="dialog" aria-label="Confirm withdrawal">
+    <div class="sheet-grip"></div>
+    <div class="cf-head"><span class="cf-badge">WITHDRAW</span><span class="logo"><img src="assets/banks logo/coop-bank.png" alt=""></span><span><b id="cfName"></b><small>Cooperative Bank of Oromia</small></span></div>
+    <div class="cf-list" id="cfRows"></div>
+    <div class="cf-actions"><button class="cf-btn cancel" type="button" onclick="closeConfirm()">Cancel</button><button class="cf-btn confirm" type="button" onclick="toPinNow()">Confirm</button></div>
+  </div>
+  <div class="scrim" id="scrim" onclick="closePick()"></div>
+  <div class="sheet tall" id="pickSheet" role="dialog" aria-label="Choose a saving">
+    <div class="sheet-grip"></div>
+    <p class="sheet-title" style="text-align:center">Deposit into</p>
+    <div id="pickList"></div>
+  </div>
 </div>
 
-<script src="savings-store.js"></script>
+<script src="savings-store.js?v=20261125c"></script>
 <script>
   const $ = id => document.getElementById(id);
   const fmt = SV.fmt;
@@ -62,7 +127,7 @@
   function toast(m) { const t = $('toast'); if (!t) return; t.textContent = m; t.classList.add('show'); clearTimeout(tt); tt = setTimeout(() => t.classList.remove('show'), 2000); }
   const IC = {
     target: '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1.2"/></svg>',
-    individual: '<svg viewBox="0 0 24 24"><path d="M19 9.5a6 6 0 0 0-6-4H10a6 6 0 0 0-6 6c0 2 1 3.6 2.5 4.6V19h3v-2h3.5v2h3v-2.6A5.6 5.6 0 0 0 19 14h2v-4z"/><path d="M15.5 10h.01"/></svg>',
+    individual: '<svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg>',
     cal: '<svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/></svg>',
     group: '<svg viewBox="0 0 24 24"><circle cx="9" cy="8" r="3.5"/><path d="M2.5 20a6.5 6.5 0 0 1 13 0"/><circle cx="17" cy="9" r="2.6"/><path d="M15.5 14.2A5 5 0 0 1 21.5 19"/></svg>'
   };
@@ -71,27 +136,71 @@
   const p = grp || S.pockets.find(x => x.id === q.get('id')) || S.pockets[0];
   const dep = grp ? true : q.get('kind') !== 'withdraw', bal = SV.balanceOf(p), max = dep ? S.wallet : bal;
   $('hTitle').textContent = grp ? 'Contribute' : dep ? 'Deposit' : 'Withdraw'; document.title = $('hTitle').textContent + ' — M-PESA';
-  $('pIc').innerHTML = IC[p.kind];
+  $('pIc').innerHTML = '<img src="assets/banks logo/coop-bank.png" alt="Cooperative Bank of Oromia">';
   $('pName').textContent = p.name;
   $('pSub').textContent = grp ? `Group balance: ${fmt(bal)} of ${fmt(grp.target.amount)} ETB` : 'Saving balance: ' + fmt(bal) + ' ETB';
-  $('amtLbl').textContent = grp ? 'How much do you want to put in?' : dep ? 'How much do you want to save?' : 'How much do you want to take out?';
-  $('flow').innerHTML = dep ? `<span>From</span><b>M-PESA wallet · ${fmt(S.wallet)} ETB</b>` : `<span>To</span><b>M-PESA wallet</b>`;
-  const QUICK = dep ? [500, 1000, 5000] : [Math.floor(bal / 2), bal].filter(v => v > 0);
-  $('quick').innerHTML = QUICK.map((v, i) => `<button type="button" onclick="$('amt').value='${v}';check()">${!dep && i === QUICK.length - 1 ? 'All' : fmt(v).replace('.00', '')}</button>`).join('');
+  $('amtLbl').textContent = grp ? 'How much do you want to put in?' : dep ? 'How much do you want to Deposit?' : 'How much do you want to Withdraw?';
   function check() {
     const a = parseFloat(($('amt').value || '').replace(/,/g, '')) || 0;
     const over = a > max;
-    $('hint').textContent = over ? `Not enough balance. Max ${fmt(max)} ETB` : dep ? `Earns ${SV.RATE}% a year. Withdraw any time.` : 'Paid to your M-PESA wallet.';
+    // Balance: the wallet for a deposit, the saving for a withdrawal
+    $('hint').innerHTML = over ? `Not enough balance. Max ${fmt(max)} ETB` : `<b>Balance:</b> ${fmt(max)} ETB`;
     $('hint').classList.toggle('err', over);
+    // Target saving: withdrawing never loses interest, it only puts the goal further away
+    const tgt = !dep && !grp && p.target, left = bal - a;
+    $('behind').classList.toggle('show', !!(tgt && a > 0 && !over));
+    if (tgt && a > 0 && !over) {
+      const t = p.target.amount, by = SV.dateStr(p.target.by);
+      $('behindTxt').innerHTML = left >= t
+        ? `You'll still have <b>${fmt(left)} ETB</b> — your <b>${fmt(t)} ETB</b> goal stays reached. Your interest is kept.`
+        : `Withdrawing puts you <b>behind</b> your goal: <b>${fmt(left)} of ${fmt(t)} ETB</b> by <b>${by}</b>. Your interest is kept.`;
+    }
     $('go').disabled = !(a > 0) || over;
   }
+  // Target withdraw: confirm first (what leaves, what stays, the goal), then the PIN
   function next() {
     const a = parseFloat(($('amt').value || '').replace(/,/g, ''));
-    sessionStorage.setItem('termLoanData', JSON.stringify({ kind: grp ? 'sav-grp-contribute' : dep ? 'sav-deposit' : 'sav-withdraw', title: (grp ? 'Contribute to ' : dep ? 'Deposit to ' : 'Withdraw from ') + p.name, id: p.id, name: p.name, amount: a,
+    if (!dep && !grp && p.target) {
+      const left = bal - a;
+      $('cfName').textContent = p.name;
+      const rows = [['From', p.name + ' saving'], ['To', 'M-PESA wallet'], ['Withdraw Amount', fmt(a) + ' ETB'], ['Balance After', fmt(left) + ' ETB'],
+        ['Target Amount', fmt(p.target.amount) + ' ETB'], ['Target Date', SV.dateStr(p.target.by)], ['Interest', 'Kept', 'up']];
+      $('cfRows').innerHTML = rows.map(([k, v, c]) => `<div class="cf-row"><span>${k}:</span><b${c ? ` class="${c}"` : ''}>${v}</b></div>`).join('')
+        + `<div class="cf-row total"><span>You Get:</span><b>${fmt(a)} ETB</b></div>`;
+      $('cfScrim').classList.add('show'); $('cfSheet').classList.add('show');
+      return;
+    }
+    toPinNow();
+  }
+  function closeConfirm() { $('cfScrim').classList.remove('show'); $('cfSheet').classList.remove('show'); }
+  function toPinNow() {
+    const a = parseFloat(($('amt').value || '').replace(/,/g, ''));
+    sessionStorage.setItem('termLoanData', JSON.stringify({ kind: grp ? 'sav-grp-contribute' : dep ? 'sav-deposit' : 'sav-withdraw', title: (grp ? 'Contribute to ' : dep ? 'Deposit to ' : 'Withdraw from ') + p.name, ptype: grp ? 'group' : p.kind, id: p.id, name: p.name, amount: a,
       back: location.pathname.split('/').pop() + location.search, next: 'Savings - Done.html' }));
     location.href = 'Term Loan - Enter PIN.html';
   }
   check();
+  if (q.get('amt')) { $('amt').value = q.get('amt'); check(); }
+
+  // Deposit (not withdraw): choose which saving the money goes into
+  if (dep) {
+    const opts = S.pockets.map(x => ({ x, q: `id=${x.id}&kind=deposit`, ic: IC[x.kind], sub: (x.kind === 'target' ? 'Target Saving' : 'Individual Saving') + ' · ' + fmt(SV.balanceOf(x)) + ' ETB' }))
+      .concat(SV.groupsOf(S).filter(g => !g.closed).map(g => ({ x: g, q: `group=${g.id}`, ic: IC.group, sub: 'Group Saving · ' + fmt(SV.balanceOf(g)) + ' ETB' })));
+    const only = q.get('only');
+    if (only) for (let k = opts.length - 1; k >= 0; k--) if ((opts[k].x.kind || 'group') !== only && !(only === 'group' && SV.groupsOf(S).includes(opts[k].x))) opts.splice(k, 1);
+    // Opened for one type: start on a saving of that type
+    if (only && opts.length && !opts.some(o => o.x === p)) location.replace(`Savings - Amount.html?${opts[0].q}&pick=1&only=${only}`);
+    // No saving to put money into yet: start one instead
+    if (!opts.length) location.replace(only === 'group' ? 'Group Saving - Create.html' : `Savings - Create.html?type=${only || 'individual'}`);
+    if (opts.length > 1) {
+      $('fromCard').classList.add('pickable');
+      $('fromCard').onclick = () => { $('scrim').classList.add('show'); $('pickSheet').classList.add('show'); };
+      $('pickList').innerHTML = opts.map(o => `<button class="acc-row${o.x === p ? ' on' : ''}" type="button" onclick="location.replace('Savings - Amount.html?${o.q}&pick=1&picked=1${only ? '&only=' + only : ''}')"><i>${o.ic}</i><span><b>${o.x.name}</b><small>${o.sub}</small></span><em class="tick"></em></button>`).join('');
+    }
+  }
+  function closePick() { $('scrim').classList.remove('show'); $('pickSheet').classList.remove('show'); }
+  // Opened from "Deposit now": show the choice straight away
+  if (dep && q.get('pick') === '1' && !q.get('picked') && $('fromCard').classList.contains('pickable')) setTimeout(() => $('fromCard').onclick(), 250);
 </script>
 <script src="components/keyboard.js"></script>
 <!-- Export to Figma button (shared exporter) -->

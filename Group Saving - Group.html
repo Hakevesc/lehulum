@@ -8,7 +8,7 @@
 <link rel="stylesheet" href="styles/base.css">
 <link rel="stylesheet" href="styles/component-status-bar.css">
 <link rel="stylesheet" href="styles/component-sc-card.css">
-<link rel="stylesheet" href="styles/savings.css">
+<link rel="stylesheet" href="styles/savings.css?v=20261125c">
 <style>
   @import url('https://api.fontshare.com/v2/css?f[]=switzer@400,500,600,700,800&display=swap');
 
@@ -108,8 +108,8 @@
   <div class="toast" id="toast"></div>
 </div>
 
-<script src="savings-store.js"></script>
-<script src="savings-ui.js"></script>
+<script src="savings-store.js?v=20261125c"></script>
+<script src="savings-ui.js?v=20261125c"></script>
 <script>
   const $ = id => document.getElementById(id);
   const fmt = SV.fmt, IC = SVUI.IC;
@@ -146,14 +146,14 @@
     $('gChip').className = 'chip ' + st.key; $('gChip').textContent = st.label;
     $('gBar').firstElementChild.style.width = Math.max(2, pct) + '%';
     $('gNote').textContent = `${d ? d + ' days to ' : 'Target date '}${SV.dateStr(g.target.by)} · ${pct}%`;
-    $('gSub').innerHTML = `${SV.membersLine(g)} · you put in <b>${fmt(mine)} ETB</b>` + (g.auto ? `<br>Auto-save ${SV.autoLine(g.auto)}` : '');
+    $('gSub').innerHTML = `${SV.membersLine(g)} · you put in <b>${fmt(mine)} ETB</b>` + (g.auto ? `<br>Recurring deposit ${SV.autoLine(g.auto)}` : '');
 
     // Actions: Contribute · Recurring Transfer · Withdraw (admin) or Members
     const can = SV.canWithdraw(g);
     $('acts').innerHTML = SVUI.roundActions([
       { label: 'Contribute', ic: 'plus', kind: 'main', onclick: `location.href='Savings - Amount.html?group=${g.id}'` },
       SVUI.recurring(g.auto, `Savings - Auto Save.html?group=${g.id}`),
-      admin ? { label: 'Withdraw', ic: 'down', kind: can ? '' : 'off', onclick: 'withdraw()' }
+      admin ? { label: 'Withdraw', ic: 'down', circle: true, kind: can ? '' : 'off', onclick: 'withdraw()' }
             : { label: 'Members', ic: 'members', onclick: "$('membersCard').scrollIntoView({behavior:'smooth'})" }
     ]);
 
@@ -177,13 +177,17 @@
     // Transactions with who did it
     const IN = '<svg viewBox="0 0 24 24"><path d="M17 7 7 17M15 17H7V9"/></svg>', OUT = '<svg viewBox="0 0 24 24"><path d="M7 17 17 7M9 7h8v8"/></svg>';
     $('txs').innerHTML = g.txns.length ? g.txns.slice().reverse().map(t => { const out = t.type === 'WITHDRAW', p = SV.person(t.by);
-      return `<div class="tx${out ? ' out' : ''}"><span class="ic">${out ? OUT : IN}</span><span class="inf"><b>${t.label || (t.by === 'me' ? 'You' : p.name) + (out ? ' · withdrawal' : t.auto ? ' · auto-save' : ' · contribution')}</b><small>${SV.dateStr(t.on)}</small></span><span class="amt">${out ? '-' : '+'}${fmt(t.amount)}</span></div>`; }).join('')
+      return `<div class="tx${out ? ' out' : ''}"><span class="ic">${out ? OUT : IN}</span><span class="inf"><b>${t.label || (t.by === 'me' ? 'You' : p.name) + (out ? ' · withdrawal' : t.auto ? ' · recurring deposit' : ' · contribution')}</b><small>${SV.dateStr(t.on)}</small></span><span class="amt">${out ? '-' : '+'}${fmt(t.amount)}</span></div>`; }).join('')
       : '<p class="no-tx">No transactions yet</p>';
 
     // ⋯ menu
     const item = (ic, label, fn) => `<button class="menu-item" onclick="closeSheets(); setTimeout(${fn}, 120)"><i>${ICN[ic]}</i><b>${label}</b></button>`;
-    $('menuItems').innerHTML = admin ? item('edit', 'Edit Group', 'openEdit') + item('add', 'Add Members', 'addMembers') + item('close', 'Close Group', 'askCloseGroup')
-      : (g.leave && g.leave.who === 'me' ? '' : item('leave', 'Leave Group', 'askLeave'));
+    // Same list as every savings menu: Account details · FAQ, then the group's own actions
+    const link = (svg, label, href) => `<button class="menu-item" type="button" onclick="location.href='${href}'"><i>${svg}</i><b>${label}</b></button>`;
+    const INFO = '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8h.01"/></svg>';
+    $('menuItems').innerHTML = link('<svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2.5"/><circle cx="9" cy="11" r="2"/><path d="M6 16c.6-1.4 1.7-2 3-2s2.4.6 3 2M14 10h4M14 13h3"/></svg>', 'Account details', 'Savings - Account Details.html?group=' + g.id) + link('<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M9.5 9.5a2.5 2.5 0 1 1 3.5 2.3c-.6.3-1 .8-1 1.5v.4M12 17h.01"/></svg>', 'FAQ', 'Savings - Help.html?tab=group')
+      + (admin ? item('edit', 'Edit Group', 'openEdit') + item('add', 'Add Members', 'addMembers') + item('close', 'Close Group', 'askCloseGroup')
+      : (g.leave && g.leave.who === 'me' ? '' : item('leave', 'Leave Group', 'askLeave')));
     $('menuBtn').style.visibility = $('menuItems').innerHTML ? '' : 'hidden';
   }
   paint();
@@ -265,9 +269,10 @@
   }
   if (g.leave && g.leave.who === 'me') setTimeout(tickApprovals, 3600);
   const done = q.get('done');
-  if (done) setTimeout(() => toast({ contribute: 'Contribution added to ' + g.name, leave: 'Leave request sent', approve: 'You approved the request', auto: 'Auto-save is on', autostop: 'Auto-save stopped' }[done] || 'Done'), 300);
+  if (done) setTimeout(() => toast({ contribute: 'Contribution added to ' + g.name, leave: 'Leave request sent', approve: 'You approved the request', auto: 'Recurring deposit is on', autostop: 'Recurring deposit deleted' }[done] || 'Done'), 300);
 </script>
 <!-- Export to Figma button (shared exporter) -->
+<script src="components/date-picker.js?v=3"></script>
 <script src="figma-export.js"></script>
 <script src="test-scenarios-data.js"></script>
 <script src="test-scenarios.js"></script>

@@ -211,8 +211,390 @@ body { font-family: Switzer, sans-serif; }
 .rbtn.main i svg { stroke: #FFF; }
 .rbtn.off i { background: #EDEDF0; }
 .rbtn.off i svg { stroke: #8A8A94; }
+.rbtn.circle i { border-radius: 50%; }
 .rbtn.on i::after { content: ''; position: absolute; top: -3px; right: -3px; width: 12px; height: 12px; border-radius: 50%; background: #16A34A; box-shadow: 0 0 0 2px var(--Background, #F5F5F5); }
 .rbtn b { font-size: 12.5px; font-weight: 600; line-height: 1.25; color: var(--On-Surface, #1C1C21); text-align: center; }
 .rbtn small { margin-top: -6px; font-size: 11px; color: var(--On-Surface-Low, #7C7C87); }
 .rbtn.on small { color: #167C2A; font-weight: 600; }
 .rbtn:disabled { opacity: 0.45; cursor: default; }
+
+/* Action row v2: rounded-rectangle buttons with text inside, and one circle (Withdraw) */
+.rbtns { grid-template-columns: minmax(0, 1fr) minmax(0, 1.25fr) 50px; gap: 10px; align-items: center; padding: 0; }
+.rbtn { position: relative; flex-direction: row; justify-content: center; gap: 7px; height: 50px; padding: 0 10px; border-radius: 16px; background: var(--Primary-Light, #FFF1F2); }
+.rbtn i { width: auto; height: auto; background: none !important; box-shadow: none !important; border-radius: 0; position: static; }
+.rbtn i svg { width: 19px; height: 19px; }
+.rbtn b { font-size: 13px; font-weight: 600; color: var(--Primary, #FE353D); white-space: nowrap; }
+.rbtn.main { background: var(--Primary, #FE353D); box-shadow: 0 4px 14px rgba(254,53,61,0.28); }
+.rbtn.main b { color: #FFF; }
+.rbtn.off { background: #EDEDF0; }
+.rbtn.off b { color: #55555E; }
+.rbtn.on::after { content: ''; position: absolute; top: -3px; right: -3px; width: 12px; height: 12px; border-radius: 50%; background: #16A34A; box-shadow: 0 0 0 2px var(--Background, #F5F5F5); }
+.rbtn.on i::after { display: none; }
+.rbtn.circle { width: 50px; padding: 0; border-radius: 50%; }
+.rbtn.circle b { display: none; }
+
+/* Action row v3 (every saving type): the Saving & Credit shortcut tiles — a white
+   card of light-pink tiles, icon · label · chevron; an odd last tile spans the row */
+.rbtns { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; padding: 8px; background: #FFF; border-radius: 22px; box-shadow: 0 2px 12px rgba(0,0,0,0.04); align-items: stretch; }
+.rbtns > .tile:last-child:nth-child(odd) { grid-column: 1 / -1; }
+.rbtns .tile { position: relative; border: none; text-align: left; font-family: Switzer, sans-serif; }
+.rbtns .tile:disabled { opacity: 0.45; cursor: default; }
+.rbtns .tile.on .t-ic::after { content: ''; position: absolute; top: 6px; left: 30px; width: 9px; height: 9px; border-radius: 50%; background: #16A34A; box-shadow: 0 0 0 2px #FFF6F6; }
+.rbtns .t-txt b { white-space: normal; line-height: 1.25; }
+/* Action row v4: one row of equal tiles that scrolls sideways */
+.rbtns { display: flex; overflow-x: auto; scroll-snap-type: x proximity; scrollbar-width: none; gap: 8px; }
+.rbtns::-webkit-scrollbar { display: none; }
+.rbtns > .tile { flex: 0 0 150px; scroll-snap-align: start; }
+.rbtns > .tile:last-child:nth-child(odd) { grid-column: auto; }
+.rbtns .t-txt b { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.rbtns > .tile { flex: 0 0 auto; min-width: 150px; padding-right: 12px; }
+.rbtns > .tile:first-child { padding-left: 5px; }
+.rbtns .t-txt b { overflow: visible; }
+
+/* ============================================================
+   Mudaye mascot styling & animations (Ethiopian Basket mascot)
+   States: waving, about (open head + coin), saved (celebration), sad (sitting empty)
+   ============================================================ */
+@keyframes mudayeFloat {
+  0%, 100% { transform: translateY(0) rotate(0deg); }
+  50% { transform: translateY(-6px) rotate(1.5deg); }
+}
+@keyframes mudayeCoinDrop {
+  0%, 100% { transform: translateY(0) scale(1); }
+  50% { transform: translateY(-5px) scale(1.02); }
+}
+@keyframes mudayeCheer {
+  0%, 100% { transform: translateY(0) scale(1); }
+  35% { transform: translateY(-8px) scale(1.04); }
+  65% { transform: translateY(-3px) scale(1.02); }
+}
+@keyframes mudayeSadSigh {
+  0%, 100% { transform: translateY(0) scale(1); }
+  50% { transform: translateY(4px) scale(0.98); }
+}
+
+.mudaye-art-box {
+  position: absolute;
+  right: 6px;
+  bottom: 12px;
+  width: 136px;
+  height: 136px;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  pointer-events: auto;
+  cursor: pointer;
+  z-index: 2;
+}
+.mudaye-art-box img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  filter: drop-shadow(0 10px 18px rgba(0,0,0,0.22));
+  transition: transform 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+.mudaye-art-box:hover img {
+  transform: scale(1.06);
+}
+.mudaye-art-box.state-waving img {
+  animation: mudayeFloat 3.2s ease-in-out infinite;
+}
+.mudaye-art-box.state-about img {
+  animation: mudayeCoinDrop 2.2s ease-in-out infinite;
+}
+.mudaye-art-box.state-saved img {
+  animation: mudayeCheer 1.8s ease-in-out infinite;
+}
+.mudaye-art-box.state-sad img {
+  animation: mudayeSadSigh 3.8s ease-in-out infinite;
+}
+
+/* Mascot state badge for interactive preview */
+.mudaye-badge-tap {
+  position: absolute;
+  top: 10px;
+  right: 12px;
+  padding: 3px 8px;
+  border-radius: 999px;
+  background: rgba(255,255,255,0.25);
+  backdrop-filter: blur(4px);
+  color: #FFF;
+  font-size: 10px;
+  font-weight: 600;
+  cursor: pointer;
+  z-index: 3;
+  user-select: none;
+  border: 1px solid rgba(255,255,255,0.35);
+  transition: background 0.2s;
+}
+.mudaye-badge-tap:hover {
+  background: rgba(255,255,255,0.4);
+}
+
+/* ============================================================
+   Swipeable Hero Slides with Carousel Dots (All Saving Types)
+   ============================================================ */
+.hero { position: relative; }
+.slides { display: flex; overflow-x: auto; scroll-snap-type: x mandatory; scrollbar-width: none; border-radius: 22px; box-shadow: 0 4px 16px rgba(15,23,42,0.06); }
+.slides::-webkit-scrollbar { display: none; }
+.slide { flex: 0 0 100%; scroll-snap-align: start; min-height: 172px; padding-bottom: 30px; box-shadow: none; }
+.hero .dots { position: absolute; left: 0; right: 0; bottom: 12px; display: flex; justify-content: center; gap: 5px; margin-top: 0; }
+.hero .dots i { width: 6px; height: 6px; border-radius: 3px; background: #E2E2E7; cursor: pointer; transition: width 0.25s, background 0.25s; }
+.hero .dots i.on { width: 16px; background: var(--Primary, #FE353D); }
+.slide.remind { position: relative; overflow: hidden; border-radius: 0; padding: 18px 16px 30px; color: #FFF; background: linear-gradient(135deg, #FF4A50 0%, #E0262D 60%, #B3131A 100%); }
+.slide.remind small { font-size: 11.5px; font-weight: 600; letter-spacing: 0.4px; color: rgba(255,255,255,0.85); text-transform: uppercase; }
+.slide.remind h3 { margin-top: 6px; max-width: 190px; font-size: 18px; font-weight: 700; line-height: 1.25; color: #FFF; }
+.slide.remind p { margin-top: 6px; max-width: 180px; font-size: 12px; line-height: 1.45; color: rgba(255,255,255,0.9); }
+.slide.remind button { margin-top: 12px; height: 34px; padding: 0 16px; border: none; border-radius: 999px; background: #FFF; color: var(--Primary, #FE353D); font-family: Switzer, sans-serif; font-size: 12.5px; font-weight: 700; cursor: pointer; }
+.slide.remind img { position: absolute; right: -6px; bottom: 18px; width: 128px; height: 128px; object-fit: contain; filter: drop-shadow(0 8px 14px rgba(0,0,0,0.18)); }
+.hero.on-red .dots i { background: rgba(255,255,255,0.45); }
+.hero.on-red .dots i.on { width: 16px; background: #FFF; }
+
+/* ============================================================
+   Top 3-dot menu components (Roll Over, Mini Statement, Account details)
+   Matches exact layout from user reference
+   ============================================================ */
+.menu-pills-row {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+  padding: 7px;
+  margin-bottom: 12px;
+  border-radius: 22px;
+  background: #FFF;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.04);
+}
+.menu-pill-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-width: 0;
+  min-height: 52px;
+  padding: 10px 11px;
+  background: #FFF6F6;
+  border: 1px solid transparent;
+  border-radius: 18px;
+  cursor: pointer;
+  font-family: Switzer, sans-serif;
+  text-align: left;
+  transition: transform 0.15s, border-color 0.15s, background 0.15s;
+}
+.menu-pill-card:hover {
+  border-color: #F7C6CA;
+  background: #FFF1F2;
+  transform: translateY(-1px);
+}
+.menu-pill-card:active {
+  transform: scale(0.98);
+}
+.menu-pill-left {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  min-width: 0;
+}
+.menu-pill-ic {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+.menu-pill-ic svg {
+  width: 20px;
+  height: 20px;
+  stroke: var(--Primary, #FE353D);
+  stroke-width: 2;
+  fill: none;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.menu-pill-title {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--On-Surface, #1C1C21);
+  white-space: nowrap;
+}
+.menu-pill-arrow {
+  width: 15px;
+  height: 15px;
+  stroke: #7C7C87;
+  stroke-width: 2.2;
+  fill: none;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  flex-shrink: 0;
+}
+
+/* Account details accordion */
+.menu-acc-accordion {
+  border: 1px solid #ECECF0;
+  border-radius: 20px;
+  background: #FFF;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.03);
+  margin-bottom: 12px;
+  overflow: hidden;
+  transition: border-color 0.15s;
+}
+.menu-acc-accordion.open {
+  border-color: #F7C6CA;
+}
+.menu-acc-head {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 16px;
+  background: #FFF;
+  border: none;
+  cursor: pointer;
+  font-family: Switzer, sans-serif;
+  text-align: left;
+}
+.menu-acc-head b {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--On-Surface, #1C1C21);
+}
+.menu-acc-head svg {
+  width: 18px;
+  height: 18px;
+  stroke: #7C7C87;
+  stroke-width: 2;
+  fill: none;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  transition: transform 0.25s ease;
+}
+.menu-acc-accordion.open .menu-acc-head svg {
+  transform: rotate(180deg);
+}
+.menu-acc-body {
+  display: none;
+  padding: 0 16px 14px;
+  border-top: 1px solid #F1F1F4;
+  background: #FAFAFB;
+}
+.menu-acc-accordion.open .menu-acc-body {
+  display: block;
+}
+.acc-fact-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 9px 0;
+  font-size: 12.5px;
+}
+.acc-fact-row + .acc-fact-row {
+  border-top: 1px solid #F0F0F3;
+}
+.acc-fact-row span {
+  color: var(--On-Surface-Low, #7C7C87);
+}
+.acc-fact-row b {
+  color: var(--On-Surface, #1C1C21);
+  font-weight: 600;
+  text-align: right;
+}
+.acc-fact-row b.status-active {
+  color: #16A34A;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+}
+.acc-fact-row b.status-active::before {
+  content: '';
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #16A34A;
+}
+
+/* Empty saving card styling (Matching Screen 1) */
+.empty-saving-card {
+  background: #FFF;
+  border-radius: 22px;
+  padding: 24px 18px 20px;
+  text-align: center;
+  box-shadow: 0 4px 16px rgba(15,23,42,0.06);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+.empty-saving-icon {
+  width: 54px;
+  height: 54px;
+  border-radius: 50%;
+  background: #FFF1F2;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 4px;
+}
+.empty-saving-icon svg {
+  width: 26px;
+  height: 26px;
+  stroke: var(--Primary, #FE353D);
+  stroke-width: 1.8;
+  fill: none;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.empty-saving-title {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--On-Surface, #1C1C21);
+}
+.empty-saving-sub {
+  font-size: 12.5px;
+  color: var(--On-Surface-Low, #7C7C87);
+  max-width: 240px;
+  line-height: 1.4;
+  margin-bottom: 10px;
+}
+
+/* Target card bottom row: days left · by date | n% of target (no progress bars on list cards) */
+.p-row { margin-top: 14px; display: flex; align-items: center; justify-content: space-between; gap: 10px; font-size: 12.5px; color: #55555E; }
+.p-row .l { display: flex; align-items: center; gap: 6px; min-width: 0; white-space: nowrap; }
+.p-row .l svg { width: 16px; height: 16px; stroke: var(--Primary, #FE353D); stroke-width: 1.9; fill: none; stroke-linecap: round; stroke-linejoin: round; flex-shrink: 0; }
+.p-row .r { white-space: nowrap; }
+.p-row .r b { color: var(--On-Surface, #1C1C21); font-weight: 700; }
+
+/* Actions v5: Deposit · Recurring Transfer tiles share the row, Withdraw is an icon-only circle at the end */
+.rbtns { align-items: center; }
+.rbtns > .tile { flex: 1 0 auto; min-width: 0; }
+.rbtns > .tcircle { flex: 0 0 52px; width: 52px; height: 52px; border: none; border-radius: 50%; background: #FFF6F6; display: grid; place-items: center; cursor: pointer; }
+.rbtns > .tcircle svg { width: 22px; height: 22px; stroke: var(--Primary, #FE353D); stroke-width: 2; fill: none; stroke-linecap: round; stroke-linejoin: round; }
+.rbtns > .tcircle:active { transform: scale(0.95); }
+.rbtns > .tcircle:disabled, .rbtns > .tcircle.off { opacity: 0.45; cursor: default; }
+/* v5 fit: the two tiles share the space left of the circle; long labels wrap, no chevrons */
+.rbtns { overflow: visible; }
+.rbtns > .tile { flex: 1 1 0; min-width: 0; padding: 10px 10px 10px 6px; }
+.rbtns > .tile .cv { display: none; }
+.rbtns > .tile .t-txt b { white-space: normal; overflow: visible; line-height: 1.2; font-size: 13px; }
+
+/* Three-dot menu v2: one plain list — pink icon square, regular label, small ▸ */
+#menu .menu-item { width: 100%; display: flex; align-items: center; gap: 16px; padding: 12px 4px; border: none; border-top: none; background: none; text-align: left; cursor: pointer; font-family: Switzer, sans-serif; }
+#menu .menu-item + .menu-item, #menu .menu-acc-accordion + .menu-item, #menu .menu-item + .menu-acc-accordion { border-top: none; }
+#menu .menu-item i { width: 48px; height: 48px; border-radius: 14px; background: #FFF1F2; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+#menu .menu-item i svg { width: 22px; height: 22px; stroke: var(--Primary, #FE353D); stroke-width: 1.9; fill: none; stroke-linecap: round; stroke-linejoin: round; }
+#menu .menu-item b { flex: 1; font-size: 16px; font-weight: 400; color: var(--On-Surface, #1C1C21); }
+#menu .menu-item::after { content: ''; width: 0; height: 0; border-top: 5px solid transparent; border-bottom: 5px solid transparent; border-left: 6px solid #1C1C21; margin-right: 6px; transition: transform 0.2s; }
+#menu .menu-acc-accordion.plain { margin: 0; padding: 0; border: none; border-radius: 0; background: none; box-shadow: none; }
+#menu .menu-acc-accordion.plain.open .menu-item::after { transform: rotate(90deg); }
+#menu .menu-acc-accordion.plain .menu-acc-body { margin: 0 4px 6px 68px; }
+
+/* Never-funded saving on the list: a Deposit pill */
+.dep-pill { height: 30px; padding: 0 14px; border: none; border-radius: 999px; background: var(--Primary, #FE353D); color: #FFF; font-family: Switzer, sans-serif; font-size: 12.5px; font-weight: 600; cursor: pointer; box-shadow: 0 4px 10px rgba(254,53,61,0.25); }
+
+/* Empty tab: create step */
+.empty-cta { margin-top: 14px; height: 40px; padding: 0 18px; border: none; border-radius: 999px; background: var(--Primary, #FE353D); color: #FFF; font-family: Switzer, sans-serif; font-size: 13px; font-weight: 600; cursor: pointer; box-shadow: 0 4px 12px rgba(254,53,61,0.25); }
+/* Card subtitle stays on one line */
+.pocket .p-info small { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.pocket .p-info { min-width: 0; }
+
+/* List cards: a divider between the name row and the bottom row (as in the design) */
+.pocket .p-row, .pocket > .p-amt { margin-top: 12px; padding-top: 12px; border-top: 1px solid #F1F1F4; }

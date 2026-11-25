@@ -528,7 +528,7 @@
     document.body.removeChild(ta);
   }
 
-  function downloadReceipt() { showToast('Downloading receipt as PDF...'); }
+  function downloadReceipt() { ReceiptPDF.download({ root: '.receipt-card', name: 'M-PESA Term Loan', toast: showToast }); }
   // PayPal withdrawals return to the PayPal hub; other top-ups to Home
   function goHome() { window.location.href = (isErrif ? 'Overdraft.html' : 'Term Loan.html') + '?done=' + (isErrif && data.turnOff ? 'off' : isRepay ? 'repay' : 'apply'); }
   function addToFavorite() { showToast('Added to favorites!'); }
@@ -582,5 +582,6 @@
 </script>
 <script src="test-scenarios-data.js"></script>
 <script src="test-scenarios.js"></script>
+<script src="components/receipt-pdf.js?v=1"></script>
 </body>
 </html>

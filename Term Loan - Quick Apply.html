@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Quick Apply</title>
+<style>
+  @import url('https://api.fontshare.com/v2/css?f[]=switzer@400,500,600,700,800&display=swap');
+
+  /* Quick Apply (Term Loan → Quick Apply): how much (amount box + slider, the
+     lowest offer minimum to the most you can borrow) and how long (14 / 30 / 60
+     days), then the offers that fit that choice, cheapest first. Tap one to choose
+     it, agree to the loan terms and Continue → confirmation sheet → M-PESA PIN.
+     (layout shared with Repay Loan) */
+  /* Repay a loan (Repayment → Repay, or Loan Details): the loan, the next
+     instalment, then Choose Repayment — type a partial amount, or tap Repay In
+     Full to put the full amount in the box — Continue → confirm sheet → PIN →
+     receipt. Repay In Full is the instalment, or with ?mode=all (Loan Details'
+     Repay All) the whole loan. ?id=<loan>. */
+  :root {
+    --Primary: #FE353D;
+    --Primary-Light: #FFF1F2;
+    --On-Surface: #1C1C21;
+    --On-Surface-Low: #7C7C87;
+    --Background: #F5F5F5;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: Switzer, sans-serif; background: transparent; display: flex; justify-content: center; align-items: center; min-height: 100vh; padding: 20px; }
+  button, input { font-family: inherit; }
+  .phone-frame { width: 360px; height: 780px; background: var(--Background); border-radius: 30px; overflow: hidden; position: relative; box-shadow: 0 20px 60px rgba(0,0,0,0.15); display: flex; flex-direction: column; }
+  .app-content { flex: 1 1 auto; min-height: 0; display: flex; flex-direction: column; }
+
+  .status-bar { display: flex; justify-content: space-between; align-items: center; padding: 14px 24px 8px; background: var(--Background); flex-shrink: 0; }
+  .status-bar .time { font-size: 14px; font-weight: 600; color: var(--On-Surface); }
+  .status-icons { display: flex; align-items: center; gap: 6px; }
+  .status-icons svg { width: 18px; height: 18px; }
+  .header-nav { display: flex; align-items: center; padding: 8px 16px 12px; flex-shrink: 0; }
+  .icon-btn { width: 36px; height: 36px; border-radius: 50%; background: transparent; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+  .icon-btn:hover { background: rgba(0,0,0,0.05); }
+  .icon-btn svg { width: 22px; height: 22px; stroke: var(--On-Surface); stroke-width: 1.8px; fill: none; stroke-linecap: round; stroke-linejoin: round; }
+  .header-title { flex: 1; margin-right: 36px; text-align: center; color: var(--On-Surface); font-size: 17px; font-weight: 500; letter-spacing: 0.3px; }
+
+  .scroll { flex: 1; min-height: 0; overflow-y: auto; padding: 4px 16px 12px; display: flex; flex-direction: column; gap: 12px; scrollbar-width: none; }
+  .scroll::-webkit-scrollbar { width: 0; }
+  .scroll > * { flex-shrink: 0; }
+  .card { background: #FFF; border-radius: 22px; box-shadow: 0 4px 16px rgba(15,23,42,0.06); }
+
+
+  .sec { margin: 6px 2px -4px; font-size: 15px; font-weight: 600; color: var(--On-Surface); }
+  .pick { padding: 16px; }
+  .lbl { font-size: 13px; font-weight: 600; color: var(--On-Surface); }
+  .amount { display: flex; align-items: center; gap: 8px; height: 58px; margin-top: 8px; padding: 0 16px; border: 1px solid #E6E6EA; border-radius: 14px; background: #F3F3F5; }
+  .amount:focus-within { border-color: var(--Primary); background: #FFF; }
+  .amount input { flex: 1; min-width: 0; border: none; outline: none; background: transparent; font-size: 22px; font-weight: 700; color: var(--On-Surface); }
+  .amount small { font-size: 14px; font-weight: 600; color: var(--On-Surface-Low); }
+  /* Money slider: lowest minimum on the left, most you can borrow on the right */
+  .slider { margin-top: 16px; }
+  .slider input { -webkit-appearance: none; appearance: none; width: 100%; height: 6px; border-radius: 3px; outline: none; cursor: pointer;
+    background: linear-gradient(90deg, var(--Primary) var(--p, 0%), #ECECF0 var(--p, 0%)); }
+  .slider input::-webkit-slider-thumb { -webkit-appearance: none; width: 22px; height: 22px; border-radius: 50%; background: #FFF; border: 3px solid var(--Primary); box-shadow: 0 2px 8px rgba(254,53,61,0.3); }
+  .slider input::-moz-range-thumb { width: 18px; height: 18px; border-radius: 50%; background: #FFF; border: 3px solid var(--Primary); }
+  .ends { display: flex; justify-content: space-between; margin-top: 8px; font-size: 11.5px; color: var(--On-Surface-Low); }
+  .ends b { display: block; margin-top: 2px; font-size: 12.5px; font-weight: 600; color: var(--On-Surface); }
+  .ends span:last-child { text-align: right; }
+  .err { margin-top: 8px; font-size: 12px; font-weight: 600; color: var(--Primary); }
+  .terms { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; margin-top: 10px; }
+  .term { height: 58px; border: 1.5px solid #ECECF0; border-radius: 14px; background: #FFF; cursor: pointer; font-family: Switzer, sans-serif; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 1px; }
+  .term b { font-size: 17px; font-weight: 700; color: var(--On-Surface); }
+  .term small { font-size: 11px; color: var(--On-Surface-Low); }
+  .term.on { border-color: var(--Primary); background: var(--Primary-Light); }
+  .term.on b { color: var(--Primary); }
+  /* Your selection */
+  .sel { display: grid; grid-template-columns: 1fr 1fr; padding: 14px 16px; }
+  .sel div + div { padding-left: 14px; border-left: 1px solid #F1F1F4; }
+  .sel small { display: block; font-size: 11.5px; color: var(--On-Surface-Low); }
+  .sel b { display: block; margin-top: 3px; font-size: 16px; font-weight: 700; color: var(--On-Surface); }
+  .hdr { display: flex; justify-content: space-between; align-items: baseline; margin: 4px 2px -4px; }
+  .hdr small { font-size: 12px; color: var(--On-Surface-Low); }
+  /* Matching offers */
+  .offers { display: flex; flex-direction: column; gap: 10px; }
+  .offer { padding: 14px; }
+  .o-top { display: flex; align-items: center; gap: 12px; }
+  .o-top .logo { width: 40px; height: 40px; border-radius: 12px; border: 1px solid #EFEFF2; background: #FFF; display: flex; align-items: center; justify-content: center; overflow: hidden; flex-shrink: 0; }
+  .o-top .logo img { width: 30px; height: 30px; object-fit: contain; }
+  .o-top .info { flex: 1; min-width: 0; }
+  .o-top b { display: block; font-size: 14.5px; font-weight: 700; color: var(--On-Surface); }
+  .o-top small { display: block; margin-top: 2px; font-size: 12px; color: var(--On-Surface-Low); }
+  .best { flex-shrink: 0; padding: 3px 9px; border-radius: 999px; background: #E8F9EE; color: #167C2A; font-size: 10.5px; font-weight: 700; }
+  .o-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 12px; }
+  .o-grid div { padding: 8px 10px; border-radius: 12px; background: #F7F7F9; }
+  .o-grid small { display: block; font-size: 10.5px; color: var(--On-Surface-Low); }
+  .o-grid b { display: block; margin-top: 2px; font-size: 13px; font-weight: 700; color: var(--On-Surface); white-space: nowrap; }
+  .o-foot { display: flex; align-items: center; justify-content: space-between; margin-top: 12px; }
+  .o-foot span { font-size: 12px; color: #55555E; }
+  .o-foot span b { color: var(--On-Surface); }
+  .offer { cursor: pointer; border: 1.5px solid transparent; }
+  .offer.on { border-color: var(--Primary); background: #FFFBFB; }
+  .radio { width: 22px; height: 22px; border-radius: 50%; border: 2px solid #D0D0D6; flex-shrink: 0; display: flex; align-items: center; justify-content: center; }
+  .offer.on .radio { border-color: var(--Primary); }
+  .offer.on .radio::after { content: ''; width: 11px; height: 11px; border-radius: 50%; background: var(--Primary); }
+  .bottom-bar { flex-shrink: 0; padding: 10px 16px 18px; background: var(--Background); }
+  .agree { display: flex; align-items: flex-start; gap: 10px; padding: 0 4px 10px; font-size: 12.5px; line-height: 1.45; color: #55555E; cursor: pointer; }
+  .agree input { width: 18px; height: 18px; margin-top: 1px; accent-color: var(--Primary); flex-shrink: 0; cursor: pointer; }
+  .agree a { color: var(--Primary); font-weight: 600; text-decoration: none; }
+  .btn-primary { width: 100%; height: 52px; border: none; border-radius: 14px; background: var(--Primary); color: #FFF; font-family: Switzer, sans-serif; font-size: 15px; font-weight: 500; cursor: pointer; box-shadow: 0 4px 16px rgba(254,53,61,0.25); }
+  .btn-primary:disabled { background: #E0E0E0; color: #7C7C87; box-shadow: none; cursor: default; }
+  /* Confirmation sheet (same as Apply) */
+  .scrim { position: absolute; inset: 0; z-index: 100; background: rgba(0,0,0,0.42); opacity: 0; visibility: hidden; transition: opacity 0.22s, visibility 0.22s; }
+  .scrim.show { opacity: 1; visibility: visible; }
+  .sheet { position: absolute; left: 0; right: 0; bottom: 0; z-index: 101; background: #FFF; border-radius: 28px 28px 0 0; padding: 10px 16px 22px; transform: translateY(100%); transition: transform 0.28s cubic-bezier(.2,.8,.2,1); }
+  .sheet.show { transform: translateY(0); }
+  .sheet-grip { width: 40px; height: 4px; border-radius: 2px; background: #D8D8DE; margin: 0 auto 18px; }
+  .cf-head { position: relative; display: flex; align-items: center; gap: 12px; border: 1px solid #E6E6EA; border-radius: 16px; padding: 14px; }
+  .cf-head .logo { width: 42px; height: 42px; border-radius: 12px; border: 1px solid #EFEFF2; display: flex; align-items: center; justify-content: center; overflow: hidden; flex-shrink: 0; }
+  .cf-head .logo img { width: 30px; height: 30px; object-fit: contain; }
+  .cf-head b { display: block; font-size: 15px; font-weight: 700; color: var(--On-Surface); }
+  .cf-head small { display: block; margin-top: 2px; font-size: 12.5px; color: var(--On-Surface-Low); }
+  .cf-badge { position: absolute; top: -11px; right: 14px; padding: 4px 10px; border-radius: 999px; background: #EDEDF0; color: #3A3A42; font-size: 10px; font-weight: 700; letter-spacing: 0.5px; }
+  .cf-rows { margin: 8px 0 18px; }
+  .cf-row { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 11px 0; border-bottom: 1px solid #EFEFF2; }
+  .cf-row:last-child { border-bottom: none; }
+  .cf-row span { font-size: 12.5px; color: #55555E; }
+  .cf-row b { font-size: 12.5px; font-weight: 700; color: var(--On-Surface); white-space: nowrap; }
+  .cf-row.total b { font-size: 15px; color: var(--Primary); }
+  .cf-actions { display: flex; gap: 12px; }
+  .cf-btn { flex: 1; height: 52px; border-radius: 14px; background: #FFF; font-family: Switzer, sans-serif; font-size: 15px; font-weight: 500; cursor: pointer; }
+  .cf-btn.cancel { border: 1.5px solid #E0E0E4; color: #55555E; }
+  .cf-btn.confirm { border: 1.5px solid var(--Primary); color: var(--Primary); }
+  .apply { height: 36px; padding: 0 20px; border: none; border-radius: 999px; background: var(--Primary); color: #FFF; font-family: Switzer, sans-serif; font-size: 13px; font-weight: 600; cursor: pointer; box-shadow: 0 3px 10px rgba(254,53,61,0.25); }
+  .none { padding: 22px 16px; text-align: center; font-size: 13px; line-height: 1.5; color: var(--On-Surface-Low); }
+</style>
+<link rel="stylesheet" href="styles/device.css">
+</head>
+<body>
+<div class="phone-frame">
+  <div class="status-bar">
+    <span class="time">10:00</span>
+    <div class="status-icons">
+      <svg data-name="icon-wifi" viewBox="0 0 24 24" fill="none"><path d="M1 9l2 2c4.97-4.97 13.03-4.97 18 0l2-2C16.93 2.93 7.08 2.93 1 9z" fill="#1C1C21"/><path d="M5 13l2 2c2.76-2.76 7.24-2.76 10 0l2-2C15.14 9.14 8.87 9.14 5 13z" fill="#1C1C21"/><path d="M9 17l2 2c1.1-1.1 2.9-1.1 4 0l2-2c-2.21-2.21-5.79-2.21-8 0z" fill="#1C1C21"/></svg>
+      <svg data-name="icon-signal" viewBox="0 0 24 24" fill="none"><rect x="2" y="6" width="4" height="12" rx="1" fill="#1C1C21"/><rect x="8" y="4" width="4" height="14" rx="1" fill="#1C1C21"/><rect x="14" y="2" width="4" height="16" rx="1" fill="#1C1C21"/><rect x="20" y="0" width="4" height="18" rx="1" fill="#1C1C21" opacity="0.3"/></svg>
+      <svg data-name="icon-battery" viewBox="0 0 28 14" fill="none"><rect x="0" y="1" width="22" height="12" rx="2.5" stroke="#1C1C21" stroke-width="1.5"/><rect x="2" y="3" width="16" height="8" rx="1" fill="#1C1C21"/><rect x="24" y="4" width="2" height="6" rx="1" fill="#1C1C21"/></svg>
+    </div>
+  </div>
+
+  <div class="app-content">
+    <div class="header-nav">
+      <button class="icon-btn" onclick="location.href='Term Loan.html'" aria-label="Back"><svg data-name="icon-arrow-left" viewBox="0 0 24 24"><path d="M19 12H5M12 19l-7-7 7-7"/></svg></button>
+      <span class="header-title">Quick Apply</span>
+    </div>
+
+    <div class="scroll">
+      <div class="card pick">
+        <span class="lbl">How much do you need?</span>
+        <label class="amount"><input id="amt" inputmode="numeric" oninput="typed()"><small>ETB</small></label>
+        <div class="slider"><input type="range" id="range" oninput="slid()"></div>
+        <div class="ends"><span>Minimum<b id="minLbl"></b></span><span>Maximum<b id="maxLbl"></b></span></div>
+        <p class="err" id="err" style="display:none"></p>
+      </div>
+
+      <div class="card pick">
+        <span class="lbl">Repay in</span>
+        <div class="terms" id="terms">
+          <button class="term" type="button" data-d="14"><b>14</b><small>days</small></button>
+          <button class="term on" type="button" data-d="30"><b>30</b><small>days</small></button>
+          <button class="term" type="button" data-d="60"><b>60</b><small>days</small></button>
+        </div>
+      </div>
+
+      <p class="sec">Your selection</p>
+      <div class="card sel"><div><small>Amount</small><b id="selAmt"></b></div><div><small>Repay in</small><b id="selDays"></b></div></div>
+
+      <div class="hdr"><span class="sec" style="margin:0">Offers for you</span><small id="count"></small></div>
+      <div class="offers" id="offers"></div>
+    </div>
+
+    <div class="bottom-bar">
+      <label class="agree"><input type="checkbox" id="agree" onchange="ready()"><span>I agree to the <a href="Term Loan - Help.html?view=terms">loan terms</a>. Late repayment adds a <b id="pen">0.5%</b> daily penalty and can lower my credit score.</span></label>
+      <button class="btn-primary" id="go" disabled onclick="openConfirm()">Continue</button>
+    </div>
+  </div>
+
+  <div class="scrim" id="scrim" onclick="closeConfirm()"></div>
+  <div class="sheet" id="sheet" role="dialog" aria-label="Confirm loan">
+    <div class="sheet-grip"></div>
+    <div class="cf-head"><span class="cf-badge">APPLY FOR LOAN</span><span class="logo"><img id="cfLogo" src="" alt=""></span><span><b id="cfName"></b><small id="cfLender"></small></span></div>
+    <div class="cf-rows" id="cfRows"></div>
+    <div class="cf-actions"><button class="cf-btn cancel" type="button" onclick="closeConfirm()">Cancel</button><button class="cf-btn confirm" type="button" onclick="confirmLoan()">Apply</button></div>
+  </div>
+</div>
+
+<script src="term-loan-store.js"></script>
+<script>
+  const $ = id => document.getElementById(id);
+  const fmt = TL.fmt, n0 = v => fmt(v).replace(/\.00$/, '');
+  // Range: the lowest offer minimum up to the most you can borrow (limit left, capped by the biggest offer)
+  const avail = Math.max(0, TL.LIMIT - TL.outstanding(TL.load()));
+  const MIN = Math.min(...TL.OFFERS.map(o => o.min));
+  const MAX = Math.max(MIN, Math.min(avail, Math.max(...TL.OFFERS.map(o => o.max))));
+  const STEP = 100;
+  let amount = Math.min(MAX, Math.max(MIN, 5000)), period = 30;
+
+  $('range').min = MIN; $('range').max = MAX; $('range').step = STEP;
+  $('range').value = amount;
+  $('minLbl').textContent = n0(MIN) + ' ETB'; $('maxLbl').textContent = n0(MAX) + ' ETB';
+  document.querySelectorAll('.term').forEach(b => b.onclick = () => {
+    period = +b.dataset.d; document.querySelectorAll('.term').forEach(x => x.classList.toggle('on', x === b)); render();
+  });
+
+  function slid() { amount = +$('range').value; $('amt').value = amount.toLocaleString('en-US'); render(); }
+  function typed() {
+    const v = Number(($('amt').value || '').replace(/[^\d]/g, ''));
+    $('amt').value = v ? v.toLocaleString('en-US') : '';
+    amount = v; $('range').value = Math.min(MAX, Math.max(MIN, v)); render();
+  }
+
+  // An offer fits when the amount is within its range and it has a term in the chosen
+  // window: 14 days → up to 14, 30 → 15–30, 60 → 31–60 (the longest such term is used)
+  const WIN = { 14: [1, 14], 30: [15, 30], 60: [31, 60] };
+  function fits(o) {
+    const [lo, hi] = WIN[period], d = o.days.filter(x => x >= lo && x <= hi);
+    return amount >= o.min && amount <= Math.min(o.max, avail) && d.length ? Math.max(...d) : 0;
+  }
+  function render() {
+    const p = (Math.min(MAX, Math.max(MIN, amount)) - MIN) / ((MAX - MIN) || 1) * 100;
+    $('range').style.setProperty('--p', p + '%');
+    const bad = amount && (amount < MIN || amount > MAX);
+    $('err').style.display = bad ? '' : 'none';
+    $('err').textContent = amount > MAX ? `The most you can borrow is ${n0(MAX)} ETB.` : `The minimum is ${n0(MIN)} ETB.`;
+    $('selAmt').textContent = amount ? n0(amount) + ' ETB' : '—';
+    $('selDays').textContent = period + ' days';
+    const list = TL.OFFERS.map(o => ({ o, d: fits(o) })).filter(x => x.d).map(x => ({ ...x, q: TL.quote(x.o, amount, x.d) })).sort((a, b) => a.q.total - b.q.total);
+    $('count').textContent = list.length ? list.length + (list.length === 1 ? ' offer' : ' offers') : '';
+    shown = list;
+    if (!list.some(x => x.o.id === chosen)) chosen = list.length ? list[0].o.id : null;   // keep the choice if it still fits, else the best
+    $('offers').innerHTML = list.length ? list.map(({ o, d, q }, i) => `<div class="card offer${o.id === chosen ? ' on' : ''}" onclick="choose('${o.id}')">
+        <div class="o-top"><span class="logo"><img src="${o.logo}" alt=""></span><span class="info"><b>${o.name}</b><small>${o.lender} · ${o.productLabel}</small></span>${i === 0 && list.length > 1 ? '<span class="best">Best offer</span>' : ''}<span class="radio"></span></div>
+        <div class="o-grid"><div><small>You get</small><b>${fmt(amount)} ETB</b></div><div><small>You repay</small><b>${fmt(q.total)} ETB</b></div>
+          <div><small>Fees</small><b>${fmt(q.access + q.dailyFee)} ETB</b></div><div><small>Repay in</small><b>${d} days${o.inst > 1 ? ' · ' + o.inst + ' parts' : ''}</b></div></div>
+        <div class="o-foot"><span>Due by <b>${TL.dateStr(q.due)}</b></span></div>
+      </div>`).join('')
+      : `<div class="card none">No offer for <b>${amount ? n0(amount) + ' ETB' : 'this amount'}</b> over ${period} days.<br>Try a different amount or period.</div>`;
+    ready();
+  }
+
+  // The chosen offer, the terms box, Continue → confirmation sheet → PIN
+  let shown = [], chosen = null;
+  const pick = () => shown.find(x => x.o.id === chosen);
+  function choose(id) { chosen = id; render(); }
+  function ready() {
+    const c = pick();
+    if (c) $('pen').textContent = (c.o.penalty * 100).toFixed(1) + '%';
+    $('go').disabled = !(c && $('agree').checked);
+  }
+  function openConfirm() {
+    const c = pick(); if (!c) return;
+    const { o, d, q } = c, pct = v => String(+(v * 100).toFixed(2));
+    $('cfLogo').src = o.logo; $('cfName').textContent = o.name; $('cfLender').textContent = o.lender;
+    const rows = [['To', 'Main account'], ['Loan Amount', fmt(amount) + ' ETB'], [`Access Fee (${pct(o.access)}%)`, fmt(q.access) + ' ETB'], [`Maintenance Fee (${pct(o.daily)}%)`, fmt(q.dailyFee) + ' ETB']]
+      .concat(q.instalments.map(i => [`Installment ${i.n} of ${q.instalments.length}`, fmt(i.amount) + ' ETB']))
+      .concat([['Repay By', TL.dateStr(q.due)], ['Total Repayment', fmt(q.total) + ' ETB']]);
+    $('cfRows').innerHTML = rows.map(([k, v], i) => `<div class="cf-row${i === rows.length - 1 ? ' total' : ''}"><span>${k}:</span><b>${v}</b></div>`).join('');
+    $('scrim').classList.add('show'); $('sheet').classList.add('show');
+  }
+  function closeConfirm() { $('scrim').classList.remove('show'); $('sheet').classList.remove('show'); }
+  document.addEventListener('keydown', e => { if (e.key === 'Escape') closeConfirm(); });
+  // Same hand-off as Term Loan - Apply: the receipt books the loan
+  function confirmLoan() {
+    const { o, d, q } = pick();
+    sessionStorage.setItem('termLoanData', JSON.stringify({
+      kind: 'apply', offer: o.id, lender: o.lender, logo: o.logo, product: o.name,
+      amount, days: d, access: q.access, dailyFee: q.dailyFee, total: q.total, instalments: q.instalments, due: q.due,
+      back: 'Term Loan - Quick Apply.html'
+    }));
+    location.href = 'Term Loan - Enter PIN.html';
+  }
+  slid();
+</script>
+<script src="components/keyboard.js"></script>
+<!-- Export to Figma button (shared exporter) -->
+<script src="figma-export.js"></script>
+<script src="test-scenarios-data.js"></script>
+<script src="test-scenarios.js"></script>
+</body>
+</html>

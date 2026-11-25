@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Target Saving — M-PESA</title>
+<link rel="stylesheet" href="styles/design-tokens.css">
+<link rel="stylesheet" href="styles/base.css">
+<link rel="stylesheet" href="styles/component-status-bar.css">
+<link rel="stylesheet" href="styles/component-sc-card.css">
+<link rel="stylesheet" href="styles/savings.css?v=20261125c">
+<style>
+  @import url('https://api.fontshare.com/v2/css?f[]=switzer@400,500,600,700,800&display=swap');
+
+  /* First page of a saving type (Savings → Individual Saving / Target Saving
+     tile; ?type=individual|target): the total for that type with its stats,
+     every saving of that type (targets behind schedule last), and a New button. */
+
+  /* Hero: swipeable slides with dots — today's saving reminder first, then the totals */
+  .hero { position: relative; }
+  .slides { display: flex; overflow-x: auto; scroll-snap-type: x mandatory; scrollbar-width: none; border-radius: 22px; box-shadow: 0 4px 16px rgba(15,23,42,0.06); }
+  .slides::-webkit-scrollbar { display: none; }
+  .slide { flex: 0 0 100%; scroll-snap-align: start; min-height: 172px; padding-bottom: 30px; box-shadow: none; }
+  .dots { position: absolute; left: 0; right: 0; bottom: 12px; display: flex; justify-content: center; gap: 5px; }
+  .dots i { width: 6px; height: 6px; border-radius: 3px; background: #E2E2E7; cursor: pointer; transition: width 0.25s, background 0.25s; }
+  .dots i.on { width: 16px; background: var(--Primary); }
+  .remind { position: relative; overflow: hidden; border-radius: 0; padding: 18px 16px 30px; color: #FFF; background: linear-gradient(135deg, #FF4A50 0%, #E0262D 60%, #B3131A 100%); }
+  .remind small { font-size: 11.5px; font-weight: 600; letter-spacing: 0.4px; color: rgba(255,255,255,0.85); text-transform: uppercase; }
+  .remind h3 { margin-top: 6px; max-width: 190px; font-size: 18px; font-weight: 700; line-height: 1.25; }
+  .remind p { margin-top: 6px; max-width: 180px; font-size: 12px; line-height: 1.45; color: rgba(255,255,255,0.9); }
+  .remind button { margin-top: 12px; height: 34px; padding: 0 16px; border: none; border-radius: 999px; background: #FFF; color: var(--Primary); font-family: Switzer, sans-serif; font-size: 12.5px; font-weight: 700; cursor: pointer; }
+  .remind img { position: absolute; right: -6px; bottom: 18px; width: 128px; height: 128px; object-fit: contain; filter: drop-shadow(0 8px 14px rgba(0,0,0,0.18)); }
+  .hero.on-red .dots i { background: rgba(255,255,255,0.45); }
+  .hero.on-red .dots i.on { background: #FFF; }
+  /* One card: the balance card only (no reminder slide / dots), with Mudaye + a "Deposit now" bubble */
+  .slide.remind, #dots { display: none !important; }
+  .slide.sc-card { position: relative; }
+  .slide.sc-card .s-stats { margin-top: 58px; }
+  .sv-mudaye { position: absolute; top: 44px; right: 22px; width: 88px; height: 88px; object-fit: contain; cursor: pointer; z-index: 1; animation: svWave 3.2s ease-in-out infinite; transform-origin: 50% 90%; }
+  @keyframes svWave { 0%, 100% { transform: rotate(0); } 8% { transform: rotate(-5deg); } 16% { transform: rotate(4deg); } 24% { transform: rotate(0); } }
+  .sv-bubble { position: absolute; top: 14px; right: 14px; z-index: 2; display: inline-flex; align-items: center; gap: 5px; height: 30px; padding: 0 12px; border: none; border-radius: 999px; background: var(--Primary, #FE353D); color: #FFF; font-family: Switzer, sans-serif; font-size: 12px; font-weight: 600; white-space: nowrap; cursor: pointer; box-shadow: 0 4px 12px rgba(254,53,61,0.3); animation: svPop 0.5s cubic-bezier(.2,1.4,.4,1) 0.3s both; }
+  .sv-bubble::after { content: ''; position: absolute; left: 22px; bottom: -5px; width: 10px; height: 10px; background: inherit; transform: rotate(45deg); border-radius: 2px; }
+  .sv-bubble svg { width: 13px; height: 13px; stroke: #FFF; stroke-width: 2.4; fill: none; stroke-linecap: round; stroke-linejoin: round; }
+  @keyframes svPop { from { opacity: 0; transform: scale(0.6) translateY(6px); } to { opacity: 1; transform: none; } }
+</style>
+<link rel="stylesheet" href="styles/device.css">
+</head>
+<body>
+<div class="phone-frame">
+  <div class="status-bar">
+    <span class="time">10:00</span>
+    <div class="status-icons">
+      <svg data-name="icon-wifi" viewBox="0 0 24 24" fill="none"><path d="M1 9l2 2c4.970-4.970 13.030-4.970 18 0l2-2C16.930 2.930 7.080 2.930 1 9z" fill="#1C1C21"/><path d="M5 13l2 2c2.760-2.760 7.240-2.760 10 0l2-2C15.140 9.140 8.870 9.140 5 13z" fill="#1C1C21"/><path d="M9 17l2 2c1.100-1.100 2.900-1.100 4 0l2-2c-2.210-2.210-5.790-2.210-8 0z" fill="#1C1C21"/></svg>
+      <svg data-name="icon-signal" viewBox="0 0 24 24" fill="none"><rect x="2" y="6" width="4" height="12" rx="1" fill="#1C1C21"/><rect x="8" y="4" width="4" height="14" rx="1" fill="#1C1C21"/><rect x="14" y="2" width="4" height="16" rx="1" fill="#1C1C21"/><rect x="20" y="0" width="4" height="18" rx="1" fill="#1C1C21" opacity="0.3"/></svg>
+      <svg data-name="icon-battery" viewBox="0 0 28 14" fill="none"><rect x="0" y="1" width="22" height="12" rx="2.5" stroke="#1C1C21" stroke-width="1.5"/><rect x="2" y="3" width="16" height="8" rx="1" fill="#1C1C21"/><rect x="24" y="4" width="2" height="6" rx="1" fill="#1C1C21"/></svg>
+    </div>
+  </div>
+
+  <div class="app-content">
+    <div class="header-nav">
+      <button class="icon-btn" onclick="location.href='Savings.html?menu=20261119d'" aria-label="Back"><svg data-name="icon-arrow-left" viewBox="0 0 24 24"><path d="M19 12H5M12 19l-7-7 7-7"/></svg></button>
+      <span class="header-title" id="hTitle">Target Saving</span>
+      <button class="icon-btn" onclick="openSheet('menu')" aria-label="Menu"><svg data-name="icon-more" viewBox="0 0 24 24"><circle cx="12" cy="5" r="1.2"/><circle cx="12" cy="12" r="1.2"/><circle cx="12" cy="19" r="1.2"/></svg></button>
+    </div>
+    <div class="hero" id="hero">
+      <div class="slides" id="slides">
+        <!-- Today's reminder: changes with the day of the week -->
+        <div class="slide remind" data-name="saving-reminder">
+          <small id="rKicker"></small>
+          <h3 id="rTitle"></h3>
+          <p id="rText"></p>
+          <button type="button" id="rBtn">Deposit Now</button>
+          <div class="mudaye-art-box state-waving" id="mudayeBox" onclick="cycleMudayeState()" title="Tap to animate Mudaye states">
+            <img id="mudayeImg" src="assets/Mudaye/Mudaye.png" alt="Mudaye">
+          </div>
+          <span class="mudaye-badge-tap" id="mudayeBadge" onclick="cycleMudayeState()">Waving &#x21c4;</span>
+        </div>
+        <div class="slide sc-card">
+          <button class="sv-bubble" type="button" onclick="depositNow()">Deposit now<svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button>
+          <img class="sv-mudaye" src="assets/Mudaye/Mudaye.png" alt="Mudaye" onclick="depositNow()">
+      <div class="s-label"><span id="tLabel"></span> <button class="eye" id="eyeBtn" title="Show balances"><svg viewBox="0 0 24 24"><path d="M1 12s4-7.5 11-7.5S23 12 23 12s-4 7.5-11 7.5S1 12 1 12z"/><circle cx="12" cy="12" r="3"/></svg></button></div>
+      <div class="s-amount"><span data-mask="" id="tTotal">******</span><small>ETB</small></div>
+      <div class="s-stats">
+        <div class="s-stat"><small id="sLeftLbl"></small><b id="sLeft"></b></div>
+        <div class="s-stat"><span class="split" data-shape="line" data-name="line"></span><small>Active accounts</small><b id="sCount"></b></div>
+      </div>
+        </div>
+      </div>
+      <div class="dots" id="dots"><i class="on"></i><i></i></div>
+    </div>
+    <div class="sec-head"><b id="listTitle"></b><small id="cnt"></small></div>
+    <div class="list" id="list"></div>
+    <div class="bottom-bar"><button class="btn-primary" id="newBtn"></button></div>
+  </div>
+  <div class="toast" id="toast"></div>
+
+  <div class="scrim" id="scrim" onclick="closeSheets()"></div>
+
+  <!-- 3-Dot Menu Sheet matching user image -->
+  <div class="sheet" id="menu" role="dialog" aria-label="Target Saving Menu">
+    <div class="sheet-grip"></div>
+    <button class="menu-item" type="button" onclick="openMiniStatement()"><i><svg viewBox="0 0 24 24"><path d="M4 7h16M4 12h10M4 17h16"/><path d="M17 12h3"/></svg></i><b>Mini Statement</b></button>
+    <div class="menu-acc-accordion plain" id="accAccordion">
+      <button class="menu-item" type="button" data-acc="" onclick="location.href='Savings - Account Details.html?scope=' + (new URLSearchParams(location.search).get('type') || 'individual')"><i><svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2.5"/><circle cx="9" cy="11" r="2"/><path d="M6 16c.6-1.4 1.7-2 3-2s2.4.6 3 2M14 10h4M14 13h3"/></svg></i><b>Account details</b></button>
+      <div class="menu-acc-body" id="accBody">
+        <div class="acc-fact-row"><span>Account ID</span><b id="accIdVal">TS-849201</b></div>
+        <div class="acc-fact-row"><span>Product Type</span><b>Target Saving</b></div>
+        <div class="acc-fact-row"><span>Status</span><b class="status-active">Active</b></div>
+        <div class="acc-fact-row"><span>Partner Bank</span><b>Cooperative Bank of Oromia</b></div>
+        <div class="acc-fact-row"><span>Interest</span><b>7%</b></div>
+        <div class="acc-fact-row"><span>Accrued Interest</span><b class="up" id="accIntVal">+340.20 ETB</b></div>
+        <div class="acc-fact-row"><span>Withholding Tax</span><b>5% on interest</b></div>
+        <div class="acc-fact-row"><span>Linked Account</span><b>0712131415 (Aster)</b></div>
+        <div class="acc-fact-row"><span>Opened Date</span><b>15 Oct 2026</b></div>
+      </div>
+    </div>
+    <button class="menu-item" type="button" onclick="location.href='Savings - Help.html?tab=' + (new URLSearchParams(location.search).get('type') || 'individual')"><i><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M9.5 9.5a2.5 2.5 0 1 1 3.5 2.3c-.6.3-1 .8-1 1.5v.4M12 17h.01"/></svg></i><b>FAQ</b></button>
+  </div>
+
+  <!-- Mini Statement Sheet -->
+  <div class="sheet" id="miniSheet" role="dialog" aria-label="Mini Statement">
+    <div class="sheet-grip"></div>
+    <p class="sheet-title">Mini Statement &middot; Target Saving</p>
+    <p class="lbl" style="margin-bottom:12px">Last 5 movements on your target savings</p>
+    <div class="list" id="miniTxList">
+      <div class="tx"><span class="ic"><svg viewBox="0 0 24 24"><path d="M17 7 7 17M15 17H7V9"/></svg></span><span class="inf"><b>Deposit &middot; New Phone</b><small>18 Nov 2026 &middot; TX948102</small></span><span class="amt">+5,000.00</span></div>
+      <div class="tx"><span class="ic"><svg viewBox="0 0 24 24"><path d="M3 17l6-6 4 4 8-8"/><path d="M14 7h7v7"/></svg></span><span class="inf"><b>Daily Interest Accrued</b><small>17 Nov 2026</small></span><span class="amt">+4.79</span></div>
+      <div class="tx"><span class="ic"><svg viewBox="0 0 24 24"><path d="M17 7 7 17M15 17H7V9"/></svg></span><span class="inf"><b>Recurring Deposit &middot; Monthly</b><small>01 Nov 2026 &middot; AS294811</small></span><span class="amt">+2,500.00</span></div>
+      <div class="tx out"><span class="ic"><svg viewBox="0 0 24 24"><path d="M7 17 17 7M9 7h8v8"/></svg></span><span class="inf"><b>Emergency Withdrawal</b><small>24 Oct 2026 &middot; WD019482</small></span><span class="amt">-1,000.00</span></div>
+      <div class="tx"><span class="ic"><svg viewBox="0 0 24 24"><path d="M17 7 7 17M15 17H7V9"/></svg></span><span class="inf"><b>Initial Deposit</b><small>15 Oct 2026 &middot; IN002941</small></span><span class="amt">+20,000.00</span></div>
+    </div>
+    <button class="btn-ghost" onclick="closeSheets()" style="margin-top:14px">Close</button>
+  </div>
+
+  <!-- Roll Over Sheet -->
+  <div class="sheet" id="rollSheet" role="dialog" aria-label="Roll Over Target Saving">
+    <div class="sheet-grip"></div>
+    <div class="cf-ic">
+      <svg viewBox="0 0 24 24"><path d="M21 12a9 9 0 1 1-3-6.7L21 8"/><path d="M21 3v5h-5"/></svg>
+    </div>
+    <p class="cf-t">Roll Over Target Saving</p>
+    <p class="cf-p">Extend your savings goal, set a higher target, or roll your funds into a new target period while earning <b>7% interest</b>.</p>
+    <button class="btn-primary" onclick="confirmRollOver()">Continue to Roll Over</button>
+    <button class="btn-ghost" onclick="closeSheets()">Cancel</button>
+  </div>
+</div>
+
+<script src="savings-store.js?v=20261125c"></script>
+<script src="savings-ui.js?v=20261125c"></script>
+<script>
+  const $ = id => document.getElementById(id);
+  const fmt = SV.fmt, IC = SVUI.IC;
+  let tt;
+  function toast(m) { const t = $('toast'); if (!t) return; t.textContent = m; t.classList.add('show'); clearTimeout(tt); tt = setTimeout(() => t.classList.remove('show'), 2200); }
+  function openSheet(id) { const s = $('scrim'); if (s) s.classList.add('show'); $(id).classList.add('show'); }
+  function closeSheets() { const s = $('scrim'); if (s) s.classList.remove('show'); document.querySelectorAll('.sheet').forEach(x => x.classList.remove('show')); }
+  document.addEventListener('keydown', e => { if (e.key === 'Escape') closeSheets(); });
+  // Hand an action to the shared PIN screen, which returns to Savings - Done.html
+  function toPin(data) { sessionStorage.setItem('termLoanData', JSON.stringify(Object.assign({ next: 'Savings - Done.html', back: location.pathname.split('/').pop() + location.search }, data))); location.href = 'Term Loan - Enter PIN.html'; }
+  // Eye toggle: masks every [data-mask] value until tapped
+  function eyeFor(btnId) {
+    const btn = $(btnId); if (!btn) return; const on = btn.innerHTML;
+    const off = '<svg viewBox="0 0 24 24"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 19.5C5 19.5 1 12 1 12a18.5 18.5 0 0 1 5.06-5.94"/><path d="M9.9 4.74A9.1 9.1 0 0 1 12 4.5c7 0 11 7.5 11 7.5a18.5 18.5 0 0 1-2.16 3.19"/><path d="M14.12 14.12a3 3 0 1 1-4.24-4.24"/><path d="M1 1l22 22"/></svg>';
+    let shown = false;
+    const paint = () => document.querySelectorAll('[data-mask]').forEach(v => v.textContent = shown ? v.dataset.mask : '******');
+    btn.onclick = () => { shown = !shown; paint(); btn.innerHTML = shown ? off : on; };
+    paint();
+  }
+  const type = new URLSearchParams(location.search).get('type') === 'individual' ? 'individual' : 'target';
+  const S = SV.load(), tgt = type === 'target';
+  const behind = p => SV.statusOf(p).key === 'behind';
+  const list = S.pockets.filter(p => p.kind === type).sort((a, b) => tgt ? behind(a) - behind(b) : 0);
+  const name = tgt ? 'Target Saving' : 'Individual Saving';
+  $('hTitle').textContent = document.title = name;
+  $('tLabel').textContent = tgt ? 'Total Target Savings' : 'Total Individual Savings';
+  $('tTotal').dataset.mask = fmt(list.reduce((a, p) => a + SV.balanceOf(p), 0));
+  // Left stat: what the targets add up to, or the interest earned so far
+  $('sLeftLbl').textContent = tgt ? 'Target amount' : 'Accrued interest';
+  $('sLeft').textContent = tgt ? fmt(list.reduce((a, p) => a + p.target.amount, 0)) : '+' + fmt(list.reduce((a, p) => a + SV.interestOf(p), 0));
+  $('sLeft').className = tgt ? '' : 'up';
+  $('sCount').textContent = list.length;
+  eyeFor('eyeBtn');
+  $('listTitle').textContent = tgt ? 'My Target Savings' : 'My Individual Savings';
+  $('cnt').textContent = list.length ? list.length + ' active' : '';
+  $('list').innerHTML = list.length ? list.map(SVUI.pocketCard).join('') : SVUI.empty(type);
+  $('newBtn').textContent = 'New ' + name;
+  $('newBtn').onclick = () => location.href = 'Savings - Create.html?type=' + type;
+
+  // Today's reminder (one per weekday) — Deposit Now goes to the saving that needs it most
+  const TIPS = [
+    ['Sunday reset', 'Plan the week, save first', 'Put something aside before the week begins.'],
+    ['Monday start', 'Start the week with a deposit', 'A little today keeps your goal moving.'],
+    ['Small steps', 'Every birr counts', 'Small deposits every day add up fast.'],
+    ['Midweek check', 'Halfway there? Top it up', 'Keep your savings on track this week.'],
+    ['Keep going', 'Your money grows daily', `Savings earn ${SV.RATE}% interest, counted every day.`],
+    ['Before the weekend', 'Save before you spend', 'Move a little into savings first.'],
+    ['Weekend win', 'Treat future you', 'A weekend deposit is a gift to your goals.']
+  ];
+  const [kick, head, text] = TIPS[new Date().getDay()];
+  $('rKicker').textContent = kick; $('rTitle').textContent = head; $('rText').textContent = text;
+  const needs = list.slice().sort((a, b) => tgt ? (SV.pctOf(a) - SV.pctOf(b)) : 0)[0];
+  $('rBtn').onclick = () => location.href = needs ? `Savings - Amount.html?id=${needs.id}&kind=deposit` : 'Savings - Create.html?type=' + type;
+
+  // ── Mudaye Mascot Animation States ──
+  // 4 states: waving (cheerful), about (head open + coin dropping), saved (celebration), sad (empty/sitting)
+  const MUDAYE_STATES = {
+    waving: { img: 'assets/Mudaye/Mudaye.png', label: 'Waving', cls: 'state-waving' },
+    about: { img: 'assets/Mudaye/Mudaye About to save.png', label: 'About to Save', cls: 'state-about' },
+    saved: { img: 'assets/Mudaye/Muday Saved.png', label: 'Saved (Cheering)', cls: 'state-saved' },
+    sad: { img: 'assets/Mudaye/Muday Sad.png', label: 'Empty (Sad)', cls: 'state-sad' }
+  };
+  const STATE_ORDER = ['waving', 'about', 'saved', 'sad'];
+  const qState = new URLSearchParams(location.search).get('state');
+  let currentMudayeIndex = STATE_ORDER.indexOf(qState) >= 0 ? STATE_ORDER.indexOf(qState) : 0;
+
+  function applyMudayeState(key) {
+    const s = MUDAYE_STATES[key] || MUDAYE_STATES.waving;
+    const box = $('mudayeBox'), img = $('mudayeImg'), badge = $('mudayeBadge');
+    if (img) img.src = s.img;
+    if (box) {
+      box.className = 'mudaye-art-box ' + s.cls;
+    }
+    if (badge) badge.innerHTML = s.label + ' &#x21c4;';
+  }
+
+  function cycleMudayeState() {
+    currentMudayeIndex = (currentMudayeIndex + 1) % STATE_ORDER.length;
+    const nextKey = STATE_ORDER[currentMudayeIndex];
+    applyMudayeState(nextKey);
+    toast('Mudaye: ' + MUDAYE_STATES[nextKey].label);
+  }
+
+  applyMudayeState(STATE_ORDER[currentMudayeIndex]);
+
+  // ── 3-Dot Menu Actions (Roll Over, Mini Statement, Account details) ──
+  function toggleAccountDetails() {
+    const acc = $('accAccordion');
+    if (acc) acc.classList.toggle('open');
+  }
+
+  function openMiniStatement() {
+    closeSheets();
+    setTimeout(() => openSheet('miniSheet'), 180);
+  }
+
+  function openRollOver() {
+    closeSheets();
+    setTimeout(() => openSheet('rollSheet'), 180);
+  }
+
+  function confirmRollOver() {
+    closeSheets();
+    toast('Roll Over request initiated');
+    setTimeout(() => {
+      location.href = 'Savings - Create.html?type=target&rollover=1';
+    }, 600);
+  }
+
+  // Slides: reminder first; dots follow the slide in view and are tappable; auto-advance
+  (function () {
+    return;   // one card now — no slides
+    const track = $('slides'), dots = [...document.querySelectorAll('#dots i')];
+    let cur = 0, auto = null, held = false;
+    const mark = k => { cur = k; dots.forEach((d, n) => d.classList.toggle('on', n === k)); $('hero').classList.toggle('on-red', k === 0); };
+    track.addEventListener('scroll', () => { const k = Math.round(track.scrollLeft / track.clientWidth); if (k !== cur) mark(k); }, { passive: true });
+    dots.forEach((d, n) => d.onclick = () => { track.scrollTo({ left: n * track.clientWidth, behavior: 'smooth' }); queue(); });
+    function queue() {
+      clearTimeout(auto);
+      if (held || matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+      auto = setTimeout(() => { track.scrollTo({ left: ((cur + 1) % dots.length) * track.clientWidth, behavior: 'smooth' }); queue(); }, 5000);
+    }
+    track.addEventListener('pointerdown', () => { held = true; clearTimeout(auto); });
+    track.addEventListener('pointerenter', () => { held = true; clearTimeout(auto); });
+    track.addEventListener('pointerleave', () => { held = false; queue(); });
+    mark(0); queue();
+  })();
+  // Deposit now (bubble or Mudaye)
+  function depositNow() { location.href = 'Savings - Amount.html?kind=deposit&pick=1&only=' + (new URLSearchParams(location.search).get('type') || 'individual'); }
+</script>
+<!-- Export to Figma button (shared exporter) -->
+<script src="figma-export.js"></script>
+<script src="test-scenarios-data.js"></script>
+<script src="test-scenarios.js"></script>
+</body>
+</html>

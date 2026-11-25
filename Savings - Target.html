@@ -8,7 +8,7 @@
 <link rel="stylesheet" href="styles/base.css">
 <link rel="stylesheet" href="styles/component-status-bar.css">
 <link rel="stylesheet" href="styles/component-sc-card.css">
-<link rel="stylesheet" href="styles/savings.css">
+<link rel="stylesheet" href="styles/savings.css?v=20261125c">
 <style>
   @import url('https://api.fontshare.com/v2/css?f[]=switzer@400,500,600,700,800&display=swap');
 
@@ -49,6 +49,15 @@
       <span class="spacer"></span>
     </div>
     <p class="lead" id="lead"></p>
+    <div style="position:relative;background:linear-gradient(135deg,#FF4A50,#E0262D);border-radius:18px;padding:12px 16px;color:#FFF;overflow:hidden;box-shadow:0 4px 14px rgba(224,38,45,0.2);display:flex;align-items:center;justify-content:space-between">
+      <div style="max-width:210px">
+        <b style="font-size:14px;display:block">Save with Mudaye</b>
+        <small style="font-size:11.5px;color:rgba(255,255,255,0.9);margin-top:2px;display:block">Mudaye keeps your coins safe until your goal date!</small>
+      </div>
+      <div class="mudaye-art-box state-about" style="position:relative;right:auto;bottom:auto;width:68px;height:68px">
+        <img src="assets/Mudaye/Mudaye About to save.png" alt="Mudaye" style="width:100%;height:100%;object-fit:contain">
+      </div>
+    </div>
     <div class="card now"><span class="p-ic" id="pIc"></span><span><b id="pName"></b><small id="pSub"></small></span></div>
     <div><label class="field"><span>Target amount</span><div class="amount-in"><input id="goal" inputmode="decimal" placeholder="0.00" oninput="paint()"><small>ETB</small></div></label>
       <p class="hint" id="goalHint" style="margin-top:6px"></p></div>
@@ -71,8 +80,8 @@
   <div class="toast" id="toast"></div>
 </div>
 
-<script src="savings-store.js"></script>
-<script src="savings-ui.js"></script>
+<script src="savings-store.js?v=20261125c"></script>
+<script src="savings-ui.js?v=20261125c"></script>
 <script>
   const $ = id => document.getElementById(id);
   const fmt = SV.fmt, IC = SVUI.IC;
@@ -89,14 +98,20 @@
   const plusMonths = m => { const d = new Date(); d.setMonth(d.getMonth() + m); return d; };
   const back = `Savings - Pocket.html?id=${p.id}`;
 
-  $('hTitle').textContent = document.title = t ? 'Change Target' : 'Set a Target';
-  $('lead').innerHTML = `Give <b>${p.name}</b> a goal and see how close you are.`;
+  $('hTitle').textContent = document.title = t ? 'Increase Target' : 'Set a Target';
+  const suggestedTarget = t ? Math.max(t.amount + 10000, Math.ceil((bal + 1) / 10000) * 10000) : 0;
+  $('lead').innerHTML = t
+    ? `Increase <b>${p.name}</b>'s target from <b>${fmt(t.amount)} ETB</b> to <b>${fmt(suggestedTarget)} ETB</b> by <b>${SV.dateStr(t.by)}</b>. Adjust the amount or deadline below.`
+    : `Give <b>${p.name}</b> a goal and see how close you are.`;
   $('pIc').innerHTML = IC[p.kind];
   $('pName').textContent = p.name;
   $('pSub').textContent = `Saved so far: ${fmt(bal)} ETB`;
   $('removeTxt').textContent = `Your money stays in ${p.name}. Only the goal is removed.`;
   $('by').min = ymd(Date.now() + 864e5); $('by').max = ymd(plusMonths(60));
-  if (t) { $('goal').value = fmt(t.amount); $('by').value = ymd(t.by); }
+  if (t) {
+    $('goal').value = fmt(suggestedTarget);
+    $('by').value = ymd(t.by);
+  }
 
   // Target date: 3 / 6 / 12 months, or any day on the picker
   function setQuick(m) { $('by').value = ymd(plusMonths(m)); document.querySelectorAll('#quick button').forEach(b => b.classList.toggle('on', +b.dataset.m === m)); paint(); }
@@ -107,16 +122,24 @@
   function paint() {
     const n = goal(), by = $('by').value;
     const low = n > 0 && n < SV.TARGET_MIN, under = n > 0 && !low && n <= bal;
-    const ok = n >= SV.TARGET_MIN && n > bal && !!by;
+    const notIncreased = !!t && n <= t.amount;
+    const validDate = !!by && by >= $('by').min && by <= $('by').max;
+    const ok = n >= SV.TARGET_MIN && n > bal && !notIncreased && validDate;
     $('goalHint').textContent = low ? 'Minimum 500 ETB'
+      : notIncreased ? `Enter more than ${fmt(t.amount)} ETB to increase this target.`
       : under ? `Already saved ${fmt(bal)} ETB. Pick a higher target.`
+      : !!by && !validDate ? 'Choose a future date within the next 5 years.'
       : n && !by ? 'Now pick a target date' : 'How much you want to reach';
-    $('goalHint').classList.toggle('err', low || under);
+    if (t) {
+      const dateLabel = validDate ? SV.dateStr(by) : 'a date you choose';
+      $('lead').innerHTML = `Current target: <b>${fmt(t.amount)} ETB</b>. Increase it to <b>${fmt(n || suggestedTarget)} ETB</b> by <b>${dateLabel}</b>. Adjust either below.`;
+    }
+    $('goalHint').classList.toggle('err', low || under || notIncreased || (!!by && !validDate));
     $('plan').classList.toggle('show', ok);
     if (ok) $('planTxt').innerHTML = `Save <b>${fmt(SV.monthlyNeeded(n, bal, new Date(by).toISOString()))} ETB a month</b> to reach it by ${SV.dateStr(by)}`;
     $('actions').className = t ? 'two' : '';
     $('actions').innerHTML = (t ? `<button class="btn-ghost" type="button" onclick="openSheet('removeSheet')">Remove</button>` : '')
-      + `<button class="btn-primary" type="button" onclick="saveTarget()"${ok ? '' : ' disabled'}>Save</button>`;
+      + `<button class="btn-primary" type="button" onclick="saveTarget()"${ok ? '' : ' disabled'}>${t ? 'Increase Target' : 'Save'}</button>`;
   }
   // A target turns the saving into a Target Saving; removing it turns it back
   function saveTarget() {
@@ -130,6 +153,7 @@
 </script>
 <script src="components/keyboard.js"></script>
 <!-- Export to Figma button (shared exporter) -->
+<script src="components/date-picker.js?v=3"></script>
 <script src="figma-export.js"></script>
 <script src="test-scenarios-data.js"></script>
 <script src="test-scenarios.js"></script>

@@ -172,10 +172,16 @@
   document.getElementById('sumTotal').textContent = fmt(data.amount || 0);
   // M-PESA Savings: its own title; opt-in and new saving have no amount, so show the rate instead
   if (/^sav-/.test(data.kind || '')) {
-    document.getElementById('pinTitle').textContent = 'M-PESA Savings';
+    // Header names the action (Deposit, Withdraw, Contribute…); other savings steps keep 'M-PESA Savings'
+    document.getElementById('payBtn').textContent = 'Continue';
+    document.getElementById('pinTitle').textContent = { 'sav-deposit': 'Deposit', 'sav-withdraw': 'Transfer Money', 'sav-close': 'Transfer Money', 'sav-grp-contribute': 'Contribute', 'sav-fd-open': 'New Fixed Saving', 'sav-fd-mature': 'Fixed Saving', 'sav-fd-early': 'Fixed Saving', 'sav-fd-roll': 'Fixed Saving' }[data.kind] || 'M-PESA Savings';
     document.getElementById('sumIcon').innerHTML = '<svg data-name="icon-piggy" viewBox="0 0 24 24" style="width:22px;height:22px;fill:none;stroke:#FE353D;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round"><path d="M19 9.5a6 6 0 0 0-6-4H10a6 6 0 0 0-6 6c0 2 1 3.6 2.5 4.6V19h3v-2h3.5v2h3v-2.6A5.6 5.6 0 0 0 19 14h2v-4z"/><path d="M15.5 10h.01"/></svg>';
+    // The saving's own icon: target, person (individual), group
+    const PT = { target: '<circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1.2"/>', individual: '<circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/>',
+      group: '<circle cx="9" cy="8" r="3.5"/><path d="M2.5 20a6.5 6.5 0 0 1 13 0"/><circle cx="17" cy="9" r="2.6"/><path d="M15.5 14.2A5 5 0 0 1 21.5 19"/>' }[data.ptype || data.type || (data.kind === 'sav-close' ? '' : '')];
+    if (PT) document.getElementById('sumIcon').innerHTML = '<svg viewBox="0 0 24 24" style="width:22px;height:22px;fill:none;stroke:#FE353D;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round">' + PT + '</svg>';
     if (data.sub) document.querySelector('.party-sub').innerHTML = data.sub;
-    else if (!data.amount) document.querySelector('.party-sub').innerHTML = '<b>Interest:</b> 7% a year';
+    else if (!data.amount) document.querySelector('.party-sub').innerHTML = '<b>Interest:</b> 7% Interest';
   }
   if (data.logo) {
     const av = document.getElementById('sumIcon');

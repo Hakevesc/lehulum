@@ -8,7 +8,7 @@
 <link rel="stylesheet" href="styles/base.css">
 <link rel="stylesheet" href="styles/component-status-bar.css">
 <link rel="stylesheet" href="styles/component-sc-card.css">
-<link rel="stylesheet" href="styles/savings.css">
+<link rel="stylesheet" href="styles/savings.css?v=20261125c">
 <style>
   @import url('https://api.fontshare.com/v2/css?f[]=switzer@400,500,600,700,800&display=swap');
 
@@ -16,16 +16,42 @@
      required), goal ≥ 500 ETB and a target date (3M / 6M / 1Y chips) with a
      "save X a month" hint → PIN → done. */
   .form { display: flex; flex-direction: column; gap: 16px; }
-  .type-card { display: flex; align-items: center; gap: 12px; padding: 12px 14px; border-radius: 16px; background: #FFF1F2; }
-  .type-card i { width: 40px; height: 40px; border-radius: 12px; background: #FFF; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
-  .type-card i svg { width: 21px; height: 21px; stroke: var(--Primary); stroke-width: 1.8; fill: none; stroke-linecap: round; stroke-linejoin: round; }
-  .type-card b { display: block; font-size: 14px; font-weight: 600; color: var(--On-Surface); }
-  .type-card small { display: block; margin-top: 1px; font-size: 12px; color: #55555E; }
-  .count { float: right; font-weight: 500; color: var(--On-Surface-Low); }
+  .form { gap: 12px; }
+  /* Product banner: red gradient, white icon square */
+  .type-card { display: flex; align-items: center; gap: 14px; padding: 16px; border-radius: 22px; background: linear-gradient(100deg, #FE353D 0%, #E0262D 45%, #9E1218 100%); box-shadow: 0 8px 20px rgba(224,38,45,0.22); }
+  .type-card i { width: 44px; height: 44px; border-radius: 12px; background: #FFF; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+  .type-card i svg { width: 24px; height: 24px; stroke: var(--Primary); stroke-width: 2; fill: none; stroke-linecap: round; stroke-linejoin: round; }
+  .type-card b { display: block; font-size: 16px; font-weight: 600; color: #FFF; }
+  .type-card small { display: block; margin-top: 3px; font-size: 12.5px; color: rgba(255,255,255,0.92); }
+  /* White field cards */
+  .fcard { padding: 18px 16px; border-radius: 22px; background: #FFF; box-shadow: 0 2px 12px rgba(0,0,0,0.04); }
+  .fcard > .lbl { display: block; margin-bottom: 12px; font-size: 16px; font-weight: 400; color: var(--On-Surface); }
+  .fcard .input { height: 60px; padding: 0 20px; border: 1px solid #E2E2E7; border-radius: 16px; background: #F7F7F9; font-size: 16px; }
+  .fcard .input:focus { background: #FFF; }
+  .fcard .amount-in { background: #F7F7F9; }
+  .count { display: none; }
   .plan { display: none; align-items: center; gap: 10px; padding: 12px 14px; border-radius: 14px; background: #F7F7F9; font-size: 12.5px; color: #55555E; }
   .plan.show { display: flex; }
   .plan svg { width: 18px; height: 18px; stroke: var(--Primary); stroke-width: 1.9; fill: none; stroke-linecap: round; stroke-linejoin: round; flex-shrink: 0; }
   .plan b { color: var(--On-Surface); }
+  /* Auto Recurring Deposit fields (as in the design) */
+  #autoFields .amount-in { background: #F7F7F9; }
+  .auto-min { margin: 8px 2px 0; font-size: 12px; color: var(--Primary); }
+  .auto-min b { font-weight: 700; }
+  .auto-min.low { font-weight: 600; }
+  #autoRow.on .switch { background: var(--Primary) !important; opacity: 1; }
+  /* One card: name, goal, target date, custom date (as in the design) */
+  .fcard .blk { display: block; margin-top: 18px; }
+  .fcard .blk:first-child { margin-top: 0; }
+  #targetFields { margin-top: 18px; }
+  #plan { display: none !important; }   /* not in the design */
+  .fcard .lbl { display: block; margin-bottom: 10px; font-size: 16px; font-weight: 400; color: var(--On-Surface); }
+  .fcard .lbl.sm { margin-top: 4px; font-size: 13px; font-weight: 600; }
+  .fcard .amount-in { background: #F7F7F9; }
+  .goal-min { margin: 8px 2px 0; font-size: 12px; color: var(--Primary); }
+  .goal-min b { font-weight: 700; }
+  .goal-min.err { font-weight: 600; }
+  .fcard .dp-field { background: #F7F7F9; }
 </style>
 <link rel="stylesheet" href="styles/device.css">
 </head>
@@ -42,28 +68,31 @@
 
   <div class="app-content">
     <div class="header-nav">
-      <button class="icon-btn" onclick="location.href='Savings.html'" aria-label="Back"><svg data-name="icon-arrow-left" viewBox="0 0 24 24"><path d="M19 12H5M12 19l-7-7 7-7"/></svg></button>
+      <button class="icon-btn" onclick="location.href='Savings.html?menu=20261119d'" aria-label="Back"><svg data-name="icon-arrow-left" viewBox="0 0 24 24"><path d="M19 12H5M12 19l-7-7 7-7"/></svg></button>
       <span class="header-title" id="hTitle">New Saving</span>
       <span class="spacer"></span>
     </div>
 
     <div class="form">
       <div class="type-card"><i id="tIc"></i><span><b id="tName"></b><small id="tSub"></small></span></div>
-      <label class="field"><span>Saving name <em class="count" id="nameCount">0/20</em></span><input class="input" id="name" maxlength="20" placeholder="e.g. New Phone" oninput="check()"></label>
+      <div class="fcard">
+      <label class="blk"><span class="lbl">Saving Name<em class="count" id="nameCount">0/20</em></span><input class="input" id="name" maxlength="20" placeholder="e.g. Saving One" oninput="check()"></label>
       <div id="targetFields">
-        <label class="field"><span>Goal amount</span><div class="amount-in"><input id="goal" inputmode="decimal" placeholder="0.00" oninput="check()"><small>ETB</small></div></label>
-        <p class="hint" id="goalHint" style="margin-top:6px">Minimum 500 ETB</p>
-        <div class="field" style="margin-top:14px"><span>Target date</span>
+        <label class="blk"><span class="lbl">Goal Amount</span><div class="amount-in"><input id="goal" inputmode="decimal" placeholder="0.00" oninput="check()"><small>ETB</small></div></label>
+        <p class="goal-min" id="goalHint"></p>
+        <div class="blk"><span class="lbl sm">Target date</span>
           <div class="quick" id="quick"><button type="button" data-m="3">3 months</button><button type="button" data-m="6" class="on">6 months</button><button type="button" data-m="12">1 year</button></div>
+          <span class="lbl" style="margin-top:16px">Custom Date</span>
           <input class="input" id="by" type="date" onchange="byChanged()">
         </div>
       </div>
+      </div>
       <div class="card">
-        <div class="switch-row" id="autoRow" onclick="toggleAuto()"><span><b>Save automatically</b><small id="autoSub">Move money from your wallet on a schedule</small></span><i class="switch"></i></div>
+        <div class="switch-row" id="autoRow" onclick="toggleAuto()"><span><b>Auto Recurring Deposit</b><small id="autoSub">Move money from your wallet on a schedule</small></span><i class="switch"></i></div>
         <div id="autoFields" style="display:none;margin-top:14px">
           <div class="amount-in"><input id="autoAmt" inputmode="decimal" placeholder="0.00" oninput="autoTouched = true; check()"><small>ETB</small></div>
-          <div class="quick" id="autoFreq" style="margin-top:10px"><button type="button" data-f="daily">Daily</button><button type="button" data-f="weekly">Weekly</button><button type="button" data-f="monthly" class="on">Monthly</button></div>
-          <p class="hint" id="autoHint" style="margin-top:8px">Minimum 50 ETB · first transfer tomorrow</p>
+          <p class="hint auto-min" id="autoHint"></p>
+          <div class="quick" id="autoFreq" style="margin-top:12px"><button type="button" data-f="daily">Daily</button><button type="button" data-f="weekly">Weekly</button><button type="button" data-f="monthly" class="on">Monthly</button></div>
         </div>
       </div>
       <div class="plan" id="plan"><svg viewBox="0 0 24 24"><path d="M3 17l6-6 4 4 8-8"/><path d="M14 7h7v7"/></svg><span id="planTxt"></span></div>
@@ -73,7 +102,7 @@
 
 </div>
 
-<script src="savings-store.js"></script>
+<script src="savings-store.js?v=20261125c"></script>
 <script>
   const $ = id => document.getElementById(id);
   const fmt = SV.fmt;
@@ -81,7 +110,7 @@
   function toast(m) { const t = $('toast'); if (!t) return; t.textContent = m; t.classList.add('show'); clearTimeout(tt); tt = setTimeout(() => t.classList.remove('show'), 2000); }
   const IC = {
     target: '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1.2"/></svg>',
-    individual: '<svg viewBox="0 0 24 24"><path d="M19 9.5a6 6 0 0 0-6-4H10a6 6 0 0 0-6 6c0 2 1 3.6 2.5 4.6V19h3v-2h3.5v2h3v-2.6A5.6 5.6 0 0 0 19 14h2v-4z"/><path d="M15.5 10h.01"/></svg>',
+    individual: '<svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg>',
     cal: '<svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/></svg>'
   };
   const type = new URLSearchParams(location.search).get('type') === 'target' ? 'target' : 'individual';
@@ -95,10 +124,10 @@
   const S = SV.load();
   $('tIc').innerHTML = IC[type];
   $('tName').textContent = type === 'target' ? 'Target Saving' : 'Individual Saving';
-  $('tSub').textContent = type === 'target' ? 'Save toward a goal by a date · 7% a year' : 'Save any amount, any time · 7% a year';
+  $('tSub').textContent = type === 'target' ? 'Save toward a goal by a date · 7% Interest' : 'Save any amount, any time · 7% Interest';
   $('hTitle').textContent = type === 'target' ? 'New Target Saving' : 'New Individual Saving';
   $('targetFields').style.display = type === 'target' ? '' : 'none';
-  $('name').placeholder = type === 'target' ? 'e.g. New Phone' : 'e.g. Rainy Day';
+  $('name').placeholder = type === 'target' ? 'e.g. New Phone' : 'e.g. Saving One';
 
   // Target date: quick chips or the picker (tomorrow → 5 years)
   const ymd = d => d.toISOString().slice(0, 10);
@@ -118,7 +147,7 @@
       const goal = parseFloat(($('goal').value || '').replace(/,/g, '')) || 0;
       const by = $('by').value;
       const low = goal > 0 && goal < SV.TARGET_MIN;
-      $('goalHint').textContent = low ? 'The goal must be at least 500 ETB' : 'Minimum 500 ETB';
+      $('goalHint').innerHTML = low ? '<b>Minimum Deposit:</b> 500.00 ETB — enter at least this much' : '<b>Minimum Deposit:</b> 500.00 ETB';
       $('goalHint').classList.toggle('err', low);
       ok = !!name && goal >= SV.TARGET_MIN && !!by;
       const show = goal >= SV.TARGET_MIN && !!by;
@@ -129,7 +158,9 @@
       const g = parseFloat(($('goal').value || '').replace(/,/g, '')) || 0;
       if (type === 'target' && !autoTouched && g >= SV.TARGET_MIN && $('by').value) $('autoAmt').value = SV.suggested(g, 0, tomorrow(), new Date($('by').value).toISOString(), autoFreq);
       const a = autoAmount(), low = a > 0 && a < SV.AUTO_MIN;
-      $('autoHint').textContent = low ? 'The minimum is 50 ETB' : type === 'target' && !autoTouched && a ? `Lands on your goal by ${SV.dateStr($('by').value)} · first transfer tomorrow` : 'Minimum 50 ETB · first transfer tomorrow';
+      $('autoHint').innerHTML = low ? '<b>Minimum Deposit:</b> 50.00 ETB — enter at least this much'
+        : type === 'target' && !autoTouched && a ? `<b>Minimum Deposit:</b> 50.00 ETB · lands on your goal by ${SV.dateStr($('by').value)}` : '<b>Minimum Deposit:</b> 50.00 ETB';
+      $('autoHint').classList.toggle('low', !!low);
       $('autoHint').classList.toggle('err', low);
       ok = ok && a >= SV.AUTO_MIN;
     }
@@ -150,6 +181,7 @@
 </script>
 <script src="components/keyboard.js"></script>
 <!-- Export to Figma button (shared exporter) -->
+<script src="components/date-picker.js?v=3"></script>
 <script src="figma-export.js"></script>
 <script src="test-scenarios-data.js"></script>
 <script src="test-scenarios.js"></script>

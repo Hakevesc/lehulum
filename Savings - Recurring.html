@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Recurring Deposits — M-PESA</title>
+<link rel="stylesheet" href="styles/design-tokens.css">
+<link rel="stylesheet" href="styles/base.css">
+<link rel="stylesheet" href="styles/component-status-bar.css">
+<link rel="stylesheet" href="styles/component-sc-card.css">
+<link rel="stylesheet" href="styles/savings.css?v=20261125c">
+<style>
+  @import url('https://api.fontshare.com/v2/css?f[]=switzer@400,500,600,700,800&display=swap');
+
+  /* Recurring Deposits: every recurring wallet → saving deposit in one place.
+     Summary, All / Active / Paused, tap one → Edit (Auto Save page) · Pause / Resume · Delete.
+     New Recurring Deposit → pick a saving without one → Auto Save page. */
+  .rsum { display: flex; align-items: center; gap: 10px; padding: 14px 16px; }
+  .rsum > div { flex: 1; min-width: 0; }
+  .rsum small { display: block; font-size: 11.5px; color: var(--On-Surface-Low); }
+  .rsum b { display: block; margin-top: 3px; font-size: 18px; font-weight: 700; color: var(--On-Surface); white-space: nowrap; }
+  .rsum b.sm { font-size: 13.5px; }
+  .rsum b em { font-style: normal; font-size: 11.5px; font-weight: 500; color: var(--On-Surface-Low); }
+  .rsum .split { width: 1px; align-self: stretch; background: #ECECEF; }
+  .rtabs { display: flex; gap: 8px; }
+  .rtabs button { height: 34px; padding: 0 16px; border: 1px solid #E6E6EA; border-radius: 999px; background: #FFF; color: #55555E; font-family: Switzer, sans-serif; font-size: 12.5px; font-weight: 600; cursor: pointer; }
+  .rtabs button.on { border-color: var(--Primary); background: #FFF1F2; color: var(--Primary); }
+  #rlist { display: flex; flex-direction: column; gap: 10px; padding-bottom: 80px; }
+  .rcard { padding: 14px; border-radius: 20px; background: #FFF; box-shadow: 0 2px 12px rgba(0,0,0,0.04); cursor: pointer; }
+  .rcard.paused { opacity: 0.7; }
+  .racts { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-top: 12px; padding-top: 12px; border-top: 1px solid #F1F1F4; }
+  .racts button { height: 36px; display: flex; align-items: center; justify-content: center; gap: 6px; border: none; border-radius: 10px; background: #FFF6F6; color: var(--On-Surface); font-family: Switzer, sans-serif; font-size: 12.5px; font-weight: 600; cursor: pointer; }
+  .racts button svg { width: 15px; height: 15px; stroke: var(--Primary); stroke-width: 2; fill: none; stroke-linecap: round; stroke-linejoin: round; }
+  .racts button.del { color: var(--Primary); }
+  .rcard { cursor: default; }
+  .rcard.paused { opacity: 1; }
+  .rcard.paused .p-top, .rcard.paused .p-row { opacity: 0.6; }
+  .rcard .miss { margin-top: 8px; font-size: 11.5px; color: #B45309; }
+  .chip.ok { background: #DCFCE7; color: #15803D; }
+  .ra-head { display: flex; align-items: center; gap: 12px; padding: 0 2px 12px; border-bottom: 1px solid #F1F1F4; }
+  .ra-head b, .ra-row b { display: block; font-size: 14px; font-weight: 600; color: var(--On-Surface); }
+  .ra-head small, .ra-row small { display: block; margin-top: 2px; font-size: 12px; color: var(--On-Surface-Low); }
+  .ra-row { width: 100%; display: flex; align-items: center; gap: 12px; padding: 13px 2px; border: none; border-bottom: 1px solid #F1F1F4; background: none; text-align: left; font-family: Switzer, sans-serif; cursor: pointer; }
+  .ra-row:last-child { border-bottom: none; }
+  .ra-row > span:not(.p-ic) { flex: 1; min-width: 0; font-size: 14px; color: var(--On-Surface); }
+  .ra-row i { width: 38px; height: 38px; border-radius: 12px; background: #FFF1F2; display: grid; place-items: center; flex-shrink: 0; }
+  .ra-row i svg { width: 18px; height: 18px; stroke: var(--Primary); stroke-width: 2; fill: none; stroke-linecap: round; stroke-linejoin: round; }
+  .ra-row.del span { color: var(--Primary); }
+  .ra-row .cv { width: 14px; height: 14px; stroke: #8A8A94; stroke-width: 2.2; fill: none; stroke-linecap: round; stroke-linejoin: round; }
+  #newSheet .none { margin: 8px 0 14px; text-align: center; font-size: 13px; color: var(--On-Surface-Low); }
+  @import url('https://api.fontshare.com/v2/css?f[]=switzer@400,500,600,700,800&display=swap');
+
+</style>
+<link rel="stylesheet" href="styles/device.css">
+</head>
+<body>
+<div class="phone-frame">
+  <div class="status-bar">
+    <span class="time">10:00</span>
+    <div class="status-icons">
+      <svg data-name="icon-wifi" viewBox="0 0 24 24" fill="none"><path d="M1 9l2 2c4.970-4.970 13.030-4.970 18 0l2-2C16.930 2.930 7.080 2.930 1 9z" fill="#1C1C21"/><path d="M5 13l2 2c2.760-2.760 7.240-2.760 10 0l2-2C15.140 9.140 8.870 9.140 5 13z" fill="#1C1C21"/><path d="M9 17l2 2c1.100-1.100 2.900-1.100 4 0l2-2c-2.210-2.210-5.790-2.210-8 0z" fill="#1C1C21"/></svg>
+      <svg data-name="icon-signal" viewBox="0 0 24 24" fill="none"><rect x="2" y="6" width="4" height="12" rx="1" fill="#1C1C21"/><rect x="8" y="4" width="4" height="14" rx="1" fill="#1C1C21"/><rect x="14" y="2" width="4" height="16" rx="1" fill="#1C1C21"/><rect x="20" y="0" width="4" height="18" rx="1" fill="#1C1C21" opacity="0.3"/></svg>
+      <svg data-name="icon-battery" viewBox="0 0 28 14" fill="none"><rect x="0" y="1" width="22" height="12" rx="2.5" stroke="#1C1C21" stroke-width="1.5"/><rect x="2" y="3" width="16" height="8" rx="1" fill="#1C1C21"/><rect x="24" y="4" width="2" height="6" rx="1" fill="#1C1C21"/></svg>
+    </div>
+  </div>
+
+  <div class="app-content">
+    <div class="header-nav">
+      <button class="icon-btn" onclick="goBack()" aria-label="Back"><svg data-name="icon-arrow-left" viewBox="0 0 24 24"><path d="M19 12H5M12 19l-7-7 7-7"/></svg></button>
+      <span class="header-title" id="hTitle">Recurring Deposits</span>
+      <span class="spacer"></span>
+    </div>
+
+    <div class="card rsum" id="rsum"></div>
+    <div class="rtabs" id="rtabs"><button type="button" data-t="all" class="on">All</button><button type="button" data-t="active">Active</button><button type="button" data-t="paused">Paused</button></div>
+    <div id="rlist"></div>
+
+    <div class="bottom-bar"><button class="btn-primary" id="newBtn" onclick="openNew()">New Recurring Deposit</button></div>
+  </div>
+
+  <div class="scrim" id="scrim" onclick="closeSheets()"></div>
+  <!-- Delete confirmation -->
+  <div class="sheet" id="delSheet" role="dialog" aria-label="Delete recurring deposit">
+    <div class="sheet-grip"></div>
+    <div class="cf-ic"><svg viewBox="0 0 24 24"><path d="M4 7h16M9 7V4h6v3M6 7l1 13h10l1-13"/></svg></div>
+    <p class="cf-t">Delete recurring deposit?</p>
+    <p class="cf-p" id="delTxt"></p>
+    <button class="btn-primary" onclick="deleteOne()">Delete</button>
+    <button class="btn-ghost" onclick="closeSheets()">Keep It</button>
+  </div>
+  <!-- New: pick the saving to add one to -->
+  <div class="sheet" id="newSheet" role="dialog" aria-label="Choose a saving">
+    <div class="sheet-grip"></div>
+    <p class="sheet-title" style="text-align:center">Deposit into</p>
+    <div id="newList"></div>
+  </div>
+  <div class="toast" id="toast"></div>
+</div>
+
+<script src="savings-store.js?v=20261125c"></script>
+<script src="savings-ui.js?v=20261125c"></script>
+<script>
+  const $ = id => document.getElementById(id);
+  const fmt = SV.fmt, IC = SVUI.IC;
+  let tt;
+  function toast(m) { const t = $('toast'); t.textContent = m; t.classList.add('show'); clearTimeout(tt); tt = setTimeout(() => t.classList.remove('show'), 2200); }
+  function openSheet(id) { $('scrim').classList.add('show'); $(id).classList.add('show'); }
+  function closeSheets() { $('scrim').classList.remove('show'); document.querySelectorAll('.sheet').forEach(x => x.classList.remove('show')); }
+  document.addEventListener('keydown', e => { if (e.key === 'Escape') closeSheets(); });
+  const q = new URLSearchParams(location.search);
+  // Remember where we came from so Edit → back to this list → back still returns there
+  if (q.get('back')) sessionStorage.setItem('rtBack', q.get('back')); else if (!q.get('from')) sessionStorage.removeItem('rtBack');
+  function goBack() { location.href = q.get('back') || sessionStorage.getItem('rtBack') || 'Savings.html'; }
+
+  // Every saving that can take a recurring deposit: my individual / target savings and the groups I'm in
+  const S = SV.load();
+  const accounts = () => S.pockets.map(p => ({ acc: p, kind: p.kind, href: `id=${p.id}`, type: p.kind === 'target' ? 'Target Saving' : 'Individual Saving' }))
+    .concat(SV.groupsOf(S).filter(g => !g.closed).map(g => ({ acc: g, kind: 'group', href: `group=${g.id}`, type: 'Group Saving' })));
+  // Opened from a saving or group: only its recurring deposits, and New sets one up for it directly
+  const only = q.get('id') ? 'id=' + q.get('id') : q.get('group') ? 'group=' + q.get('group') : '';
+  if (only) { sessionStorage.setItem('rtOnly', only); } else if (q.get('from')) { /* back from Edit: keep the filter */ } else sessionStorage.removeItem('rtOnly');
+  const scope = only || (q.get('from') && sessionStorage.getItem('rtOnly')) || '';
+  const mine = () => accounts().filter(x => !scope || x.href === scope);
+  let tab = 'all', cur = null;
+  const EDIT = '<svg viewBox="0 0 24 24"><path d="M4 20h4L19 9l-4-4L4 16z"/></svg>', BIN = '<svg viewBox="0 0 24 24"><path d="M4 7h16M9 7V4h6v3M6 7l1 13h10l1-13"/></svg>';
+  const PAUSE = '<svg viewBox="0 0 24 24"><path d="M9 5v14M15 5v14"/></svg>', PLAY = '<svg viewBox="0 0 24 24"><path d="M7 5l12 7-12 7z"/></svg>';
+
+  function render() {
+    const all = mine().filter(x => x.acc.auto);
+    if (scope) { $('rtabs').style.display = 'none'; const one = mine()[0]; $('hTitle').textContent = one ? one.acc.name : 'Recurring Deposits'; $('newBtn').style.display = one && one.acc.auto ? 'none' : ''; }
+    const on = all.filter(x => !x.acc.auto.paused);
+    const monthly = on.reduce((t, x) => t + x.acc.auto.amount * ({ daily: 30, weekly: 4, monthly: 1 }[x.acc.auto.freq]), 0);
+    const next = on.map(x => x.acc.auto.next).sort()[0];
+    $('rsum').innerHTML = `<div><small>Per month</small><b>${fmt(monthly)}<em> ETB</em></b></div><span class="split" data-shape="line" data-name="line"></span>
+      <div><small>Next transfer</small><b class="sm">${next ? SV.dateStr(next) : '—'}</b></div>`;
+    const list = all.filter(x => tab === 'all' || (tab === 'paused') === !!x.acc.auto.paused);
+    $('rlist').innerHTML = list.length ? list.map(x => {
+      const a = x.acc.auto, i = accounts().indexOf(accounts().find(y => y.acc === x.acc));
+      return `<div class="rcard${a.paused ? ' paused' : ''}">
+        <div class="p-top"><span class="p-ic">${IC[x.kind] || IC.individual}</span><span class="p-info"><b>${x.acc.name}</b><small>${x.type}</small></span>
+          <span class="chip ${a.paused ? 'none' : 'ok'}">${a.paused ? 'Paused' : 'Active'}</span></div>
+        <div class="p-row"><span class="l">${IC.repeat}<span>${fmt(a.amount)} ETB · ${SV.FREQS[a.freq].label}</span></span>
+          <span class="r">${a.paused ? 'Paused' : 'Next <b>' + SV.dateStr(a.next) + '</b>'}</span></div>
+        ${a.missed ? `<p class="miss">${a.missed} skipped — low wallet balance</p>` : ''}
+        <div class="racts">
+          <button type="button" onclick="pick('${x.href}'); editOne()">${EDIT}Edit</button>
+          <button type="button" onclick="pick('${x.href}'); pauseOne()">${a.paused ? PLAY + 'Resume' : PAUSE + 'Pause'}</button>
+          <button type="button" class="del" onclick="pick('${x.href}'); askDelete()">${BIN}Delete</button>
+        </div>
+      </div>`;
+    }).join('') : `<div class="empty"><i>${IC.repeat}</i><b>${tab === 'paused' ? 'Nothing paused' : 'No recurring deposits yet'}</b><small>${tab === 'paused' ? 'Paused deposits show here.' : 'Move money from your wallet on a schedule.'}</small></div>`;
+  }
+  $('rtabs').querySelectorAll('button').forEach(b => b.addEventListener('click', () => {
+    tab = b.dataset.t; $('rtabs').querySelectorAll('button').forEach(x => x.classList.toggle('on', x === b)); render();
+  }));
+
+  // Manage one (buttons on each card): edit (Auto Save page), pause / resume, delete
+  function pick(href) { cur = accounts().find(x => x.href === href); }
+  function editOne() { location.href = `Savings - Auto Save.html?${cur.href}&from=recurring`; }
+  function pauseOne() {
+    const a = cur.acc.auto;
+    if (a.paused) {   // resuming: skip the dates that passed while paused
+      delete a.paused; let n = a.next; for (let i = 0; new Date(n) <= new Date() && i < 400; i++) n = SV.nextRun(n, a.freq); a.next = n;
+    } else a.paused = true;
+    SV.save(S); closeSheets(); render(); toast(a.paused ? 'Recurring deposit paused' : 'Recurring deposit resumed');
+  }
+  function askDelete() {
+    $('delTxt').textContent = `${fmt(cur.acc.auto.amount)} ETB will stop moving to ${cur.acc.name}. The money already saved stays there.`;
+    openSheet('delSheet');
+  }
+  function deleteOne() { cur.acc.auto = null; SV.save(S); closeSheets(); render(); toast('Recurring deposit deleted'); }
+
+  // New: savings without one yet
+  function openNew() {
+    if (scope) { location.href = `Savings - Auto Save.html?${scope}&from=recurring`; return; }   // one saving: no picker
+    const free = accounts().filter(x => !x.acc.auto);
+    $('newList').innerHTML = free.length ? free.map(x => `<button class="ra-row" type="button" onclick="location.href='Savings - Auto Save.html?${x.href}&from=recurring'"><span class="p-ic">${IC[x.kind] || IC.individual}</span><span><b>${x.acc.name}</b><small>${x.type}</small></span><svg class="cv" viewBox="0 0 24 24"><path d="M9 6l6 6-6 6"/></svg></button>`).join('')
+      : `<p class="none">Every saving already has a recurring deposit.</p><button class="btn-primary" onclick="location.href='Savings - Create.html?type=individual'">New Saving</button>`;
+    openSheet('newSheet');
+  }
+
+  render();
+  const done = q.get('done');
+  if (done) setTimeout(() => toast({ auto: 'Recurring deposit saved', autostop: 'Recurring deposit deleted' }[done] || 'Done'), 300);
+</script>
+<script src="figma-export.js"></script>
+<script src="test-scenarios-data.js"></script>
+<script src="test-scenarios.js"></script>
+</body>
+</html>

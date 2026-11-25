@@ -8,26 +8,20 @@
 <link rel="stylesheet" href="styles/base.css">
 <link rel="stylesheet" href="styles/component-status-bar.css">
 <link rel="stylesheet" href="styles/component-sc-card.css">
-<link rel="stylesheet" href="styles/savings.css">
+<link rel="stylesheet" href="styles/savings.css?v=20261125c">
 <style>
   @import url('https://api.fontshare.com/v2/css?f[]=switzer@400,500,600,700,800&display=swap');
 
   /* One fixed deposit (?id=). Hero (bank, masked ID, name, headline amount, term
-     bar), actions by state — Active: Check Balance · Mini Statement · Early
-     Withdraw; Matured: Withdraw · Roll Over · Mini Statement; Closed: New
-     Deposit — account details, transactions. Matured deposits ask what to do
+     bar), actions by state — Active: Roll Over · Mini Statement · Early
+     Withdraw; Matured: Withdraw · Roll Over · Mini Statement; Closed: no shortcuts.
+     Account details and transactions remain available. Matured deposits ask what to do
      on open. ?close=1 opens the close dialog. */
   .hero-top { position: relative; display: flex; align-items: center; gap: 8px; margin-bottom: 12px; font-size: 12px; font-weight: 600; color: #55555E; }
   .hero-top img { width: 26px; height: 26px; border-radius: 50%; border: 1px solid #EFEFF2; background: #FFF; object-fit: contain; }
   .hero-top em { margin-left: auto; }
   .s-bar.matured i { background: #16A34A; }
   .s-bar.closed i { background: #C9C9D1; }
-  .grid3 { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; }
-  .ga { display: flex; flex-direction: column; align-items: center; gap: 7px; padding: 12px 4px; border: 1px solid #E8E8EC; border-radius: 16px; background: #FFF; font-family: Switzer, sans-serif; cursor: pointer; }
-  .ga i { width: 38px; height: 38px; border-radius: 12px; background: #FFF1F2; display: flex; align-items: center; justify-content: center; }
-  .ga i svg { width: 20px; height: 20px; stroke: var(--Primary); stroke-width: 1.9; fill: none; stroke-linecap: round; stroke-linejoin: round; }
-  .ga span { font-size: 12px; font-weight: 500; line-height: 1.2; color: var(--On-Surface); text-align: center; }
-  .ga:disabled { opacity: 0.4; cursor: default; }
   .acc-h { width: 100%; display: flex; align-items: center; justify-content: space-between; border: none; background: none; padding: 0; cursor: pointer; font-family: Switzer, sans-serif; font-size: 15px; font-weight: 600; color: var(--On-Surface); }
   .acc-h svg { width: 18px; height: 18px; stroke: #8A8A94; stroke-width: 2; fill: none; transition: transform 0.2s; }
   .acc.open .acc-h svg { transform: rotate(180deg); }
@@ -35,6 +29,24 @@
   .acc.open .rows { display: block; }
   .rows .row small { display: block; margin-top: 2px; font-size: 11px; font-weight: 500; color: var(--Primary); text-align: right; }
   .retired { font-size: 12px; text-align: center; color: var(--On-Surface-Low); }
+  /* Hero like a saving: Mudaye + "Deposit now" bubble (opens a new fixed deposit) */
+  #hero { position: relative; }
+  #hero .s-bar { margin-top: 30px; }
+  .sv-mudaye { position: absolute; top: 40px; right: 18px; width: 84px; height: 84px; object-fit: contain; cursor: pointer; z-index: 1; animation: svWave 3.2s ease-in-out infinite; transform-origin: 50% 90%; }
+  @keyframes svWave { 0%, 100% { transform: rotate(0); } 8% { transform: rotate(-5deg); } 16% { transform: rotate(4deg); } 24% { transform: rotate(0); } }
+  .sv-bubble { position: absolute; top: 14px; right: 14px; z-index: 2; display: inline-flex; align-items: center; gap: 5px; height: 30px; padding: 0 12px; border: none; border-radius: 999px; background: var(--Primary, #FE353D); color: #FFF; font-family: Switzer, sans-serif; font-size: 12px; font-weight: 600; white-space: nowrap; cursor: pointer; box-shadow: 0 4px 12px rgba(254,53,61,0.3); animation: svPop 0.5s cubic-bezier(.2,1.4,.4,1) 0.3s both; }
+  .sv-bubble::after { content: ''; position: absolute; left: 22px; bottom: -5px; width: 10px; height: 10px; background: inherit; transform: rotate(45deg); border-radius: 2px; }
+  .sv-bubble svg { width: 13px; height: 13px; stroke: #FFF; stroke-width: 2.4; fill: none; stroke-linecap: round; stroke-linejoin: round; }
+  @keyframes svPop { from { opacity: 0; transform: scale(0.6) translateY(6px); } to { opacity: 1; transform: none; } }
+  /* Roll Over · Withdraw: two equal tiles */
+  #actions > .tile { flex: 1 1 0; }
+  /* Close sheet (as in the design) */
+  .cf-ic.cl-round { border-radius: 50%; }
+  #closeSheet .cf-rows { padding: 2px 14px; border-radius: 14px; background: #FFF6F6; }
+  .cl-ack { display: flex; align-items: flex-start; gap: 10px; margin: 0 0 14px; padding: 12px 14px; border-radius: 14px; background: #FFF; box-shadow: 0 2px 12px rgba(0,0,0,0.06); font-size: 12.5px; line-height: 1.45; color: #55555E; cursor: pointer; }
+  .cl-ack input { width: 18px; height: 18px; margin-top: 1px; accent-color: var(--Primary); flex-shrink: 0; }
+  .cl-ack b { color: var(--On-Surface); }
+  #clGo:disabled { background: #E0E0E0; color: #7C7C87; box-shadow: none; }
 </style>
 <link rel="stylesheet" href="styles/device.css">
 </head>
@@ -51,29 +63,42 @@
 
   <div class="app-content">
     <div class="header-nav">
-      <button class="icon-btn" onclick="location.href='Fixed Deposit.html'" aria-label="Back"><svg data-name="icon-arrow-left" viewBox="0 0 24 24"><path d="M19 12H5M12 19l-7-7 7-7"/></svg></button>
+      <button class="icon-btn" onclick="location.href='Fixed Deposit.html?menu=20261119c'" aria-label="Back"><svg data-name="icon-arrow-left" viewBox="0 0 24 24"><path d="M19 12H5M12 19l-7-7 7-7"/></svg></button>
       <span class="header-title" id="hTitle">Fixed Deposit</span>
       <button class="icon-btn" id="menuBtn" onclick="openSheet('menu')" aria-label="Menu"><svg data-name="icon-more" viewBox="0 0 24 24"><circle cx="12" cy="5" r="1.2"/><circle cx="12" cy="12" r="1.2"/><circle cx="12" cy="19" r="1.2"/></svg></button>
     </div>
 
     <div class="sc-card" id="hero">
-      <div class="hero-top"><img src="assets/banks logo/awass-bank.png" alt=""><span>Awash Bank</span><em id="mId"></em></div>
+      <button class="sv-bubble" type="button" onclick="location.href='Fixed Deposit - Plans.html'">Deposit now<svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button>
+      <img class="sv-mudaye" src="assets/Mudaye/Mudaye.png" alt="Mudaye" onclick="location.href='Fixed Deposit - Plans.html'">
+      <em id="mId" hidden></em>
       <div class="s-label"><span id="aName"></span> <button class="eye" id="eyeBtn" title="Show balances"><svg viewBox="0 0 24 24"><path d="M1 12s4-7.5 11-7.5S23 12 23 12s-4 7.5-11 7.5S1 12 1 12z"/><circle cx="12" cy="12" r="3"/></svg></button></div>
       <div class="s-amount"><span data-mask="" id="aAmt">******</span><small>ETB</small></div>
       <div class="s-bar" id="aBar"><i></i></div>
       <p class="s-note" id="aNote"></p>
     </div>
-    <div class="grid3" id="actions"></div>
+    <div class="rbtns" id="actions"></div>
     <p class="retired" id="retired" style="display:none">This deposit is closed and its account ID is retired.</p>
-    <div class="card acc" id="acc"><button class="acc-h" onclick="$('acc').classList.toggle('open')">Account details<svg viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg></button><div class="rows" id="facts"></div></div>
     <div class="card"><div class="sec-head" style="margin:0 0 4px"><b>Transactions</b></div><div id="txs"></div></div>
   </div>
 
   <div class="scrim" id="scrim" onclick="closeSheets()"></div>
   <div class="sheet" id="menu" role="dialog" aria-label="Deposit menu">
     <div class="sheet-grip"></div>
-    <button class="menu-item" onclick="location.href='Fixed Deposit - Help.html'"><i><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M9.5 9a2.5 2.5 0 1 1 3.5 2.3c-.6.3-1 .9-1 1.6v.6M12 17h.01"/></svg></i><b>FAQs</b></button>
-    <button class="menu-item" id="closeItem" onclick="closeSheets(); setTimeout(askClose, 120)"><i><svg viewBox="0 0 24 24"><path d="M18 6 6 18M6 6l12 12"/></svg></i><b>Close Deposit</b></button>
+    <button class="menu-item" type="button" onclick="closeSheets(); setTimeout(miniStatement, 120)"><i><svg viewBox="0 0 24 24"><path d="M4 7h16M4 12h10M4 17h16"/><path d="M17 12h3"/></svg></i><b>Mini Statement</b></button>
+    <div class="menu-acc-accordion plain" id="accAccordion">
+      <button class="menu-item" type="button" data-acc="" onclick="location.href='Savings - Account Details.html?fd=' + a.id"><i><svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2.5"/><circle cx="9" cy="11" r="2"/><path d="M6 16c.6-1.4 1.7-2 3-2s2.4.6 3 2M14 10h4M14 13h3"/></svg></i><b>Account details</b></button>
+      <div class="menu-acc-body" id="accMenuBody">
+        <div class="acc-fact-row"><span>Account ID</span><b id="mAccId">FD-849201</b></div>
+        <div class="acc-fact-row"><span>Partner Bank</span><b>Cooperative Bank of Oromia</b></div>
+        <div class="acc-fact-row"><span>Status</span><b class="status-active" id="mAccStatus">Active</b></div>
+        <div class="acc-fact-row"><span>Interest</span><b id="mAccRate">10.0%</b></div>
+        <div class="acc-fact-row"><span>Accrued Interest</span><b class="up" id="mAccInt">+0.00 ETB</b></div>
+        <div class="acc-fact-row"><span>Maturity Date</span><b id="mAccMat">15 Oct 2027</b></div>
+      </div>
+    </div>
+    <button class="menu-item" type="button" onclick="location.href='Savings - Help.html?tab=fixed'"><i><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M9.5 9.5a2.5 2.5 0 1 1 3.5 2.3c-.6.3-1 .8-1 1.5v.4M12 17h.01"/></svg></i><b>FAQ</b></button>
+    <button class="menu-item" type="button" id="closeItem" onclick="closeSheets(); setTimeout(askClose, 120)"><i><svg viewBox="0 0 24 24"><path d="M12 3v8"/><path d="M6.4 6.6a8 8 0 1 0 11.2 0"/></svg></i><b>Close Deposit</b></button>
   </div>
   <div class="sheet" id="matSheet" role="dialog" aria-label="Your term has ended">
     <div class="sheet-grip"></div>
@@ -86,12 +111,14 @@
   </div>
   <div class="sheet" id="closeSheet" role="dialog" aria-label="Close deposit">
     <div class="sheet-grip"></div>
-    <div class="cf-ic"><svg viewBox="0 0 24 24"><path d="M18 6 6 18M6 6l12 12"/></svg></div>
+    <div class="cf-ic cl-round"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="m9 9 6 6M15 9l-6 6"/></svg></div>
     <p class="cf-t" id="clT"></p>
     <p class="cf-p" id="clP"></p>
     <div class="cf-rows rows" id="clRows"></div>
+    <!-- Before maturity: confirm the interest that is lost -->
+    <label class="cl-ack" id="clAck"><input type="checkbox" id="clAckIn" onchange="$('clGo').disabled = !this.checked"><span id="clAckTxt"></span></label>
     <button class="btn-primary" id="clGo"></button>
-    <button class="btn-ghost" onclick="closeSheets()">Keep My Deposit</button>
+    <button class="btn-ghost" id="clAlt" onclick="closeSheets()">Keep My Deposit</button>
   </div>
   <div class="sheet" id="destSheet" role="dialog" aria-label="Send money to">
     <div class="sheet-grip"></div>
@@ -101,8 +128,8 @@
   <div class="toast" id="toast"></div>
 </div>
 
-<script src="savings-store.js"></script>
-<script src="savings-ui.js"></script>
+<script src="savings-store.js?v=20261125c"></script>
+<script src="savings-ui.js?v=20261125c"></script>
 <script>
   const $ = id => document.getElementById(id);
   const fmt = SV.fmt, IC = SVUI.IC;
@@ -136,16 +163,17 @@
   const a = (S.deposits || []).find(x => x.id === q.get('id')) || (S.deposits || [])[0];
   const st = SV.fdStatus(a), mat = SV.maturityOf(a), intr = SV.accrued(a);
   const A = {
-    balance: ['Check Balance', '<svg viewBox="0 0 24 24"><rect x="3" y="6" width="18" height="13" rx="2.5"/><path d="M3 10h18M7 15h4"/></svg>', checkBalance],
+    roll: ['Roll Over', '<svg viewBox="0 0 24 24"><path d="M21 12a9 9 0 1 1-3-6.7L21 8"/><path d="M21 3v5h-5"/></svg>', rollOver],
     mini: ['Mini Statement', '<svg viewBox="0 0 24 24"><path d="M6 3h9l4 4v14H6z"/><path d="M9 11h7M9 15h7M9 7h3"/></svg>', miniStatement],
     early: ['Early Withdraw', '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/><path d="M4 4l3 3"/></svg>', () => location.href = 'Fixed Deposit - Early Withdraw.html?id=' + a.id],
-    withdraw: ['Withdraw', '<svg viewBox="0 0 24 24"><path d="M12 4v11M7.5 10.5 12 15l4.5-4.5"/><path d="M4 16v3a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-3"/></svg>', withdrawMatured],
-    roll: ['Roll Over', '<svg viewBox="0 0 24 24"><path d="M21 12a9 9 0 1 1-3-6.7L21 8"/><path d="M21 3v5h-5"/></svg>', rollOver],
-    fresh: ['New Deposit', '<svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>', () => location.href = 'Fixed Deposit - Plans.html']
+    withdraw: ['Withdraw', '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 16V8M8.5 11.5 12 8l3.5 3.5"/></svg>', () => st === 'matured' ? withdrawMatured() : location.href = 'Fixed Deposit - Early Withdraw.html?id=' + a.id],
   };
-  const set = { active: ['balance', 'mini', 'early'], matured: ['withdraw', 'roll', 'mini'], closed: ['balance', 'mini', 'fresh'] }[st];
-  $('actions').innerHTML = set.map(k => `<button class="ga" data-k="${k}" ${st === 'closed' && k !== 'fresh' ? 'disabled' : ''}><i>${A[k][1]}</i><span>${A[k][0]}</span></button>`).join('');
-  $('actions').querySelectorAll('.ga').forEach(b => b.onclick = () => A[b.dataset.k][2]());
+  // Mini Statement lives in the ⋮ menu
+  // Same row everywhere: Roll Over · Withdraw circle (before maturity Withdraw opens the early-withdraw step)
+  const set = { active: ['roll', 'withdraw'], matured: ['roll', 'withdraw'], closed: [] }[st];
+  $('actions').innerHTML = SVUI.roundActions(set.map(k => ({ label: A[k][0], ic: A[k][1], onclick: `act('${k}')` })));
+  $('actions').style.display = st === 'closed' ? 'none' : '';
+  function act(k) { A[k][2](); }
   $('retired').style.display = st === 'closed' ? '' : 'none';
   if (st === 'closed') $('closeItem').style.display = 'none';
 
@@ -159,13 +187,21 @@
   $('aNote').textContent = st === 'active' ? `Opened ${SV.dateStr(a.opened)} · ${SV.daysToMaturity(a)} days to ${SV.dateStr(mat)}`
     : st === 'matured' ? `Matured ${SV.dateStr(mat)} · +${fmt(intr)} ETB interest` : `Closed ${SV.dateStr(a.closed.on)} · ${fmt(a.closed.paid)} ETB paid`;
 
-  // Account details
+  // Account details in card
   const facts = [['Account ID', a.id]];
   if (st === 'active') facts.push(['Accrued interest', `+${fmt(intr)} ETB<small>Lost if withdrawn early</small>`]);
   else facts.push(['Interest earned', (a.closed && a.closed.lost != null ? '0.00' : fmt(intr)) + ' ETB']);
   if (st === 'closed') facts.push(['Total paid', fmt(a.closed.paid) + ' ETB'], ['Closed by', a.closed.how]);
-  facts.push(['Principal', fmt(a.principal) + ' ETB'], ['Interest rate', a.rate + '% a year'], ['Lock period', a.months + ' months'], ['Opened', SV.dateStr(a.opened)], ['Maturity date', SV.dateStr(mat)]);
-  $('facts').innerHTML = facts.map(([k, v]) => `<div class="row"><span>${k}</span><b>${v}</b></div>`).join('');
+  facts.push(['Principal', fmt(a.principal) + ' ETB'], ['Interest', a.rate + '%'], ['Lock period', a.months + ' months'], ['Opened', SV.dateStr(a.opened)], ['Maturity date', SV.dateStr(mat)]);
+  // Account details live on their own page (⋮ → Account details)
+  if ($('facts')) $('facts').innerHTML = facts.map(([k, v]) => `<div class="row"><span>${k}</span><b>${v}</b></div>`).join('');
+
+  // 3-dot menu account details values
+  if ($('mAccId')) $('mAccId').textContent = a.id;
+  if ($('mAccStatus')) $('mAccStatus').textContent = st === 'active' ? 'Active' : st === 'matured' ? 'Matured' : 'Closed';
+  if ($('mAccRate')) $('mAccRate').textContent = a.rate + '%';
+  if ($('mAccInt')) $('mAccInt').textContent = '+' + fmt(intr) + ' ETB';
+  if ($('mAccMat')) $('mAccMat').textContent = SV.dateStr(mat);
 
   // Transactions, newest first
   const T = {
@@ -179,23 +215,31 @@
     return `<div class="tx ${c}"><span class="ic">${ic}</span><span class="inf"><b>${l}</b><small>${SV.dateStr(t.on)}</small></span><span class="amt">${sg}${fmt(t.amount)}</span></div>`; }).join('');
 
   // Actions that need the PIN
-  function checkBalance() { toPin({ kind: 'sav-fd-balance', title: 'Balance · ' + a.name, id: a.id, amount: 0, sub: '<b>Balance check</b>' }); }
   function miniStatement() { toPin({ kind: 'sav-fd-mini', title: 'Mini Statement · ' + a.name, id: a.id, amount: 0, sub: '<b>Last 5 transactions</b>' }); }
   function withdrawMatured() {
-    destRows('wallet', (dest, name) => toPin({ kind: 'sav-fd-mature', title: 'Withdraw ' + a.name, id: a.id, amount: Math.round(SV.maturedTotal(a) * 100) / 100, dest, destName: name }));
+    // Straight to the PIN: the money goes to the M-PESA wallet (as in the design)
+    ((dest, name, go) => go(dest, name))('wallet', 'M-PESA Wallet', (dest, name) => toPin({ kind: 'sav-fd-mature', title: a.name, logo: 'assets/banks logo/coop-bank.png',  id: a.id, amount: Math.round(SV.maturedTotal(a) * 100) / 100, dest, destName: name }));
   }
-  function rollOver() { location.href = 'Fixed Deposit - Plans.html?roll=' + a.id; }
+  function rollOver() {
+    if (st !== 'matured') return toast('Roll Over is available after maturity');
+    location.href = 'Fixed Deposit - Plans.html?roll=' + encodeURIComponent(a.id);
+  }
   function askClose() {
     if (st === 'matured') {
       $('clT').textContent = 'Close this deposit?';
       $('clP').innerHTML = 'Your term has ended, so you get the deposit <b>and</b> the interest.';
       $('clRows').innerHTML = `<div class="row"><span>Deposit</span><b>${fmt(a.principal)} ETB</b></div><div class="row"><span>Interest</span><b class="up">+${fmt(intr)} ETB</b></div><div class="row total"><span>You get</span><b>${fmt(SV.maturedTotal(a))} ETB</b></div>`;
-      $('clGo').textContent = 'Close & Withdraw'; $('clGo').onclick = () => { closeSheets(); setTimeout(withdrawMatured, 120); };
+      $('clGo').textContent = 'Close & Withdraw'; $('clGo').disabled = false; $('clGo').onclick = () => { closeSheets(); setTimeout(withdrawMatured, 120); };
+      $('clAck').style.display = 'none';
+      $('clAlt').textContent = 'Roll Over'; $('clAlt').onclick = () => { closeSheets(); setTimeout(rollOver, 120); };
     } else {
       $('clT').textContent = 'Close before maturity?';
       $('clP').innerHTML = `It matures on <b>${SV.dateStr(mat)}</b>. Closing now returns your deposit only.`;
       $('clRows').innerHTML = `<div class="row"><span>You get</span><b>${fmt(a.principal)} ETB</b></div><div class="row"><span>Interest you lose</span><b class="lost">-${fmt(intr)} ETB</b></div>`;
-      $('clGo').textContent = 'Continue'; $('clGo').onclick = () => location.href = 'Fixed Deposit - Early Withdraw.html?id=' + a.id;
+      $('clGo').textContent = 'Close & Withdraw'; $('clGo').disabled = true; $('clGo').onclick = () => location.href = 'Fixed Deposit - Early Withdraw.html?id=' + a.id;
+      $('clAck').style.display = ''; $('clAckIn').checked = false;
+      $('clAckTxt').innerHTML = `I understand that I will lose <b>${fmt(intr)} ETB</b> in interest by withdrawing before the maturity date.`;
+      $('clAlt').textContent = 'Keep My Deposit'; $('clAlt').onclick = closeSheets;
     }
     openSheet('closeSheet');
   }

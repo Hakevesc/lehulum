@@ -7,13 +7,13 @@
   const TARGET_MIN = 500;      // smallest goal
   const WALLET = 75000;        // M-PESA main balance used by the prototype
   const DAY = 864e5;
-  const VERSION = 4;
+  const VERSION = 6;
   const iso = d => new Date(Date.now() + d * DAY).toISOString();
   const addMonths = (s, m) => { const d = new Date(s); d.setMonth(d.getMonth() + m); return d.toISOString(); };
   const days = (a, b) => (new Date(b) - new Date(a)) / DAY;
 
   // Fixed deposit: one partner bank, four lock plans
-  const PARTNER = { name: 'Awash Bank', logo: 'assets/banks logo/awass-bank.png' };
+  const PARTNER = { name: 'Cooperative Bank of Oromia', logo: 'assets/banks logo/coop-bank.png' };
   const PLANS = [{ months: 3, min: 10000, rate: 8 }, { months: 6, min: 20000, rate: 9 }, { months: 9, min: 30000, rate: 9.5 }, { months: 12, min: 50000, rate: 10 }];
   // Group saving: me plus the address book
   const AV = 'assets/avatars/';
@@ -41,6 +41,9 @@
           txns: [{ type: 'DEPOSIT', amount: 8000, on: iso(-120) }, { type: 'DEPOSIT', amount: 6000, on: iso(-75) }, { type: 'DEPOSIT', amount: 6000, on: iso(-20) }, { type: 'DEPOSIT', amount: 5000, on: iso(-4) }] },
         { id: 'IS90212455', kind: 'target', name: 'Emergency Fund', opened: iso(-90), target: { amount: 15000, from: iso(-90), by: iso(30) },
           txns: [{ type: 'DEPOSIT', amount: 4000, on: iso(-90) }, { type: 'DEPOSIT', amount: 3200, on: iso(-30) }] },
+        // A target that has reached its goal (Reached chip, cheering Mudaye)
+        { id: 'IS90212388', kind: 'target', name: 'School Fees', opened: iso(-150), target: { amount: 12000, from: iso(-150), by: iso(20) },
+          txns: [{ type: 'DEPOSIT', amount: 4000, on: iso(-150) }, { type: 'DEPOSIT', amount: 4000, on: iso(-90) }, { type: 'DEPOSIT', amount: 4500, on: iso(-25) }] },
         { id: 'IS90212501', kind: 'individual', name: 'Rainy Day', opened: iso(-60), target: null,
           auto: { amount: 250, freq: 'weekly', start: iso(3), next: iso(3) },
           txns: [{ type: 'DEPOSIT', amount: 3000, on: iso(-60) }, { type: 'WITHDRAW', amount: 590, on: iso(-12) }] }
@@ -72,7 +75,31 @@
   function load() {
     try {
       const s = JSON.parse(sessionStorage.getItem('mpSavings') || 'null');
-      if (s && s.pockets && +sessionStorage.getItem('mpSavingsV') === VERSION) { if (applyAuto(s)) save(s); return s; }
+      const storedVersion = +sessionStorage.getItem('mpSavingsV');
+      if (s && s.pockets && storedVersion === VERSION) { if (applyAuto(s)) save(s); return s; }
+      // v5 → v6: add the reached target to an existing demo
+      if (s && s.pockets && storedVersion === 5) {
+        if (!s.pockets.some(p => p.id === 'IS90212388')) s.pockets.splice(2, 0, seed().pockets.find(p => p.id === 'IS90212388'));
+        save(s); if (applyAuto(s)) save(s); return s;
+      }
+      if (s && s.pockets && storedVersion === 4) {
+        // Keep existing demo savings while aligning fixed-deposit labels,
+        // rates and principal with the selected term and its opening movement.
+        s.deposits = (Array.isArray(s.deposits) ? s.deposits : []).map(a => {
+          if (!a || !a.id) return a;
+          const namedMonths = String(a.name || '').match(/^(\d+)\s+Months?\s+Lock/i);
+          const months = namedMonths ? Number(namedMonths[1]) : Number(a.months);
+          const plan = PLANS.find(p => p.months === months);
+          if (plan) { a.name = plan.months + ' Months Lock'; a.months = plan.months; a.rate = plan.rate; }
+          const deposits = Array.isArray(a.txns) ? a.txns.filter(t => t.type === 'DEPOSIT' && Number(t.amount) > 0) : [];
+          if (deposits.length) a.principal = Number(deposits[deposits.length - 1].amount);
+          a.txns = Array.isArray(a.txns) ? a.txns : [];
+          return a;
+        }).filter(Boolean);
+        save(s);
+        if (applyAuto(s)) save(s);
+        return s;
+      }
     } catch (e) {}
     const s = seed(); save(s); return s;
   }
@@ -112,7 +139,7 @@
   function applyAuto(s) {
     let changed = false;
     const run = (acc, by) => {
-      const a = acc.auto; if (!a) return;
+      const a = acc.auto; if (!a || a.paused) return;
       for (let i = 0; new Date(a.next) <= new Date() && i < 400; i++) {
         if (s.wallet >= a.amount) { acc.txns.push({ type: 'DEPOSIT', amount: a.amount, on: a.next, by, auto: true }); s.wallet -= a.amount; }
         else a.missed = (a.missed || 0) + 1;

@@ -8,13 +8,23 @@
 <link rel="stylesheet" href="styles/base.css">
 <link rel="stylesheet" href="styles/component-status-bar.css">
 <link rel="stylesheet" href="styles/component-sc-card.css">
-<link rel="stylesheet" href="styles/savings.css">
+<link rel="stylesheet" href="styles/savings.css?v=20261125c">
 <style>
   @import url('https://api.fontshare.com/v2/css?f[]=switzer@400,500,600,700,800&display=swap');
 
   /* Group Saving (Savings → Group Saving): total of my groups, any leave
      request waiting on me, My Groups, and New Group. */
 
+  /* One card: the balance card only (no reminder slide / dots), with Mudaye + a "Deposit now" bubble */
+  .slide.remind, #dots { display: none !important; }
+  .slide.sc-card { position: relative; }
+  .slide.sc-card .s-stats { margin-top: 58px; }
+  .sv-mudaye { position: absolute; top: 44px; right: 22px; width: 88px; height: 88px; object-fit: contain; cursor: pointer; z-index: 1; animation: svWave 3.2s ease-in-out infinite; transform-origin: 50% 90%; }
+  @keyframes svWave { 0%, 100% { transform: rotate(0); } 8% { transform: rotate(-5deg); } 16% { transform: rotate(4deg); } 24% { transform: rotate(0); } }
+  .sv-bubble { position: absolute; top: 14px; right: 14px; z-index: 2; display: inline-flex; align-items: center; gap: 5px; height: 30px; padding: 0 12px; border: none; border-radius: 999px; background: var(--Primary, #FE353D); color: #FFF; font-family: Switzer, sans-serif; font-size: 12px; font-weight: 600; white-space: nowrap; cursor: pointer; box-shadow: 0 4px 12px rgba(254,53,61,0.3); animation: svPop 0.5s cubic-bezier(.2,1.4,.4,1) 0.3s both; }
+  .sv-bubble::after { content: ''; position: absolute; left: 22px; bottom: -5px; width: 10px; height: 10px; background: inherit; transform: rotate(45deg); border-radius: 2px; }
+  .sv-bubble svg { width: 13px; height: 13px; stroke: #FFF; stroke-width: 2.4; fill: none; stroke-linecap: round; stroke-linejoin: round; }
+  @keyframes svPop { from { opacity: 0; transform: scale(0.6) translateY(6px); } to { opacity: 1; transform: none; } }
 </style>
 <link rel="stylesheet" href="styles/device.css">
 </head>
@@ -31,18 +41,37 @@
 
   <div class="app-content">
     <div class="header-nav">
-      <button class="icon-btn" onclick="location.href='Savings.html'" aria-label="Back"><svg data-name="icon-arrow-left" viewBox="0 0 24 24"><path d="M19 12H5M12 19l-7-7 7-7"/></svg></button>
+      <button class="icon-btn" onclick="location.href='Savings.html?menu=20261119d'" aria-label="Back"><svg data-name="icon-arrow-left" viewBox="0 0 24 24"><path d="M19 12H5M12 19l-7-7 7-7"/></svg></button>
       <span class="header-title" id="hTitle">Group Saving</span>
-      <span class="spacer"></span>
+      <button class="icon-btn" id="menuBtn" onclick="openSheet('menu')" aria-label="Menu"><svg data-name="icon-more" viewBox="0 0 24 24"><circle cx="12" cy="5" r="1.2"/><circle cx="12" cy="12" r="1.2"/><circle cx="12" cy="19" r="1.2"/></svg></button>
     </div>
 
-    <div class="sc-card">
-      <div class="s-label">Total Group Savings <button class="eye" id="eyeBtn" title="Show balances"><svg viewBox="0 0 24 24"><path d="M1 12s4-7.5 11-7.5S23 12 23 12s-4 7.5-11 7.5S1 12 1 12z"/><circle cx="12" cy="12" r="3"/></svg></button></div>
-      <div class="s-amount"><span data-mask="" id="tTotal">******</span><small>ETB</small></div>
-      <div class="s-stats">
-        <div class="s-stat"><small>You put in</small><b id="tMine"></b></div>
-        <div class="s-stat"><span class="split" data-shape="line" data-name="line"></span><small>Active groups</small><b id="tCount"></b></div>
+    <!-- Swipeable Hero Banner: Slide 1 Reminder + Slide 2 Total Group Card -->
+    <div class="hero on-red" id="hero">
+      <div class="slides" id="slides">
+        <div class="slide remind" id="remindSlide" data-name="saving-reminder">
+          <small id="rKicker">Midweek check</small>
+          <h3 id="rTitle">Halfway there? Top it up</h3>
+          <p id="rText">Keep your savings on track this week.</p>
+          <button type="button" id="rBtn">Deposit Now</button>
+          <div class="mudaye-art-box state-waving" id="mudayeBox" onclick="cycleMudayeState()" title="Tap to animate Mudaye states">
+            <img id="mudayeImg" src="assets/Mudaye/Mudaye.png" alt="Mudaye">
+          </div>
+          <span class="mudaye-badge-tap" id="mudayeBadge" onclick="cycleMudayeState()">Waving &#x21c4;</span>
+        </div>
+
+        <div class="slide sc-card" id="totalCard">
+          <button class="sv-bubble" type="button" onclick="depositNow()">Deposit now<svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button>
+          <img class="sv-mudaye" src="assets/Mudaye/Mudaye.png" alt="Mudaye" onclick="depositNow()">
+          <div class="s-label">Total Group Savings <button class="eye" id="eyeBtn" title="Show balances"><svg viewBox="0 0 24 24"><path d="M1 12s4-7.5 11-7.5S23 12 23 12s-4 7.5-11 7.5S1 12 1 12z"/><circle cx="12" cy="12" r="3"/></svg></button></div>
+          <div class="s-amount"><span data-mask="" id="tTotal">******</span><small>ETB</small></div>
+          <div class="s-stats">
+            <div class="s-stat"><small>You put in</small><b id="tMine"></b></div>
+            <div class="s-stat"><span class="split" data-shape="line" data-name="line"></span><small>Active groups</small><b id="tCount"></b></div>
+          </div>
+        </div>
       </div>
+      <div class="dots" id="dots"><i class="on"></i><i></i></div>
     </div>
     <div class="list" id="leaves"></div>
     <div class="sec-head"><b>My Groups</b><small id="cnt"></small></div>
@@ -50,11 +79,57 @@
     <div class="bottom-bar"><button class="btn-primary" onclick="location.href='Group Saving - Create.html'">New Group</button></div>
   </div>
 
+  <div class="scrim" id="scrim" onclick="closeSheets()"></div>
+
+  <!-- 3-Dot Menu Sheet matching user request -->
+  <div class="sheet" id="menu" role="dialog" aria-label="Group Saving Menu">
+    <div class="sheet-grip"></div>
+    <button class="menu-item" type="button" onclick="openMiniStatement()"><i><svg viewBox="0 0 24 24"><path d="M4 7h16M4 12h10M4 17h16"/><path d="M17 12h3"/></svg></i><b>Mini Statement</b></button>
+    <div class="menu-acc-accordion plain" id="accAccordion">
+      <button class="menu-item" type="button" data-acc="" onclick="location.href='Savings - Account Details.html?scope=group'"><i><svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2.5"/><circle cx="9" cy="11" r="2"/><path d="M6 16c.6-1.4 1.7-2 3-2s2.4.6 3 2M14 10h4M14 13h3"/></svg></i><b>Account details</b></button>
+      <div class="menu-acc-body" id="accBody">
+        <div class="acc-fact-row"><span>Account ID</span><b id="accIdVal">GRP-628190</b></div>
+        <div class="acc-fact-row"><span>Product Type</span><b>Group Saving (Equb/Chama)</b></div>
+        <div class="acc-fact-row"><span>Status</span><b class="status-active">Active</b></div>
+        <div class="acc-fact-row"><span>Partner Bank</span><b>Cooperative Bank of Oromia</b></div>
+        <div class="acc-fact-row"><span>Interest</span><b>7%</b></div>
+        <div class="acc-fact-row"><span>Governance</span><b>Multi-member approval</b></div>
+        <div class="acc-fact-row"><span>Linked Account</span><b>0712131415 (Aster)</b></div>
+      </div>
+    </div>
+    <button class="menu-item" type="button" onclick="location.href='Savings - Help.html?tab=group'"><i><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M9.5 9.5a2.5 2.5 0 1 1 3.5 2.3c-.6.3-1 .8-1 1.5v.4M12 17h.01"/></svg></i><b>FAQ</b></button>
+  </div>
+
+  <!-- Mini Statement Sheet -->
+  <div class="sheet" id="miniSheet" role="dialog" aria-label="Mini Statement">
+    <div class="sheet-grip"></div>
+    <p class="sheet-title">Mini Statement &middot; Group Saving</p>
+    <p class="lbl" style="margin-bottom:12px">Last movements across your group savings</p>
+    <div class="list" id="miniTxList">
+      <div class="tx"><span class="ic"><svg viewBox="0 0 24 24"><path d="M17 7 7 17M15 17H7V9"/></svg></span><span class="inf"><b>Contribution &middot; Family Trip</b><small>18 Nov 2026 &middot; TX301984</small></span><span class="amt">+2,000.00</span></div>
+      <div class="tx"><span class="ic"><svg viewBox="0 0 24 24"><path d="M3 17l6-6 4 4 8-8"/><path d="M14 7h7v7"/></svg></span><span class="inf"><b>Interest Accrued</b><small>17 Nov 2026</small></span><span class="amt">+6.84</span></div>
+      <div class="tx"><span class="ic"><svg viewBox="0 0 24 24"><path d="M17 7 7 17M15 17H7V9"/></svg></span><span class="inf"><b>Member Join &middot; Dawit</b><small>10 Nov 2026 &middot; JN892102</small></span><span class="amt">+3,500.00</span></div>
+    </div>
+    <button class="btn-ghost" onclick="closeSheets()" style="margin-top:14px">Close</button>
+  </div>
+
+  <!-- Roll Over Sheet -->
+  <div class="sheet" id="rollSheet" role="dialog" aria-label="Roll Over Group Saving">
+    <div class="sheet-grip"></div>
+    <div class="cf-ic">
+      <svg viewBox="0 0 24 24"><path d="M21 12a9 9 0 1 1-3-6.7L21 8"/><path d="M21 3v5h-5"/></svg>
+    </div>
+    <p class="cf-t">Roll Over Group Saving</p>
+    <p class="cf-p">Extend your group target, restart the contribution cycle, or roll over accrued group funds into a new cycle.</p>
+    <button class="btn-primary" onclick="confirmRollOver()">Continue to Roll Over</button>
+    <button class="btn-ghost" onclick="closeSheets()">Cancel</button>
+  </div>
+
   <div class="toast" id="toast"></div>
 </div>
 
-<script src="savings-store.js"></script>
-<script src="savings-ui.js"></script>
+<script src="savings-store.js?v=20261125c"></script>
+<script src="savings-ui.js?v=20261125c"></script>
 <script>
   const $ = id => document.getElementById(id);
   const fmt = SV.fmt, IC = SVUI.IC;
@@ -96,6 +171,93 @@
   if (!$('leaves').innerHTML) $('leaves').style.display = 'none';
   $('cnt').textContent = G.length ? G.length + ' active' : '';
   $('list').innerHTML = G.length ? G.map(SVUI.groupCard).join('') : SVUI.empty('group');
+
+  // Today's reminder
+  const TIPS = [
+    ['Sunday reset', 'Plan the week, save first', 'Put something aside before the week begins.'],
+    ['Monday start', 'Start the week with a deposit', 'A little today keeps your goal moving.'],
+    ['Small steps', 'Every birr counts', 'Small deposits every day add up fast.'],
+    ['Midweek check', 'Halfway there? Top it up', 'Keep your savings on track this week.'],
+    ['Keep going', 'Your money grows daily', `Savings earn ${SV.RATE}% interest, counted every day.`],
+    ['Before the weekend', 'Save before you spend', 'Move a little into savings first.'],
+    ['Weekend win', 'Treat future you', 'A weekend deposit is a gift to your goals.']
+  ];
+  const [kick, head, text] = TIPS[new Date().getDay()];
+  $('rKicker').textContent = kick; $('rTitle').textContent = head; $('rText').textContent = text;
+  $('rBtn').onclick = () => location.href = G.length ? `Savings - Amount.html?group=${G[0].id}` : 'Group Saving - Create.html';
+
+  // ── Mudaye Mascot Animation States ──
+  const MUDAYE_STATES = {
+    waving: { img: 'assets/Mudaye/Mudaye.png', label: 'Waving', cls: 'state-waving' },
+    about: { img: 'assets/Mudaye/Mudaye About to save.png', label: 'About to Save', cls: 'state-about' },
+    saved: { img: 'assets/Mudaye/Muday Saved.png', label: 'Saved (Cheering)', cls: 'state-saved' },
+    sad: { img: 'assets/Mudaye/Muday Sad.png', label: 'Empty (Sad)', cls: 'state-sad' }
+  };
+  const STATE_ORDER = ['waving', 'about', 'saved', 'sad'];
+  let currentMudayeIndex = 0;
+
+  function applyMudayeState(key) {
+    const s = MUDAYE_STATES[key] || MUDAYE_STATES.waving;
+    const box = $('mudayeBox'), img = $('mudayeImg'), badge = $('mudayeBadge');
+    if (img) img.src = s.img;
+    if (box) box.className = 'mudaye-art-box ' + s.cls;
+    if (badge) badge.innerHTML = s.label + ' &#x21c4;';
+  }
+
+  function cycleMudayeState() {
+    currentMudayeIndex = (currentMudayeIndex + 1) % STATE_ORDER.length;
+    const nextKey = STATE_ORDER[currentMudayeIndex];
+    applyMudayeState(nextKey);
+    toast('Mudaye: ' + MUDAYE_STATES[nextKey].label);
+  }
+
+  applyMudayeState(STATE_ORDER[currentMudayeIndex]);
+
+  // ── 3-Dot Menu Handlers ──
+  function toggleAccountDetails() {
+    const acc = $('accAccordion');
+    if (acc) acc.classList.toggle('open');
+  }
+
+  function openMiniStatement() {
+    closeSheets();
+    setTimeout(() => openSheet('miniSheet'), 180);
+  }
+
+  function openRollOver() {
+    closeSheets();
+    setTimeout(() => openSheet('rollSheet'), 180);
+  }
+
+  function confirmRollOver() {
+    closeSheets();
+    toast('Roll Over request initiated');
+    setTimeout(() => {
+      location.href = 'Group Saving - Create.html?rollover=1';
+    }, 600);
+  }
+
+  // Swipeable hero slides and dots
+  (function () {
+    return;   // one card now — no slides
+    const track = $('slides'), dots = [...document.querySelectorAll('#dots i')];
+    if (!track || !dots.length) return;
+    let cur = 0, auto = null, held = false;
+    const mark = k => { cur = k; dots.forEach((d, n) => d.classList.toggle('on', n === k)); $('hero').classList.toggle('on-red', k === 0); };
+    track.addEventListener('scroll', () => { const k = Math.round(track.scrollLeft / track.clientWidth); if (k !== cur) mark(k); }, { passive: true });
+    dots.forEach((d, n) => d.onclick = () => { track.scrollTo({ left: n * track.clientWidth, behavior: 'smooth' }); queue(); });
+    function queue() {
+      clearTimeout(auto);
+      if (held || matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+      auto = setTimeout(() => { track.scrollTo({ left: ((cur + 1) % dots.length) * track.clientWidth, behavior: 'smooth' }); queue(); }, 5000);
+    }
+    track.addEventListener('pointerdown', () => { held = true; clearTimeout(auto); });
+    track.addEventListener('pointerenter', () => { held = true; clearTimeout(auto); });
+    track.addEventListener('pointerleave', () => { held = false; queue(); });
+    mark(0); queue();
+  })();
+  // Deposit now (bubble or Mudaye)
+  function depositNow() { location.href = 'Savings - Amount.html?kind=deposit&pick=1&only=group'; }
 </script>
 <!-- Export to Figma button (shared exporter) -->
 <script src="figma-export.js"></script>

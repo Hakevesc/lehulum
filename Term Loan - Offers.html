@@ -104,7 +104,7 @@
   const bank = q.get('bank') || TL.OFFERS[0].lender;
   const mine = TL.OFFERS.filter(o => o.lender === bank);
   // Chips: All + only the loan types this bank offers
-  const LABEL = { cash: 'Cash Loan', salary: 'Salary Advance', bnpl: 'BNPL' };
+  const LABEL = { cash: 'Cash Loan', salary: 'Salary Advance' };
   const types = [...new Set(mine.map(o => o.product))];
   let type = types.includes(q.get('type')) ? q.get('type') : 'all';
   $('hTitle').textContent = bank;

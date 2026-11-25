@@ -74,7 +74,8 @@
   .bal b { color: var(--On-Surface); font-weight: 600; }
   .bal.err { color: var(--Primary); font-weight: 600; }
   /* Repay In Full: tap to put the full amount in the box */
-  .opt { width: 100%; display: flex; align-items: center; gap: 14px; padding: 14px; border: 1px solid #ECECF0; border-radius: 18px; background: #FFF; cursor: pointer; text-align: left; }
+  /* Repay All: a centred outline button with the whole amount left */
+  .opt { width: 100%; display: flex; flex-direction: column; align-items: center; gap: 3px; padding: 14px; border: 1.5px solid #F7A4A8; border-radius: 18px; background: #FFF; cursor: pointer; text-align: center; }
   .opt.on { border-color: var(--Primary); background: var(--Primary-Light); }
   .opt > i { width: 40px; height: 40px; border-radius: 12px; background: var(--Primary-Light); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
   .opt.on > i { background: #FFF; }
@@ -150,10 +151,7 @@
         <label class="lbl" for="amt">Set Partial Amount</label>
         <div class="amount"><input id="amt" inputmode="decimal" placeholder="e.g 1,200.00" oninput="paint()"><small>ETB</small></div>
         <p class="bal" id="bal"></p>
-        <button class="opt" id="fullOpt" type="button" onclick="fillFull()">
-          <i><svg viewBox="0 0 24 24"><path d="M2 12.5l4.5 4.5L15 8.5"/><path d="M11 15l2 2 9-9"/></svg></i>
-          <span><b>Repay In Full</b><small id="fullSub"></small></span>
-        </button>
+        <button class="opt" id="fullOpt" type="button" onclick="fillFull()"><b>Repay All</b><small id="fullSub"></small></button>
       </div>
     </div>
 
@@ -182,15 +180,15 @@
   if (!nx) location.replace('Term Loan - Details.html?id=' + loan.id);
   const total = TL.remainingOf(loan), nxLeft = nx ? TL.instLeft(nx) : 0;
   // Repay In Full clears the next instalment — or, from Loan Details' Repay All, the whole loan
-  const wholeLoan = q.get('mode') === 'all' && unpaid.length > 1;
-  const full = wholeLoan ? total : nxLeft;   // what Repay In Full pays
+  const wholeLoan = q.get('mode') === 'all' && unpaid.length > 1;   // Settle All on Loan Details
+  const full = total;   // Repay All pays everything left on the loan
   const num = () => parseFloat(($('amt').value || '').replace(/,/g, '')) || 0;
 
   $('logo').src = loan.logo;
   $('product').textContent = loan.product;
   $('lender').textContent = loan.lender;
   $('tag').textContent = offer.productLabel || 'Loan';
-  $('fullSub').textContent = fmt(full) + ' ETB' + (wholeLoan ? ' · the whole loan' : '');
+  $('fullSub').textContent = fmt(full) + ' ETB';
 
   // The next instalment — payments always go to the earliest one first
   function showInst() {
@@ -204,21 +202,23 @@
     $('instNote').innerHTML = note; $('instNote').style.display = note ? '' : 'none';
   }
 
-  // Repay In Full puts the full amount in the box; any smaller amount is a part payment
+  // Repay All puts the whole loan in the box. Otherwise the amount goes to the next
+  // instalment: less than it is a part payment, exactly it pays that instalment
   function fillFull() { $('amt').value = fmt(full); paint(); }
   const isFull = a => Math.abs(a - full) < 0.005;
   function paint() {
     const a = num(), fullOn = a > 0 && isFull(a);
-    const tooBig = a > 0 && !fullOn && a >= nxLeft - 0.004, low = a > BALANCE;
+    const tooBig = a > 0 && !fullOn && a > nxLeft + 0.004, low = a > BALANCE;
     $('fullOpt').classList.toggle('on', fullOn);
     $('bal').className = 'bal' + (tooBig || low ? ' err' : '');
-    $('bal').innerHTML = tooBig ? `Up to ${fmt(nxLeft - 0.01)} ETB as a part payment — or tap Repay In Full`
+    $('bal').innerHTML = tooBig ? `Up to ${fmt(nxLeft)} ETB for instalment ${nx.n} — or tap Repay All`
       : low ? `Not enough balance. Balance: <b>${fmt(BALANCE)} ETB</b>` : `Balance: <b>${fmt(BALANCE)} ETB</b>`;
     $('go').disabled = !(a > 0) || tooBig || low;
   }
   function next() {
     const a = Math.round(num() * 100) / 100;
-    if (isFull(a)) toPin(full, wholeLoan || unpaid.length === 1 ? 'all' : nx.n, false);
+    if (isFull(a)) toPin(full, 'all', false);
+    else if (a >= nxLeft - 0.004) toPin(nxLeft, unpaid.length === 1 ? 'all' : nx.n, false);
     else toPin(a, nx.n, true);
   }
 

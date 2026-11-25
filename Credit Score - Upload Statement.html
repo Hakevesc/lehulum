@@ -8,7 +8,7 @@
   @import url('https://api.fontshare.com/v2/css?f[]=switzer@400,500,600,700,800&display=swap');
 
   /* Update credit score (from Credit Score → Update score): pick the bank and
-     statement period, upload the PDF statement, agree, Update My Score → processing → Done; the score updates a little later
+     statement period, upload the PDF statement, agree (Fayda ID must be linked first — Link Fayda ID.html), Update My Score → processing → Done; the score updates a little later
      with the new score. */
   :root {
     --Primary: #FE353D;
@@ -224,9 +224,11 @@
 
 </div>
 
-<script src="term-loan-store.js"></script>
+<script src="term-loan-store.js?v=fayda1"></script>
 <script>
   const $ = id => document.getElementById(id);
+  // The National ID comes from Fayda: not linked yet → link it first (linked → never asked)
+  if (!TL.faydaLinked()) location.replace('Link Fayda ID.html?next=' + encodeURIComponent('Credit Score - Upload Statement.html'));
   const BANK_DIR = 'assets/banks logo/';
   const BANKS = [
     ['Commercial Bank of Ethiopia', 'cbe-logo.png'], ['Bank of Abyssinia', 'abyssinya-bank.png'], ['Awash Bank', 'awass-bank.png'],
@@ -286,6 +288,7 @@
     $('drop').style.display = ''; check();
   }
 
+  // Update My Score needs the bank, the statement and the consent
   function check() { $('submit').disabled = !(bank !== null && file && !uploading && $('consent').classList.contains('on')); }
 
   // Submit → processing: the bank reviews the statement in the background and the

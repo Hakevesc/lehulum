@@ -8,12 +8,12 @@
 <link rel="stylesheet" href="styles/base.css">
 <link rel="stylesheet" href="styles/component-status-bar.css">
 <link rel="stylesheet" href="styles/component-sc-card.css">
-<link rel="stylesheet" href="styles/savings.css">
+<link rel="stylesheet" href="styles/savings.css?v=20261125c">
 <style>
   @import url('https://api.fontshare.com/v2/css?f[]=switzer@400,500,600,700,800&display=swap');
 
   /* Amount for the chosen plan (?plan=i): wallet and minimum checks, the
-     projected interest and maturity, then a review of the deposit → PIN.
+     projected interest and maturity, then a confirmation sheet → PIN.
      ?roll=<id> skips the amount: the matured total is reinvested and any gap
      to the plan's minimum comes from the wallet. */
   .view { display: none; flex-direction: column; gap: 12px; flex: 1 1 auto; }
@@ -24,11 +24,55 @@
   .plan-top span { flex: 1; min-width: 0; }
   .plan-top b { display: block; font-size: 14px; font-weight: 600; color: var(--On-Surface); }
   .plan-top small { display: block; margin-top: 2px; font-size: 12px; color: var(--On-Surface-Low); }
+  .plan-top small b { display: inline; margin: 0; font-size: inherit; font-weight: 600; color: #55555E; }
+  .lock { padding: 18px 16px 16px; }
+  .lock-q { margin-bottom: 12px; font-size: 16px; font-weight: 400; color: var(--On-Surface); }
+  .lock .amount-in { background: #F7F7F9; }
+  .lock-hint { margin: 8px 2px 0; font-size: 12px; color: var(--On-Surface-Low); }
+  .lock-hint b { font-weight: 700; }
+  .lock-hint.min { color: var(--Primary); }
+  .lock-hint.err { color: var(--Primary); font-weight: 600; }
+  .lock-sum { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 14px; padding: 12px 14px; border-radius: 14px; background: #F7F7F9; }
+  .lock-sum small { display: block; font-size: 11.5px; color: var(--On-Surface-Low); }
+  .lock-sum b { display: block; margin-top: 3px; font-size: 14px; font-weight: 700; color: var(--On-Surface); }
   .earn { display: grid; grid-template-columns: 1fr 1fr; gap: 12px 10px; }
   .earn small { display: block; font-size: 11.5px; color: var(--On-Surface-Low); }
   .earn b { display: block; margin-top: 2px; font-size: 14px; font-weight: 700; color: var(--On-Surface); }
   .earn b.up { color: #16A34A; }
   .rv-chip { display: block; width: fit-content; margin: 0 auto 6px; padding: 6px 14px; border-radius: 999px; background: #EFEFF3; font-size: 11.5px; font-weight: 600; letter-spacing: 0.6px; color: #55555E; text-transform: uppercase; }
+  /* Confirmation sheet (same layout as the loan Apply sheet) */
+  .scrim { position: absolute; inset: 0; z-index: 100; background: rgba(0,0,0,0.42); opacity: 0; visibility: hidden; transition: opacity 0.22s, visibility 0.22s; }
+  .scrim.show { opacity: 1; visibility: visible; }
+  .cf-sheet { position: absolute; left: 0; right: 0; bottom: 0; z-index: 101; background: #FFF; border-radius: 28px 28px 0 0; padding: 10px 16px 22px; transform: translateY(100%); transition: transform 0.28s cubic-bezier(.2,.8,.2,1); }
+  .cf-sheet.show { transform: translateY(0); }
+  .cf-sheet .sheet-grip { width: 40px; height: 4px; border-radius: 2px; background: #D8D8DE; margin: 0 auto 18px; }
+  .cf-head { position: relative; display: flex; align-items: center; gap: 12px; border: 1px solid #E6E6EA; border-radius: 16px; padding: 14px; }
+  .cf-head .logo { width: 42px; height: 42px; border-radius: 12px; border: 1px solid #EFEFF2; display: flex; align-items: center; justify-content: center; overflow: hidden; flex-shrink: 0; }
+  .cf-head .logo img { width: 30px; height: 30px; object-fit: contain; }
+  .cf-head b { display: block; font-size: 15px; font-weight: 700; color: var(--On-Surface); }
+  .cf-head small { display: block; margin-top: 2px; font-size: 12.5px; color: var(--On-Surface-Low); }
+  .cf-badge { position: absolute; top: -11px; right: 14px; padding: 4px 10px; border-radius: 999px; background: #EDEDF0; color: #3A3A42; font-size: 10px; font-weight: 700; letter-spacing: 0.5px; }
+  .cf-sheet .cf-rows { margin: 8px 0 10px; padding: 0; border-radius: 0; background: none; }
+  .cf-row { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 11px 0; border-bottom: 1px solid #EFEFF2; }
+  .cf-row:last-child { border-bottom: none; }
+  .cf-row span { font-size: 12.5px; color: #55555E; }
+  .cf-row b { font-size: 12.5px; font-weight: 700; color: var(--On-Surface); white-space: nowrap; }
+  .cf-row b.up { color: #16A34A; }
+  .cf-row b.down { color: #55555E; }
+  .cf-row.total b { font-size: 15px; color: var(--Primary); }
+  .cf-note { margin: 0 2px 16px; font-size: 11.5px; line-height: 1.45; color: var(--Primary); }
+  .cf-note.err { font-weight: 600; }
+  .cf-actions { display: flex; gap: 12px; }
+  .cf-btn { flex: 1; height: 52px; border-radius: 14px; background: #FFF; font-family: Switzer, sans-serif; font-size: 15px; font-weight: 500; cursor: pointer; }
+  .cf-btn.cancel { border: 1.5px solid #E0E0E4; color: #55555E; }
+  .cf-btn.confirm { border: 1.5px solid var(--Primary); color: var(--Primary); }
+  .cf-btn.confirm:disabled { border-color: #E0E0E4; color: #A0A0AA; cursor: default; }
+  /* Sheet rows (as in the design): plain rows, a bold total, the yellow warning */
+  .cf-sheet .cf-row b.up { color: var(--On-Surface); }
+  .cf-row.grand b { font-size: 14px; color: var(--On-Surface); }
+  .cf-note.warn { display: flex; gap: 10px; align-items: flex-start; padding: 12px 14px; border-radius: 14px; background: #FEF3C7; color: #92400E; font-size: 12.5px; }
+  .cf-note.warn svg { width: 18px; height: 18px; flex-shrink: 0; stroke: #B45309; stroke-width: 2; fill: none; stroke-linecap: round; stroke-linejoin: round; }
+  .cf-actions .cf-btn.cancel { color: #55555E; }
 </style>
 <link rel="stylesheet" href="styles/device.css">
 </head>
@@ -51,31 +95,30 @@
     </div>
 
     <section class="view" id="vAmount">
-      <div class="card plan-top"><img src="assets/banks logo/awass-bank.png" alt=""><span><b id="pName"></b><small id="pSub"></small></span></div>
-      <label class="field"><span>How much do you want to lock?</span><div class="amount-in"><input id="amt" inputmode="numeric" maxlength="9" placeholder="0.00" oninput="check()"><small>ETB</small></div></label>
-      <p class="hint" id="hint"></p>
-      <div class="quick" id="quick"></div>
-      <div class="card earn">
-        <div><small>Interest rate</small><b id="eRate"></b></div>
-        <div><small>Maturity date</small><b id="eBy"></b></div>
-        <div><small>Interest at maturity</small><b class="up" id="eInt">0.00 ETB</b></div>
-        <div><small>You get</small><b id="eTotal">0.00 ETB</b></div>
+      <div class="card plan-top"><img src="assets/banks logo/coop-bank.png" alt=""><span><b id="pName"></b><small id="pSub"></small></span></div>
+      <div class="card lock">
+        <p class="lock-q">How much do you want to lock?</p>
+        <div class="amount-in"><input id="amt" inputmode="numeric" maxlength="9" placeholder="0.00" oninput="check()"><small>ETB</small></div>
+        <p class="lock-hint" id="hint"></p>
+        <div class="lock-sum"><div><small>You get</small><b id="eTotal">0.00 ETB</b></div><div><small>Maturity date</small><b id="eBy"></b></div></div>
       </div>
       <div class="bottom-bar"><button class="btn-primary" id="go" disabled onclick="review()">Continue</button></div>
     </section>
-    <section class="view" id="vReview">
-      <div class="card"><span class="rv-chip" id="rvChip">Review your deposit</span><div class="rows" id="rvRows"></div></div>
-      <div class="notice warn"><svg viewBox="0 0 24 24"><path d="M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"/><path d="M12 9v4M12 17h.01"/></svg><span>Withdrawing before <b id="rvBy"></b> returns your deposit only — the interest is lost.</span></div>
-      <p class="hint err" id="rvErr" style="display:none"></p>
-      <div class="bottom-bar"><button class="btn-primary" id="confirm" onclick="confirmDeposit()">Confirm</button></div>
-    </section>
   </div>
 
+  <div class="scrim" id="scrim" onclick="closeConfirm()"></div>
+  <div class="cf-sheet" id="cfSheet" role="dialog" aria-label="Confirm fixed deposit">
+    <div class="sheet-grip"></div>
+    <div class="cf-head"><span class="cf-badge" id="cfBadge">FIXED DEPOSIT</span><span class="logo"><img src="assets/banks logo/coop-bank.png" alt=""></span><span><b id="cfName"></b><small>Cooperative Bank of Oromia</small></span></div>
+    <div class="cf-rows" id="cfRows"></div>
+    <p class="cf-note" id="cfNote"></p>
+    <div class="cf-actions"><button class="cf-btn cancel" type="button" onclick="closeConfirm()">Cancel</button><button class="cf-btn confirm" type="button" id="confirm" onclick="confirmDeposit()">Confirm</button></div>
+  </div>
   <div class="toast" id="toast"></div>
 </div>
 
-<script src="savings-store.js"></script>
-<script src="savings-ui.js"></script>
+<script src="savings-store.js?v=20261125c"></script>
+<script src="savings-ui.js?v=20261125c"></script>
 <script>
   const $ = id => document.getElementById(id);
   const fmt = SV.fmt, IC = SVUI.IC;
@@ -88,55 +131,67 @@
   function toPin(data) { sessionStorage.setItem('termLoanData', JSON.stringify(Object.assign({ next: 'Savings - Done.html', back: location.pathname.split('/').pop() + location.search }, data))); location.href = 'Term Loan - Enter PIN.html'; }
 
   const q = new URLSearchParams(location.search), S = SV.load();
-  const plan = SV.PLANS[+q.get('plan') || 0];
-  const roll = q.get('roll') ? (S.deposits || []).find(a => a.id === q.get('roll')) : null;
-  const base = roll ? Math.floor(SV.maturedTotal(roll) * 100) / 100 : 0;
+  const planIndex = Number(q.get('plan'));
+  const plan = SV.PLANS[Number.isInteger(planIndex) && planIndex >= 0 && planIndex < SV.PLANS.length ? planIndex : 0];
+  const rollCandidate = q.get('roll') ? (S.deposits || []).find(a => a.id === q.get('roll')) : null;
+  const roll = rollCandidate && SV.fdStatus(rollCandidate) === 'matured' ? rollCandidate : null;
+  const invalidRoll = q.has('roll') && !roll;
+  const base = roll ? Math.round(SV.maturedTotal(roll) * 100) / 100 : 0;
   const name = plan.months + ' Months Lock';
   let amount = 0;
   const num = () => parseFloat(($('amt').value || '').replace(/,/g, '')) || 0;
-  function show(v) { ['vAmount', 'vReview'].forEach(id => $(id).classList.toggle('show', id === v)); }
+  function show(v) { $('vAmount').classList.toggle('show', v === 'vAmount'); }
 
   $('pName').textContent = name;
-  $('pSub').textContent = `${plan.rate}% a year · minimum ${fmt(plan.min).replace('.00', '')} ETB · Awash Bank`;
-  $('eRate').textContent = plan.rate + '% a year';
+  $('pSub').innerHTML = `<b>Interest rate:</b> ${plan.rate}% Interest · Cooperative Bank of Oromia`;
   $('eBy').textContent = SV.dateStr(SV.projected(plan, 0).by);
-  $('quick').innerHTML = [plan.min, plan.min * 2, S.wallet].filter((v, i, a) => v <= S.wallet && a.indexOf(v) === i).slice(0, 3)
-    .map((v, i, a) => `<button type="button" onclick="$('amt').value='${v}';check()">${v === S.wallet ? 'All' : fmt(v).replace('.00', '')}</button>`).join('');
   function check() {
+    if (invalidRoll) {
+      $('hint').textContent = 'This deposit is not ready to roll over. Choose a deposit that has reached maturity.';
+      $('hint').classList.add('err');
+      $('go').disabled = true;
+      return;
+    }
     const a = num(), pr = SV.projected(plan, a);
     const msg = a > S.wallet ? `Not enough balance. Max ${fmt(S.wallet)} ETB` : a && a < plan.min ? `Minimum deposit is ${fmt(plan.min)} ETB` : '';
-    $('hint').textContent = msg || `M-PESA balance: ${fmt(S.wallet)} ETB. If you withdraw early, you lose the interest.`;
-    $('hint').classList.toggle('err', !!msg);
-    $('eInt').textContent = '+' + fmt(pr.interest) + ' ETB';
-    $('eTotal').textContent = fmt(a + pr.interest) + ' ETB';
+    $('hint').innerHTML = msg || `<b>Minimum Deposit:</b> ${fmt(plan.min)} ETB`;
+    $('hint').className = 'lock-hint ' + (msg ? 'err' : 'min');
+    $('eTotal').textContent = fmt(a + pr.interest) + ' ETB';   // deposit + interest, same as the confirmation
     $('go').disabled = !a || !!msg;
   }
-  // Review: what is locked, where it comes from, and what comes back
+  // Confirmation sheet: where the money comes from, what is locked, what comes back
+  const TAX = 0.05;
   function review() {
+    if (invalidRoll) return;
     amount = roll ? Math.max(base, plan.min) : num();
     const pr = SV.projected(plan, amount), topUp = roll ? Math.max(0, plan.min - base) : 0;
-    const rows = [['Deposit', name], ['Bank', 'Awash Bank']];
-    if (roll) { rows.push(['From matured deposit', fmt(base) + ' ETB']); if (topUp) rows.push(['Added from wallet', fmt(topUp) + ' ETB']); }
-    rows.push(['Amount locked', fmt(amount) + ' ETB'], ['Interest rate', plan.rate + '% a year'], ['Lock period', plan.months + ' months'], ['Matures on', SV.dateStr(pr.by)], ['Interest', '<b class="up">+' + fmt(pr.interest) + ' ETB</b>']);
-    $('rvRows').innerHTML = rows.map(([k, v]) => `<div class="row"><span>${k}</span><b>${v}</b></div>`).join('') + `<div class="row total"><span>At maturity</span><b>${fmt(amount + pr.interest)} ETB</b></div>`;
-    $('rvRows').querySelectorAll('b b').forEach(b => b.parentElement.replaceWith(b));
-    $('rvBy').textContent = SV.dateStr(pr.by);
+    const rows = [];
+    if (roll) { rows.push(['From', roll.name + ' (matured)'], ['Matured amount', fmt(base) + ' ETB']); if (topUp) rows.push(['Added from wallet', fmt(topUp) + ' ETB']); }
+    else rows.push(['From', 'M-PESA wallet']);
+    rows.push(['Amount locked', fmt(amount) + ' ETB'], ['Interest rate', plan.rate + '% Interest'], ['Lock period', plan.months + ' months'], ['Matures on', SV.dateStr(pr.by)],
+      ['Interest at Maturity', '+' + fmt(pr.interest) + ' ETB']);
+    $('cfRows').innerHTML = rows.map(([k, v, c]) => `<div class="cf-row"><span>${k}</span><b${c ? ` class="${c}"` : ''}>${v}</b></div>`).join('')
+      + `<div class="cf-row grand"><span>Total Earning at Maturity</span><b>${fmt(amount + pr.interest)} ETB</b></div>`;
+    $('cfName').textContent = name;
+    $('cfBadge').textContent = roll ? 'ROLLOVER' : 'FIXED DEPOSIT';
     const short = topUp > S.wallet;
-    $('rvErr').style.display = short ? '' : 'none';
-    $('rvErr').textContent = short ? `You need ${fmt(topUp)} ETB in your wallet to top up this plan. Choose another plan.` : '';
+    $('cfNote').className = 'cf-note' + (short ? ' err' : ' warn');
+    $('cfNote').innerHTML = short ? `You need ${fmt(topUp)} ETB in your wallet to top up this plan. Choose another plan.`
+      : `<svg viewBox="0 0 24 24"><path d="M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"/><path d="M12 9v4M12 17h.01"/></svg><span>Withdrawing before <b>${SV.dateStr(pr.by)}</b> returns your deposit only — the interest is lost.</span>`;
     $('confirm').disabled = short;
-    $('hTitle').textContent = roll ? 'Confirm Rollover' : 'Review Deposit';
-    $('rvChip').textContent = roll ? 'Confirm rollover' : 'Review your deposit';
-    show('vReview');
+    $('scrim').classList.add('show'); $('cfSheet').classList.add('show');
   }
+  function closeConfirm() { $('scrim').classList.remove('show'); $('cfSheet').classList.remove('show'); if (roll) goBack(); }
   function confirmDeposit() {
+    if (invalidRoll) return;
     const topUp = roll ? Math.max(0, plan.min - base) : 0;
     toPin(roll
-      ? { kind: 'sav-fd-roll', title: 'Roll over to ' + name, amount, plan: +q.get('plan') || 0, from: roll.id, base, topUp, name }
-      : { kind: 'sav-fd-open', title: 'Open ' + name, amount, plan: +q.get('plan') || 0, name });
+      ? { kind: 'sav-fd-roll', title: 'Roll over to ' + name, logo: 'assets/banks logo/coop-bank.png', amount, plan: +q.get('plan') || 0, from: roll.id, base, topUp, name }
+      : { kind: 'sav-fd-open', title: name, amount, plan: +q.get('plan') || 0, name, logo: 'assets/banks logo/coop-bank.png' });
   }
-  function goBack() { if (!roll && $('vReview').classList.contains('show')) { $('hTitle').textContent = 'Deposit Amount'; return show('vAmount'); } history.length > 1 ? history.back() : location.href = 'Fixed Deposit - Plans.html'; }
-  if (roll) review(); else { show('vAmount'); check(); }
+  function goBack() { history.length > 1 ? history.back() : location.href = 'Fixed Deposit - Plans.html'; }
+  show('vAmount'); check();
+  if (roll) { $('amt').value = Math.max(base, plan.min); $('amt').disabled = true; check(); setTimeout(review, 200); }   // rollover: the matured total, straight to the sheet
 </script>
 <script src="components/keyboard.js"></script>
 <!-- Export to Figma button (shared exporter) -->

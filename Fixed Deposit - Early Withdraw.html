@@ -8,7 +8,7 @@
 <link rel="stylesheet" href="styles/base.css">
 <link rel="stylesheet" href="styles/component-status-bar.css">
 <link rel="stylesheet" href="styles/component-sc-card.css">
-<link rel="stylesheet" href="styles/savings.css">
+<link rel="stylesheet" href="styles/savings.css?v=20261125c">
 <style>
   @import url('https://api.fontshare.com/v2/css?f[]=switzer@400,500,600,700,800&display=swap');
 
@@ -43,7 +43,7 @@
 
   <div class="app-content">
     <div class="header-nav">
-      <button class="icon-btn" onclick="history.length > 1 ? history.back() : location.href='Fixed Deposit.html'" aria-label="Back"><svg data-name="icon-arrow-left" viewBox="0 0 24 24"><path d="M19 12H5M12 19l-7-7 7-7"/></svg></button>
+      <button class="icon-btn" onclick="history.length > 1 ? history.back() : location.href='Fixed Deposit.html?menu=20261119c'" aria-label="Back"><svg data-name="icon-arrow-left" viewBox="0 0 24 24"><path d="M19 12H5M12 19l-7-7 7-7"/></svg></button>
       <span class="header-title" id="hTitle">Early Withdrawal</span>
       <span class="spacer"></span>
     </div>
@@ -64,8 +64,8 @@
   <div class="toast" id="toast"></div>
 </div>
 
-<script src="savings-store.js"></script>
-<script src="savings-ui.js"></script>
+<script src="savings-store.js?v=20261125c"></script>
+<script src="savings-ui.js?v=20261125c"></script>
 <script>
   const $ = id => document.getElementById(id);
   const fmt = SV.fmt, IC = SVUI.IC;
@@ -88,7 +88,7 @@
   }
   const S = SV.load(), a = (S.deposits || []).find(x => x.id === new URLSearchParams(location.search).get('id')) || (S.deposits || [])[0];
   // A deposit that has matured in the meantime goes the normal way
-  if (SV.fdStatus(a) !== 'active') location.replace('Fixed Deposit - Account.html?id=' + a.id);
+  if (SV.fdStatus(a) !== 'active') location.replace('Fixed Deposit - Account.html?id=' + a.id + '&menu=20261119c');
   const intr = SV.accrued(a), mat = SV.maturityOf(a);
   let dest = 'wallet', destName = 'M-PESA Wallet';
   $('alert').innerHTML = `Your deposit matures on <b>${SV.dateStr(mat)}</b>, ${SV.daysToMaturity(a)} days from now. Withdrawing now returns your principal only.`;
@@ -99,8 +99,8 @@
   $('dIc').innerHTML = IC.wallet;
   $('agree').onchange = () => { $('consent').classList.toggle('on', $('agree').checked); $('go').disabled = !$('agree').checked; };
   function pickDest() { destRows(dest, (id, name) => { dest = id; destName = name; $('dName').textContent = name; const p = S.pockets.find(x => x.id === id); $('dIc').innerHTML = p ? IC[p.kind] : IC.wallet; }); }
-  function withdraw() { toPin({ kind: 'sav-fd-early', title: 'Early withdraw ' + a.name, id: a.id, amount: a.principal, lost: Math.round(intr * 100) / 100, dest, destName }); }
-  function keep() { location.href = 'Fixed Deposit - Account.html?id=' + a.id + '&cancel=1'; }
+  function withdraw() { toPin({ kind: 'sav-fd-early', title: a.name, logo: 'assets/banks logo/coop-bank.png',  id: a.id, amount: a.principal, lost: Math.round(intr * 100) / 100, dest, destName }); }
+  function keep() { location.href = 'Fixed Deposit - Account.html?id=' + a.id + '&cancel=1&menu=20261119c'; }
 </script>
 <!-- Export to Figma button (shared exporter) -->
 <script src="figma-export.js"></script>

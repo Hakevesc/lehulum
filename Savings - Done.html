@@ -3,81 +3,412 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Done — M-PESA</title>
-<link rel="stylesheet" href="styles/design-tokens.css">
-<link rel="stylesheet" href="styles/base.css">
-<link rel="stylesheet" href="styles/component-status-bar.css">
-<link rel="stylesheet" href="styles/component-sc-card.css">
-<link rel="stylesheet" href="styles/savings.css">
+<title>Savings - Receipt</title>
 <style>
   @import url('https://api.fontshare.com/v2/css?f[]=switzer@400,500,600,700,800&display=swap');
 
-  /* Result after the PIN for every savings action — opt-in, individual /
-     target (create, deposit, withdraw, close), fixed deposit (open, roll over,
-     withdraw at maturity, early withdraw, balance, mini statement) and group
-     (create, contribute, withdraw, close, leave, approve). Books the action
-     once into savings-store.js, then shows the outcome and the next step. */
-  .app-content { align-items: center; text-align: center; padding-bottom: 0 !important; }
-  .header-nav { align-self: stretch; }
-  .ok { margin-top: 26px; width: 96px; height: 96px; border-radius: 50%; background: #E8F9EE; display: flex; align-items: center; justify-content: center; animation: pop 0.45s cubic-bezier(.2,1.4,.4,1) both; }
-  .ok span { width: 64px; height: 64px; border-radius: 50%; background: #16A34A; display: flex; align-items: center; justify-content: center; box-shadow: 0 8px 20px rgba(22,163,74,0.3); }
-  .ok svg { width: 32px; height: 32px; stroke: #FFF; stroke-width: 3; fill: none; stroke-linecap: round; stroke-linejoin: round; }
-  .ok.info { background: #FFF1F2; }
-  .ok.info span { background: var(--Primary); box-shadow: 0 8px 20px rgba(254,53,61,0.3); }
-  @keyframes pop { from { transform: scale(0.6); } to { transform: none; } }
-  h1 { margin-top: 18px; font-size: 21px; font-weight: 700; color: var(--On-Surface); }
-  .sub { margin-top: 6px; max-width: 290px; font-size: 13.5px; line-height: 1.5; color: var(--On-Surface-Low); }
-  .sum { margin-top: 20px; align-self: stretch; text-align: left; }
-  .row small { display: block; margin-top: 2px; font-weight: 400; font-size: 11.5px; color: var(--On-Surface-Low); }
-  .bottom-bar { align-self: stretch; }
+  :root {
+    --Primary: #FE353D;
+    --Primary-Dark: #C41520;
+    --On-Surface: #1C1C21;
+    --On-Surface-Low: #7C7C87;
+    --Gray-0: #FFF;
+    --Primary-Light: #FFF1F2;
+    --Success: #1FC83B;
+    --Success-Light: #E8F9EC;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: Switzer, sans-serif;
+    background: transparent;
+    display: flex; justify-content: center; align-items: center;
+    min-height: 100vh; padding: 20px;
+  }
+
+  .phone-frame {
+    width: 360px; height: 780px;
+    background: #F5F5F5; border-radius: 30px;
+    overflow: hidden; position: relative;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.15);
+  }
+
+  .app-content { height: 100%; position: relative; display: flex; flex-direction: column; }
+
+  /* Status Bar */
+  .status-bar {
+    flex-shrink: 0; z-index: 5;
+    display: flex; justify-content: space-between; align-items: center;
+    width: 100%; padding: 14px 24px 8px; background: #F5F5F5;
+  }
+  .status-bar .time { font-size: 14px; font-weight: 600; color: var(--On-Surface); }
+  .status-icons { display: flex; align-items: center; gap: 6px; }
+  .status-icons svg { width: 18px; height: 18px; }
+
+  /* Header */
+  .header-nav {
+    flex-shrink: 0; z-index: 5;
+    width: 100%; display: flex; align-items: center; justify-content: space-between;
+    padding: 12px 16px; background: #F5F5F5;
+  }
+  .close-btn, .header-action-btn {
+    display: flex; align-items: center; justify-content: center;
+    width: 36px; height: 36px; border-radius: 50%;
+    background: transparent; border: none; cursor: pointer; transition: all 0.2s;
+  }
+  .close-btn:hover, .header-action-btn:hover { background: rgba(0,0,0,0.05); }
+  .close-btn svg { width: 22px; height: 22px; stroke: var(--On-Surface); stroke-width: 1.8px; }
+  .header-action-btn svg { width: 20px; height: 20px; stroke: var(--On-Surface); stroke-width: 1.8px; }
+  .header-title {
+    color: var(--On-Surface); font-family: Switzer, sans-serif;
+    font-size: 17px; font-weight: 500; letter-spacing: 0.3px;
+    flex: 1; text-align: center;
+  }
+  .header-actions { display: flex; gap: 4px; }
+
+  /* Scrollable Content */
+  .scrollable-content {
+    flex: 1; overflow-y: auto; padding: 0 16px 20px;
+    display: flex; flex-direction: column;
+  }
+  .scrollable-content::-webkit-scrollbar { width: 0; }
+
+  /* Receipt Card */
+  .receipt-card {
+    width: 100%; background: #FAFAFA; border: 1px solid #EFEFF2; border-radius: 20px;
+    padding: 46px 18px 22px;
+    display: flex; flex-direction: column; align-items: center;
+    position: relative; overflow: visible;
+    margin-top: 34px;
+  }
+
+  /* Green success circle overlapping the top */
+  .success-icon-wrapper {
+    position: absolute; top: -30px; left: 50%; transform: translateX(-50%);
+    width: 60px; height: 60px; border-radius: 50%;
+    background: var(--Success-Light); border: 2px solid var(--Success);
+    display: flex; align-items: center; justify-content: center;
+    z-index: 10; box-shadow: 0 0 0 5px #F5F5F5;
+  }
+  .success-icon-wrapper svg { width: 26px; height: 26px; stroke: var(--Success); stroke-width: 2.5; fill: none; }
+
+  /* Receipt Header */
+  .receipt-header { width: 100%; text-align: center; margin-bottom: 18px; }
+  .receipt-header h2 {
+    color: var(--On-Surface); font-family: Switzer, sans-serif;
+    font-size: 20px; font-weight: 700; letter-spacing: -0.2px; margin-bottom: 6px;
+  }
+  .receipt-header p {
+    color: var(--On-Surface-Low); font-family: Switzer, sans-serif;
+    font-size: 13.5px; font-weight: 400; line-height: 1.4;
+  }
+
+  /* Transaction Details */
+  .transaction-details {
+    width: 100%; display: flex; flex-direction: column;
+    gap: 14px; margin-bottom: 18px;
+  }
+  .detail-row { display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; line-height: 1.35; }
+  #tlRows { display: flex; flex-direction: column; gap: 14px; }   /* same spacing as the rows below */
+  .detail-row .label {
+    color: var(--On-Surface-Low); font-family: Switzer, sans-serif;
+    font-size: 13px; font-weight: 400; letter-spacing: 0.1px;
+    flex-shrink: 0; max-width: 150px;
+  }
+  .detail-row .value {
+    color: var(--On-Surface); font-family: Switzer, sans-serif;
+    font-size: 14px; font-weight: 500;
+    text-align: right; overflow-wrap: break-word; flex: 1;
+  }
+  .detail-row .value.copyable { display: flex; align-items: center; gap: 8px; justify-content: flex-end; }
+
+  .copy-btn {
+    display: flex; align-items: center; gap: 4px;
+    padding: 4px 8px; background: transparent; border: none;
+    cursor: pointer; transition: all 0.2s; border-radius: 6px;
+  }
+  .copy-btn:hover { background: var(--Primary-Light); }
+  .copy-btn .copy-text { color: var(--Primary); font-family: Switzer, sans-serif; font-size: 12px; font-weight: 500; }
+  .copy-btn svg { width: 14px !important; height: 14px !important; stroke: var(--Primary); stroke-width: 2; fill: none; }
+  .copy-btn.copied .copy-text, .copy-btn.copied svg { stroke: var(--Success); color: var(--Success); }
+
+  /* Stamp Watermark */
+  .stamp-watermark {
+    position: absolute; top: 52%; left: 50%;
+    transform: translate(-50%, -50%);
+    width: 230px; height: 230px;
+    opacity: 0.12; mix-blend-mode: multiply;
+    pointer-events: none; z-index: 1;
+  }
+  .stamp-watermark img { width: 100%; height: 100%; object-fit: contain; }
+
+  /* Amount Section */
+  .amount-section {
+    width: 100%; text-align: center;
+    padding-top: 16px; border-top: 1px solid #E8E8EC;
+    position: relative; z-index: 2;
+  }
+  .beneficiary-name {
+    color: var(--On-Surface); font-family: Switzer, sans-serif;
+    font-size: 16px; font-weight: 600; margin-bottom: 6px; letter-spacing: 0.2px;
+  }
+  .amount-display { display: flex; align-items: center; justify-content: center; gap: 10px; margin-bottom: 18px; }
+  .amount-value {
+    color: var(--Success); font-family: Switzer, sans-serif;
+    font-size: 38px; font-weight: 700; letter-spacing: -0.5px; line-height: 1;
+  }
+  .amount-currency {
+    color: var(--Success); font-family: Switzer, sans-serif;
+    font-size: 16px; font-weight: 500;
+    padding-left: 10px; border-left: 2px solid var(--Success); line-height: 1.1;
+  }
+
+  /* QR Code */
+  .qr-wrapper {
+    padding: 6px; border: 3px solid var(--Primary);
+    border-radius: 14px; background: #FFF;
+    display: inline-block; position: relative; z-index: 2;
+  }
+  .qr-wrapper img { width: 76px; height: 76px; display: block; }
+
+  /* Bottom Actions */
+  .bottom-actions {
+    flex-shrink: 0;
+    display: flex; justify-content: space-around;
+    padding: 10px 16px 12px; width: 100%;
+    background: #F5F5F5;
+  }
+  .action-btn {
+    display: flex; flex-direction: column; align-items: center; gap: 6px;
+    background: transparent; border: none; cursor: pointer;
+    transition: all 0.2s; flex: 1; padding: 4px 0;
+  }
+  .action-btn:hover { transform: translateY(-2px); }
+  .action-btn:active { transform: scale(0.95); }
+  .action-sep { width: 1px; align-self: stretch; margin: 6px 0; background: #E6E6EA; }
+  .action-icon {
+    width: 46px; height: 46px; border-radius: 13px;
+    border: 1.5px solid var(--Primary); background: var(--Primary-Light);
+    display: flex; align-items: center; justify-content: center; transition: all 0.2s;
+  }
+  .action-btn:hover .action-icon { background: var(--Primary-Light); }
+  .action-icon svg { width: 22px; height: 22px; stroke: var(--Primary); stroke-width: 2; fill: none; }
+  .action-label {
+    color: var(--On-Surface); font-family: Switzer, sans-serif;
+    font-size: 12.5px; font-weight: 500; letter-spacing: 0.1px;
+  }
+
+  /* Toast */
+  .toast {
+    position: absolute; bottom: 96px; left: 50%;
+    transform: translateX(-50%) translateY(20px);
+    background: var(--On-Surface); color: #FFF;
+    padding: 11px 22px; border-radius: 12px;
+    font-family: Switzer, sans-serif; font-size: 13px; font-weight: 500;
+    opacity: 0; pointer-events: none; transition: all 0.3s ease;
+    z-index: 1000; box-shadow: 0 4px 16px rgba(0,0,0,0.2);
+  }
+  .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+  /* ── Share sheet ── */
+  /* Bottom modal for sharing the receipt through a common set of apps,
+     matching the app's other bottom-sheet conventions (sheet-overlay /
+     sheet / sheet-grip / sheet-close / sheet-title). */
+  .sheet-overlay { position: absolute; inset: 0; background: rgba(0,0,0,0.45); display: flex; align-items: flex-end; opacity: 0; pointer-events: none; transition: opacity 0.25s; z-index: 50; }
+  .sheet-overlay.show { opacity: 1; pointer-events: auto; }
+  .sheet { position: relative; width: 100%; max-height: 82%; overflow-y: auto; background: #FFF; border-radius: 24px 24px 0 0; padding: 12px 20px 22px; display: flex; flex-direction: column; gap: 14px; transform: translateY(100%); transition: transform 0.3s cubic-bezier(0.2, 0.8, 0.3, 1); }
+  .sheet-overlay.show .sheet { transform: translateY(0); }
+  .sheet-grip { width: 44px; height: 4px; border-radius: 2px; background: #D8D8DE; margin: 0 auto 4px; }
+  .sheet-close { position: absolute; top: 12px; right: 16px; width: 28px; height: 28px; border-radius: 50%; background: var(--Field, #F5F5F5); border: none; display: flex; align-items: center; justify-content: center; cursor: pointer; }
+  .sheet-close svg { width: 15px; height: 15px; stroke: var(--On-Surface-Low); stroke-width: 2; fill: none; }
+  .sheet-title { font-family: Switzer, sans-serif; font-size: 17px; font-weight: 700; color: var(--On-Surface); text-align: center; }
+  .share-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px 8px; padding: 4px 0 6px; }
+  .share-item { display: flex; flex-direction: column; align-items: center; gap: 7px; background: none; border: none; padding: 0; cursor: pointer; }
+  .share-item .ico { width: 50px; height: 50px; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0; box-shadow: inset 0 0 0 1px rgba(0,0,0,0.06); }
+  .share-item .ico svg { width: 22px; height: 22px; }
+  .share-item span { font-family: Switzer, sans-serif; font-size: 11px; color: var(--On-Surface-Low); text-align: center; }
 </style>
+<script src="assets/qrcode.min.js"></script>
+<script src="assets/qr.js"></script>
+<link rel="stylesheet" href="styles/savings.css">
 <link rel="stylesheet" href="styles/device.css">
 </head>
 <body>
+
 <div class="phone-frame">
-  <div class="status-bar">
-    <span class="time">10:00</span>
-    <div class="status-icons">
-      <svg data-name="icon-wifi" viewBox="0 0 24 24" fill="none"><path d="M1 9l2 2c4.970-4.970 13.030-4.970 18 0l2-2C16.930 2.930 7.080 2.930 1 9z" fill="#1C1C21"/><path d="M5 13l2 2c2.760-2.760 7.240-2.760 10 0l2-2C15.140 9.140 8.870 9.140 5 13z" fill="#1C1C21"/><path d="M9 17l2 2c1.100-1.100 2.900-1.100 4 0l2-2c-2.210-2.210-5.790-2.210-8 0z" fill="#1C1C21"/></svg>
-      <svg data-name="icon-signal" viewBox="0 0 24 24" fill="none"><rect x="2" y="6" width="4" height="12" rx="1" fill="#1C1C21"/><rect x="8" y="4" width="4" height="14" rx="1" fill="#1C1C21"/><rect x="14" y="2" width="4" height="16" rx="1" fill="#1C1C21"/><rect x="20" y="0" width="4" height="18" rx="1" fill="#1C1C21" opacity="0.3"/></svg>
-      <svg data-name="icon-battery" viewBox="0 0 28 14" fill="none"><rect x="0" y="1" width="22" height="12" rx="2.5" stroke="#1C1C21" stroke-width="1.5"/><rect x="2" y="3" width="16" height="8" rx="1" fill="#1C1C21"/><rect x="24" y="4" width="2" height="6" rx="1" fill="#1C1C21"/></svg>
-    </div>
-  </div>
-
   <div class="app-content">
-    <div class="header-nav">
-      <button class="icon-btn" onclick="finish()" aria-label="Back"><svg data-name="icon-arrow-left" viewBox="0 0 24 24"><path d="M19 12H5M12 19l-7-7 7-7"/></svg></button>
-      <span class="header-title" id="hTitle"></span>
-      <span class="spacer"></span>
+
+    <!-- Status Bar -->
+    <div class="status-bar">
+      <span class="time">10:00</span>
+      <div class="status-icons">
+        <svg viewBox="0 0 24 24" fill="none"><path d="M1 9l2 2c4.97-4.97 13.03-4.97 18 0l2-2C16.93 2.93 7.08 2.93 1 9z" fill="#1C1C21"/><path d="M5 13l2 2c2.76-2.76 7.24-2.76 10 0l2-2C15.14 9.14 8.87 9.14 5 13z" fill="#1C1C21"/><path d="M9 17l2 2c1.1-1.1 2.9-1.1 4 0l2-2c-2.21-2.21-5.79-2.21-8 0z" fill="#1C1C21"/></svg>
+        <svg viewBox="0 0 24 24" fill="none"><rect x="2" y="6" width="4" height="12" rx="1" fill="#1C1C21"/><rect x="8" y="4" width="4" height="14" rx="1" fill="#1C1C21"/><rect x="14" y="2" width="4" height="16" rx="1" fill="#1C1C21"/><rect x="20" y="0" width="4" height="18" rx="1" fill="#1C1C21" opacity="0.3"/></svg>
+        <svg viewBox="0 0 28 14" fill="none"><rect x="0" y="1" width="22" height="12" rx="2.5" stroke="#1C1C21" stroke-width="1.5"/><rect x="2" y="3" width="16" height="8" rx="1" fill="#1C1C21"/><rect x="24" y="4" width="2" height="6" rx="1" fill="#1C1C21"/></svg>
+      </div>
     </div>
 
-    <div class="ok" id="okIc"><span><svg data-name="icon-check" viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg></span></div>
-    <h1 id="title"></h1>
-    <p class="sub" id="sub"></p>
-    <div class="card sum rows" id="sum"></div>
-    <div class="bottom-bar"><button class="btn-primary" id="primary"></button><button class="btn-ghost" id="secondary" onclick="finish()">Done</button></div>
+    <!-- Header Navigation -->
+    <div class="header-nav">
+      <button class="close-btn" onclick="finish()">
+        <svg viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+        </svg>
+      </button>
+      <span class="header-title">Confirmation Receipt</span>
+      <div class="header-actions">
+        <button class="header-action-btn" onclick="shareReceipt()" title="Share">
+          <svg viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/>
+            <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/>
+            <line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/>
+          </svg>
+        </button>
+        <button class="header-action-btn" onclick="downloadReceipt()" title="Download">
+          <svg viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+            <polyline points="7 10 12 15 17 10"/>
+            <line x1="12" y1="15" x2="12" y2="3"/>
+          </svg>
+        </button>
+      </div>
+    </div>
+
+    <!-- Scrollable Content -->
+    <div class="scrollable-content">
+
+      <div class="receipt-card">
+
+        <div class="success-icon-wrapper">
+          <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
+        </div>
+
+        <div class="stamp-watermark">
+          <img src="assets/M-PESA-official_stamp.png" alt="M-PESA Stamp">
+        </div>
+
+        <div class="receipt-header">
+          <h2 id="title"></h2>
+          <p>Thank you for choosing M-PESA Lehulum</p>
+        </div>
+
+        <div class="transaction-details">
+          <!-- Same row style as the Bill Payment and Send Money receipts; filled below -->
+          <div id="tlRows"></div>
+          <div class="detail-row">
+            <span class="label">Transaction ID</span>
+            <span class="value copyable">
+              <button class="copy-btn" id="copyBtn" onclick="copyTransactionId()">
+                <span class="copy-text">Copy ID</span>
+                <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="12" height="12" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h10"/></svg>
+              </button>
+              <span id="transactionId">&mdash;</span>
+            </span>
+          </div>
+          <div class="detail-row">
+            <span class="label">Transaction Date</span>
+            <span class="value" id="detailDate">&mdash;</span>
+          </div>
+        </div>
+
+        <div class="amount-section" id="amountSection">
+          <div class="beneficiary-name" id="detailName">Aster Mequanent</div>
+          <div class="amount-display">
+            <span class="amount-value" id="detailAmount"></span>
+            <span class="amount-currency">ETB</span>
+          </div>
+          <div class="qr-wrapper">
+            <img id="qrCode" src="" alt="Transaction QR Code">
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+
+    <!-- Bottom Actions -->
+    <div class="bottom-actions">
+      <button class="action-btn" onclick="addToFavorite()">
+        <div class="action-icon"><svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/></svg></div>
+        <span class="action-label">Add to Favorite</span>
+      </button>
+      <span class="action-sep" data-shape="line" data-name="line"></span>
+      <!-- Download Detail: saves this receipt as a PDF -->
+      <button class="action-btn" onclick="secondAction()">
+        <div class="action-icon" id="secondIc"></div>
+        <span class="action-label" id="secondLbl"></span>
+      </button>
+    </div>
+
+      <!-- Share sheet — lets the customer share the receipt through a common
+       set of apps instead of the old single-toast placeholder. -->
+  <div class="sheet-overlay" id="shareSheetOverlay" onclick="if(event.target===this)closeShareSheet()">
+    <div class="sheet">
+      <div class="sheet-grip"></div>
+      <button class="sheet-close" onclick="closeShareSheet()" aria-label="Close">
+        <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+      <div class="sheet-title">Share via</div>
+      <div class="share-grid">
+        <button class="share-item" onclick="shareVia('Drive')">
+          <div class="ico" style="background:#FFF;"><svg viewBox="0 0 24 24"><path d="M8.5 3h7L22 14h-7z" fill="#FFC107"/><path d="M8.5 3L2 14l3.5 6h7L9 14z" fill="#4CAF50"/><path d="M5.5 20h13l3.5-6h-7l-3.5 6z" fill="#2196F3"/></svg></div>
+          <span>Drive</span>
+        </button>
+        <button class="share-item" onclick="shareVia('Gmail')">
+          <div class="ico" style="background:#FFF;"><svg viewBox="0 0 24 24" fill="none" stroke="#EA4335" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 6 9-6"/></svg></div>
+          <span>Gmail</span>
+        </button>
+        <button class="share-item" onclick="shareVia('Messages')">
+          <div class="ico" style="background:#1774E9;"><svg viewBox="0 0 24 24" fill="#FFF"><path d="M12 3C6.5 3 2 6.8 2 11.5c0 2.6 1.4 4.9 3.6 6.5-.1 1-.5 2.3-1.4 3.5 1.6-.2 3.1-.8 4.3-1.6 1.1.4 2.3.6 3.5.6 5.5 0 10-3.8 10-8.5S17.5 3 12 3z"/></svg></div>
+          <span>Messages</span>
+        </button>
+        <button class="share-item" onclick="shareVia('WhatsApp')">
+          <div class="ico" style="background:#25D366;"><svg viewBox="0 0 24 24" fill="#FFF"><path d="M12 2a10 10 0 00-8.6 15L2 22l5.2-1.4A10 10 0 1012 2zm5.5 14.3c-.2.6-1.3 1.2-1.8 1.2-.5.1-1 .1-3.2-.7-2.7-1.1-4.4-3.8-4.6-4-.1-.2-1.1-1.4-1.1-2.7 0-1.3.7-2 1-2.2.2-.2.5-.3.7-.3h.5c.2 0 .4 0 .5.4l.7 1.7c.1.2.1.4 0 .6l-.4.5c-.1.2-.2.3 0 .5.2.3.7 1.2 1.5 1.9 1 .9 1.9 1.2 2.2 1.3.3.1.4.1.6-.1l.6-.7c.2-.2.4-.2.6-.1l1.6.8c.2.1.4.2.4.4.1.2.1.7-.1 1.3z"/></svg></div>
+          <span>WhatsApp</span>
+        </button>
+        <button class="share-item" onclick="shareVia('Messenger')">
+          <div class="ico" style="background:linear-gradient(135deg,#00B2FF,#A033FF);"><svg viewBox="0 0 24 24" fill="#FFF"><path d="M13 2L4 14h6l-1 8 9-12h-6z"/></svg></div>
+          <span>Messenger</span>
+        </button>
+        <button class="share-item" onclick="shareVia('Facebook')">
+          <div class="ico" style="background:#1877F2;"><svg viewBox="0 0 24 24" fill="#FFF"><path d="M14 9.6V9h2.5V6H14c-2 0-3.5 1.5-3.5 3.5V11H8v3h2.5v7h3v-7H16l.5-3h-3V9.6z"/></svg></div>
+          <span>Facebook</span>
+        </button>
+        <button class="share-item" onclick="shareVia('X')">
+          <div class="ico" style="background:#000;"><svg viewBox="0 0 24 24" fill="none" stroke="#FFF" stroke-width="2.2" stroke-linecap="round"><line x1="6" y1="6" x2="18" y2="18"/><line x1="18" y1="6" x2="6" y2="18"/></svg></div>
+          <span>X</span>
+        </button>
+        <button class="share-item" onclick="copyReceiptLink()">
+          <div class="ico" style="background:var(--Field, #F0F0F3);"><svg viewBox="0 0 24 24" fill="none" stroke="var(--On-Surface-Low)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg></div>
+          <span>Copy</span>
+        </button>
+      </div>
+    </div>
   </div>
 
-  <div class="toast" id="toast"></div>
+<div class="toast" id="toast"></div>
+
+  </div>
 </div>
 
-<script src="savings-store.js"></script>
-<script src="savings-ui.js"></script>
+<script src="savings-store.js?v=20261125c"></script>
+<script src="savings-ui.js?v=20261125c"></script>
 <script>
+  /* Savings receipt: the result of every savings action after the PIN — opt-in,
+     individual / target (create, deposit, withdraw, close), fixed deposit (open,
+     roll over, withdraw at maturity, early withdraw, balance, mini statement),
+     group (create, contribute, withdraw, close, leave, approve) and auto-save.
+     Books the action once into savings-store.js, then shows it in the same
+     receipt layout as Term Loan - Receipt. */
   const $ = id => document.getElementById(id);
-  const fmt = SV.fmt, IC = SVUI.IC;
-  let tt;
-  function toast(m) { const t = $('toast'); if (!t) return; t.textContent = m; t.classList.add('show'); clearTimeout(tt); tt = setTimeout(() => t.classList.remove('show'), 2200); }
-  function openSheet(id) { const s = $('scrim'); if (s) s.classList.add('show'); $(id).classList.add('show'); }
-  function closeSheets() { const s = $('scrim'); if (s) s.classList.remove('show'); document.querySelectorAll('.sheet').forEach(x => x.classList.remove('show')); }
-  document.addEventListener('keydown', e => { if (e.key === 'Escape') closeSheets(); });
-  // Hand an action to the shared PIN screen, which returns to Savings - Done.html
-  function toPin(data) { sessionStorage.setItem('termLoanData', JSON.stringify(Object.assign({ next: 'Savings - Done.html', back: location.pathname.split('/').pop() + location.search }, data))); location.href = 'Term Loan - Enter PIN.html'; }
+  const fmt = SV.fmt;
 
   const d = JSON.parse(sessionStorage.getItem('termLoanData') || '{}');
   const S = SV.load(), now = new Date().toISOString();
   S.deposits = S.deposits || []; S.groups = S.groups || [];
   const P = id => S.pockets.find(x => x.id === id), A = id => S.deposits.find(x => x.id === id), G = id => S.groups.find(x => x.id === id);
+  let invalidFDAction = false;
   // Money paid out of a deposit lands in the wallet or a saving pocket
   function payInto(dest, amt) { const p = dest && dest !== 'wallet' && P(dest); if (p) p.txns.push({ type: 'DEPOSIT', amount: amt, on: now, by: 'fd' }); else S.wallet += amt; }
 
@@ -85,7 +416,7 @@
   if (d.ref && d.recorded !== d.ref) {
     const p = P(d.id), a = A(d.id), g = G(d.id);
     switch (d.kind) {
-      case 'sav-optin': S.optedIn = true; break;
+      case 'sav-optin': S.optedIn = true; S.pockets = []; S.deposits = []; S.groups = []; break;   // a new saver starts with no accounts
       case 'sav-create': d.id = SV.newId(); S.pockets.push({ id: d.id, kind: d.type, name: d.name, opened: now, target: d.target ? { amount: d.target.amount, from: now, by: d.target.by } : null, auto: d.auto || null, txns: [] }); break;
       case 'sav-deposit': if (p) { p.txns.push({ type: 'DEPOSIT', amount: d.amount, on: now }); S.wallet -= d.amount; } break;
       case 'sav-withdraw': if (p) { p.txns.push({ type: 'WITHDRAW', amount: d.amount, on: now }); S.wallet += d.amount; } break;
@@ -93,8 +424,13 @@
       case 'sav-fd-open': { const pl = SV.PLANS[d.plan]; d.id = SV.newId('FD');
         S.deposits.push({ id: d.id, name: d.name, months: pl.months, rate: pl.rate, principal: d.amount, opened: now, closed: null, txns: [{ type: 'DEPOSIT', amount: d.amount, on: now }] });
         S.wallet -= d.amount; break; }
-      case 'sav-fd-roll': { const old = A(d.from), pl = SV.PLANS[d.plan];
-        d.interest = SV.accrued(old);
+      case 'sav-fd-roll': { const old = A(d.from), pl = SV.PLANS[Number(d.plan)];
+        if (!old || SV.fdStatus(old) !== 'matured' || !pl) { invalidFDAction = true; break; }
+        const base = Math.round(SV.maturedTotal(old) * 100) / 100;
+        const topUp = Math.round(Math.max(0, pl.min - base) * 100) / 100;
+        const amount = Math.round(Math.max(base, pl.min) * 100) / 100;
+        if (topUp > S.wallet) { invalidFDAction = true; break; }
+        d.base = base; d.topUp = topUp; d.amount = amount; d.interest = SV.accrued(old); d.plan = Number(d.plan);
         old.txns.push({ type: 'INTEREST POSTED', amount: d.interest, on: now }, { type: 'ROLLED OVER', amount: d.base, on: now });
         old.closed = { on: now, paid: d.base, how: 'Rollover to a new term' };
         d.id = SV.newId('FD');
@@ -130,81 +466,156 @@
     }
     SV.save(S); d.recorded = d.ref; sessionStorage.setItem('termLoanData', JSON.stringify(d));
   }
+  if (invalidFDAction) location.replace('Fixed Deposit.html?roll=not-ready&menu=20261119c');
+  // Opting in has no receipt: straight to M-PESA Savings (it shows its own toast)
+  if (d.kind === 'sav-optin') location.replace('Savings.html?done=optin&menu=20261119d');
+  // A new saving has no money yet: no receipt, straight to it (it shows the 'ready' state)
+  if (d.kind === 'sav-create') location.replace(`Savings - Pocket.html?id=${d.id}&done=create`);
 
   // ── What to show ──
   const p = P(d.id), a = A(d.id), g = G(d.id);
   const rows = [];
   const goPocket = (done) => () => location.href = `Savings - Pocket.html?id=${d.id}&done=${done}`;
-  const goAcct = () => location.href = `Fixed Deposit - Account.html?id=${d.id}&done=1`;
+  const goAcct = () => location.href = `Fixed Deposit - Account.html?id=${d.id}&done=1&menu=20261119c`;
   const goGroup = (done) => () => location.href = `Group Saving - Group.html?id=${d.id}` + (done ? '&done=' + done : '');
   const C = {
-    'sav-optin': ['You\'re opted in', 'Start saving for your goals and earn ' + SV.RATE + '% a year.', 'Go to M-PESA Savings', () => location.href = 'Savings.html?done=optin'],
+    'sav-optin': ['You\'re opted in', 'Start saving for your goals and earn ' + SV.RATE + '% interest.', 'Go to M-PESA Savings', () => location.href = 'Savings.html?done=optin&menu=20261119d'],
     'sav-create': [`${d.name} is ready`, 'Make your first deposit to start saving.', 'Add Money', () => location.href = `Savings - Amount.html?id=${d.id}&kind=deposit`],
-    'sav-deposit': p && p.target && SV.balanceOf(p) >= p.target.amount
-      ? ['You have reached your target!', `${fmt(d.amount)} ETB added — ${d.name} now has ${fmt(SV.balanceOf(p))} ETB.`, 'View Saving', goPocket('deposit')]
-      : ['Money saved', `${fmt(d.amount)} ETB added to ${d.name}.`, 'View Saving', goPocket('deposit')],
-    'sav-withdraw': ['Money withdrawn', `${fmt(d.amount)} ETB sent to your M-PESA wallet.`, 'View Saving', goPocket('withdraw')],
-    'sav-close': ['Saving closed', `${fmt(d.amount)} ETB sent to your M-PESA wallet.`, 'Back to Savings', () => location.href = 'Savings.html?done=closed'],
-    'sav-fd-open': ['Deposit created', `${fmt(d.amount)} ETB is locked with Awash Bank.`, 'View Deposit', goAcct],
-    'sav-fd-roll': ['Deposit rolled over', 'Your new term has started.', 'View Deposit', goAcct],
-    'sav-fd-mature': ['Deposit closed', `${fmt(d.amount)} ETB sent to your ${d.destName || 'M-PESA wallet'}.`, 'Back to Fixed Deposit', () => location.href = 'Fixed Deposit.html'],
-    'sav-fd-early': ['Deposit closed', 'Closed before maturity — your deposit was returned.', 'Back to Fixed Deposit', () => location.href = 'Fixed Deposit.html'],
+    'sav-deposit': ['Money Deposited!', `${fmt(d.amount)} ETB added to ${d.name}.`, 'View Saving', goPocket('deposit')],
+    'sav-withdraw': [p && p.target ? 'Money Withdrawal!' : 'Money Withdrawal', `${fmt(d.amount)} ETB sent to your M-PESA wallet.`, 'View Saving', goPocket('withdraw')],
+    'sav-close': [d.target ? 'Money Withdrawal!' : 'Saving Account Closed', `${fmt(d.amount)} ETB sent to your M-PESA wallet.`, 'Back to Savings', () => location.href = 'Savings.html?done=closed&menu=20261119d'],
+    'sav-fd-open': ['Money Deposited!', `${fmt(d.amount)} ETB is locked with Cooperative Bank of Oromia.`, 'View Deposit', goAcct],
+    'sav-fd-roll': ['Money Deposited!', 'Your new term has started.', 'View Deposit', goAcct],
+    'sav-fd-mature': ['Money Withdrawal!', `${fmt(d.amount)} ETB sent to your ${d.destName || 'M-PESA wallet'}.`, 'Back to Fixed Deposit', () => location.href = 'Fixed Deposit.html?menu=20261119c'],
+    'sav-fd-early': ['Money Withdrawal!', 'Closed before maturity — your deposit was returned.', 'Back to Fixed Deposit', () => location.href = 'Fixed Deposit.html?menu=20261119c'],
     'sav-fd-balance': ['Balance', 'Balance as of ' + new Date().toLocaleString('en-GB', { day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' }), 'Mini Statement', () => { d.kind = 'sav-fd-mini'; sessionStorage.setItem('termLoanData', JSON.stringify(d)); location.reload(); }],
     'sav-fd-mini': ['Mini statement', 'Your last five movements. Also sent to your phone by SMS.', 'Done', goAcct],
     'sav-grp-create': [`${d.name} is ready`, `Invitations sent to ${(d.members || []).length} ${(d.members || []).length > 1 ? 'members' : 'member'}. Contribute to get the group started.`, 'Contribute', () => location.href = `Savings - Amount.html?group=${d.id}`],
     'sav-grp-contribute': ['Contribution added', `${fmt(d.amount)} ETB added to ${g ? g.name : 'the group'}.`, 'View Group', goGroup('contribute')],
     'sav-grp-withdraw': ['Money withdrawn', `${fmt(d.amount)} ETB sent to your M-PESA wallet. The group is now closed.`, 'Back to Group Saving', () => location.href = 'Group Saving.html'],
     'sav-grp-close': ['Group closed', 'Every member got back what they put in.', 'Back to Group Saving', () => location.href = 'Group Saving.html'],
-    'sav-auto-set': ['Auto-save is on', `${fmt(d.amount)} ETB moves from your wallet to ${d.name} ${d.auto ? SV.FREQS[d.auto.freq].every : ''}.`, d.group ? 'View Group' : 'View Saving',
+    'sav-auto-set': ['Recurring deposit is on', `${fmt(d.amount)} ETB moves from your wallet to ${d.name} ${d.auto ? SV.FREQS[d.auto.freq].every : ''}.`, d.group ? 'View Group' : 'View Saving',
       () => location.href = (d.group ? `Group Saving - Group.html?id=${d.id}` : `Savings - Pocket.html?id=${d.id}`) + '&done=auto'],
     'sav-grp-leave': ['Leave request sent', `Once ${SV.LEAVE_NEEDED} members approve, ${fmt(d.amount)} ETB comes back to your wallet.`, 'View Group', goGroup('leave')],
     'sav-grp-approve': d.completed ? [`${SV.person(d.who).name} has left`, `${fmt(d.paid)} ETB was paid back to them, with interest.`, 'View Group', goGroup('')]
                                    : ['You approved', `${d.count || 1} of ${SV.LEAVE_NEEDED} members have approved.`, 'View Group', goGroup('approve')]
-  }[d.kind] || ['Done', '', 'Back to Savings', () => location.href = 'Savings.html'];
-  $('title').textContent = C[0]; $('sub').textContent = C[1];
-  $('primary').textContent = C[2]; $('primary').onclick = C[3];
-
+  }[d.kind] || ['Done', '', 'Back to Savings', () => location.href = 'Savings.html?menu=20261119d'];
   const ETB = v => fmt(v) + ' ETB';
   switch (d.kind) {
-    case 'sav-create': rows.push(['Saving', d.type === 'target' ? 'Target Saving' : 'Individual Saving'], ['Interest', SV.RATE + '% a year']); if (d.target) rows.push(['Goal', ETB(d.target.amount)], ['By', SV.dateStr(d.target.by)]);
-      if (d.auto) rows.push(['Auto-save', SV.autoLine(d.auto)], ['First transfer', SV.dateStr(d.auto.start)]); break;
-    case 'sav-deposit': case 'sav-withdraw': if (p) { rows.push(['Saving', d.name], ['Amount', ETB(d.amount)], ['Saving balance', ETB(SV.balanceOf(p))]); if (p.target) rows.push(['Goal progress', SV.pctOf(p) + '% of ' + ETB(p.target.amount)]); } break;
-    case 'sav-close': rows.push(['Saving', d.name], ['Paid to wallet', ETB(d.amount)]); break;
+    case 'sav-create': rows.push(['Saving', d.type === 'target' ? 'Target Saving' : 'Individual Saving'], ['Interest', SV.RATE + '%']); if (d.target) rows.push(['Goal', ETB(d.target.amount)], ['By', SV.dateStr(d.target.by)]);
+      if (d.auto) rows.push(['Recurring deposit', SV.autoLine(d.auto)], ['First transfer', SV.dateStr(d.auto.start)]); break;
+    // Deposit receipt (as in the design): who, bank, the saving account, amount, interest
+    case 'sav-deposit':
+      rows.push(['Name', 'Aster Mequanent'], ['Phone Number', '0712131415'], ['Partner Bank', 'Cooperative Bank of Oromia'], ['Saving Account Number', d.id]);
+      if (p && p.target) rows.push(['Saving Name', d.name], ['Interest', SV.RATE + '% Interest'], ['Target Amount', ETB(p.target.amount)], ['Deposited Amount', ETB(d.amount)], ['Target Date', SV.dateStr(p.target.by)]);
+      else rows.push(['Saving A/C Name', d.name], ['Amount', ETB(d.amount)], ['Interest', SV.RATE + '% Interest']);
+      break;
+    // Withdraw / close receipt (as in the design): who, bank, the saving account, what went to the wallet
+    case 'sav-withdraw':
+      rows.push(['Name', 'Aster Mequanent'], ['Phone Number', '0712131415'], ['Partner Bank', 'Cooperative Bank of Oromia'], ['Saving Account Number', d.id], ['Saving Name', d.name]);
+      if (p && p.target) rows.push(['Interest', ETB(SV.interestOf(p))], ['Target Amount', ETB(p.target.amount)], ['Withdrawn Amount', ETB(d.amount)], ['Target Date', SV.dateStr(p.target.by)]);
+      else rows.push(['Amount', ETB(d.amount)]);
+      break;
+    case 'sav-close':
+      rows.push(['Name', 'Aster Mequanent'], ['Phone Number', '0712131415'], ['Partner Bank', 'Cooperative Bank of Oromia'], ['Saving Account Number', d.id], ['Saving Name', d.name], ['Interest', ETB(d.interest || 0)]);
+      if (d.target) rows.push(['Target Amount', ETB(d.target.amount)], ['Withdrawn Amount', ETB(d.amount)], ['Target Date', SV.dateStr(d.target.by)]);
+      else rows.push(['Amount', ETB(d.amount)]);
+      break;
     case 'sav-auto-set': { const acc = d.group ? G(d.id) : P(d.id);
       rows.push([d.group ? 'Group' : 'Saving', d.name], ['Amount', ETB(d.amount)], ['How often', SV.FREQS[d.auto.freq].label], ['First transfer', SV.dateStr(d.auto.start)], ['From', 'M-PESA wallet']);
       if (acc && acc.target && !d.group) { const on = SV.reachesOn(acc.target.amount, SV.balanceOf(acc), d.auto); if (on) rows.push(['Reaches the goal', SV.dateStr(on)]); }
       break; }
-    case 'sav-fd-open': case 'sav-fd-roll': if (a) { const pr = SV.projected(SV.PLANS[d.plan], d.amount);
-      rows.push(['Deposit', a.name]);
+    // New fixed deposit (as in the design)
+    case 'sav-fd-open': case 'sav-fd-roll': if (a) { const pr = SV.projected(SV.PLANS[d.plan], a.principal);
+      rows.push(['Name', 'Aster Mequanent'], ['Phone Number', '0712131415'], ['Partner Bank', 'Cooperative Bank of Oromia'], ['Deposit Type', a.name], ['Interest', a.rate + '% Interest'],
+        ['Locked amount', ETB(a.principal)], ['Maturity Date', SV.dateStr(SV.maturityOf(a))], ['Total Earning at Maturity', ETB(a.principal + pr.interest)]); } break;
+    case 'sav-fd-roll-old': if (a) { const pr = SV.projected(SV.PLANS[d.plan], a.principal);
+      rows.push(['Deposit', a.name], ['Bank', 'Cooperative Bank of Oromia']);
       if (d.kind === 'sav-fd-roll') { rows.push(['From matured deposit', ETB(d.base)]); if (d.topUp) rows.push(['Added from wallet', ETB(d.topUp)]); }
-      rows.push(['Locked amount', ETB(d.amount)], ['Interest rate', a.rate + '% a year'], ['Matures on', SV.dateStr(SV.maturityOf(a))], ['At maturity', ETB(d.amount + pr.interest)]); } break;
-    case 'sav-fd-mature': rows.push(['Deposit', ETB(d.principal || 0)], ['Interest earned', '+' + ETB(d.interest || 0)], ['Total paid', ETB(d.amount)], ['Sent to', d.destName || 'M-PESA Wallet']); break;
-    case 'sav-fd-early': rows.push(['Principal returned', ETB(d.amount)], ['Interest lost', '<b class="lost">-' + ETB(d.lost) + '</b>'], ['Sent to', d.destName || 'M-PESA Wallet'], ['Status', 'Closed before maturity']); break;
-    case 'sav-fd-balance': $('okIc').className = 'ok info'; $('secondary').textContent = 'Done'; $('secondary').onclick = goAcct;
-      rows.push(['Current balance', '<b>' + ETB(SV.maturedTotal(a)) + '</b>'], ['Principal', ETB(a.principal)], ['Accrued interest', '+' + ETB(SV.accrued(a))], ['Matures on', SV.dateStr(SV.maturityOf(a))]); break;
-    case 'sav-fd-mini': $('okIc').className = 'ok info'; $('secondary').style.display = 'none';
-      SV.history(a).reverse().slice(0, 5).forEach(t => rows.push([`${{ 'DEPOSIT': 'Deposit', 'INTEREST ACCRUED': 'Interest accrued', 'INTEREST POSTED': 'Interest posted', 'WITHDRAW': 'Withdrawn', 'ROLLED OVER': 'Rolled over' }[t.type]}<small>${SV.dateStr(t.on)}</small>`, (t.type === 'WITHDRAW' ? '-' : '+') + fmt(t.amount)])); break;
-    case 'sav-grp-create': $('secondary').textContent = 'Add Later'; $('secondary').onclick = goGroup('');
-      rows.push(['Group', d.name], ['Target', ETB(d.target.amount)], ['By', SV.dateStr(d.target.by)], ['Members', (d.members.length + 1) + ' including you']); break;
+      rows.push(['Locked amount', ETB(a.principal)], ['Interest', a.rate + '%'], ['Lock period', a.months + ' months'], ['Matures on', SV.dateStr(SV.maturityOf(a))], ['Interest at maturity', '+' + ETB(pr.interest)], ['At maturity', ETB(a.principal + pr.interest)]); } break;
+    // Fixed deposit closed (at or before maturity), as in the design
+    case 'sav-fd-mature': case 'sav-fd-early': {
+      const early = d.kind === 'sav-fd-early', intr = early ? 0 : (d.interest || 0), prin = early ? d.amount : (d.principal || 0);
+      rows.push(['Name', 'Aster Mequanent'], ['Phone Number', '0712131415'], ['Partner Bank', 'Cooperative Bank of Oromia'], ['Deposit Type', a ? a.name : d.name || ''],
+        ['Interest', early ? '<b class="lost">-' + ETB(d.lost || 0) + ' (lost)</b>' : '+' + ETB(intr)], ['Locked amount', ETB(prin)]);
+      if (a) rows.push(['Maturity Date', SV.dateStr(SV.maturityOf(a))]);
+      rows.push(['Total Earning at Maturity', ETB(early ? prin : prin + intr)]);
+      if (d.destName && !/wallet/i.test(d.destName)) rows.push(['Sent to', d.destName]);
+      break; }
+    case 'sav-fd-balance': rows.push(['Current balance', '<b>' + ETB(SV.maturedTotal(a)) + '</b>'], ['Principal', ETB(a.principal)], ['Accrued interest', '+' + ETB(SV.accrued(a))], ['Matures on', SV.dateStr(SV.maturityOf(a))]); break;
+    case 'sav-fd-mini': SV.history(a).reverse().slice(0, 5).forEach(t => rows.push([`${{ 'DEPOSIT': 'Deposit', 'INTEREST ACCRUED': 'Interest accrued', 'INTEREST POSTED': 'Interest posted', 'WITHDRAW': 'Withdrawn', 'ROLLED OVER': 'Rolled over' }[t.type]}<small>${SV.dateStr(t.on)}</small>`, (t.type === 'WITHDRAW' ? '-' : '+') + fmt(t.amount)])); break;
+    case 'sav-grp-create': rows.push(['Group', d.name], ['Target', ETB(d.target.amount)], ['By', SV.dateStr(d.target.by)], ['Members', (d.members.length + 1) + ' including you']); break;
     case 'sav-grp-contribute': if (g) rows.push(['Group', g.name], ['Amount', ETB(d.amount)], ['Group balance', ETB(SV.balanceOf(g))], ['Target progress', SV.pctOf(g) + '% of ' + ETB(g.target.amount)]); break;
     case 'sav-grp-withdraw': rows.push(['Group', g ? g.name : ''], ['Sent to', 'M-PESA wallet'], ['Amount', ETB(d.amount)]); break;
     case 'sav-grp-close': rows.push(['Group', g ? g.name : ''], ['Paid back in total', ETB(d.amount)], ['Your share to wallet', ETB(d.mine || 0)]); break;
     case 'sav-grp-leave': case 'sav-grp-approve': if (g) rows.push(['Group', g.name]); rows.push([d.kind === 'sav-grp-leave' ? 'Paid back to you' : 'Paid back to them', ETB(d.completed ? d.paid : d.amount)]); break;
   }
-  if (d.ref && !/balance|mini/.test(d.kind)) rows.push(['Transaction ID', d.ref]);
-  if (!/balance/.test(d.kind)) rows.push(['Date', new Date().toLocaleString('en-GB', { day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' })]);
-  $('sum').innerHTML = rows.map(([k, v]) => `<div class="row"><span>${k}</span><b>${v}</b></div>`).join('');
-  $('sum').querySelectorAll('.row > b > b').forEach(b => b.parentElement.replaceWith(b));
-  if (d.kind === 'sav-optin') { $('sum').style.display = 'none'; $('secondary').style.display = 'none'; }
+  const TYPE = { 'sav-create': 'Saving Created', 'sav-deposit': 'Deposit to Saving account', 'sav-withdraw': 'Transfer to M-PESA account', 'sav-close': 'Transfer to M-PESA account',
+    'sav-auto-set': 'Recurring Deposit Setup', 'sav-fd-open': 'Deposit to Saving A/C', 'sav-fd-roll': 'Deposit to Saving A/C', 'sav-fd-mature': 'Deposit to M-PESA A/C',
+    'sav-fd-early': 'Deposit to M-PESA A/C', 'sav-fd-balance': 'Balance Inquiry', 'sav-fd-mini': 'Mini Statement', 'sav-grp-create': 'Group Saving Created',
+    'sav-grp-contribute': 'Group Contribution', 'sav-grp-withdraw': 'Group Withdrawal', 'sav-grp-close': 'Group Closure',
+    'sav-grp-leave': 'Group Leave Request', 'sav-grp-approve': 'Group Leave Approval' }[d.kind];
+  const PARTY_TYPES = ['sav-grp-contribute', 'sav-grp-withdraw', 'sav-grp-close'];
+  if (PARTY_TYPES.includes(d.kind)) {
+    const inbound = ['sav-withdraw', 'sav-close', 'sav-fd-mature', 'sav-fd-early', 'sav-grp-withdraw', 'sav-grp-close'].includes(d.kind);
+    rows.unshift([inbound ? "Receiver's Name" : "Payer's Name", 'Aster Mequanent'], [inbound ? "Receiver's Phone Number" : "Payer's Phone Number", '0712131415']);
+  }
+  if (TYPE) rows.push(['Transaction Type', (d.kind === 'sav-withdraw' && p && p.target) || (d.kind === 'sav-close' && d.target) ? 'Transferred to M-PESA A/C' : TYPE]);
+  $('title').textContent = C[0];
+  $('tlRows').innerHTML = rows.map(([k, v]) => `<div class="detail-row"><span class="label">${k}</span><span class="value">${v}</span></div>`).join('');
+  $('tlRows').querySelectorAll('.value > b').forEach(b => b.replaceWith(...b.childNodes));
+  $('transactionId').textContent = d.ref || '—';
+  const pad = n => String(n).padStart(2, '0');
+  const dt = new Date();
+  $('detailDate').textContent = pad(dt.getDate()) + '/' + pad(dt.getMonth() + 1) + '/' + dt.getFullYear() + ' at ' + dt.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
+
+  // Money in (to the wallet) is green +, money out (into savings) is red −; no amount, no amount block
+  const IN = ['sav-fd-open', 'sav-deposit', 'sav-withdraw', 'sav-close', 'sav-fd-mature', 'sav-fd-early', 'sav-grp-withdraw', 'sav-grp-close'];   // deposit: + into the saving
+  const OUT = ['sav-grp-contribute'];
+  const moved = IN.includes(d.kind) ? (d.kind === 'sav-grp-close' ? d.mine : d.amount) : OUT.includes(d.kind) ? d.amount : d.kind === 'sav-fd-roll' ? d.amount : 0;   // rollover: the amount locked
+  if (moved) {
+    const out = !IN.includes(d.kind);
+    $('detailAmount').textContent = (['sav-withdraw', 'sav-close', 'sav-fd-open', 'sav-fd-roll', 'sav-fd-mature', 'sav-fd-early'].includes(d.kind) ? '' : out ? '-' : '+') + Math.round(moved).toLocaleString('en-US');
+    const c = out ? '#FE353D' : '#16A34A';
+    $('detailAmount').style.color = c; document.querySelector('.amount-currency').style.color = c;
+    renderQR($('qrCode'), JSON.stringify({ type: C[0], txId: d.ref, amount: fmt(moved) + ' ETB' }), 240);
+  } else $('amountSection').style.display = 'none';
+
+  // Bottom: Add to Favorite · Download Detail (the receipt as a PDF)
+  $('secondIc').innerHTML = '<svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16v9"/><path d="M12 8v9M8 13l4 4 4-4"/><path d="M4 21h16"/></svg>';
+  $('secondLbl').textContent = 'Download Detail';
+  function secondAction() { downloadReceipt(); }
+
+  function showToast(msg) { const t = $('toast'); t.textContent = msg; t.classList.add('show'); setTimeout(() => t.classList.remove('show'), 2500); }
+  function copyText(text) {
+    return navigator.clipboard.writeText(text).catch(() => {
+      const ta = document.createElement('textarea'); ta.value = text; document.body.appendChild(ta); ta.select();
+      document.execCommand('copy'); document.body.removeChild(ta);
+    });
+  }
+  function copyTransactionId() {
+    copyText($('transactionId').textContent);
+    $('copyBtn').classList.add('copied');
+    $('copyBtn').querySelector('.copy-text').textContent = 'Copied!';
+    showToast('Transaction ID copied to clipboard');
+    setTimeout(() => { $('copyBtn').classList.remove('copied'); $('copyBtn').querySelector('.copy-text').textContent = 'Copy ID'; }, 2000);
+  }
+  function shareReceipt() { $('shareSheetOverlay').classList.add('show'); }
+  function closeShareSheet() { $('shareSheetOverlay').classList.remove('show'); }
+  function shareVia(app) { closeShareSheet(); showToast('Sharing via ' + app + '...'); }
+  function copyReceiptLink() { closeShareSheet(); copyText(location.href).then(() => showToast('Receipt link copied')); }
+  function downloadReceipt() { ReceiptPDF.download({ root: '.receipt-card', name: 'M-PESA Savings', toast: showToast }); }
+  function addToFavorite() { showToast('Added to favorites!'); }
   function finish() {
     const k = d.kind || '';
     location.href = k === 'sav-deposit' || k === 'sav-withdraw' ? `Savings - Pocket.html?id=${d.id}`
-      : /^sav-fd-(open|roll|balance|mini)/.test(k) ? `Fixed Deposit - Account.html?id=${d.id}&done=1` : /^sav-fd/.test(k) ? 'Fixed Deposit.html'
+      : /^sav-fd-(open|roll|balance|mini)/.test(k) ? `Fixed Deposit - Account.html?id=${d.id}&done=1&menu=20261119c` : /^sav-fd/.test(k) ? 'Fixed Deposit.html?menu=20261119c'
       : k === 'sav-auto-set' ? (d.group ? `Group Saving - Group.html?id=${d.id}` : `Savings - Pocket.html?id=${d.id}`)
-      : /^sav-grp-(create|contribute|leave|approve)/.test(k) && G(d.id) ? `Group Saving - Group.html?id=${d.id}` : /^sav-grp/.test(k) ? 'Group Saving.html' : 'Savings.html';
+      : /^sav-grp-(create|contribute|leave|approve)/.test(k) && G(d.id) ? `Group Saving - Group.html?id=${d.id}` : /^sav-grp/.test(k) ? 'Group Saving.html' : 'Savings.html?menu=20261119d';
   }
 </script>
 <!-- Export to Figma button (shared exporter) -->
+<script src="components/receipt-pdf.js?v=1"></script>
 <script src="figma-export.js"></script>
 <script src="test-scenarios-data.js"></script>
 <script src="test-scenarios.js"></script>

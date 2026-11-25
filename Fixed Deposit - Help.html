@@ -8,7 +8,7 @@
 <link rel="stylesheet" href="styles/base.css">
 <link rel="stylesheet" href="styles/component-status-bar.css">
 <link rel="stylesheet" href="styles/component-sc-card.css">
-<link rel="stylesheet" href="styles/savings.css">
+<link rel="stylesheet" href="styles/savings.css?v=20261125c">
 <style>
   @import url('https://api.fontshare.com/v2/css?f[]=switzer@400,500,600,700,800&display=swap');
 
@@ -45,23 +45,24 @@
 
   <div class="app-content">
     <div class="header-nav">
-      <button class="icon-btn" onclick="history.length > 1 ? history.back() : location.href='Fixed Deposit.html'" aria-label="Back"><svg data-name="icon-arrow-left" viewBox="0 0 24 24"><path d="M19 12H5M12 19l-7-7 7-7"/></svg></button>
-      <span class="header-title" id="hTitle">Fixed Deposit</span>
+      <button class="icon-btn" onclick="history.length > 1 ? history.back() : location.href='Fixed Deposit.html?menu=20261119c'" aria-label="Back"><svg data-name="icon-arrow-left" viewBox="0 0 24 24"><path d="M19 12H5M12 19l-7-7 7-7"/></svg></button>
+      <span class="header-title" id="hTitle">FAQs</span>
       <span class="spacer"></span>
     </div>
 
     <div class="card"><span class="pill">Fixed deposit terms</span><div class="tbl" id="tbl"></div></div>
     <div class="card" style="padding-bottom:6px"><span class="pill">Frequent questions</span><div id="faq"></div></div>
-    <div class="bottom-bar"><button class="btn-primary" onclick="history.length > 1 ? history.back() : location.href='Fixed Deposit.html'">Done</button></div>
+    <div class="bottom-bar"><button class="btn-primary" onclick="history.length > 1 ? history.back() : location.href='Fixed Deposit.html?menu=20261119c'">Done</button></div>
   </div>
 
   <div class="toast" id="toast"></div>
 </div>
 
-<script src="savings-store.js"></script>
-<script src="savings-ui.js"></script>
+<script src="savings-store.js?v=20261125c"></script>
+<script src="savings-ui.js?v=20261125c"></script>
 <script>
   const $ = id => document.getElementById(id);
+  document.title = 'Fixed Deposit FAQs — M-PESA';
   const fmt = SV.fmt, IC = SVUI.IC;
   let tt;
   function toast(m) { const t = $('toast'); if (!t) return; t.textContent = m; t.classList.add('show'); clearTimeout(tt); tt = setTimeout(() => t.classList.remove('show'), 2200); }
@@ -77,7 +78,7 @@
   const TERMS = [
     ['Lock period', 'How long the money stays locked', `${P[0].months} – ${P[P.length - 1].months} months`],
     ['Minimum deposit', 'Smallest amount, by period', `From ${fmt(P[0].min).replace('.00', '')} ETB`],
-    ['Interest rate', 'Fixed yearly rate — longer earns more', `${P[0].rate}% – ${P[P.length - 1].rate}%`],
+    ['Interest rate', 'Fixed rate — longer earns more', `${P[0].rate}% – ${P[P.length - 1].rate}%`],
     ['Total locked', 'Your active fixed deposits', fmt(open.reduce((s, a) => s + a.principal, 0)) + ' ETB'],
     ['Accrued interest', 'Built up so far, paid at maturity', fmt(open.reduce((s, a) => s + SV.accrued(a), 0)) + ' ETB'],
     ['Next maturity', 'When your next deposit ends', next ? SV.dateStr(SV.maturityOf(next)) : '—'],
@@ -86,8 +87,8 @@
   $('tbl').innerHTML = TERMS.map(([t, s, v]) => `<div class="tr"><span><b>${t}</b><small>${s}</small></span>${v.startsWith('<em') ? v : '<em>' + v + '</em>'}</div>`).join('');
   const DOWN = '<svg viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg>';
   const QA = [
-    ['What is a fixed deposit?', 'You lock an amount with Awash Bank for a set period — 3, 6, 9 or 12 months — at a fixed interest rate. The rate does not change during the term.'],
-    ['How much interest will I earn?', `From <b>${P[0].rate}%</b> a year for 3 months up to <b>${P[P.length - 1].rate}%</b> for 12 months. Interest builds up daily and you see the exact amount before you confirm.`],
+    ['What is a fixed deposit?', 'You lock an amount with Cooperative Bank of Oromia for a set period — 3, 6, 9 or 12 months — at a fixed interest rate. The rate does not change during the term.'],
+    ['How much interest will I earn?', `From <b>${P[0].rate}%</b> interest for 3 months up to <b>${P[P.length - 1].rate}%</b> for 12 months. Interest builds up daily and you see the exact amount before you confirm.`],
     ['What is the minimum deposit?', P.map(p => `<b>${p.months} months:</b> ${fmt(p.min).replace('.00', '')} ETB`).join(' · ')],
     ['Can I withdraw early?', 'Yes, but you get back <b>only your deposit</b> — all the interest built up is lost. You are asked to confirm before it happens.'],
     ['What happens at maturity?', 'You get your deposit plus the interest. Withdraw it to your M-PESA wallet or a saving, or <b>roll it over</b> into a new term.'],

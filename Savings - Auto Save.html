@@ -3,12 +3,12 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Auto-Save — M-PESA</title>
+<title>Auto Recurring Deposit — M-PESA</title>
 <link rel="stylesheet" href="styles/design-tokens.css">
 <link rel="stylesheet" href="styles/base.css">
 <link rel="stylesheet" href="styles/component-status-bar.css">
 <link rel="stylesheet" href="styles/component-sc-card.css">
-<link rel="stylesheet" href="styles/savings.css">
+<link rel="stylesheet" href="styles/savings.css?v=20261125c">
 <style>
   @import url('https://api.fontshare.com/v2/css?f[]=switzer@400,500,600,700,800&display=swap');
 
@@ -43,7 +43,7 @@
   <div class="app-content">
     <div class="header-nav">
       <button class="icon-btn" onclick="goBack()" aria-label="Back"><svg data-name="icon-arrow-left" viewBox="0 0 24 24"><path d="M19 12H5M12 19l-7-7 7-7"/></svg></button>
-      <span class="header-title" id="hTitle">Set Up Auto-Save</span>
+      <span class="header-title" id="hTitle">Auto Recurring Deposit</span>
       <span class="spacer"></span>
     </div>
 
@@ -54,23 +54,23 @@
     <label class="field"><span>First transfer</span><input class="input" id="start" type="date" onchange="paint()"></label>
     <div class="sugg" id="sugg"><svg viewBox="0 0 24 24"><path d="M3 17l6-6 4 4 8-8"/><path d="M14 7h7v7"/></svg><span id="suggTxt"></span><button type="button" onclick="useSuggested()">Use</button></div>
     <div class="card rows" id="sum"></div>
-    <div class="bottom-bar"><button class="btn-primary" id="go" disabled onclick="saveAuto()">Turn On Auto-Save</button><button class="btn-ghost" id="stopBtn" style="display:none;color:var(--Primary)" onclick="openSheet('stopSheet')">Stop Auto-Save</button></div>
+    <div class="bottom-bar"><button class="btn-primary" id="go" disabled onclick="saveAuto()">Turn On</button><button class="btn-ghost" id="stopBtn" style="display:none;color:var(--Primary)" onclick="openSheet('stopSheet')">Delete Recurring Deposit</button></div>
   </div>
 
   <div class="scrim" id="scrim" onclick="closeSheets()"></div>
-  <div class="sheet" id="stopSheet" role="dialog" aria-label="Stop auto-save">
+  <div class="sheet" id="stopSheet" role="dialog" aria-label="Delete recurring deposit">
     <div class="sheet-grip"></div>
     <div class="cf-ic"><svg viewBox="0 0 24 24"><path d="M17 2l4 4-4 4"/><path d="M3 11V9a3 3 0 0 1 3-3h15"/><path d="M7 22l-4-4 4-4"/><path d="M21 13v2a3 3 0 0 1-3 3H3"/></svg></div>
-    <p class="cf-t">Stop auto-save?</p>
+    <p class="cf-t">Delete recurring deposit?</p>
     <p class="cf-p" id="stopTxt"></p>
-    <button class="btn-primary" onclick="stopAuto()">Stop Auto-Save</button>
+    <button class="btn-primary" onclick="stopAuto()">Delete</button>
     <button class="btn-ghost" onclick="closeSheets()">Keep It On</button>
   </div>
   <div class="toast" id="toast"></div>
 </div>
 
-<script src="savings-store.js"></script>
-<script src="savings-ui.js"></script>
+<script src="savings-store.js?v=20261125c"></script>
+<script src="savings-ui.js?v=20261125c"></script>
 <script>
   const $ = id => document.getElementById(id);
   const fmt = SV.fmt, IC = SVUI.IC;
@@ -87,13 +87,14 @@
   const acc = grp || S.pockets.find(p => p.id === q.get('id')) || S.pockets[0];
   const goal = acc.target, saved = grp ? SV.balanceOf(grp) : SV.balanceOf(acc);
   const ymd = d => new Date(d).toISOString().slice(0, 10);
-  const back = grp ? `Group Saving - Group.html?id=${grp.id}` : `Savings - Pocket.html?id=${acc.id}`;
+  // Opened from Recurring Deposits → go back there
+  const back = q.get('from') === 'recurring' ? 'Savings - Recurring.html?from=1' + (sessionStorage.getItem('rtBack') ? '&back=' + encodeURIComponent(sessionStorage.getItem('rtBack')) : '') : grp ? `Group Saving - Group.html?id=${grp.id}` : `Savings - Pocket.html?id=${acc.id}`;
   let freq = acc.auto ? acc.auto.freq : 'monthly';
 
-  $('hTitle').textContent = acc.auto ? 'Edit Auto-Save' : 'Set Up Auto-Save';
+  $('hTitle').textContent = acc.auto ? 'Edit Recurring Deposit' : 'Auto Recurring Deposit';
   $('wIc').innerHTML = IC[grp ? 'group' : acc.kind];
   $('wName').textContent = acc.name;
-  $('wSub').textContent = goal ? `${fmt(saved)} of ${fmt(goal.amount)} ETB · by ${SV.dateStr(goal.by)}` : `Balance ${fmt(saved)} ETB · ${SV.RATE}% a year`;
+  $('wSub').textContent = goal ? `${fmt(saved)} of ${fmt(goal.amount)} ETB · by ${SV.dateStr(goal.by)}` : `Balance ${fmt(saved)} ETB · ${SV.RATE}% interest`;
   $('start').min = ymd(Date.now() + 864e5);
   $('start').value = acc.auto ? ymd(acc.auto.next) : ymd(Date.now() + 864e5);
   if (acc.auto) { $('amt').value = acc.auto.amount; $('stopBtn').style.display = ''; $('go').textContent = 'Save Changes';
@@ -123,8 +124,8 @@
   }
   function saveAuto() {
     const a = amount();
-    toPin({ kind: 'sav-auto-set', title: (acc.auto ? 'Update auto-save · ' : 'Auto-save to ') + acc.name, id: acc.id, group: !!grp, name: acc.name,
-      amount: a, auto: { amount: a, freq, start: startIso(), next: startIso() }, sub: `<b>Auto-save:</b> ${fmt(a)} ETB ${SV.FREQS[freq].label.toLowerCase()}` });
+    toPin({ kind: 'sav-auto-set', title: (acc.auto ? 'Update recurring deposit · ' : 'Recurring deposit to ') + acc.name, id: acc.id, group: !!grp, name: acc.name,
+      amount: a, auto: { amount: a, freq, start: startIso(), next: startIso() }, sub: `<b>Recurring deposit:</b> ${fmt(a)} ETB ${SV.FREQS[freq].label.toLowerCase()}` });
   }
   function stopAuto() { acc.auto = null; SV.save(S); location.href = back + '&done=autostop'; }
   function goBack() { location.href = back; }
@@ -132,6 +133,7 @@
 </script>
 <script src="components/keyboard.js"></script>
 <!-- Export to Figma button (shared exporter) -->
+<script src="components/date-picker.js?v=3"></script>
 <script src="figma-export.js"></script>
 <script src="test-scenarios-data.js"></script>
 <script src="test-scenarios.js"></script>

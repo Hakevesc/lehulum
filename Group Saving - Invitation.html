@@ -8,7 +8,7 @@
 <link rel="stylesheet" href="styles/base.css">
 <link rel="stylesheet" href="styles/component-status-bar.css">
 <link rel="stylesheet" href="styles/component-sc-card.css">
-<link rel="stylesheet" href="styles/savings.css">
+<link rel="stylesheet" href="styles/savings.css?v=20261125c">
 <style>
   @import url('https://api.fontshare.com/v2/css?f[]=switzer@400,500,600,700,800&display=swap');
 
@@ -84,7 +84,7 @@
       </div>
       <div class="card facts3"><div><small>Target</small><b id="fTarget"></b></div><div><small>By</small><b id="fBy"></b></div><div><small>Members</small><b id="fMembers"></b></div></div>
       <div class="card">
-        <div class="rule"><i><svg viewBox="0 0 24 24"><path d="M3 17l6-6 4 4 8-8"/><path d="M14 7h7v7"/></svg></i><span><b>Earn 7% a year</b>Interest starts the day you put money in.</span></div>
+        <div class="rule"><i><svg viewBox="0 0 24 24"><path d="M3 17l6-6 4 4 8-8"/><path d="M14 7h7v7"/></svg></i><span><b>Earn 7% interest</b>Interest starts the day you put money in.</span></div>
         <div class="rule"><i><svg viewBox="0 0 24 24"><rect x="4" y="10" width="16" height="11" rx="2.5"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg></i><span><b>Money stays until the goal</b><span id="ruleAdmin"></span></span></div>
         <div class="rule"><i><svg viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><path d="M16 17l5-5-5-5M21 12H9"/></svg></i><span><b>Leaving needs approval</b>3 members must approve, then you get back what you put in, with interest.</span></div>
       </div>
@@ -111,8 +111,8 @@
   <div class="toast" id="toast"></div>
 </div>
 
-<script src="savings-store.js"></script>
-<script src="savings-ui.js"></script>
+<script src="savings-store.js?v=20261125c"></script>
+<script src="savings-ui.js?v=20261125c"></script>
 <script>
   const $ = id => document.getElementById(id);
   const fmt = SV.fmt, IC = SVUI.IC;

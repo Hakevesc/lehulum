@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Account Details — M-PESA</title>
+<link rel="stylesheet" href="styles/design-tokens.css">
+<link rel="stylesheet" href="styles/base.css">
+<link rel="stylesheet" href="styles/component-status-bar.css">
+<link rel="stylesheet" href="styles/component-sc-card.css">
+<link rel="stylesheet" href="styles/savings.css?v=20261125c">
+<style>
+  @import url('https://api.fontshare.com/v2/css?f[]=switzer@400,500,600,700,800&display=swap');
+
+  /* Account Details: hero (product, status, balance, term line), account number with copy,
+     grouped detail cards, partner bank. Works for Individual, Target, Fixed, Group, or a list summary. */
+  .ad-scroll { flex: 1; min-height: 0; overflow-y: auto; scrollbar-width: none; display: flex; flex-direction: column; gap: 12px; padding-bottom: 20px; }
+  .ad-scroll::-webkit-scrollbar { display: none; }
+  .ad-scroll > * { flex-shrink: 0; }
+  .ad-hero { position: relative; padding: 16px; border-radius: 24px; background: #FFF; box-shadow: 0 4px 16px rgba(15,23,42,0.06); overflow: hidden; }
+  .ad-hero::before { content: ''; position: absolute; right: -60px; top: -60px; width: 200px; height: 200px; border-radius: 50%; background: radial-gradient(circle, rgba(254,53,61,0.10), rgba(254,53,61,0) 70%); }
+  .ad-top { position: relative; display: flex; align-items: center; gap: 12px; }
+  .ad-name { flex: 1; min-width: 0; }
+  .ad-name b { display: block; font-size: 16px; font-weight: 600; color: var(--On-Surface); }
+  .ad-name small { display: block; margin-top: 2px; font-size: 12px; color: var(--On-Surface-Low); }
+  .chip.ok { background: #DCFCE7; color: #15803D; }
+  .ad-lbl { position: relative; display: block; margin-top: 18px; font-size: 12px; color: var(--On-Surface-Low); }
+  .ad-amt { position: relative; margin-top: 2px; }
+  .ad-amt b { font-size: 30px; font-weight: 700; letter-spacing: -0.5px; color: var(--On-Surface); }
+  .ad-amt small { margin-left: 5px; font-size: 14px; font-weight: 500; color: var(--On-Surface-Low); }
+  .ad-gain { position: relative; margin-top: 4px; font-size: 12.5px; color: #55555E; }
+  .ad-gain b { color: #16A34A; font-weight: 700; }
+  .ad-term:empty { display: none; }
+  .ad-term { position: relative; margin-top: 16px; padding-top: 14px; border-top: 1px dashed #E6E6EA; }
+  .tl { display: flex; align-items: center; gap: 10px; }
+  .tl > span:not(.mid) { font-size: 11px; color: var(--On-Surface-Low); white-space: nowrap; }
+  .tl > span b { display: block; margin-top: 2px; font-size: 12.5px; font-weight: 600; color: var(--On-Surface); }
+  .tl .r { text-align: right; }
+  .tl .mid { flex: 1; height: 6px; border-radius: 3px; background: #F1F1F4; overflow: hidden; }
+  .tl .mid i { display: block; height: 100%; border-radius: 3px; background: var(--Primary); }
+  .ad-term .left { margin-top: 8px; text-align: center; font-size: 11.5px; font-weight: 600; color: var(--Primary); }
+  .ad-card { padding: 2px 16px; border-radius: 20px; background: #FFF; box-shadow: 0 2px 12px rgba(0,0,0,0.04); }
+  .ad-num { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 14px 16px; }
+  .ad-num small { display: block; font-size: 11.5px; color: var(--On-Surface-Low); }
+  .ad-num b { display: block; margin-top: 3px; font-size: 16px; font-weight: 600; letter-spacing: 1.2px; color: var(--On-Surface); }
+  .copy { display: inline-flex; align-items: center; gap: 6px; height: 34px; padding: 0 12px; border: 1.5px solid #F2C9CB; border-radius: 10px; background: #FFF6F6; color: var(--Primary); font-family: Switzer, sans-serif; font-size: 12.5px; font-weight: 600; cursor: pointer; }
+  .copy svg { width: 15px; height: 15px; stroke: currentColor; stroke-width: 2; fill: none; stroke-linecap: round; stroke-linejoin: round; }
+  /* Sections: title 8px above its card, 20px between groups */
+  #sections { display: flex; flex-direction: column; gap: 8px; }
+  .ad-sec { margin: 12px 4px 0; font-size: 15px; font-weight: 400; color: var(--On-Surface); }
+  .ad-sec:first-child { margin-top: 0; }
+  .ad-row { display: flex; align-items: center; justify-content: space-between; gap: 14px; min-height: 48px; padding: 12px 0; }
+  .ad-row span { flex-shrink: 0; }
+  .ad-row span { font-size: 13px; color: #6A6A73; }
+  .ad-row b { font-size: 13px; font-weight: 600; color: var(--On-Surface); text-align: right; }
+  .ad-row b.up { color: #16A34A; }
+  .ad-row b.warn { color: var(--Primary); font-weight: 500; }
+  .ad-line { display: block; height: 1px; background: #F1F1F4; }
+  .ad-acc { width: 100%; display: flex; align-items: center; gap: 12px; padding: 12px 0; border: none; background: none; text-align: left; font-family: Switzer, sans-serif; cursor: pointer; }
+  .ad-acc .nm { flex: 1; min-width: 0; }
+  .ad-acc .nm b { display: block; font-size: 14px; font-weight: 600; color: var(--On-Surface); }
+  .ad-acc .nm small { display: block; margin-top: 2px; font-size: 12px; color: var(--On-Surface-Low); }
+  .ad-acc .v { font-size: 13.5px; font-weight: 700; color: var(--On-Surface); white-space: nowrap; }
+  .ad-acc .v small { font-size: 11px; font-weight: 500; color: var(--On-Surface-Low); }
+  .ad-acc .cv { width: 14px; height: 14px; stroke: #8A8A94; stroke-width: 2.2; fill: none; stroke-linecap: round; stroke-linejoin: round; }
+  .ad-none { padding: 14px 0; text-align: center; font-size: 13px; color: var(--On-Surface-Low); }
+  .ad-bank { display: flex; align-items: center; justify-content: center; gap: 8px; margin-top: 8px; font-size: 12px; color: var(--On-Surface-Low); }
+  .ad-bank img { width: 22px; height: 22px; border-radius: 50%; object-fit: contain; background: #FFF; }
+  .ad-bank b { color: var(--On-Surface); font-weight: 600; }
+  .app-content { display: flex; flex-direction: column; }
+  @import url('https://api.fontshare.com/v2/css?f[]=switzer@400,500,600,700,800&display=swap');
+
+</style>
+<link rel="stylesheet" href="styles/device.css">
+</head>
+<body>
+<div class="phone-frame">
+  <div class="status-bar">
+    <span class="time">10:00</span>
+    <div class="status-icons">
+      <svg data-name="icon-wifi" viewBox="0 0 24 24" fill="none"><path d="M1 9l2 2c4.970-4.970 13.030-4.970 18 0l2-2C16.930 2.930 7.080 2.930 1 9z" fill="#1C1C21"/><path d="M5 13l2 2c2.760-2.760 7.240-2.760 10 0l2-2C15.140 9.140 8.870 9.140 5 13z" fill="#1C1C21"/><path d="M9 17l2 2c1.100-1.100 2.900-1.100 4 0l2-2c-2.210-2.210-5.790-2.210-8 0z" fill="#1C1C21"/></svg>
+      <svg data-name="icon-signal" viewBox="0 0 24 24" fill="none"><rect x="2" y="6" width="4" height="12" rx="1" fill="#1C1C21"/><rect x="8" y="4" width="4" height="14" rx="1" fill="#1C1C21"/><rect x="14" y="2" width="4" height="16" rx="1" fill="#1C1C21"/><rect x="20" y="0" width="4" height="18" rx="1" fill="#1C1C21" opacity="0.3"/></svg>
+      <svg data-name="icon-battery" viewBox="0 0 28 14" fill="none"><rect x="0" y="1" width="22" height="12" rx="2.5" stroke="#1C1C21" stroke-width="1.5"/><rect x="2" y="3" width="16" height="8" rx="1" fill="#1C1C21"/><rect x="24" y="4" width="2" height="6" rx="1" fill="#1C1C21"/></svg>
+    </div>
+  </div>
+
+  <div class="app-content">
+    <div class="header-nav">
+      <button class="icon-btn" onclick="goBack()" aria-label="Back"><svg data-name="icon-arrow-left" viewBox="0 0 24 24"><path d="M19 12H5M12 19l-7-7 7-7"/></svg></button>
+      <span class="header-title">Account Details</span>
+      <span class="spacer"></span>
+    </div>
+
+    <div class="ad-scroll">
+      <!-- Hero: product, status, balance -->
+      <div class="ad-hero">
+        <div class="ad-top"><span class="p-ic" id="hIc"></span><span class="ad-name"><b id="hName"></b><small id="hType"></small></span><span class="chip" id="hChip"></span></div>
+        <small class="ad-lbl" id="hLbl">Balance</small>
+        <div class="ad-amt"><b id="hAmt"></b><small>ETB</small></div>
+        <div class="ad-gain" id="hGain"></div>
+        <div class="ad-term" id="hTerm"></div>
+      </div>
+
+      <!-- Account number with copy -->
+      <div class="ad-card ad-num" id="numCard">
+        <span><small>Account Number</small><b id="accNo"></b></span>
+        <button type="button" class="copy" onclick="copyNo()" aria-label="Copy account number"><svg viewBox="0 0 24 24"><rect x="9" y="9" width="12" height="12" rx="2.5"/><path d="M5 15V5a2 2 0 0 1 2-2h10"/></svg>Copy</button>
+      </div>
+
+      <div id="sections"></div>
+
+      <div class="ad-bank"><img src="assets/banks logo/coop-bank.png" alt=""><span>Held with <b>Cooperative Bank of Oromia</b></span></div>
+    </div>
+  </div>
+  <div class="toast" id="toast"></div>
+</div>
+
+<script src="savings-store.js?v=20261125c"></script>
+<script src="savings-ui.js?v=20261125c"></script>
+<script>
+  /* Account details for one saving (?id= | ?fd= | ?group=) or a summary of a list (?scope=all|individual|target|fixed|group). */
+  const $ = id => document.getElementById(id);
+  const fmt = SV.fmt, IC = SVUI.IC, D = SV.dateStr;
+  let tt;
+  function toast(m) { const t = $('toast'); t.textContent = m; t.classList.add('show'); clearTimeout(tt); tt = setTimeout(() => t.classList.remove('show'), 2000); }
+  const q = new URLSearchParams(location.search), S = SV.load();
+  function goBack() { if (history.length > 1) history.back(); else location.href = 'Savings.html'; }
+  const ETB = v => fmt(v) + ' ETB';
+  const section = (title, rows) => `<p class="ad-sec">${title}</p><div class="ad-card">${rows.filter(Boolean).map(([k, v, cls]) =>
+    `<div class="ad-row"><span>${k}</span><b${cls ? ` class="${cls}"` : ''}>${v}</b></div>`).join('<i class="ad-line" data-shape="line" data-name="line"></i>')}</div>`;
+  const chip = (cls, txt) => { $('hChip').className = 'chip ' + cls; $('hChip').textContent = txt; };
+  const WALLET_ROW = ['Linked wallet', SV.fmtPhone(SV.ME.phone)];
+
+  const pocket = q.get('id') && S.pockets.find(p => p.id === q.get('id'));
+  const fd = q.get('fd') && (S.deposits || []).find(a => a.id === q.get('fd'));
+  const grp = q.get('group') && (S.groups || []).find(g => g.id === q.get('group'));
+
+  if (pocket) {
+    const bal = SV.balanceOf(pocket), intr = SV.interestOf(pocket), st = SV.statusOf(pocket);
+    $('hIc').innerHTML = IC[pocket.kind]; $('hName').textContent = pocket.name;
+    $('hType').textContent = pocket.kind === 'target' ? 'Target Saving' : 'Individual Saving';
+    st ? chip(st.key, st.label) : chip('ok', 'Active');
+    $('hAmt').textContent = fmt(bal); $('hGain').innerHTML = `<b>+${fmt(intr)}</b> interest earned`;
+    if (pocket.target) $('hTerm').innerHTML = `<div class="tl"><span>Opened<b>${D(pocket.opened)}</b></span><span class="mid"><i style="width:${Math.min(100, SV.pctOf(pocket))}%"></i></span><span class="r">Goal by<b>${D(pocket.target.by)}</b></span></div>`;
+    $('accNo').textContent = pocket.id;
+    $('sections').innerHTML =
+      section('Earnings', [['Interest', SV.RATE + '%'], ['Accrued interest', '+' + ETB(intr), 'up']])   // no tax row (as in the design)
+      + (pocket.target ? section('Goal', [['Target amount', ETB(pocket.target.amount)], ['Saved so far', SV.pctOf(pocket) + '%'], ['Target date', D(pocket.target.by)], ['Days left', String(SV.daysLeft(pocket))]]) : '')
+      + section('Account', [['Opened', D(pocket.opened)], ['Recurring deposit', pocket.auto ? (pocket.auto.paused ? 'Paused' : SV.autoLine(pocket.auto)) : 'Off'], WALLET_ROW]);
+  } else if (fd) {
+    const st = SV.fdStatus(fd), mat = SV.maturityOf(fd), intr = SV.accrued(fd);
+    $('hIc').innerHTML = IC.fixed; $('hName').textContent = fd.name; $('hType').textContent = 'Fixed Deposit';
+    document.querySelector('.header-title').textContent = 'Fixed Saving';
+    chip({ active: 'flex', matured: 'reached', closed: 'none' }[st], { active: 'Locked', matured: 'Matured', closed: 'Closed' }[st]);
+    $('hLbl').textContent = st === 'matured' ? 'Ready to collect' : 'Locked amount';
+    $('hAmt').textContent = fmt(st === 'matured' ? SV.maturedTotal(fd) : st === 'closed' ? fd.closed.paid : fd.principal);
+    $('hGain').innerHTML = st === 'active' ? `<b>+${fmt(intr)}</b> interest so far` : st === 'matured' ? `Includes <b>+${fmt(intr)}</b> interest` : 'Closed on ' + D(fd.closed.on);
+    const pct = st === 'closed' ? 100 : Math.max(2, Math.round(SV.elapsed(fd) / SV.termDays(fd) * 100));
+    $('hTerm').innerHTML = `<div class="tl"><span>Opened<b>${D(fd.opened)}</b></span><span class="mid"><i style="width:${pct}%"></i></span><span class="r">Matures<b>${D(mat)}</b></span></div>`
+      + (st === 'active' ? `<p class="left">${SV.daysToMaturity(fd)} days to go</p>` : '');
+    $('accNo').textContent = fd.id;
+    const gross = st === 'active' ? fd.principal * fd.rate / 100 * SV.termDays(fd) / 365 : intr, tax = gross * 0.05;
+    const total = fd.principal + gross;   // deposit + interest (no tax shown)
+    $('sections').innerHTML =
+      section('Deposit', [['Principal', ETB(fd.principal)], ['Lock period', fd.months + ' months'], ['Interest', fd.rate + '%'], ['Total Earning at Maturity', ETB(total)]])
+      + section('Earnings', [[st === 'active' ? 'Accrued interest' : 'Interest earned', '+' + ETB(intr), 'up'], st === 'active' ? ['Close early', 'Interest is lost', 'warn'] : null])
+      + section('Dates', [['Opened', D(fd.opened)], ['Maturity date', D(mat)], st === 'closed' ? ['Closed', D(fd.closed.on)] : null])
+      + section('Account', [WALLET_ROW]);
+  } else if (grp) {
+    const bal = SV.balanceOf(grp), st = SV.statusOf(grp), mine = SV.memberTotal(grp, 'me');
+    $('hIc').innerHTML = IC.group; $('hName').textContent = grp.name; $('hType').textContent = 'Group Saving · ' + SV.membersLine(grp);
+    chip(st.key, st.label);
+    $('hLbl').textContent = 'Group balance'; $('hAmt').textContent = fmt(bal); $('hGain').innerHTML = `You put in <b>${fmt(mine)}</b> ETB`;
+    $('hTerm').innerHTML = `<div class="tl"><span>Started<b>${D(grp.opened)}</b></span><span class="mid"><i style="width:${Math.min(100, SV.pctOf(grp))}%"></i></span><span class="r">Goal by<b>${D(grp.target.by)}</b></span></div>`;
+    $('accNo').textContent = grp.id;
+    $('sections').innerHTML =
+      section('Group', [['Target amount', ETB(grp.target.amount)], ['Reached', SV.pctOf(grp) + '%'], ['Admin', grp.admin === 'me' ? 'You' : SV.person(grp.admin).name], ['Members', String(SV.joined(grp).length)]])
+      + section('Earnings', [['Interest', SV.RATE + '%'], ['Your interest', '+' + ETB(SV.memberInterest(grp, 'me')), 'up']])
+      + section('Account', [['Opened', D(grp.opened)], ['Recurring deposit', grp.auto ? (grp.auto.paused ? 'Paused' : SV.autoLine(grp.auto)) : 'Off'], WALLET_ROW]);
+  } else {
+    // Summary of a list page; each account opens its own details
+    const scope = q.get('scope') || 'all';
+    const NAME = { all: 'M-PESA Savings', individual: 'Individual Saving', target: 'Target Saving', fixed: 'Fixed Deposit', group: 'Group Saving' };
+    const items = [].concat(
+      ['all', 'individual', 'target'].includes(scope) ? S.pockets.filter(p => scope === 'all' || p.kind === scope).map(p => ({ ic: IC[p.kind], n: p.name, s: p.kind === 'target' ? 'Target Saving' : 'Individual Saving', v: SV.balanceOf(p), i: SV.interestOf(p), href: 'id=' + p.id })) : [],
+      ['all', 'fixed'].includes(scope) ? SV.openDeposits(S).map(a => ({ ic: IC.fixed, n: a.name, s: 'Fixed Deposit', v: a.principal, i: SV.accrued(a), href: 'fd=' + a.id })) : [],
+      ['all', 'group'].includes(scope) ? SV.groupsOf(S).map(g => ({ ic: IC.group, n: g.name, s: 'Group Saving', v: SV.memberTotal(g, 'me'), i: SV.memberInterest(g, 'me'), href: 'group=' + g.id })) : []);
+    const tot = items.reduce((t, x) => t + x.v, 0), int = items.reduce((t, x) => t + x.i, 0);
+    $('hIc').innerHTML = IC[{ all: 'individual', fixed: 'fixed', group: 'group' }[scope] || scope]; $('hName').textContent = NAME[scope]; $('hType').textContent = items.length + ' active account' + (items.length === 1 ? '' : 's');
+    chip('ok', 'Active');
+    $('hLbl').textContent = 'Total balance'; $('hAmt').textContent = fmt(tot); $('hGain').innerHTML = `<b>+${fmt(int)}</b> interest earned`;
+    $('numCard').style.display = 'none';
+    $('sections').innerHTML = section('Summary', [['Active accounts', String(items.length)], ['Interest', scope === 'fixed' ? 'By lock period' : scope === 'all' ? 'Up to 10%' : SV.RATE + '%'], ['Accrued interest', '+' + ETB(int), 'up'], WALLET_ROW])
+      + `<p class="ad-sec">Accounts</p><div class="ad-card">${items.map(x => `<button class="ad-acc" type="button" onclick="location.href='Savings - Account Details.html?${x.href}'"><span class="p-ic">${x.ic}</span><span class="nm"><b>${x.n}</b><small>${x.s}</small></span><span class="v">${fmt(x.v)}<small> ETB</small></span><svg class="cv" viewBox="0 0 24 24"><path d="M9 6l6 6-6 6"/></svg></button>`).join('<i class="ad-line" data-shape="line" data-name="line"></i>') || '<p class="ad-none">No accounts yet</p>'}</div>`;
+  }
+  function copyNo() { const v = $('accNo').textContent; try { navigator.clipboard.writeText(v); } catch (e) {} toast('Account number copied'); }
+</script>
+<script src="figma-export.js"></script>
+<script src="test-scenarios-data.js"></script>
+<script src="test-scenarios.js"></script>
+</body>
+</html>

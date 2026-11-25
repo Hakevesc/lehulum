@@ -254,6 +254,12 @@
     }));
     location.href = 'Term Loan - Enter PIN.html';
   }
+  // Coming from Quick Apply: ?amount= and ?days= are already chosen
+  (function () {
+    const p = new URLSearchParams(location.search), a = Number(p.get('amount')), d = Number(p.get('days'));
+    if (a) $('amount').value = a.toLocaleString('en-US');
+    if (offer.days.includes(d)) { days = d; document.querySelectorAll('.seg').forEach(x => x.classList.toggle('on', Number(x.dataset.d) === d)); }
+  })();
   update();
 </script>
 <script src="components/keyboard.js"></script>

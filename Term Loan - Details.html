@@ -38,10 +38,12 @@
   .scroll::-webkit-scrollbar { width: 0; }
   .scroll > * { flex-shrink: 0; }
   /* Hero actions: pay the next instalment, or settle the whole loan */
-  .pay-acts { display: flex; gap: 10px; margin-top: 16px; }
+  /* Repay / Settle All close the instalment card */
+  .pay-acts { display: flex; gap: 10px; margin-top: 18px; }
   .pay-acts button { flex: 1; min-width: 0; height: 44px; border-radius: 999px; font-family: Switzer, sans-serif; font-size: 13px; font-weight: 600; cursor: pointer; white-space: nowrap; }
+  .pay-acts button { height: 46px; font-size: 14px; }
   .pay-acts .next { border: none; background: var(--Primary); color: #FFF; box-shadow: 0 4px 12px rgba(254,53,61,0.25); }
-  .pay-acts .all { border: 1px solid #F7C6CA; background: #FFF1F2; color: var(--Primary); }
+  .pay-acts .all { border: 1.5px solid var(--Primary); background: #FFF; color: var(--Primary); }
 
   .card { background: #FFF; border-radius: 20px; padding: 16px; box-shadow: 0 4px 16px rgba(15,23,42,0.06); }
   .loan-head { display: flex; align-items: center; gap: 12px; padding-bottom: 14px; border-bottom: 1px solid #F1F1F4; }
@@ -188,10 +190,6 @@
             <p><b>${fmt(paid)}</b> paid of ${fmt(loan.total)} ETB</p></div>
         </div>
 
-        ${nx ? `<div class="pay-acts">${unpaid > 1
-            ? `<button class="next" type="button" onclick="openRepay(${nx.n})">Pay Next (${n0(TL.instLeft(nx))} ETB)</button><button class="all" type="button" onclick="openRepay('all')">Settle All (${n0(left)} ETB)</button>`
-            : `<button class="next" type="button" onclick="openRepay(${nx.n})">Repay (${n0(left)} ETB)</button>`}</div>` : ''}
-
         <div class="facts">
           <div class="fact"><span class="lbl">Disbursed Date</span><b>${TL.dateStr(loan.disbursed)}</b></div>
           <div class="fact"><span class="split" data-shape="line" data-name="line"></span><span class="lbl">Final due</span><b>${TL.dateStr(loan.instalments[n - 1].due)}</b></div>
@@ -210,7 +208,9 @@
             ${partly ? `<div class="part-line"><span>Paid <b>${fmt(got)}</b> of ${fmt(i.amount)} ETB</span><span class="pct">${Math.round(got / i.amount * 100)}%</span></div>` : ''}
             <div class="inst-amt"><span>${partly ? 'Left to pay' : 'Repayment amount'}</span><b>${fmt(partly ? TL.instLeft(i) : i.amount)} ETB</b></div>
           </div>`; }).join('')}
-      </div></div>`;
+      </div>
+      ${nx ? `<div class="pay-acts"><button class="next" type="button" onclick="openRepay(${nx.n})">Repay</button>${unpaid > 1 ? `<button class="all" type="button" onclick="openRepay('all')">Settle All</button>` : ''}</div>` : ''}
+      </div>`;
   }
 
   // Repay Now / Pay Rest / Repay All open the Repay screen (part or all)

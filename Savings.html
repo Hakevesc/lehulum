@@ -9,7 +9,7 @@
 <link rel="stylesheet" href="styles/component-status-bar.css">
 <link rel="stylesheet" href="styles/component-sc-card.css">
 <link rel="stylesheet" href="styles/component-actions.css">
-<link rel="stylesheet" href="styles/savings.css">
+<link rel="stylesheet" href="styles/savings.css?v=20261125c">
 <style>
   @import url('https://api.fontshare.com/v2/css?f[]=switzer@400,500,600,700,800&display=swap');
 
@@ -20,23 +20,64 @@
   .view { display: none; flex-direction: column; gap: 12px; flex: 1 1 auto; }
   .view.show { display: flex; }
   .view > * { flex-shrink: 0; }
-  /* Opt-in */
-  .oi-hero { position: relative; overflow: hidden; border-radius: 22px; padding: 22px 18px 20px; color: #FFF; background: linear-gradient(135deg, #FF3B40 0%, #E0262D 55%, #B3131A 100%); box-shadow: 0 8px 22px rgba(224,38,45,0.28); }
-  .oi-hero .art { position: absolute; right: -8px; top: 10px; width: 132px; height: 116px; }
-  .oi-hero small { font-size: 12.5px; color: rgba(255,255,255,0.88); }
-  .oi-hero h2 { margin-top: 6px; max-width: 190px; font-size: 22px; font-weight: 700; line-height: 1.2; }
-  .oi-hero p { margin-top: 10px; max-width: 200px; font-size: 12.5px; line-height: 1.45; color: rgba(255,255,255,0.9); }
-  .ben { display: flex; align-items: center; gap: 12px; padding: 11px 0; }
-  .ben + .ben { border-top: 1px solid #F1F1F4; }
-  .ben i { width: 40px; height: 40px; border-radius: 12px; background: #FFF1F2; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
-  .ben i svg { width: 21px; height: 21px; stroke: var(--Primary); stroke-width: 1.8; fill: none; stroke-linecap: round; stroke-linejoin: round; }
-  .ben b { display: block; font-size: 13.5px; font-weight: 600; color: var(--On-Surface); }
-  .ben small { display: block; margin-top: 2px; font-size: 12px; color: var(--On-Surface-Low); }
+  /* Extra bottom padding so the fixed "New Saving" bar never overlaps list content */
+  #vHome { padding-bottom: 76px; }
+  /* First-time savings activation, composed to match the supplied activation screen. */
+  .phone-frame.saving-optin { background: #FFF; }
+  .saving-optin .header-title { color: #0D1836; font-weight: 700; }
+  .saving-optin .header-nav { position: relative; z-index: 3; }
+  #vOptin { gap: 12px; }
+  #vOptin .oi-hero { position: relative; flex: 1 0 330px; min-height: 330px; margin: 0 -15px; padding: 0; overflow: visible; color: #101A38; background: transparent; box-shadow: none; }
+  #vOptin .oi-hero::after { content: ''; position: absolute; z-index: 1; inset: -79px -15px -70px 0; pointer-events: none; background: linear-gradient(90deg, #FFF 0%, rgba(255,255,255,.98) 28%, rgba(255,255,255,.78) 45%, rgba(255,255,255,.24) 65%, rgba(255,255,255,0) 82%); }
+  .oi-photo { position: absolute; z-index: 0; top: -79px; right: 0; width: min(68vw, 245px); height: auto; pointer-events: none; }
+  .oi-copy { position: absolute; z-index: 2; left: 18px; top: 68px; width: 58%; }
+  .oi-title { color: #0D1836; font-size: clamp(29px, 8.3vw, 32px); font-weight: 800; letter-spacing: -1px; line-height: 1.02; }
+  .oi-title span { color: var(--Primary); }
+  #vOptin .oi-hero p { max-width: 190px; margin-top: 16px; color: #18213D; font-size: 15px; line-height: 1.35; }
+  .oi-accent { display: block; width: 68px; height: 4px; margin-top: 14px; border-radius: 3px; background: var(--Primary); }
+  .oi-benefits { position: relative; z-index: 2; padding: 13px 10px 15px; border-radius: 24px; background: rgba(255,255,255,.97); box-shadow: 0 10px 28px rgba(16,24,40,.11); }
+  .oi-benefits h3 { margin: 0 0 12px; color: #0D1836; font-size: 17px; font-weight: 700; text-align: center; }
+  .oi-benefit-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .oi-benefit { min-width: 0; display: flex; flex-direction: column; align-items: center; gap: 7px; padding: 0 5px; text-align: center; }
+  .oi-benefit + .oi-benefit { border-left: 1px solid #DCDDE3; }
+  .oi-benefit svg { width: 30px; height: 30px; stroke: var(--Primary); stroke-width: 2; fill: none; stroke-linecap: round; stroke-linejoin: round; }
+  .oi-benefit b { color: #101A38; font-size: 12px; font-weight: 500; line-height: 1.25; }
+  .oi-note { position: relative; z-index: 2; min-height: 56px; display: flex; align-items: center; gap: 12px; padding: 10px 13px; border-radius: 16px; background: #FFF1F2; }
+  .oi-note { cursor: pointer; }
+  .oi-note input { position: absolute; opacity: 0; pointer-events: none; }
+  .oi-check { width: 22px; height: 22px; flex: 0 0 22px; display: grid; place-items: center; border: 2px solid #C9C9D1; border-radius: 6px; background: #FFF; transition: background .15s, border-color .15s; }
+  .oi-check svg { width: 14px; height: 14px; stroke: #FFF; stroke-width: 3; fill: none; stroke-linecap: round; stroke-linejoin: round; opacity: 0; }
+  .oi-note input:checked + .oi-check { border-color: var(--Primary); background: var(--Primary); }
+  .oi-note input:checked + .oi-check svg { opacity: 1; }
+  .oi-note input:focus-visible + .oi-check { outline: 2px solid var(--Primary); outline-offset: 2px; }
+  .oi-note a { color: var(--Primary); font-weight: 600; text-decoration: underline; text-underline-offset: 2px; }
+  #vOptin .btn-primary:disabled { background: #E0E0E0; color: #7C7C87; box-shadow: none; cursor: default; }
+  .oi-info { width: 30px; height: 30px; flex: 0 0 30px; display: grid; place-items: center; border-radius: 50%; background: var(--Primary); color: #FFF; font-size: 19px; font-weight: 700; line-height: 1; }
+  .oi-note p { color: #101A38; font-size: 13.5px; line-height: 1.35; }
+  #vOptin .bottom-bar { position: relative; z-index: 2; display: grid; gap: 11px; margin: auto -15px 0; padding: 0 16px 5px; background: transparent; }
+  #vOptin .btn-primary { height: 50px; border-radius: 14px; background: linear-gradient(100deg,var(--Primary),#E0262D); box-shadow: 0 7px 18px rgba(254,53,61,.22); font-size: 14.5px; font-weight: 600; }
+  #vOptin .btn-learn { height: 48px; border: 1.5px solid #E2E2E7; border-radius: 14px; background: #FFF; color: #55555E; font-family: Switzer,sans-serif; font-size: 14.5px; font-weight: 500; cursor: pointer; }
+  @media (max-height: 760px) {
+    #vOptin .oi-hero { flex-basis: 285px; min-height: 285px; }
+    #vOptin .oi-hero::after { inset: -64px -15px -48px 0; }
+    .oi-photo { top: -64px; width: min(61vw, 220px); }
+    .oi-copy { top: 54px; }
+    .oi-title { font-size: clamp(27px, 7.7vw, 30px); }
+    .oi-benefits { padding: 10px 8px 12px; }
+    .oi-benefits h3 { margin-bottom: 8px; font-size: 17px; }
+    .oi-benefit svg { width: 28px; height: 28px; }
+    .oi-note { min-height: 56px; }
+  }
+  .phone-frame.saving-optin #newSavingBar { display: none !important; }
   /* Product tiles: 2×2 outlined, as on Saving & Credit */
   .actions.actions-4 { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; padding: 16px; margin-bottom: 0; }
   .actions.actions-4 .primary-action { position: relative; min-height: 88px; border: 1px solid #E8E8EC; border-radius: 16px; background: #FFF; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px; }
   .actions.actions-4 .primary-action .icon-container { width: 38px; height: 38px; margin: 0; }
   .actions.actions-4 .label { font-size: 12px; white-space: nowrap; line-height: 1.2; }
+  .actions.actions-4 .primary-action.wide { grid-column: 1 / -1; min-height: 56px; flex-direction: row; gap: 10px; }
+  .actions.actions-4 .primary-action.wide .icon-container { display: grid; place-items: center; }
+  .actions.actions-4 .primary-action.wide .label { align-self: center; height: auto; display: flex; align-items: center; font-size: 13px; }
+  .actions.actions-4 .primary-action.wide svg { width: 26px; height: 26px; stroke: var(--Primary, #FE353D); stroke-width: 1.8; fill: none; stroke-linecap: round; stroke-linejoin: round; }
   .actions.actions-4 .soon { position: absolute; top: 8px; right: 8px; padding: 2px 7px; border-radius: 999px; background: #F1F1F4; color: #55555E; font-style: normal; font-size: 9.5px; font-weight: 600; }
   /* Filter + list */
   .filters { display: flex; gap: 8px; margin: 0 -15px; padding: 0 15px; overflow-x: auto; scrollbar-width: none; }
@@ -58,6 +99,24 @@
   .menu-item i { width: 38px; height: 38px; border-radius: 11px; background: #FFF1F2; display: flex; align-items: center; justify-content: center; }
   .menu-item i svg { width: 19px; height: 19px; stroke: var(--Primary); stroke-width: 1.9; fill: none; stroke-linecap: round; stroke-linejoin: round; }
   .menu-item b { flex: 1; font-size: 14px; font-weight: 600; color: var(--On-Surface); }
+  /* Balance card: Mudaye + a "Deposit now" message bubble (same as Saving & Credit) */
+  #totalCard { position: relative; }
+  .sv-mudaye { position: absolute; top: 44px; right: 22px; width: 88px; height: 88px; object-fit: contain; cursor: pointer; z-index: 1; animation: svWave 3.2s ease-in-out infinite; transform-origin: 50% 90%; }
+  @keyframes svWave { 0%, 100% { transform: rotate(0); } 8% { transform: rotate(-5deg); } 16% { transform: rotate(4deg); } 24% { transform: rotate(0); } }
+  .sv-bubble { position: absolute; top: 14px; right: 14px; z-index: 2; display: inline-flex; align-items: center; gap: 5px; height: 30px; padding: 0 12px; border: none; border-radius: 999px; background: var(--Primary, #FE353D); color: #FFF; font-family: Switzer, sans-serif; font-size: 12px; font-weight: 600; white-space: nowrap; cursor: pointer; box-shadow: 0 4px 12px rgba(254,53,61,0.3); animation: svPop 0.5s cubic-bezier(.2,1.4,.4,1) 0.3s both; }
+  .sv-bubble::after { content: ''; position: absolute; left: 22px; bottom: -5px; width: 10px; height: 10px; background: inherit; transform: rotate(45deg); border-radius: 2px; }
+  .sv-bubble svg { width: 13px; height: 13px; stroke: #FFF; stroke-width: 2.4; fill: none; stroke-linecap: round; stroke-linejoin: round; }
+  @keyframes svPop { from { opacity: 0; transform: scale(0.6) translateY(6px); } to { opacity: 1; transform: none; } }
+  #totalCard .s-stats { margin-top: 58px; }
+  /* "Successfully Opted-In!" toast above New Saving */
+  .ok-toast { position: absolute; left: 16px; right: 16px; bottom: 92px; z-index: 400; display: flex; align-items: center; gap: 12px; padding: 12px 14px; border-radius: 16px; background: #1C1C21; box-shadow: 0 10px 28px rgba(16,24,40,0.25); opacity: 0; transform: translateY(16px); pointer-events: none; transition: opacity 0.3s, transform 0.3s cubic-bezier(.2,.9,.3,1.2); }
+  .ok-toast.show { opacity: 1; transform: none; }
+  .ok-ic { width: 32px; height: 32px; border-radius: 9px; background: #22C55E; display: grid; place-items: center; flex-shrink: 0; }
+  .ok-ic svg { width: 18px; height: 18px; stroke: #FFF; stroke-width: 3; fill: none; stroke-linecap: round; stroke-linejoin: round; }
+  .ok-toast b { display: block; font-size: 15px; font-weight: 600; color: #FFF; }
+  .ok-toast small { display: block; margin-top: 2px; font-size: 11.5px; color: rgba(255,255,255,0.6); }
+  .actions.actions-4 .icon-container.ic-svg { display: grid; place-items: center; }
+  .actions.actions-4 .icon-container.ic-svg svg { width: 32px; height: 32px; stroke: var(--Primary, #FE353D); stroke-width: 1.7; fill: none; stroke-linecap: round; stroke-linejoin: round; }
 </style>
 <link rel="stylesheet" href="styles/device.css">
 </head>
@@ -79,59 +138,73 @@
       <button class="icon-btn" onclick="openSheet('menu')" aria-label="Menu"><svg data-name="icon-more" viewBox="0 0 24 24"><circle cx="12" cy="5" r="1.2"/><circle cx="12" cy="12" r="1.2"/><circle cx="12" cy="19" r="1.2"/></svg></button>
     </div>
 
-    <!-- Opt-in -->
+    <!-- First-time savings activation -->
     <section class="view" id="vOptin">
-      <div class="oi-hero"><svg class="art" viewBox="0 0 128 112" aria-hidden="true">
-          <defs><linearGradient id="pigO" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#FF6B70"/><stop offset="1" stop-color="#E0262D"/></linearGradient>
-          <linearGradient id="coinO" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FFE08A"/><stop offset="1" stop-color="#F2B233"/></linearGradient></defs>
-          <ellipse cx="66" cy="98" rx="46" ry="10" fill="#8E0D12" opacity="0.18"/><ellipse cx="66" cy="92" rx="44" ry="9" fill="#C2161D"/>
-          <path d="M28 68c0-16 16-28 38-28s38 12 38 28c0 10-7 18-17 22H45c-10-4-17-12-17-22z" fill="url(#pigO)"/><path d="M40 46l-4-12 14 7z" fill="#E0262D"/>
-          <ellipse cx="102" cy="66" rx="9" ry="8" fill="#FF8A8E"/><circle cx="99" cy="65" r="1.6" fill="#B3131A"/><circle cx="105" cy="65" r="1.6" fill="#B3131A"/><circle cx="86" cy="56" r="2.6" fill="#5A0A0E"/>
-          <rect x="52" y="44" width="18" height="3.5" rx="1.75" fill="#B3131A"/><rect x="44" y="84" width="9" height="10" rx="3" fill="#C2161D"/><rect x="78" y="84" width="9" height="10" rx="3" fill="#C2161D"/>
-          <circle cx="61" cy="24" r="14" fill="url(#coinO)"/><circle cx="61" cy="24" r="10" fill="none" stroke="#E09A1F" stroke-width="1.6"/><path d="M61 18v12M58 21h4.5a2 2 0 0 1 0 4H58" fill="none" stroke="#C47D10" stroke-width="1.8" stroke-linecap="round"/>
-        </svg>
-        <small>M-PESA Savings</small>
-        <h2>Save for what matters</h2>
-        <p>Put money aside, set goals and earn interest — all from M-PESA.</p>
+      <div class="oi-hero">
+        <img class="oi-photo" src="assets/savings-activation-hero.png" alt="A woman saving coins in a piggy bank">
+        <div class="oi-copy">
+          <h2 class="oi-title">Activate<br>Saving<br><span>By M-PESA</span></h2>
+          <p>Small steps today,<br>big dreams tomorrow.</p>
+          <i class="oi-accent" aria-hidden="true"></i>
+        </div>
       </div>
-      <div class="card">
-        <div class="ben"><i><svg viewBox="0 0 24 24"><path d="M3 17l6-6 4 4 8-8"/><path d="M14 7h7v7"/></svg></i><span><b>Earn 7% a year</b><small>Interest grows every day on what you save</small></span></div>
-        <div class="ben"><i><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1.2"/></svg></i><span><b>A pocket for every goal</b><small>Keep each goal separate and track your progress</small></span></div>
-        <div class="ben"><i><svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></svg></i><span><b>Your money, any time</b><small>Withdraw to your M-PESA wallet whenever you need it</small></span></div>
+      <div class="oi-benefits">
+        <h3>M-PESA Saving Benefits</h3>
+        <div class="oi-benefit-grid">
+          <div class="oi-benefit"><svg viewBox="0 0 48 48" aria-hidden="true"><path d="M24 4 39 10v11c0 10-6.5 18-15 23C15.5 39 9 31 9 21V10z"/><path d="m17 24 5 5 10-11"/></svg><b>Keep Your<br>Money Safe</b></div>
+          <div class="oi-benefit"><svg viewBox="0 0 48 48" aria-hidden="true"><path d="M8 38h7V27H8zM21 38h7V21h-7zM34 38h7V14h-7z"/><path d="m8 22 12-10 8 6L42 5M33 5h9v9"/></svg><b>Grow Your<br>Savings</b></div>
+          <div class="oi-benefit"><svg viewBox="0 0 48 48" aria-hidden="true"><path d="M13 7h22v12c0 10-4.5 16-11 16s-11-6-11-16z"/><path d="M13 12H6v4c0 7 3 11 9 12M35 12h7v4c0 7-3 11-9 12M24 35v7M15 42h18"/><path d="m24 12 2.2 4.5 5 .7-3.6 3.5.9 5-4.5-2.4-4.5 2.4.9-5-3.6-3.5 5-.7z"/></svg><b>Achieve Your<br>Goals</b></div>
+        </div>
       </div>
-      <div class="bottom-bar"><button class="btn-primary" onclick="optIn()">Opt-In to M-PESA Savings</button></div>
+      <label class="oi-note"><input type="checkbox" id="oiAgree" onchange="$('oiGo').disabled = !this.checked"><span class="oi-check" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg></span><p>Accept the terms to get your saving <a href="Savings - Terms &amp; Conditions.html" onclick="event.stopPropagation()">Term and Condition</a> according to the agreed schedule.</p></label>
+      <div class="bottom-bar">
+        <button class="btn-primary" id="oiGo" type="button" disabled onclick="activateSavings()">Activate</button>
+        <button class="btn-learn" type="button" onclick="notNow()">Not now</button>
+      </div>
     </section>
 
     <!-- Home -->
     <section class="view" id="vHome">
-      <div class="sc-card"><svg class="art" viewBox="0 0 128 112" aria-hidden="true">
-          <defs><linearGradient id="pigG" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#FF6B70"/><stop offset="1" stop-color="#E0262D"/></linearGradient>
-          <linearGradient id="coinG" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FFE08A"/><stop offset="1" stop-color="#F2B233"/></linearGradient></defs>
-          <ellipse cx="66" cy="98" rx="46" ry="10" fill="#8E0D12" opacity="0.18"/><ellipse cx="66" cy="92" rx="44" ry="9" fill="#C2161D"/>
-          <path d="M28 68c0-16 16-28 38-28s38 12 38 28c0 10-7 18-17 22H45c-10-4-17-12-17-22z" fill="url(#pigG)"/><path d="M40 46l-4-12 14 7z" fill="#E0262D"/>
-          <ellipse cx="102" cy="66" rx="9" ry="8" fill="#FF8A8E"/><circle cx="99" cy="65" r="1.6" fill="#B3131A"/><circle cx="105" cy="65" r="1.6" fill="#B3131A"/><circle cx="86" cy="56" r="2.6" fill="#5A0A0E"/>
-          <rect x="52" y="44" width="18" height="3.5" rx="1.75" fill="#B3131A"/><rect x="44" y="84" width="9" height="10" rx="3" fill="#C2161D"/><rect x="78" y="84" width="9" height="10" rx="3" fill="#C2161D"/>
-          <circle cx="61" cy="24" r="14" fill="url(#coinG)"/><circle cx="61" cy="24" r="10" fill="none" stroke="#E09A1F" stroke-width="1.6"/><path d="M61 18v12M58 21h4.5a2 2 0 0 1 0 4H58" fill="none" stroke="#C47D10" stroke-width="1.8" stroke-linecap="round"/>
-        </svg>
-        <div class="s-label">Total Savings <button class="eye" id="eyeBtn" title="Show balances"><svg viewBox="0 0 24 24"><path d="M1 12s4-7.5 11-7.5S23 12 23 12s-4 7.5-11 7.5S1 12 1 12z"/><circle cx="12" cy="12" r="3"/></svg></button></div>
-        <div class="s-amount"><span class="mask" id="tSaved" data-value="">******</span><small>ETB</small></div>
-        <div class="s-stats">
-          <div class="s-stat"><small>Accrued interest</small><b class="up" id="tInt"></b></div>
-          <div class="s-stat"><span class="split" data-shape="line" data-name="line"></span><small>Active accounts</small><b id="tCount"></b></div>
+      <div class="hero" id="hero">
+        <div class="slides" id="slides">
+          <!-- Reminder / Mudaye banner -->
+          <div class="slide remind" id="remindSlide" data-name="saving-reminder">
+            <small id="rKicker">Midweek check</small>
+            <h3 id="rTitle">Halfway there? Top it up</h3>
+            <p id="rText">Keep your savings on track this week.</p>
+            <button type="button" id="rBtn">Deposit Now</button>
+            <div class="mudaye-art-box state-waving" id="mudayeBox" onclick="cycleMudayeHomeState()" title="Tap to animate Mudaye states">
+              <img id="mudayeImg" src="assets/Mudaye/Mudaye.png" alt="Mudaye">
+            </div>
+            <span class="mudaye-badge-tap" id="mudayeBadge" onclick="cycleMudayeHomeState()">Waving &#x21c4;</span>
+          </div>
+
+          <!-- Total balance card (Slide 2 for active state) -->
+          <div class="slide sc-card" id="totalCard">
+            <button class="sv-bubble" type="button" onclick="depositNow()">Deposit now<svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button>
+            <img class="sv-mudaye" src="assets/Mudaye/Mudaye.png" alt="Mudaye" onclick="depositNow()">
+            <div class="s-label">Total Savings <button class="eye" id="eyeBtn" title="Show balances"><svg viewBox="0 0 24 24"><path d="M1 12s4-7.5 11-7.5S23 12 23 12s-4 7.5-11 7.5S1 12 1 12z"/><circle cx="12" cy="12" r="3"/></svg></button></div>
+            <div class="s-amount"><span class="mask" id="tSaved" data-value="">******</span><small>ETB</small></div>
+            <div class="s-stats">
+              <div class="s-stat"><small>Accrued interest</small><b class="up" id="tInt"></b></div>
+              <div class="s-stat"><span class="split" data-shape="line" data-name="line"></span><small>Active accounts</small><b id="tCount"></b></div>
+            </div>
+          </div>
         </div>
+        <div class="dots" id="dots"><i class="on"></i><i></i></div>
       </div>
 
       <!-- Four outlined savings products (same as the Saving & Credit quick actions) -->
       <div class="actions actions-4">
-        <div class="primary-action" onclick="setFilter('individual')">
-          <div class="icon-container"><img src="assets/Saving.svg" alt="Individual Saving"></div>
+        <div class="primary-action" onclick="location.href='Savings - Type.html?type=individual'">
+          <div class="icon-container ic-svg"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg></div>
           <span class="label">Individual Saving</span>
         </div>
-        <div class="primary-action" onclick="setFilter('target')">
+        <div class="primary-action" onclick="location.href='Savings - Type.html?type=target'">
           <div class="icon-container"><img src="assets/Target Saving.svg" alt="Target Saving"></div>
           <span class="label">Target Saving</span>
         </div>
-        <div class="primary-action" onclick="location.href='Fixed Deposit.html'">
+        <div class="primary-action" onclick="location.href='Fixed Deposit.html?menu=20261119c'">
           <div class="icon-container"><img src="assets/Fixed Deposit.svg" alt="Fixed Deposit"></div>
           <span class="label">Fixed Deposit</span>
         </div>
@@ -142,34 +215,105 @@
       </div>
 
       <div class="list" id="notices"></div>
+      
+      <!-- Section header -->
       <div class="sec-head"><b>My Savings</b><small id="cnt"></small></div>
-      <div class="filters" id="filters">
-        <button class="on" data-f="all">All</button><button data-f="individual">Individual</button><button data-f="target">Target</button><button data-f="fixed">Fixed</button><button data-f="group">Group</button>
+
+      <!-- Active container: filters & list -->
+      <div id="activeSection">
+        <div class="filters" id="filters">
+          <button class="on" data-f="all">All</button><button data-f="individual">Individual</button><button data-f="target">Target</button><button data-f="fixed">Fixed</button><button data-f="group">Group</button>
+        </div>
+        <div class="list" id="list" style="margin-top:10px;padding-bottom:80px"></div>
       </div>
-      <div class="list" id="list"></div>
-      <div class="bottom-bar"><button class="btn-primary" onclick="openSheet('pickSheet')">New Saving</button></div>
+
+      <!-- Empty container (Screen 1): No Active Saving Account card -->
+      <div id="emptySection" style="display:none">
+        <div class="empty-saving-card">
+          <div class="empty-saving-icon">
+            <svg viewBox="0 0 24 24"><path d="M19 9.5a6 6 0 0 0-6-4H10a6 6 0 0 0-6 6c0 2 1 3.6 2.5 4.6V19h3v-2h3.5v2h3v-2.6A5.6 5.6 0 0 0 19 14h2v-4z"/><circle cx="15.5" cy="10" r="1"/></svg>
+          </div>
+          <div class="empty-saving-title">No Active Saving Account</div>
+          <div class="empty-saving-sub">Loan instalments and Errif repayments</div>
+          <button class="btn-primary" type="button" onclick="location.href='Savings - Create.html?type=target'" style="margin-top:4px">New Target Saving</button>
+        </div>
+      </div>
     </section>
+  </div>
+
+  <!-- Fixed "New Saving" bottom bar — always visible, never scrolls away -->
+  <div class="bottom-bar" id="newSavingBar" style="display:none;position:absolute;bottom:0;left:0;right:0;z-index:10;margin:0;padding:10px 16px 18px;background:var(--Background,#F5F5F5)">
+    <button class="btn-primary" onclick="openSheet('pickSheet')">New Saving</button>
   </div>
 
   <div class="scrim" id="scrim" onclick="closeSheets()"></div>
   <div class="sheet" id="pickSheet" role="dialog" aria-label="New saving">
     <div class="sheet-grip"></div>
     <p class="sheet-title">New saving</p>
-    <button class="pick" onclick="location.href='Savings - Create.html?type=individual'"><i><svg viewBox="0 0 24 24"><path d="M19 9.5a6 6 0 0 0-6-4H10a6 6 0 0 0-6 6c0 2 1 3.6 2.5 4.6V19h3v-2h3.5v2h3v-2.6A5.6 5.6 0 0 0 19 14h2v-4z"/><path d="M15.5 10h.01"/></svg></i><span><b>Individual Saving</b><small>Save any amount, any time · 7% a year</small></span><svg class="cv" viewBox="0 0 24 24"><path d="M9 6l6 6-6 6"/></svg></button>
+    <button class="pick" onclick="location.href='Savings - Create.html?type=individual'"><i><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg></i><span><b>Individual Saving</b><small>Save any amount, any time · 7% interest</small></span><svg class="cv" viewBox="0 0 24 24"><path d="M9 6l6 6-6 6"/></svg></button>
     <button class="pick" onclick="location.href='Savings - Create.html?type=target'"><i><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1.2"/></svg></i><span><b>Target Saving</b><small>Set a goal and a date, and save toward it</small></span><svg class="cv" viewBox="0 0 24 24"><path d="M9 6l6 6-6 6"/></svg></button>
-    <button class="pick" onclick="location.href='Fixed Deposit - Plans.html'"><i><svg viewBox="0 0 24 24"><rect x="4" y="10" width="16" height="11" rx="2.5"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/><path d="M12 14.5v2.5"/></svg></i><span><b>Fixed Deposit</b><small>Lock money for 3–12 months · up to 10% a year</small></span><svg class="cv" viewBox="0 0 24 24"><path d="M9 6l6 6-6 6"/></svg></button>
+    <button class="pick" onclick="location.href='Fixed Deposit - Plans.html'"><i><svg viewBox="0 0 24 24"><rect x="4" y="10" width="16" height="11" rx="2.5"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/><path d="M12 14.5v2.5"/></svg></i><span><b>Fixed Deposit</b><small>Lock money for 3–12 months · up to 10% interest</small></span><svg class="cv" viewBox="0 0 24 24"><path d="M9 6l6 6-6 6"/></svg></button>
     <button class="pick" onclick="location.href='Group Saving - Create.html'"><i><svg viewBox="0 0 24 24"><circle cx="9" cy="8" r="3.5"/><path d="M2.5 20a6.5 6.5 0 0 1 13 0"/><circle cx="17" cy="9" r="2.6"/><path d="M15.5 14.2A5 5 0 0 1 21.5 19"/></svg></i><span><b>Group Saving</b><small>Save toward a goal with family or friends</small></span><svg class="cv" viewBox="0 0 24 24"><path d="M9 6l6 6-6 6"/></svg></button>
   </div>
+
+  <div class="sheet" id="learnSheet" role="dialog" aria-label="About M-PESA Savings">
+    <div class="sheet-grip"></div>
+    <p class="sheet-title">About M-PESA Savings</p>
+    <p class="lbl" style="font-size:14px;line-height:1.55;margin:0 4px 18px">Choose flexible savings or set a target and date. Your balance earns interest, and you can track deposits and progress from your savings account. Fixed deposit terms and rates are shown before you confirm.</p>
+    <button class="btn-primary" type="button" onclick="closeSheets()">Done</button>
+  </div>
+
+  <!-- 3-Dot Menu Sheet matching user image -->
   <div class="sheet" id="menu" role="dialog" aria-label="Savings menu">
     <div class="sheet-grip"></div>
-    <button class="menu-item" onclick="location.href='My Activity.html'"><i><svg viewBox="0 0 24 24"><path d="M4 19V9M10 19V5M16 19v-7M22 19H2"/></svg></i><b>Savings Activity</b></button>
-    <button class="menu-item" onclick="location.href='Tariffs & Fees.html'"><i><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 8v5M12 16h.01"/></svg></i><b>Rates &amp; Fees</b></button>
+    <button class="menu-item" type="button" onclick="openMiniStatement()"><i><svg viewBox="0 0 24 24"><path d="M4 7h16M4 12h10M4 17h16"/><path d="M17 12h3"/></svg></i><b>Mini Statement</b></button>
+    <div class="menu-acc-accordion plain" id="accAccordion">
+      <button class="menu-item" type="button" data-acc="" onclick="location.href='Savings - Account Details.html?scope=all'"><i><svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2.5"/><circle cx="9" cy="11" r="2"/><path d="M6 16c.6-1.4 1.7-2 3-2s2.4.6 3 2M14 10h4M14 13h3"/></svg></i><b>Account details</b></button>
+      <div class="menu-acc-body" id="accBody">
+        <div class="acc-fact-row"><span>Active deposits</span><b id="fdCountVal">0</b></div>
+        <div class="acc-fact-row"><span>Total principal</span><b id="fdPrincipalVal">0.00 ETB</b></div>
+        <div class="acc-fact-row"><span>Accrued interest</span><b class="up" id="accIntVal">+0.00 ETB</b></div>
+        <div class="acc-fact-row"><span>Rate range</span><b id="fdRateVal">—</b></div>
+        <div class="acc-fact-row"><span>Next maturity</span><b id="fdMaturityVal">—</b></div>
+        <div class="acc-fact-row"><span>Partner Bank</span><b>Cooperative Bank of Oromia</b></div>
+      </div>
+    </div>
+    <button class="menu-item" type="button" onclick="location.href='Savings - Help.html'"><i><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M9.5 9.5a2.5 2.5 0 1 1 3.5 2.3c-.6.3-1 .8-1 1.5v.4M12 17h.01"/></svg></i><b>FAQ</b></button>
+    <button class="menu-item" type="button" onclick="location.href='Fixed Deposit.html?menu=20261119c&amp;action=close'"><i><svg viewBox="0 0 24 24"><path d="M12 3v8"/><path d="M6.4 6.6a8 8 0 1 0 11.2 0"/></svg></i><b>Close Deposit</b></button>
+  </div>
+
+  <!-- Mini Statement Sheet -->
+  <div class="sheet" id="miniSheet" role="dialog" aria-label="Mini Statement">
+    <div class="sheet-grip"></div>
+    <p class="sheet-title">Mini Statement &middot; M-PESA Savings</p>
+    <p class="lbl" style="margin-bottom:12px">Last 5 movements on your savings account</p>
+    <div class="list" id="miniTxList">
+      <div class="tx"><span class="ic"><svg viewBox="0 0 24 24"><path d="M17 7 7 17M15 17H7V9"/></svg></span><span class="inf"><b>Target Saving &middot; Deposit</b><small>18 Nov 2026 &middot; TX948102</small></span><span class="amt">+5,000.00</span></div>
+      <div class="tx"><span class="ic"><svg viewBox="0 0 24 24"><path d="M3 17l6-6 4 4 8-8"/><path d="M14 7h7v7"/></svg></span><span class="inf"><b>Daily Interest Accrued</b><small>17 Nov 2026</small></span><span class="amt">+4.79</span></div>
+      <div class="tx"><span class="ic"><svg viewBox="0 0 24 24"><path d="M17 7 7 17M15 17H7V9"/></svg></span><span class="inf"><b>Recurring Deposit</b><small>01 Nov 2026 &middot; AS294811</small></span><span class="amt">+2,500.00</span></div>
+      <div class="tx out"><span class="ic"><svg viewBox="0 0 24 24"><path d="M7 17 17 7M9 7h8v8"/></svg></span><span class="inf"><b>Wallet Withdrawal</b><small>24 Oct 2026 &middot; WD019482</small></span><span class="amt">-1,000.00</span></div>
+      <div class="tx"><span class="ic"><svg viewBox="0 0 24 24"><path d="M17 7 7 17M15 17H7V9"/></svg></span><span class="inf"><b>Initial Savings Deposit</b><small>15 Oct 2026 &middot; IN002941</small></span><span class="amt">+20,000.00</span></div>
+    </div>
+    <button class="btn-ghost" onclick="closeSheets()" style="margin-top:14px">Close</button>
+  </div>
+
+  <!-- Roll Over Sheet -->
+  <div class="sheet" id="rollSheet" role="dialog" aria-label="Roll Over Saving">
+    <div class="sheet-grip"></div>
+    <div class="cf-ic">
+      <svg viewBox="0 0 24 24"><path d="M21 12a9 9 0 1 1-3-6.7L21 8"/><path d="M21 3v5h-5"/></svg>
+    </div>
+    <p class="cf-t">Roll Over Savings</p>
+    <p class="cf-p">Set a new goal date, roll your funds into a new target period, or transition to a Fixed Deposit with up to <b>10% interest</b>.</p>
+    <button class="btn-primary" onclick="confirmRollOver()">Continue to Roll Over</button>
+    <button class="btn-ghost" onclick="closeSheets()">Cancel</button>
   </div>
   <div class="toast" id="toast"></div>
+  <div class="ok-toast" id="optToast" role="status"><span class="ok-ic"><svg viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg></span><span><b>Successfully Opted-In!</b><small>You have successfully opted in to M-PESA Saving</small></span></div>
 </div>
 
-<script src="savings-store.js"></script>
-<script src="savings-ui.js"></script>
+<script src="savings-store.js?v=20261125c"></script>
+<script src="savings-ui.js?v=20261125c"></script>
 <script>
   const $ = id => document.getElementById(id);
   const fmt = SV.fmt;
@@ -181,26 +325,163 @@
     cal: '<svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/></svg>'
   };
   const S = SV.load();
-  ['vOptin', 'vHome'].forEach(id => $(id).classList.toggle('show', (id === 'vHome') === !!S.optedIn));
-  $('menu') && (document.querySelector('.header-nav .icon-btn:last-child').style.visibility = S.optedIn ? '' : 'hidden');
+  const qParams = new URLSearchParams(location.search);
+  // ?demo=1 (hub): start over with the sample savings, already opted in
+  if (qParams.get('demo') === '1') { sessionStorage.removeItem('mpSavings'); const D = SV.load(); D.optedIn = true; SV.save(D); location.replace('Savings.html?menu=20261119d'); }
+  const T = SV.totals(S);
+  const activeFDs = (S.deposits || []).filter(d => !d.closed);
+  const fdInterest = activeFDs.reduce((sum, d) => sum + SV.accrued(d), 0);
+  const isEmptyState = qParams.get('empty') === '1' || T.count === 0;
+  $('fdCountVal').textContent = activeFDs.length;
+  $('fdPrincipalVal').textContent = fmt(activeFDs.reduce((sum, d) => sum + d.principal, 0)) + ' ETB';
+  $('accIntVal').textContent = '+' + fmt(fdInterest) + ' ETB';
+  const fdRates = activeFDs.map(d => d.rate);
+  $('fdRateVal').textContent = fdRates.length ? `${Math.min(...fdRates)}%–${Math.max(...fdRates)}%` : '—';
+  const nextFD = activeFDs.filter(d => SV.fdStatus(d) === 'active').sort((a, b) => new Date(SV.maturityOf(a)) - new Date(SV.maturityOf(b)))[0];
+  $('fdMaturityVal').textContent = nextFD ? SV.dateStr(SV.maturityOf(nextFD)) : activeFDs.length ? 'Ready to collect' : '—';
 
-  // Opt-in → PIN → done
-  function optIn() {
-    sessionStorage.setItem('termLoanData', JSON.stringify({ kind: 'sav-optin', title: 'Opt-In to M-PESA Savings', amount: 0, back: 'Savings.html', next: 'Savings - Done.html' }));
-    location.href = 'Term Loan - Enter PIN.html';
+  // If user requested empty view or opted in, show vHome
+  if (qParams.get('empty') === '1') {
+    S.optedIn = true;
+  }
+  ['vOptin', 'vHome'].forEach(id => $(id).classList.toggle('show', (id === 'vHome') === !!S.optedIn));
+  document.querySelector('.phone-frame').classList.toggle('saving-optin', !S.optedIn);
+  $('hTitle').textContent = S.optedIn ? 'M-PESA Savings' : 'Activate M-PESA Saving';
+  document.title = S.optedIn ? 'M-PESA Savings — M-PESA' : 'Activate M-PESA Saving — M-PESA';
+  const menuButton = document.querySelector('.header-nav .icon-btn:last-child');
+  if (menuButton) menuButton.style.visibility = S.optedIn ? '' : 'hidden';
+  // The fixed "New Saving" bar only belongs to the active Home view
+  if ($('newSavingBar')) $('newSavingBar').style.display = S.optedIn ? '' : 'none';
+
+  // Mudaye states
+  const MUDAYE_STATES = {
+    waving: { img: 'assets/Mudaye/Mudaye.png', label: 'Waving', cls: 'state-waving' },
+    about: { img: 'assets/Mudaye/Mudaye About to save.png', label: 'About to Save', cls: 'state-about' },
+    saved: { img: 'assets/Mudaye/Muday Saved.png', label: 'Saved (Cheering)', cls: 'state-saved' },
+    sad: { img: 'assets/Mudaye/Muday Sad.png', label: 'Empty (Sad)', cls: 'state-sad' }
+  };
+  const STATE_ORDER = ['waving', 'about', 'saved', 'sad'];
+  let currentHomeMudaye = isEmptyState ? 3 : 0; // default to sad when empty, waving when active
+  if (qParams.get('state')) {
+    const idx = STATE_ORDER.indexOf(qParams.get('state'));
+    if (idx >= 0) currentHomeMudaye = idx;
   }
 
-  // Totals (hidden until the eye is tapped)
-  const T = SV.totals(S);
-  $('tSaved').dataset.value = fmt(T.saved);
+  function applyMudayeHome(key) {
+    const st = MUDAYE_STATES[key] || MUDAYE_STATES.waving;
+    const box = $('mudayeBox'), img = $('mudayeImg'), badge = $('mudayeBadge');
+    if (img) img.src = st.img;
+    if (box) box.className = 'mudaye-art-box ' + st.cls;
+    if (badge) badge.innerHTML = st.label + ' &#x21c4;';
+  }
+
+  function cycleMudayeHomeState() {
+    currentHomeMudaye = (currentHomeMudaye + 1) % STATE_ORDER.length;
+    const nextKey = STATE_ORDER[currentHomeMudaye];
+    applyMudayeHome(nextKey);
+    toast('Mudaye: ' + MUDAYE_STATES[nextKey].label);
+  }
+
+  applyMudayeHome(STATE_ORDER[currentHomeMudaye]);
+
+  // First-time activation: tick the terms (Got It on the terms page ticks it too) → Activate → PIN
+  if (new URLSearchParams(location.search).get('terms') === '1' && $('oiAgree')) { $('oiAgree').checked = true; $('oiGo').disabled = false; }
+  function activateSavings() {
+    if (!$('oiAgree').checked) return;
+    sessionStorage.setItem('termLoanData', JSON.stringify({
+      kind: 'sav-optin', title: 'Opt-In to M-PESA Savings', amount: 0,
+      back: 'Savings.html', next: 'Savings - Done.html'
+    }));
+    location.href = 'Term Loan - Enter PIN.html';
+  }
+  function notNow() {
+    location.href = 'Credit & Saving.html';
+  }
+  // Configure Screen 1 (Empty) vs Active
+  if (isEmptyState) {
+    $('emptySection').style.display = 'none';
+    $('activeSection').style.display = 'block';
+    $('totalCard').style.display = 'block';
+    $('remindSlide').style.display = 'none';
+    $('dots').style.display = 'none';
+    $('cnt').textContent = '0 active';
+    document.querySelector('#totalCard .sv-mudaye').src = 'assets/Mudaye/Muday Sad.png';   // nothing saved yet
+    $('tSaved').classList.add('zero');
+    if ($('newSavingBar')) $('newSavingBar').style.display = '';
+  } else {
+    $('emptySection').style.display = 'none';
+    $('activeSection').style.display = 'block';
+    $('totalCard').style.display = 'block';
+    $('remindSlide').style.display = 'none';   // one card: the balance card only
+    $('dots').style.display = 'none';
+    $('cnt').textContent = T.count + ' active';
+    $('rBtn').textContent = 'Deposit Now';
+    const firstNeed = S.pockets[0];
+    $('rBtn').onclick = () => location.href = firstNeed ? `Savings - Amount.html?id=${firstNeed.id}&kind=deposit` : 'Savings - Create.html?type=target';
+    $('accIntVal').textContent = '+' + fmt(fdInterest) + ' ETB';
+    // Show fixed "New Saving" bar only on active state
+    if ($('newSavingBar')) $('newSavingBar').style.display = '';
+  }
+
+  // Totals
+  $('tSaved').dataset.value = fmt(isEmptyState ? 0 : T.saved);
+  if (isEmptyState) { $('tSaved').textContent = '0.00'; $('tInt').textContent = '0.00'; $('tCount').textContent = '0'; }
   $('tInt').textContent = '+' + fmt(T.interest);
   $('tCount').textContent = T.count;
   (function () {
-    const btn = $('eyeBtn'), on = btn.innerHTML, v = $('tSaved');
+    const btn = $('eyeBtn'), on = btn ? btn.innerHTML : '', v = $('tSaved');
+    if (!btn) return;
     const off = '<svg viewBox="0 0 24 24"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 19.5C5 19.5 1 12 1 12a18.5 18.5 0 0 1 5.06-5.94"/><path d="M9.9 4.74A9.1 9.1 0 0 1 12 4.5c7 0 11 7.5 11 7.5a18.5 18.5 0 0 1-2.16 3.19"/><path d="M14.12 14.12a3 3 0 1 1-4.24-4.24"/><path d="M1 1l22 22"/></svg>';
     let shown = false;
     btn.onclick = () => { shown = !shown; v.textContent = shown ? v.dataset.value : '******'; btn.innerHTML = shown ? off : on; };
   })();
+
+  // 3-Dot Menu Actions
+  function toggleAccountDetails() {
+    const acc = $('accAccordion');
+    if (acc) acc.classList.toggle('open');
+  }
+
+  function openMiniStatement() {
+    closeSheets();
+    location.href = 'Fixed Deposit.html?menu=20261119c&action=mini';
+  }
+
+  function openRollOver() {
+    closeSheets();
+    location.href = 'Fixed Deposit.html?menu=20261119c&action=rollover';
+  }
+
+  function confirmRollOver() {
+    closeSheets();
+    toast('Roll Over request initiated');
+    setTimeout(() => {
+      location.href = 'Fixed Deposit.html?menu=20261119c&action=rollover';
+    }, 600);
+  }
+
+  // Deposit now → Deposit, where the customer picks the saving
+  function depositNow() { if (isEmptyState) return openSheet('pickSheet'); location.href = 'Savings - Amount.html?kind=deposit&pick=1'; }
+
+  // One balance card now — no auto-advancing slides
+  if (false) {
+    (function () {
+      const track = $('slides'), dots = [...document.querySelectorAll('#dots i')];
+      let cur = 0, auto = null, held = false;
+      const mark = k => { cur = k; dots.forEach((d, n) => d.classList.toggle('on', n === k)); $('hero').classList.toggle('on-red', k === 0); };
+      track.addEventListener('scroll', () => { const k = Math.round(track.scrollLeft / track.clientWidth); if (k !== cur) mark(k); }, { passive: true });
+      dots.forEach((d, n) => d.onclick = () => { track.scrollTo({ left: n * track.clientWidth, behavior: 'smooth' }); queue(); });
+      function queue() {
+        clearTimeout(auto);
+        if (held || matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+        auto = setTimeout(() => { track.scrollTo({ left: ((cur + 1) % dots.length) * track.clientWidth, behavior: 'smooth' }); queue(); }, 5500);
+      }
+      track.addEventListener('pointerdown', () => { held = true; clearTimeout(auto); });
+      track.addEventListener('pointerenter', () => { held = true; clearTimeout(auto); });
+      track.addEventListener('pointerleave', () => { held = false; queue(); });
+      mark(0); queue();
+    })();
+  }
 
   // Accounts list, one product order: target (behind-schedule last), individual, fixed, group
   let filter = 'all';
@@ -212,7 +493,7 @@
       filter === 'all' || filter === 'fixed' ? SV.openDeposits(S).map(SVUI.depositCard) : [],
       filter === 'all' || filter === 'group' ? SV.groupsOf(S).map(SVUI.groupCard) : []);
     $('cnt').textContent = T.count + ' active';
-    $('list').innerHTML = items.length ? items.join('') : SVUI.empty(filter);
+    $('list').innerHTML = items.length ? items.join('') : SVUI.empty(filter);   // New Saving is always at the bottom
     document.querySelectorAll('#filters button').forEach(b => b.classList.toggle('on', b.dataset.f === filter));
   }
   function setFilter(f) { filter = f; render(); }
@@ -225,7 +506,8 @@
   function closeSheets() { $('scrim').classList.remove('show'); document.querySelectorAll('.sheet').forEach(s => s.classList.remove('show')); }
   document.addEventListener('keydown', e => { if (e.key === 'Escape') closeSheets(); });
   const done = new URLSearchParams(location.search).get('done');
-  if (done) setTimeout(() => toast({ optin: 'You have opted in to M-PESA Savings', closed: 'Saving closed — money sent to your wallet' }[done] || 'Done'), 300);
+  if (done === 'optin') setTimeout(() => { $('optToast').classList.add('show'); setTimeout(() => $('optToast').classList.remove('show'), 3500); }, 300);
+  else if (done) setTimeout(() => toast({ optin: 'You have opted in to M-PESA Savings', closed: 'Saving closed — money sent to your wallet' }[done] || 'Done'), 300);
 </script>
 <!-- Export to Figma button (shared exporter) -->
 <script src="figma-export.js"></script>

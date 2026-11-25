@@ -8,7 +8,7 @@
 <link rel="stylesheet" href="styles/base.css">
 <link rel="stylesheet" href="styles/component-status-bar.css">
 <link rel="stylesheet" href="styles/component-sc-card.css">
-<link rel="stylesheet" href="styles/savings.css">
+<link rel="stylesheet" href="styles/savings.css?v=20261125c">
 <style>
   @import url('https://api.fontshare.com/v2/css?f[]=switzer@400,500,600,700,800&display=swap');
 
@@ -45,12 +45,12 @@
 
   <div class="app-content">
     <div class="header-nav">
-      <button class="icon-btn" onclick="history.length > 1 ? history.back() : location.href='Fixed Deposit.html'" aria-label="Back"><svg data-name="icon-arrow-left" viewBox="0 0 24 24"><path d="M19 12H5M12 19l-7-7 7-7"/></svg></button>
+      <button class="icon-btn" onclick="history.length > 1 ? history.back() : location.href='Fixed Deposit.html?menu=20261119c'" aria-label="Back"><svg data-name="icon-arrow-left" viewBox="0 0 24 24"><path d="M19 12H5M12 19l-7-7 7-7"/></svg></button>
       <span class="header-title" id="hTitle">Choose a Plan</span>
       <span class="spacer"></span>
     </div>
 
-    <div class="card lead"><img src="assets/banks logo/awass-bank.png" alt=""><span><b id="leadT">Held with Awash Bank</b><small id="leadS">Fixed rate for the whole term</small></span></div>
+    <div class="card lead"><img src="assets/banks logo/coop-bank.png" alt=""><span><b id="leadT">In Partnership with COOP</b><small id="leadS">Fixed rate for the whole term</small></span></div>
     <div class="notice warn"><svg viewBox="0 0 24 24"><path d="M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"/><path d="M12 9v4M12 17h.01"/></svg><span>If you withdraw before the maturity date, you <b>lose all the interest</b> — only your deposit is returned.</span></div>
     <div class="list" id="plans"></div>
   </div>
@@ -58,8 +58,8 @@
   <div class="toast" id="toast"></div>
 </div>
 
-<script src="savings-store.js"></script>
-<script src="savings-ui.js"></script>
+<script src="savings-store.js?v=20261125c"></script>
+<script src="savings-ui.js?v=20261125c"></script>
 <script>
   const $ = id => document.getElementById(id);
   const fmt = SV.fmt, IC = SVUI.IC;
@@ -72,19 +72,29 @@
   function toPin(data) { sessionStorage.setItem('termLoanData', JSON.stringify(Object.assign({ next: 'Savings - Done.html', back: location.pathname.split('/').pop() + location.search }, data))); location.href = 'Term Loan - Enter PIN.html'; }
 
   const q = new URLSearchParams(location.search), S = SV.load();
-  const roll = q.get('roll') ? (S.deposits || []).find(a => a.id === q.get('roll')) : null;
-  const base = roll ? Math.floor(SV.maturedTotal(roll) * 100) / 100 : 0;
+  const rollRequested = q.has('roll') || q.has('rollover');
+  const candidate = q.get('roll') ? (S.deposits || []).find(a => a.id === q.get('roll')) : null;
+  const roll = candidate && SV.fdStatus(candidate) === 'matured' ? candidate : null;
+  const invalidRoll = rollRequested && !roll;
+  const base = roll ? Math.round(SV.maturedTotal(roll) * 100) / 100 : 0;
   if (roll) {
     $('hTitle').textContent = 'Roll Over'; document.title = 'Roll Over — M-PESA';
     $('leadT').textContent = 'Reinvesting ' + fmt(base) + ' ETB';
     $('leadS').textContent = 'From ' + roll.name + ' · deposit plus interest';
   }
-  $('plans').innerHTML = SV.PLANS.map((p, i) => { const pr = SV.projected(p, Math.max(p.min, base)), gap = roll ? Math.max(0, p.min - base) : 0;
-    return `<div class="card plan"><div class="pt"><b>${p.months} Months Lock</b><span class="rate">${p.rate}% a year</span></div>
-      <div class="grid"><div><small>Minimum deposit</small><b>${fmt(p.min).replace('.00', '')} ETB</b></div><div><small>Maturity date</small><b>${SV.dateStr(pr.by)}</b></div></div>
-      ${gap ? `<p class="more">Needs ${fmt(gap)} ETB more from your wallet</p>` : ''}
-      <button type="button" onclick="choose(${i})">Select</button></div>`; }).join('');
-  function choose(i) { location.href = `Fixed Deposit - Amount.html?plan=${i}` + (roll ? '&roll=' + roll.id : ''); }
+  if (invalidRoll) {
+    $('plans').innerHTML = '<div class="notice warn">Choose a deposit that has reached maturity to roll it over. Active deposits can be rolled over after their maturity date.</div>';
+  } else {
+    $('plans').innerHTML = SV.PLANS.map((p, i) => { const pr = SV.projected(p, Math.max(p.min, base)), gap = roll ? Math.max(0, p.min - base) : 0;
+      return `<div class="card plan" role="button" tabindex="0" onclick="choose(${i})" style="cursor:pointer"><div class="pt"><b>${p.months} Months Lock</b><span class="rate">${p.rate}% Interest</span></div>
+        <div class="grid"><div><small>Minimum deposit</small><b>${fmt(p.min).replace('.00', '')} ETB</b></div><div><small>Maturity date</small><b>${SV.dateStr(pr.by)}</b></div></div>
+        ${gap ? `<p class="more">Needs ${fmt(gap)} ETB more from your wallet</p>` : ''}
+      </div>`; }).join('');   // the whole card picks the plan
+  }
+  function choose(i) {
+    if (invalidRoll || !SV.PLANS[i]) return;
+    location.href = `Fixed Deposit - Amount.html?plan=${i}` + (roll ? '&roll=' + encodeURIComponent(roll.id) : '');
+  }
 </script>
 <!-- Export to Figma button (shared exporter) -->
 <script src="figma-export.js"></script>

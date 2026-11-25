@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>M-PESA Savings FAQs — M-PESA</title>
+<link rel="stylesheet" href="styles/design-tokens.css">
+<link rel="stylesheet" href="styles/base.css">
+<link rel="stylesheet" href="styles/component-status-bar.css">
+<link rel="stylesheet" href="styles/component-sc-card.css">
+<link rel="stylesheet" href="styles/savings.css?v=20261125c">
+<style>
+  @import url('https://api.fontshare.com/v2/css?f[]=switzer@400,500,600,700,800&display=swap');
+
+  .faq-intro { padding: 15px 16px; }
+  .faq-intro h1 { color: var(--On-Surface); font-size: 16px; font-weight: 700; }
+  .faq-intro p { margin-top: 5px; color: var(--On-Surface-Low); font-size: 12.5px; line-height: 1.45; }
+  .pill { display: block; width: fit-content; margin: 0 auto 8px; padding: 7px 16px; border-radius: 999px; background: #EFEFF3; font-size: 11.5px; font-weight: 600; letter-spacing: 1px; color: #55555E; text-transform: uppercase; }
+  .qa + .qa { border-top: 1px solid #F1F1F4; }
+  .q { width: 100%; display: flex; align-items: center; gap: 12px; padding: 15px 0; border: none; background: none; cursor: pointer; text-align: left; font-family: Switzer, sans-serif; }
+  .q b { flex: 1; font-size: 14px; font-weight: 600; line-height: 1.35; color: var(--On-Surface); }
+  .q svg { width: 18px; height: 18px; flex-shrink: 0; stroke: #8A8A94; stroke-width: 2; fill: none; stroke-linecap: round; stroke-linejoin: round; transition: transform 0.2s; }
+  .qa.open .q svg { transform: rotate(180deg); stroke: var(--Primary); }
+  .a { display: none; padding: 0 0 15px; font-size: 13px; line-height: 1.55; color: #55555E; }
+  .qa.open .a { display: block; }
+  .a b { color: var(--On-Surface); font-weight: 600; }
+  .a a { color: var(--Primary); font-weight: 600; text-decoration: none; }
+  .support-note { margin: 0 4px 4px; color: var(--On-Surface-Low); font-size: 12px; line-height: 1.5; text-align: center; }
+  /* Sections: one per product, the current product first */
+  .faq-scroll { display: flex; flex-direction: column; gap: 20px; }
+  .faq-sec { display: flex; flex-direction: column; gap: 8px; }
+  .faq-title { margin: 0 4px; font-size: 15px; font-weight: 400; color: var(--On-Surface); }
+  .faq-card { padding: 16px 16px 4px; }
+  /* Product tabs (unused) */
+  .ftabs { display: grid; grid-template-columns: repeat(4, 1fr); gap: 4px; padding: 4px; border-radius: 14px; background: #FFF; box-shadow: 0 2px 12px rgba(0,0,0,0.04); }
+  .ftabs button { height: 36px; border: none; border-radius: 10px; background: none; color: #55555E; font-family: Switzer, sans-serif; font-size: 12.5px; font-weight: 600; cursor: pointer; }
+  .ftabs button.on { background: var(--Primary); color: #FFF; }
+  /* Questions scroll; Got It stays fixed at the bottom */
+  .app-content { display: flex; flex-direction: column; overflow: hidden !important; }
+  .faq-wrap { flex: 1 1 auto; min-height: 0; overflow-y: auto; scrollbar-width: none; display: flex; flex-direction: column; gap: 14px; padding-bottom: 12px; }
+  .faq-wrap::-webkit-scrollbar { display: none; }
+  .faq-wrap > * { flex-shrink: 0; }
+  .faq-bar { flex-shrink: 0; margin-top: 0; }
+</style>
+<link rel="stylesheet" href="styles/device.css">
+</head>
+<body>
+<div class="phone-frame">
+  <div class="status-bar">
+    <span class="time">10:00</span>
+    <div class="status-icons">
+      <svg data-name="icon-wifi" viewBox="0 0 24 24" fill="none"><path d="M1 9l2 2c4.97-4.97 13.03-4.97 18 0l2-2C16.93 2.93 7.08 2.93 1 9z" fill="#1C1C21"/><path d="M5 13l2 2c2.76-2.76 7.24-2.76 10 0l2-2C15.14 9.14 8.87 9.14 5 13z" fill="#1C1C21"/><path d="M9 17l2 2c1.1-1.1 2.9-1.1 4 0l2-2c-2.21-2.21-5.79-2.21-8 0z" fill="#1C1C21"/></svg>
+      <svg data-name="icon-signal" viewBox="0 0 24 24" fill="none"><rect x="2" y="6" width="4" height="12" rx="1" fill="#1C1C21"/><rect x="8" y="4" width="4" height="14" rx="1" fill="#1C1C21"/><rect x="14" y="2" width="4" height="16" rx="1" fill="#1C1C21"/><rect x="20" y="0" width="4" height="18" rx="1" fill="#1C1C21" opacity=".3"/></svg>
+      <svg data-name="icon-battery" viewBox="0 0 28 14" fill="none"><rect x="0" y="1" width="22" height="12" rx="2.5" stroke="#1C1C21" stroke-width="1.5"/><rect x="2" y="3" width="16" height="8" rx="1" fill="#1C1C21"/><rect x="24" y="4" width="2" height="6" rx="1" fill="#1C1C21"/></svg>
+    </div>
+  </div>
+
+  <div class="app-content">
+    <div class="header-nav">
+      <button class="icon-btn" type="button" onclick="goBack()" aria-label="Back"><svg data-name="icon-arrow-left" viewBox="0 0 24 24"><path d="M19 12H5M12 19l-7-7 7-7"/></svg></button>
+      <span class="header-title">FAQ</span>
+      <span class="spacer"></span>
+    </div>
+
+    <!-- The product you came from first, then the others — each with its own title -->
+    <div class="faq-wrap">
+    <div class="faq-scroll" id="faq"></div>
+    <p class="support-note">Still need help? Contact M-PESA Customer Care.</p>
+    </div>
+    <div class="bottom-bar faq-bar"><button class="btn-primary" type="button" onclick="goBack()">Close</button></div>
+  </div>
+</div>
+
+<script>
+  function goBack() {
+    if (history.length > 1) history.back();
+    else location.href = 'Savings.html';
+  }
+  // Questions per product
+  const FAQ = {
+    individual: [
+      ['What is Individual Saving?', 'A flexible saving with no goal or end date. Put money in and take it out whenever you need.'],
+      ['How do I open one?', 'Open M-PESA Savings, tap <b>Individual Saving</b>, then <b>New Individual Saving</b>. Name it, add a first deposit if you like and confirm with your PIN.'],
+      ['How much interest do I earn?', 'Individual Saving earns <b>7% interest</b>, counted every day on your balance. A 5% withholding tax applies to the interest.'],
+      ['Can I withdraw any time?', 'Yes. Withdrawals go straight to your M-PESA wallet. There is no lock period.'],
+      ['How does Auto Recurring Deposit work?', 'Choose an amount and a daily, weekly or monthly schedule. The money moves from your wallet on that schedule. Pause, edit or delete it any time in <b>Recurring Deposits</b>.'],
+      ['How do I close it?', 'Open the saving, tap ⋮ and choose <b>Close Saving</b>. The balance and interest are sent to your M-PESA wallet.'],
+    ],
+    target: [
+      ['What is Target Saving?', 'A saving with a goal amount and a date — for a phone, school fees or a trip. We show how much to save to stay on track.'],
+      ['What do On track and Behind mean?', '<b>On track</b> means your balance is where it should be for the date. <b>Behind</b> means you need to deposit a bit more to reach the goal on time.'],
+      ['Can I change my target?', 'Yes. Open the saving and tap the Target card to change the amount or date, or remove the target to make it an Individual Saving.'],
+      ['What if I miss the goal?', 'Nothing is lost. Your money and interest stay in the saving. Set a new date, keep saving, or withdraw.'],
+      ['How much interest do I earn?', 'Target Saving earns <b>7% interest</b>, counted every day. A 5% withholding tax applies to the interest.'],
+      ['Can I withdraw before the date?', 'Yes, any time. Your progress toward the goal goes down by the amount you take out.'],
+    ],
+    fixed: [
+      ['What is a Fixed Deposit?', 'You lock an amount with Cooperative Bank of Oromia for 3, 6, 9 or 12 months at a fixed interest rate that does not change during the term.'],
+      ['How much interest do I earn?', 'From <b>8%</b> for 3 months up to <b>10%</b> for 12 months. You see the exact interest before you confirm.'],
+      ['What is the minimum amount?', 'It depends on the lock period, from 10,000 ETB for 3 months. The minimum shows on each plan.'],
+      ['Can I withdraw early?', 'Yes, but closing before the maturity date returns your deposit only — the interest earned so far is lost.'],
+      ['What happens at maturity?', 'You get your deposit plus the interest. Withdraw it to your wallet or <b>Roll Over</b> into a new term.'],
+      ['Can I add money to a deposit?', 'No. Each Fixed Deposit is one amount. Open a new one to lock more money.'],
+    ],
+    group: [
+      ['What is Group Saving?', 'Save toward one goal with family, friends or colleagues. Everyone contributes and sees the group progress.'],
+      ['How do I create a group?', 'Open Group Saving, tap <b>New Group</b>, set the goal and date, and invite members by M-PESA number.'],
+      ['Who can withdraw?', 'Only the admin, and only when the goal is reached or the date has passed.'],
+      ['Can I leave a group?', 'Yes. Send a leave request; once enough members approve, your contributions and their interest go back to your wallet.'],
+      ['How much interest do I earn?', 'Group Saving earns <b>7% interest</b> on what each member puts in. A 5% withholding tax applies to the interest.'],
+      ['Can I contribute automatically?', 'Yes. Turn on <b>Recurring</b> in the group to contribute from your wallet on a schedule.'],
+    ],
+  };
+  const CHEV = '<svg viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg>';
+  const NAME = { individual: 'Individual Saving FAQ', target: 'Target Saving FAQ', fixed: 'Fixed Deposit FAQ', group: 'Group Saving FAQ' };
+  const first = FAQ[new URLSearchParams(location.search).get('tab')] ? new URLSearchParams(location.search).get('tab') : 'individual';
+  const order = [first].concat(Object.keys(FAQ).filter(k => k !== first));
+  document.getElementById('faq').innerHTML = order.map((k, n) => `<section class="faq-sec">
+      <div class="card faq-card"><span class="pill">${NAME[k]}</span>${FAQ[k].map(([q, a], i) => `<div class="qa${n === 0 && i === 0 ? ' open' : ''}"><button class="q" type="button" aria-expanded="${n === 0 && i === 0}"><b>${q}</b>${CHEV}</button><div class="a">${a}</div></div>`).join('')}</div>
+    </section>`).join('');
+  document.getElementById('faq').addEventListener('click', e => {
+    const button = e.target.closest('.q'); if (!button) return;
+    const item = button.closest('.qa'), open = item.classList.toggle('open');
+    button.setAttribute('aria-expanded', String(open));
+  });
+</script>
+<script src="figma-export.js"></script>
+<script src="test-scenarios-data.js"></script>
+<script src="test-scenarios.js"></script>
+</body>
+</html>

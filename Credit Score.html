@@ -149,7 +149,7 @@
   <div class="toast" id="toast"></div>
 </div>
 
-<script src="term-loan-store.js"></script>
+<script src="term-loan-store.js?v=fayda1"></script>
 <script>
   const $ = id => document.getElementById(id);
   const BANDS = [
@@ -180,7 +180,13 @@
 
   // Update score: upload a bank statement. While the bank reviews it the score shows
   // "Updating…"; when it lands the page refreshes with the new score.
-  function updateScore() { if (!TL.scorePending()) location.href = 'Credit Score - Upload Statement.html'; }
+  // Scenario: ?fayda=0 starts with the Fayda ID not linked (Update score → Link Fayda ID first)
+  if (new URLSearchParams(location.search).get('fayda') === '0') TL.linkFayda(false);
+  function updateScore() {
+    if (TL.scorePending()) return;
+    // Fayda ID not linked yet → link it first, then the statement upload
+    location.href = TL.faydaLinked() ? 'Credit Score - Upload Statement.html' : 'Link Fayda ID.html?next=' + encodeURIComponent('Credit Score - Upload Statement.html');
+  }
   if (TL.scorePending()) {
     $('updated').textContent = 'Updating…';
     $('updBtn').disabled = true; $('updBtn').style.opacity = 0.45;

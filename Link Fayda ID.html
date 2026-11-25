@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Link Fayda ID</title>
+<link rel="stylesheet" href="styles/design-tokens.css">
+<link rel="stylesheet" href="styles/base.css">
+<link rel="stylesheet" href="styles/component-status-bar.css">
+<style>
+  @import url('https://api.fontshare.com/v2/css?f[]=switzer@400,500,600,700,800&display=swap');
+
+  /* Link Fayda ID: shown only when the National ID (Fayda) is not linked yet —
+     e.g. before Update Credit Score. Enter the FAN on this page → Send Code →
+     full-screen code entry (like OTP Verification) → Verification Complete → linked → back to ?next=. Once linked it is never asked again (TL.faydaLinked). */
+  :root { --Primary: #FE353D; --Primary-Light: #FFF1F2; --On-Surface: #1C1C21; --On-Surface-Low: #7C7C87; --Background: #F5F5F5; --Line: #E6E6EA; }
+  body { font-family: Switzer, sans-serif; }
+  .phone-frame { background: var(--Background); }
+  .app-content { position: relative; height: calc(100% - 16px); display: flex; flex-direction: column; padding: 0 16px; overflow: hidden; }
+  .header-nav { flex: 0 0 48px; display: flex; align-items: center; justify-content: space-between; margin: 0 -4px; }
+  .icon-btn { width: 36px; height: 36px; border: 0; border-radius: 50%; background: transparent; display: grid; place-items: center; cursor: pointer; }
+  .icon-btn svg { width: 22px; height: 22px; stroke: var(--On-Surface); stroke-width: 1.9; fill: none; stroke-linecap: round; stroke-linejoin: round; }
+  .header-title { flex: 1; text-align: center; color: var(--On-Surface); font-size: 16px; font-weight: 600; }
+
+  .main { flex: 1; display: flex; flex-direction: column; align-items: center; padding-top: 30px; }
+  .link-card { position: relative; width: 100%; display: flex; align-items: center; justify-content: center; gap: 10px; padding: 22px 18px; border-radius: 24px; background: #FFF; box-shadow: 0 6px 20px rgba(20,20,30,0.06); }
+  .lg { width: 72px; height: 72px; flex-shrink: 0; border-radius: 50%; border: 3px solid #E6E6EA; background: #FFF; display: grid; place-items: center; overflow: hidden; }
+  .lg.fayda img { width: 100%; height: 100%; object-fit: cover; }
+  .lg.mpesa img { width: 52px; height: auto; }
+  .dash { flex: 1; max-width: 34px; border-top: 2px dashed #D6D6DC; }
+  .swap { width: 38px; height: 38px; flex-shrink: 0; border-radius: 50%; background: var(--Primary-Light); display: grid; place-items: center; }
+  .swap svg { width: 18px; height: 18px; stroke: var(--Primary); stroke-width: 2.2; fill: none; stroke-linecap: round; stroke-linejoin: round; }
+  .linked .lg { border-color: #22C55E; }
+  .linked .swap { background: #DCFCE7; }
+  .linked .swap svg { stroke: #16A34A; }
+  .linked .dash { border-top-style: solid; border-color: #86EFAC; }
+  .pill { position: absolute; top: -12px; left: 50%; transform: translateX(-50%); display: inline-flex; align-items: center; gap: 5px; padding: 4px 11px; border-radius: 999px; background: #DCFCE7; color: #15803D; font-size: 11px; font-weight: 600; white-space: nowrap; }
+  .pill svg { width: 13px; height: 13px; fill: #16A34A; }
+  .pill svg path + path { fill: none; stroke: #FFF; stroke-width: 2.4; stroke-linecap: round; stroke-linejoin: round; }
+  .main h1 { margin-top: 26px; color: var(--On-Surface); font-size: 22px; font-weight: 600; text-align: center; }
+  .main > p { margin-top: 8px; max-width: 280px; color: var(--On-Surface-Low); font-size: 13.5px; line-height: 1.5; text-align: center; }
+
+  .bottom-bar { flex-shrink: 0; padding: 10px 0 18px; }
+  .safe { display: flex; align-items: center; justify-content: center; gap: 7px; margin-bottom: 12px; color: var(--On-Surface-Low); font-size: 12px; }
+  .safe svg { width: 16px; height: 16px; stroke: #16A34A; stroke-width: 2; fill: none; stroke-linecap: round; stroke-linejoin: round; flex-shrink: 0; }
+  .btn-primary { width: 100%; height: 52px; border: none; border-radius: 14px; background: var(--Primary); color: #FFF; font-family: Switzer, sans-serif; font-size: 15px; font-weight: 500; cursor: pointer; box-shadow: 0 4px 16px rgba(254,53,61,0.25); }
+  .btn-primary:disabled { background: #E0E0E0; color: var(--On-Surface-Low); box-shadow: none; cursor: default; }
+  .field-label { margin: 0 2px 8px; color: #55555E; font-size: 12.5px; font-weight: 500; }
+  .input { width: 100%; height: 52px; padding: 0 14px; border: 1px solid var(--Line); border-radius: 14px; background: #FFF; font-family: Switzer, sans-serif; font-size: 16px; letter-spacing: 1.5px; color: var(--On-Surface); outline: none; }
+  .input:focus { border-color: var(--Primary); }
+  .hint { margin: 7px 2px 18px; color: var(--On-Surface-Low); font-size: 11.5px; }
+  .fan-top { display: flex; align-items: center; justify-content: space-between; margin: 0 2px 8px; }
+  .fan-top .field-label { margin: 0; }
+  .where { border: none; background: none; padding: 0; color: var(--Primary); font-family: Switzer, sans-serif; font-size: 12px; font-weight: 600; cursor: pointer; }
+  .fan-box { position: relative; display: flex; align-items: center; gap: 10px; height: 54px; padding: 0 14px; border: 1.5px solid var(--Line); border-radius: 14px; background: #FFF; transition: border-color 0.15s; }
+  .fan-box:focus-within { border-color: var(--Primary); }
+  .fan-box.ok { border-color: #22C55E; }
+  .fan-box.err { border-color: var(--Primary); background: #FFFBFB; }
+  .fan-box > svg { width: 20px; height: 20px; flex-shrink: 0; stroke: #A0A0AA; stroke-width: 1.8; fill: none; stroke-linecap: round; stroke-linejoin: round; }
+  .fan-box .input { flex: 1; min-width: 0; height: 100%; padding: 0; border: none; font-size: 16.5px; font-weight: 500; letter-spacing: 1.8px; background: transparent; }
+  .fan-box .count { flex-shrink: 0; color: var(--On-Surface-Low); font-size: 11.5px; font-weight: 500; }
+  .fan-box .tick { display: none; width: 22px; height: 22px; flex-shrink: 0; border-radius: 50%; background: #22C55E; place-items: center; }
+  .fan-box .tick svg { width: 12px; height: 12px; stroke: #FFF; stroke-width: 3.2; fill: none; stroke-linecap: round; stroke-linejoin: round; }
+  .fan-box.ok .tick { display: grid; }
+  .fan-box.ok .count { display: none; }
+  .fan-err { display: none; margin: 6px 2px 0; color: var(--Primary); font-size: 11.5px; font-weight: 500; }
+  .fan-err.show { display: block; }
+  /* Where's my FAN: a mini Fayda card with the number highlighted */
+  .id-help { display: none; margin-top: 10px; padding: 12px; border-radius: 14px; background: #F6F7F9; }
+  .id-help.show { display: block; }
+  .mini-id { position: relative; display: flex; gap: 10px; padding: 10px; border-radius: 10px; background: linear-gradient(135deg, #EAF2F6, #FFF); border: 1px solid #DCE6EC; }
+  .mini-id .ph { width: 38px; height: 46px; border-radius: 6px; background: #C9D6DE; flex-shrink: 0; }
+  .mini-id .ln { flex: 1; display: flex; flex-direction: column; gap: 5px; padding-top: 2px; }
+  .mini-id .ln i { height: 5px; border-radius: 3px; background: #CBD5DC; }
+  .mini-id .ln i:nth-child(2) { width: 70%; }
+  .mini-id .fan-no { margin-top: 3px; align-self: flex-start; padding: 3px 6px; border-radius: 5px; border: 1.5px solid var(--Primary); background: #FFF1F2; color: var(--Primary); font-size: 9.5px; font-weight: 700; letter-spacing: 1px; }
+  .mini-id img { position: absolute; top: 8px; right: 8px; width: 18px; height: 18px; border-radius: 50%; }
+  .id-help p { margin-top: 8px; color: #55555E; font-size: 11.5px; line-height: 1.45; }
+  .hint.ph { display: flex; align-items: center; gap: 7px; margin-top: 12px; }
+  .hint.ph svg { width: 15px; height: 15px; flex-shrink: 0; stroke: #16A34A; stroke-width: 2; fill: none; stroke-linecap: round; stroke-linejoin: round; }
+
+  .toast { position: absolute; left: 50%; bottom: 96px; z-index: 120; transform: translate(-50%, 12px); display: flex; align-items: center; gap: 8px; padding: 11px 16px; border-radius: 14px; background: #1C1C21; color: #FFF; font-size: 13px; font-weight: 500; white-space: nowrap; opacity: 0; pointer-events: none; transition: opacity 0.2s, transform 0.2s; }
+  .toast.show { opacity: 1; transform: translate(-50%, 0); }
+  .toast svg { width: 16px; height: 16px; stroke: #4ADE80; stroke-width: 3; fill: none; stroke-linecap: round; stroke-linejoin: round; }
+
+  /* FAN form on the page */
+  .form { width: 100%; margin-top: 26px; }
+  .main { overflow-y: auto; scrollbar-width: none; }
+  .main::-webkit-scrollbar { display: none; }
+  .bottom-bar .hint.ph { justify-content: center; margin: 0 0 12px; }
+
+  /* Code entry: full screen, same as OTP Verification (red header, boxes, keypad) */
+  .ov { position: absolute; inset: 0; z-index: 130; display: none; flex-direction: column; background: #F5F5F5; }
+  .ov.show { display: flex; }
+  .ov-head { position: relative; flex-shrink: 0; height: 140px; background: linear-gradient(160deg, #A41016 0%, #C41520 30%, #D32F2F 60%, #B71C1C 100%); border-radius: 0 0 30px 30px; overflow: hidden; }
+  .ov-head .pat { position: absolute; inset: 0; opacity: 0.2; background: url('assets/M-PESA-pattern.svg') no-repeat right -270px top -270px / 490px; mix-blend-mode: overlay; }
+  .ov-head .status-bar { position: relative; z-index: 2; background: transparent; }
+  .ov-head .status-bar .time { color: #FFF; }
+  .ov-head .status-bar [fill="#1C1C21"] { fill: #FFF; }
+  .ov-head .status-bar [stroke="#1C1C21"] { stroke: #FFF; }
+  .ov-nav { position: relative; z-index: 2; display: flex; align-items: center; justify-content: center; height: 36px; padding: 0 20px; }
+  .ov-nav button { position: absolute; left: 14px; width: 36px; height: 36px; border: none; background: none; display: grid; place-items: center; cursor: pointer; }
+  .ov-nav button svg { width: 24px; height: 24px; stroke: #FFF; stroke-width: 1.6; fill: none; stroke-linecap: round; stroke-linejoin: round; }
+  .ov-nav span { color: #FFF; font-size: 17px; font-weight: 400; }
+  .ov-head h2 { position: relative; z-index: 2; margin-top: 12px; padding: 0 24px; color: #FFF; font-size: 22px; font-weight: 400; }
+  .ov-body { flex: 1; min-height: 0; display: flex; flex-direction: column; align-items: center; padding: 0 16px 10px; }
+  .ov-msg { margin-top: 26px; color: var(--On-Surface); font-size: 14px; line-height: 1.5; text-align: center; }
+  .ov-msg b { font-weight: 600; }
+  .ov-sub { min-height: 22px; margin: 4px 0 10px; display: flex; align-items: center; justify-content: center; gap: 6px; color: var(--Primary); font-size: 13px; font-weight: 500; }
+  .ov-sub .spin { width: 13px; height: 13px; border: 2px solid rgba(254,53,61,0.25); border-top-color: var(--Primary); border-radius: 50%; animation: spin 0.7s linear infinite; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .codes { display: flex; gap: 14px; justify-content: center; margin-bottom: 10px; }
+  .cbox { position: relative; width: 60px; height: 64px; border-radius: 16px; background: #FFF; border: 2px solid #ECECEC; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 8px rgba(0,0,0,0.06); font-size: 34px; font-weight: 500; color: var(--On-Surface); transition: all 0.2s; }
+  .cbox.on { border-color: var(--Primary); background: #FFF5F5; }
+  .cbox.on::after { content: ''; position: absolute; width: 2px; height: 28px; background: var(--Primary); animation: blink 1s step-end infinite; }
+  .cbox.ok { border-color: #1FC83B; background: #F0FFF4; }
+  @keyframes blink { 50% { opacity: 0; } }
+  .resend-row { display: flex; align-items: center; justify-content: center; gap: 4px; font-size: 13px; color: var(--On-Surface-Low); }
+  .resend-row button { border: none; background: none; color: var(--Primary); font-family: Switzer, sans-serif; font-size: 13px; font-weight: 600; cursor: pointer; }
+  .resend-row button:disabled { color: var(--On-Surface-Low); font-weight: 500; cursor: default; }
+  .ov .btn-primary { height: 44px; margin: 12px 0; border-radius: 12px; font-size: 14px; }
+  .ov .keypad { margin-top: 0; padding: 14px 16px; gap: 8px; }
+  .ov .key.back svg { width: 26px; height: 26px; stroke: var(--On-Surface); stroke-width: 1.7; fill: none; stroke-linecap: round; stroke-linejoin: round; }
+  .ov-foot { display: flex; align-items: center; justify-content: center; gap: 14px; margin-top: auto; padding-top: 8px; }
+  .ov-foot a { display: flex; align-items: center; gap: 4px; color: var(--On-Surface-Low); font-size: 11px; text-decoration: none; cursor: pointer; }
+  .ov-foot svg { width: 12px; height: 12px; stroke: currentColor; stroke-width: 2; fill: none; stroke-linecap: round; stroke-linejoin: round; }
+
+  /* Page: red header + white card holding the logos and the FAN field */
+  .ov-head.slim { height: 66px; border-radius: 0 0 24px 24px; }
+  .page { height: calc(100% - 66px); }
+  .page .main { align-items: stretch; padding-top: 22px; }
+  .fcard { padding: 22px 16px 16px; border-radius: 24px; background: #FFF; box-shadow: 0 8px 24px rgba(20,20,30,0.08); }
+  .fcard .link-card { padding: 0 0 22px; background: none; box-shadow: none; }
+  .fcard .hint.ph { margin: 12px 2px 0; }
+  .id-help { margin-top: 12px; padding: 12px; border-radius: 16px; background: #FFF; }
+  .bottom-bar .btn-primary { display: flex; align-items: center; justify-content: center; gap: 8px; }
+  .bottom-bar .btn-primary svg { width: 18px; height: 18px; stroke: currentColor; stroke-width: 2; fill: none; stroke-linecap: round; stroke-linejoin: round; }
+  .btn-later { width: 100%; height: 48px; margin-top: 10px; border: none; border-radius: 14px; background: #E9E9EC; color: #55555E; font-family: Switzer, sans-serif; font-size: 14.5px; font-weight: 500; cursor: pointer; }
+</style>
+<link rel="stylesheet" href="styles/component-keypad.css">
+<link rel="stylesheet" href="styles/device.css">
+</head>
+<body>
+<div class="phone-frame">
+  <!-- Red header, like the Sign Up "Link Your Fayda ID" screen -->
+  <div class="ov-head slim">
+    <div class="pat"></div>
+    <div class="status-bar">
+      <span class="time">10:00</span>
+      <div class="status-icons">
+        <svg data-name="icon-wifi" viewBox="0 0 24 24" fill="none"><path d="M1 9l2 2c4.97-4.97 13.03-4.97 18 0l2-2C16.93 2.93 7.08 2.93 1 9z" fill="#1C1C21"/><path d="M5 13l2 2c2.76-2.76 7.24-2.76 10 0l2-2C15.14 9.14 8.87 9.14 5 13z" fill="#1C1C21"/><path d="M9 17l2 2c1.1-1.1 2.9-1.1 4 0l2-2c-2.21-2.21-5.79-2.21-8 0z" fill="#1C1C21"/></svg>
+        <svg data-name="icon-signal" viewBox="0 0 24 24" fill="none"><rect x="2" y="6" width="4" height="12" rx="1" fill="#1C1C21"/><rect x="8" y="4" width="4" height="14" rx="1" fill="#1C1C21"/><rect x="14" y="2" width="4" height="16" rx="1" fill="#1C1C21"/><rect x="20" y="0" width="4" height="18" rx="1" fill="#1C1C21" opacity=".3"/></svg>
+        <svg data-name="icon-battery" viewBox="0 0 28 14" fill="none"><rect x="0" y="1" width="22" height="12" rx="2.5" stroke="#1C1C21" stroke-width="1.5"/><rect x="2" y="3" width="16" height="8" rx="1" fill="#1C1C21"/><rect x="24" y="4" width="2" height="6" rx="1" fill="#1C1C21"/></svg>
+      </div>
+    </div>
+    <div class="ov-nav"><button type="button" onclick="goBack()" aria-label="Back"><svg viewBox="0 0 24 24"><path d="M19 12H5M12 19l-7-7 7-7"/></svg></button><span>Link Your Fayda ID</span></div>
+  </div>
+
+  <div class="app-content page">
+    <main class="main">
+      <div class="fcard">
+        <div class="link-card" id="linkCard">
+          <span class="lg fayda"><img src="assets/fayda-logo-hq.png" alt="Fayda"></span>
+          <span class="dash"></span>
+          <span class="swap" id="swapIc"><svg viewBox="0 0 24 24"><path d="M4 8h14l-4-4M20 16H6l4 4"/></svg></span>
+          <span class="dash"></span>
+          <span class="lg mpesa"><img src="assets/M-PESA-red-logo.svg" alt="M-PESA"></span>
+        </div>
+        <div class="fan-top"><p class="field-label">Fayda Number (FAN)</p><button class="where" type="button" onclick="$('idHelp').classList.toggle('show')">Where's my FAN?</button></div>
+        <div class="fan-box" id="fanBox">
+          <svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2.5"/><circle cx="9" cy="11" r="2"/><path d="M6 16c.6-1.4 1.7-2 3-2s2.4.6 3 2M14 10h4M14 13h3"/></svg>
+          <input class="input" id="fan" inputmode="numeric" autocomplete="off" placeholder="0000 0000 0000 0000" maxlength="19" oninput="fmtFan()" onblur="fanBlur()">
+          <span class="count" id="fanCount">0/16</span>
+          <span class="tick"><svg viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg></span>
+        </div>
+        <p class="fan-err" id="fanErr">FAN must be 16 digits</p>
+        <p class="hint ph"><svg viewBox="0 0 24 24"><rect x="7" y="2" width="10" height="20" rx="2.5"/><path d="M11 18h2"/></svg>A code will be sent to your Fayda-registered phone</p>
+      </div>
+      <div class="id-help show" id="idHelp">
+        <div class="mini-id"><span class="ph"></span><span class="ln"><i></i><i></i><span class="fan-no">FAN 1234 5678 9012 3456</span></span><img src="assets/fayda-logo-hq.png" alt=""></div>
+        <p>The FAN is the 16-digit number on the front of your Fayda ID card, or in the Fayda app.</p>
+      </div>
+    </main>
+
+    <div class="bottom-bar">
+      <button class="btn-primary" id="sendBtn" type="button" disabled onclick="sendCode()"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="m8.5 12 2.5 2.5 4.5-5"/></svg>Link Now</button>
+      <button class="btn-later" type="button" onclick="goBack()">Remind me later</button>
+    </div>
+  </div>
+
+  <!-- Code entry (full screen, like OTP Verification) -->
+  <div class="ov" id="ov" role="dialog" aria-label="Enter verification code">
+    <div class="ov-head">
+      <div class="pat"></div>
+    <div class="status-bar">
+      <span class="time">10:00</span>
+      <div class="status-icons">
+        <svg data-name="icon-wifi" viewBox="0 0 24 24" fill="none"><path d="M1 9l2 2c4.97-4.97 13.03-4.97 18 0l2-2C16.93 2.93 7.08 2.93 1 9z" fill="#1C1C21"/><path d="M5 13l2 2c2.76-2.76 7.24-2.76 10 0l2-2C15.14 9.14 8.87 9.14 5 13z" fill="#1C1C21"/><path d="M9 17l2 2c1.1-1.1 2.9-1.1 4 0l2-2c-2.21-2.21-5.79-2.21-8 0z" fill="#1C1C21"/></svg>
+        <svg data-name="icon-signal" viewBox="0 0 24 24" fill="none"><rect x="2" y="6" width="4" height="12" rx="1" fill="#1C1C21"/><rect x="8" y="4" width="4" height="14" rx="1" fill="#1C1C21"/><rect x="14" y="2" width="4" height="16" rx="1" fill="#1C1C21"/><rect x="20" y="0" width="4" height="18" rx="1" fill="#1C1C21" opacity=".3"/></svg>
+        <svg data-name="icon-battery" viewBox="0 0 28 14" fill="none"><rect x="0" y="1" width="22" height="12" rx="2.5" stroke="#1C1C21" stroke-width="1.5"/><rect x="2" y="3" width="16" height="8" rx="1" fill="#1C1C21"/><rect x="24" y="4" width="2" height="6" rx="1" fill="#1C1C21"/></svg>
+      </div>
+    </div>
+      <div class="ov-nav"><button type="button" onclick="closeOtp()" aria-label="Back"><svg viewBox="0 0 24 24"><path d="M19 12H5M12 19l-7-7 7-7"/></svg></button><span>Link Fayda ID</span></div>
+      <h2 id="ovTitle">Enter Verification Code</h2>
+    </div>
+    <div class="ov-body">
+      <p class="ov-msg" id="ovMsg"></p>
+      <div class="ov-sub" id="ovSub"><span class="spin"></span><span>Auto-filling...</span></div>
+      <div class="codes"><span class="cbox"></span><span class="cbox"></span><span class="cbox"></span><span class="cbox"></span></div>
+      <div class="resend-row" id="resendRow"><span>Didn't receive the code?</span><button type="button" id="resend" onclick="resend()" disabled></button></div>
+      <button class="btn-primary" id="verifyBtn" type="button" disabled onclick="verify()">Verify</button>
+      <div class="keypad" id="keypad"></div>
+      <div class="ov-foot">
+        <a><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M9.5 9.5a2.5 2.5 0 1 1 3.5 2.3c-.6.3-1 .8-1 1.5M12 17h.01"/></svg>Contact Us</a>
+        <a><svg viewBox="0 0 24 24"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5M9 13h6M9 17h4"/></svg>Terms and Conditions</a>
+      </div>
+    </div>
+  </div>
+
+  <div class="toast" id="toast"><svg viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg><span>Fayda ID Linked</span></div>
+</div>
+
+<script src="term-loan-store.js?v=fayda1"></script>
+<script>
+  const $ = id => document.getElementById(id);
+  const q = new URLSearchParams(location.search);
+  const next = q.get('next') || 'Credit Score - Upload Statement.html';
+  if (q.get('reason')) $('why').textContent = q.get('reason');
+  // Already linked → never asked again
+  if (TL.faydaLinked() && q.get('demo') !== '1') location.replace(next);
+
+  function goBack() { location.href = /Upload Statement/.test(next) ? 'Credit Score.html' : 'Lehulum Home.html'; }
+
+  // FAN: 16 digits shown in groups of four
+  function fmtFan() {
+    const d = $('fan').value.replace(/\D/g, '').slice(0, 16);
+    $('fan').value = d.replace(/(\d{4})(?=\d)/g, '$1 ');
+    $('sendBtn').disabled = d.length !== 16;
+    $('fanCount').textContent = d.length + '/16';
+    $('fanBox').classList.toggle('ok', d.length === 16);
+    if (d.length === 16 || !d.length) { $('fanBox').classList.remove('err'); $('fanErr').classList.remove('show'); }
+  }
+  // Leaving the field part-way shows what's missing
+  function fanBlur() {
+    const n = $('fan').value.replace(/\D/g, '').length, bad = n > 0 && n < 16;
+    $('fanBox').classList.toggle('err', bad); $('fanErr').classList.toggle('show', bad);
+  }
+
+
+  // Code entry: 4 boxes + keypad; the SMS auto-fills after a moment (like OTP Verification)
+  const LEN = 4, cboxes = [...document.querySelectorAll('.cbox')];
+  let code = '', done = false, timer = null, auto = null;
+  $('keypad').innerHTML = ['1','2','3','4','5','6','7','8','9'].map(n => `<button class="key" type="button" onclick="press('${n}')">${n}</button>`).join('')
+    + `<button class="key empty" type="button" tabindex="-1"></button><button class="key" type="button" onclick="press('0')">0</button>`
+    + `<button class="key back" type="button" onclick="unpress()" aria-label="Delete"><svg viewBox="0 0 24 24"><path d="M21 5H9l-6 7 6 7h12a1 1 0 0 0 1-1V6a1 1 0 0 0-1-1z"/><path d="m17 9-6 6M11 9l6 6"/></svg></button>`;
+  function draw() {
+    cboxes.forEach((b, i) => { b.textContent = code[i] || ''; b.classList.toggle('on', !done && i === code.length); b.classList.toggle('ok', done); });
+    $('verifyBtn').disabled = !done && code.length < LEN;
+  }
+  function press(d) { if (done || code.length >= LEN) return; code += d; draw(); }
+  function unpress() { if (done) return; code = code.slice(0, -1); draw(); }
+  document.addEventListener('keydown', e => {
+    if (!$('ov').classList.contains('show')) return;
+    if (/^\d$/.test(e.key)) press(e.key); else if (e.key === 'Backspace') unpress(); else if (e.key === 'Enter' && !$('verifyBtn').disabled) verify();
+  });
+  function countdown() {
+    let t = 30; clearInterval(timer);
+    const tick = () => { $('resend').disabled = t > 0; $('resend').textContent = t > 0 ? `Resend in 0:${String(t).padStart(2, '0')}` : 'Resend now'; if (t-- <= 0) clearInterval(timer); };
+    tick(); timer = setInterval(tick, 1000);
+  }
+  function autoFill() {
+    clearTimeout(auto); $('ovSub').style.visibility = 'visible';
+    const sms = '3154'; let k = 0;
+    const step = () => {
+      if (done || !$('ov').classList.contains('show')) return;
+      if (k < LEN) { code = sms.slice(0, ++k); draw(); auto = setTimeout(step, 300); }
+      else $('ovSub').style.visibility = 'hidden';
+    };
+    auto = setTimeout(step, 1500);
+  }
+  function sendCode() {
+    $('fan').blur();
+    code = ''; done = false; draw();
+    $('ovTitle').textContent = 'Enter Verification Code';
+    $('ovMsg').innerHTML = 'Code sent to your Fayda phone <b>+251 9•• ••• 421</b>';
+    $('resendRow').style.visibility = 'visible'; $('verifyBtn').textContent = 'Verify';
+    $('ov').classList.add('show'); countdown(); autoFill();
+  }
+  function resend() { code = ''; draw(); countdown(); autoFill(); }
+  function closeOtp() { clearTimeout(auto); clearInterval(timer); $('ov').classList.remove('show'); }
+
+  // Verify → boxes turn green, "Verification Complete!" → Continue → linked (never asked again) → next
+  function verify() {
+    if (!done) {
+      done = true; clearTimeout(auto); clearInterval(timer); draw();
+      $('ovTitle').textContent = 'Verification Complete!';
+      $('ovMsg').innerHTML = 'Your <b>Fayda ID</b> has been verified<br>successfully';
+      $('ovSub').style.visibility = 'hidden'; $('resendRow').style.visibility = 'hidden';
+      $('verifyBtn').textContent = 'Continue';
+      TL.linkFayda(true);
+      return;
+    }
+    $('ov').classList.remove('show');
+    $('linkCard').classList.add('linked');
+    $('swapIc').innerHTML = '<svg viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg>';
+    $('sendBtn').disabled = true;
+    $('toast').classList.add('show');
+    setTimeout(() => location.replace(next), 1400);
+  }
+</script>
+<script src="figma-export.js"></script>
+<script src="test-scenarios-data.js"></script>
+<script src="test-scenarios.js"></script>
+</body>
+</html>
